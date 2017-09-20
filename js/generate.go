@@ -28,14 +28,8 @@ func (p *Program) String() (string, error) {
 	for i := 0; i < l; i++ {
 		child := body[i]
 		switch child.(type) {
-		// statements
-		case ExpressionStatement, BlockStatement, EmptyStatement,
-			DebuggerStatement, WithStatement, ReturnStatement,
-			LabeledStatement, BreakStatement, ContinueStatement,
-			IfStatement, SwitchStatement, ThrowStatement, TryStatement,
-			WhileStatement, DoWhileStatement, ForStatement, ForInStatement:
-		// directives
-		case Directive:
+		// statements || directives
+		case IStatement, Directive:
 		default:
 			return "", errors.New("a program's body must contain either directives or statements")
 		}

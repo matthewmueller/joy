@@ -35,15 +35,39 @@ func main() {
 	//     "end": 1
 	//   },
 
-	
-	program := js.Program{
-		Type: "Program",
-		Body: []interface{}{
-			js.EmptyStatement{
-				Type: "EmptyStatement",
-			},
-		},
-	}
+	program := js.CreateProgram(
+		js.CreateEmptyStatement(),
+		js.CreateExpressionStatement(
+			js.CreateCallExpression(
+				js.CreateFunctionExpression(nil, []js.IPattern{},
+					js.CreateFunctionBody(
+						js.CreateExpressionStatement(
+							js.CreateCallExpression(
+								js.CreateMemberExpression(
+									js.CreateIdentifier("console"),
+									js.CreateIdentifier("log"),
+									false,
+								),
+								[]js.IExpression{
+									js.CreateString("hi world!"),
+								},
+							),
+						),
+					),
+				),
+				[]js.IExpression{},
+			),
+		),
+	)
+
+	// program := js.Program{
+	// 	Type: "Program",
+	// 	Body: []interface{}{
+	// 		js.EmptyStatement{
+	// 			Type: "EmptyStatement",
+	// 		},
+	// 	},
+	// }
 
 	jssrc, err := js.Generate(program)
 	if err != nil {
