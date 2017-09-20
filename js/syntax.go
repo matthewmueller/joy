@@ -450,8 +450,8 @@ func (n WithStatement) Statement() Statement {
 
 // ReturnStatement struct
 type ReturnStatement struct {
-	Type     string       `json:"type,omitempty"`
-	Argument *IExpression `json:"argument,omitempty"`
+	Type     string      `json:"type,omitempty"`
+	Argument IExpression `json:"argument,omitempty"`
 }
 
 // Node fn
@@ -534,7 +534,7 @@ type IfStatement struct {
 	Type       string      `json:"type,omitempty"`
 	Test       IExpression `json:"test,omitempty"`
 	Consequent IStatement  `json:"consequent,omitempty"`
-	Alternate  *IStatement `json:"alternate,omitempty"`
+	Alternate  IStatement  `json:"alternate,omitempty"`
 }
 
 // Node fn
@@ -575,7 +575,7 @@ func (n SwitchStatement) Statement() Statement {
 // SwitchCase struct
 type SwitchCase struct {
 	Type       string       `json:"type,omitempty"`
-	Test       *IExpression `json:"test,omitempty"`
+	Test       IExpression  `json:"test,omitempty"`
 	Consequent []IStatement `json:"consequent,omitempty"`
 }
 
@@ -608,10 +608,10 @@ func (n ThrowStatement) Statement() Statement {
 
 // TryStatement struct
 type TryStatement struct {
-	Type      string           `json:"type,omitempty"`
-	Block     IBlockStatement  `json:"block,omitempty"`
-	Handler   *CatchClause     `json:"handler,omitempty"`
-	Finalizer *IBlockStatement `json:"finalizer,omitempty"`
+	Type      string          `json:"type,omitempty"`
+	Block     IBlockStatement `json:"block,omitempty"`
+	Handler   *CatchClause    `json:"handler,omitempty"`
+	Finalizer IBlockStatement `json:"finalizer,omitempty"`
 }
 
 // Node fn
@@ -686,11 +686,11 @@ func (n DoWhileStatement) Statement() Statement {
 
 // ForStatement struct
 type ForStatement struct {
-	Type   string       `json:"type,omitempty"`
-	Init   interface{}  `json:"init,omitempty"` //  VariableDeclaration | Expression | null
-	Test   *IExpression `json:"test,omitempty"`
-	Update *IExpression `json:"update,omitempty"`
-	Body   IStatement   `json:"body,omitempty"`
+	Type   string      `json:"type,omitempty"`
+	Init   interface{} `json:"init,omitempty"` //  VariableDeclaration | Expression | null
+	Test   IExpression `json:"test,omitempty"`
+	Update IExpression `json:"update,omitempty"`
+	Body   IStatement  `json:"body,omitempty"`
 }
 
 // Node fn
@@ -817,9 +817,9 @@ func (n VariableDeclaration) Declaration() Declaration {
 
 // VariableDeclarator struct
 type VariableDeclarator struct {
-	Type string       `json:"type,omitempty"`
-	ID   IPattern     `json:"id,omitempty"`
-	Init *IExpression `json:"init,omitempty"`
+	Type string      `json:"type,omitempty"`
+	ID   IPattern    `json:"id,omitempty"`
+	Init IExpression `json:"init,omitempty"`
 }
 
 // Node fn
@@ -862,8 +862,8 @@ func (n ThisExpression) Expression() Expression {
 
 // ArrayExpression struct
 type ArrayExpression struct {
-	Type     string         `json:"type,omitempty"`
-	Elements []*IExpression `json:"elements,omitempty"`
+	Type     string        `json:"type,omitempty"`
+	Elements []IExpression `json:"elements,omitempty"`
 }
 
 // Node fn

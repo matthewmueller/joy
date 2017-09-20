@@ -6,7 +6,6 @@ import (
 	"go/token"
 	"reflect"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/js"
 )
 
@@ -30,7 +29,25 @@ func fileToProgram(fset *token.FileSet, f *ast.File) (p js.Program, err error) {
 		stmts = append(stmts, stmt)
 	}
 
-	return js.CreateProgram(stmts...), nil
+	// call main()
+	callmain := js.CreateExpressionStatement(
+		js.CreateCallExpression(
+			js.CreateIdentifier("main"),
+			[]js.IExpression{},
+		),
+	)
+
+	// self-executing
+	wrap := js.CreateExpressionStatement(
+		js.CreateCallExpression(
+			js.CreateFunctionExpression(nil, []js.IPattern{},
+				js.CreateFunctionBody(append(stmts, callmain)...),
+			),
+			[]js.IExpression{},
+		),
+	)
+
+	return js.CreateProgram(wrap), nil
 }
 
 func declToStatement(fset *token.FileSet, f *ast.File, decl ast.Decl) (s js.IStatement, err error) {
@@ -48,21 +65,35 @@ func function(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl) (j js.IStateme
 		return js.CreateEmptyStatement(), nil
 	}
 
-	if fn.Name != nil && fn.Name.Name == "main" {
-		log.Infof("handling main differently")
-		return mainFunc(fset, f, fn)
+	// anonymous fns
+	if fn.Name == nil {
+		return j, fmt.Errorf("function: anon functions not yet supported")
 	}
 
-	return j, nil
-}
+	// create the params
+	name := js.CreateIdentifier((*fn.Name).Name)
 
-func mainFunc(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl) (j js.IStatement, err error) {
-	// e.g. func main()
-	if fn.Body == nil {
-		return js.CreateEmptyStatement(), nil
+	// build argument list
+	// var args
+	var params []js.IPattern
+	if fn.Type != nil && fn.Type.Params != nil {
+		fields := fn.Type.Params.List
+		for _, field := range fields {
+			// names because: (a, b string, c int) = [[a, b], c]
+			for _, name := range field.Names {
+				id := js.CreateIdentifier(name.Name)
+				params = append(params, id)
+			}
+		}
 	}
+	// if fn.Recv != nil {
+	// 	fn.Recv.List
+	// }
+	// for _, field := range fn.Recv {
 
-	// TODO: []IStatement{} instead of interface{}
+	// }
+
+	// create the body
 	var body []interface{}
 	for _, stmt := range fn.Body.List {
 		jsStmt, e := funcStatement(fset, f, fn, stmt)
@@ -72,21 +103,48 @@ func mainFunc(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl) (j js.IStateme
 		body = append(body, jsStmt)
 	}
 
-	return js.CreateExpressionStatement(
-		js.CreateCallExpression(
-			js.CreateFunctionExpression(nil, []js.IPattern{},
-				js.CreateFunctionBody(body...),
-			),
-			[]js.IExpression{},
-		),
+	return js.CreateFunctionDeclaration(
+		&name,
+		params,
+		js.CreateFunctionBody(body...),
 	), nil
-	// return j, nil
 }
+
+// func mainFunc(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl) (j js.IStatement, err error) {
+// 	// e.g. func main()
+// 	if fn.Body == nil {
+// 		return js.CreateEmptyStatement(), nil
+// 	}
+
+// 	// TODO: []IStatement{} instead of interface{}
+// 	var body []interface{}
+// 	for _, stmt := range fn.Body.List {
+// 		jsStmt, e := funcStatement(fset, f, fn, stmt)
+// 		if e != nil {
+// 			return j, e
+// 		}
+// 		body = append(body, jsStmt)
+// 	}
+
+// 	return js.CreateExpressionStatement(
+// 		js.CreateCallExpression(
+// 			js.CreateFunctionExpression(nil, []js.IPattern{},
+// 				js.CreateFunctionBody(body...),
+// 			),
+// 			[]js.IExpression{},
+// 		),
+// 	), nil
+// 	// return j, nil
+// }
 
 func funcStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, stmt ast.Stmt) (j js.IStatement, err error) {
 	switch s := stmt.(type) {
 	case *ast.ExprStmt:
 		return exprStatement(fset, f, fn, s)
+	case *ast.AssignStmt:
+		return assignStatement(fset, f, fn, s)
+	case *ast.ReturnStmt:
+		return returnStatement(fset, f, fn, s)
 	default:
 		return nil, fmt.Errorf("funcStatement: unhandled type %s", reflect.TypeOf(stmt))
 	}
@@ -103,6 +161,61 @@ func exprStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr *ast
 	default:
 		return nil, fmt.Errorf("exprStatement: unhandled type: %s", reflect.TypeOf(expr))
 	}
+}
+
+func assignStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, as *ast.AssignStmt) (j js.IStatement, err error) {
+	lhs := as.Lhs
+	rhs := as.Rhs
+
+	// handle balanced destructuring
+	var decls []js.VariableDeclarator
+	if len(lhs) == len(rhs) {
+		for i, expr := range lhs {
+			var id js.IPattern
+
+			switch t := expr.(type) {
+			case *ast.Ident:
+				id = js.CreateIdentifier(t.Name)
+			default:
+				return j, fmt.Errorf("assignStatement: unhandled type: %s", reflect.TypeOf(expr))
+			}
+
+			rh, e := expression(fset, f, fn, rhs[i])
+			if e != nil {
+				return j, e
+			}
+
+			decl := js.CreateVariableDeclarator(id, rh)
+			decls = append(decls, decl)
+		}
+
+		return js.CreateVariableDeclaration("var", decls...), nil
+	}
+
+	return j, fmt.Errorf("assignStatement: unbalanced variables not implemented yet")
+}
+
+func returnStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.ReturnStmt) (j js.IStatement, err error) {
+	// no return values
+	if len(n.Results) == 0 {
+		return js.CreateReturnStatement(nil), nil
+	}
+
+	if len(n.Results) > 1 {
+		return nil, fmt.Errorf("returnStatement: multiple return values not implement yet")
+	}
+
+	var args []js.IExpression
+	for _, arg := range n.Results {
+		a, e := expression(fset, f, fn, arg)
+		if e != nil {
+			return nil, e
+		}
+		args = append(args, a)
+	}
+
+	// return an array (TODO: be smarter later)
+	return js.CreateReturnStatement(args[0]), nil
 }
 
 func callExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr *ast.CallExpr) (j js.IExpression, err error) {
@@ -132,9 +245,32 @@ func expression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr ast.Exp
 		return identifier(fset, f, fn, t)
 	case *ast.BasicLit:
 		return basiclit(fset, f, fn, t)
+	case *ast.CallExpr:
+		return callExpression(fset, f, fn, t)
+	case *ast.BinaryExpr:
+		return binaryExpression(fset, f, fn, t)
 	default:
 		return nil, fmt.Errorf("expression: unhandled type: %s", reflect.TypeOf(expr))
 	}
+}
+
+func binaryExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, b *ast.BinaryExpr) (j js.IExpression, err error) {
+	x, e := expression(fset, f, fn, b.X)
+	if e != nil {
+		return nil, e
+	}
+	y, e := expression(fset, f, fn, b.Y)
+	if e != nil {
+		return nil, e
+	}
+
+	if !b.Op.IsOperator() {
+		return nil, fmt.Errorf("binaryExpression: not sure how to handle this operator: %s", b.Op.String())
+	}
+
+	op := js.BinaryOperator(b.Op.String())
+
+	return js.CreateBinaryExpression(x, op, y), nil
 }
 
 func identifier(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, ident *ast.Ident) (j js.IExpression, err error) {

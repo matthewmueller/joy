@@ -88,9 +88,10 @@ func CreateProgram(body ...interface{}) Program {
 	}
 }
 
-// CreateFunction fn
-func CreateFunction(id *Identifier, params []IPattern, body FunctionBody) Function {
-	return Function{
+// CreateFunctionDeclaration fn
+func CreateFunctionDeclaration(id *Identifier, params []IPattern, body FunctionBody) FunctionDeclaration {
+	return FunctionDeclaration{
+		Type:   "FunctionDeclaration",
 		ID:     id,
 		Params: params,
 		Body:   body,
@@ -106,11 +107,6 @@ func CreateEmptyStatement() EmptyStatement {
 
 // CreateCallExpression fn
 func CreateCallExpression(callee IExpression, arguments []IExpression) CallExpression {
-	// var args []Expression
-	// for _, argument := range arguments {
-	// 	args = append(args, argument.Expression())
-	// }
-
 	return CallExpression{
 		Type:      "CallExpression",
 		Callee:    callee,
@@ -176,5 +172,49 @@ func CreateMemberExpression(object IExpression, property IExpression, computed b
 		Object:   object,
 		Property: property,
 		Computed: computed,
+	}
+}
+
+// CreateVariableDeclaration fn
+func CreateVariableDeclaration(kind string, decls ...VariableDeclarator) VariableDeclaration {
+	return VariableDeclaration{
+		Type:         "VariableDeclaration",
+		Declarations: decls,
+		Kind:         kind,
+	}
+}
+
+// CreateVariableDeclarator fn
+func CreateVariableDeclarator(id IPattern, init IExpression) VariableDeclarator {
+	return VariableDeclarator{
+		Type: "VariableDeclarator",
+		ID:   id,
+		Init: init,
+	}
+}
+
+// CreateReturnStatement fn
+func CreateReturnStatement(argument IExpression) ReturnStatement {
+	return ReturnStatement{
+		Type:     "ReturnStatement",
+		Argument: argument,
+	}
+}
+
+// CreateArrayExpression fn
+func CreateArrayExpression(elements ...IExpression) ArrayExpression {
+	return ArrayExpression{
+		Type:     "ArrayExpression",
+		Elements: elements,
+	}
+}
+
+// CreateBinaryExpression fn
+func CreateBinaryExpression(l IExpression, op BinaryOperator, r IExpression) BinaryExpression {
+	return BinaryExpression{
+		Type:     "BinaryExpression",
+		Left:     l,
+		Operator: op,
+		Right:    r,
 	}
 }

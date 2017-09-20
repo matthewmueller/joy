@@ -71,7 +71,7 @@ func (p *Program) String() (string, error) {
 		results = append(results, s)
 	}
 
-	return strings.Join(results, ";"), nil
+	return strings.Join(results, ";\n"), nil
 }
 
 func (n ExpressionStatement) String() (string, error) {
@@ -125,8 +125,36 @@ func (n FunctionExpression) String() (string, error) {
 		return "", e
 	}
 
-	fn := "function(" + strings.Join(params, ", ") + ") { " + body + " }"
+	fn := "function(" + strings.Join(params, ", ") + ") {\n" + body + "\n}"
 
+	return fn, nil
+}
+
+func (n FunctionDeclaration) String() (string, error) {
+	var params []string
+	for _, param := range n.Params {
+		s, e := stringify(param)
+		if e != nil {
+			return "", e
+		}
+		params = append(params, s)
+	}
+
+	body, e := stringify(n.Body)
+	if e != nil {
+		return "", e
+	}
+
+	name := ""
+	if n.ID != nil {
+		n, e := stringify(*n.ID)
+		if e != nil {
+			return "", e
+		}
+		name = " " + n
+	}
+
+	fn := "function" + name + " (" + strings.Join(params, ", ") + ") { \n" + body + "\n}"
 	return fn, nil
 }
 
@@ -142,7 +170,7 @@ func (n FunctionBody) String() (string, error) {
 		stmts = append(stmts, s)
 	}
 
-	return strings.Join(stmts, ";"), nil
+	return strings.Join(stmts, ";\n") + ";", nil
 }
 
 func (n MemberExpression) String() (string, error) {
@@ -187,114 +215,133 @@ func (n Literal) String() (string, error) {
 	}
 }
 
-func (n BlockStatement) String() (string, error) {
-	return "BlockStatement", nil
+func (n VariableDeclaration) String() (string, error) {
+	var decls []string
+	for _, decl := range n.Declarations {
+		d, e := stringify(decl)
+		if e != nil {
+			return "", e
+		}
+		decls = append(decls, d)
+	}
+
+	return n.Kind + " " + strings.Join(decls, ", "), nil
 }
 
-func (n EmptyStatement) String() (string, error) {
-	return "", nil
-}
-
-func (n DebuggerStatement) String() (string, error) {
-	return "DebuggerStatement", nil
-}
-
-func (n WithStatement) String() (string, error) {
-	return "WithStatement", nil
+func (n VariableDeclarator) String() (string, error) {
+	v, e := stringify(n.ID)
+	if e != nil {
+		return "", e
+	}
+	x, e := stringify(n.Init)
+	if e != nil {
+		return "", e
+	}
+	return v + " = " + x, nil
 }
 
 func (n ReturnStatement) String() (string, error) {
-	return "ReturnStatement", nil
+	r, e := stringify(n.Argument)
+	if e != nil {
+		return "", e
+	}
+
+	return "return " + r, nil
 }
 
-func (n LabeledStatement) String() (string, error) {
-	return "LabeledStatement", nil
+func (n ArrayExpression) String() (string, error) {
+	var decls []string
+	for _, decl := range n.Elements {
+		d, e := stringify(decl)
+		if e != nil {
+			return "", e
+		}
+		decls = append(decls, d)
+	}
+	return "[" + strings.Join(decls, ", ") + "]", nil
 }
 
-func (n BreakStatement) String() (string, error) {
-	return "BreakStatement", nil
+func (n BinaryExpression) String() (string, error) {
+	l, e := stringify(n.Left)
+	if e != nil {
+		return "", e
+	}
+	o, e := stringify(n.Operator)
+	if e != nil {
+		return "", e
+	}
+	r, e := stringify(n.Right)
+	if e != nil {
+		return "", e
+	}
+
+	return l + " " + o + " " + r, nil
 }
 
-func (n ContinueStatement) String() (string, error) {
-	return "ContinueStatement", nil
+func (n BinaryOperator) String() (string, error) {
+	return string(n), nil
 }
 
-func (n IfStatement) String() (string, error) {
-	return "IfStatement", nil
-}
-
-func (n SwitchStatement) String() (string, error) {
-	return "SwitchStatement", nil
-}
-
-func (n ThrowStatement) String() (string, error) {
-	return "ThrowStatement", nil
-}
-
-func (n TryStatement) String() (string, error) {
-	return "TryStatement", nil
-}
-
-func (n WhileStatement) String() (string, error) {
-	return "WhileStatement", nil
-}
-
-func (n DoWhileStatement) String() (string, error) {
-	return "DoWhileStatement", nil
-}
-
-func (n ForStatement) String() (string, error) {
-	return "ForStatement", nil
-}
-
-func (n ForInStatement) String() (string, error) {
-	return "ForInStatement", nil
-}
-
-func (n Declaration) String() (string, error) {
-	return "Declaration", nil
-}
-
-// func generateProgram(node Program) (string, error) {
-// 	results := []string{}
-// 	body := node.Body
-// 	l := len(body)
-
-// 	for i := 0; i < l; i++ {
-// 		child := body[i]
-
-// 		t, ok := child.Statement
-// 		if !ok {
-// 			log.Infof("not ok")
-// 		} else {
-// 			log.Infof("ok!")
-// 		}
-
-// 		switch t := child.(type) {
-// 		case Directive:
-// 			s, e := generateDirective(t)
-// 			if e != nil {
-// 				return "", e
-// 			}
-// 			results = append(results, s)
-// 		case Statement:
-// 			s, e := generateStatement(t)
-// 			if e != nil {
-// 				return "", e
-// 			}
-// 			results = append(results, s)
-// 		default:
-// 			return "", errors.New("a program must contain either directive or statements")
-// 		}
-// 	}
-
-// 	return strings.Join(results, "\n"), nil
+// func (n BlockStatement) String() (string, error) {
+// 	return "BlockStatement", nil
 // }
 
-// func generateDirective(node Directive) (string, error) {
+// func (n EmptyStatement) String() (string, error) {
 // 	return "", nil
 // }
 
-// func generateStatement(node Statement) (string, error) {
-// 	return "", nil
+// func (n DebuggerStatement) String() (string, error) {
+// 	return "DebuggerStatement", nil
+// }
+
+// func (n WithStatement) String() (string, error) {
+// 	return "WithStatement", nil
+// }
+
+// func (n LabeledStatement) String() (string, error) {
+// 	return "LabeledStatement", nil
+// }
+
+// func (n BreakStatement) String() (string, error) {
+// 	return "BreakStatement", nil
+// }
+
+// func (n ContinueStatement) String() (string, error) {
+// 	return "ContinueStatement", nil
+// }
+
+// func (n IfStatement) String() (string, error) {
+// 	return "IfStatement", nil
+// }
+
+// func (n SwitchStatement) String() (string, error) {
+// 	return "SwitchStatement", nil
+// }
+
+// func (n ThrowStatement) String() (string, error) {
+// 	return "ThrowStatement", nil
+// }
+
+// func (n TryStatement) String() (string, error) {
+// 	return "TryStatement", nil
+// }
+
+// func (n WhileStatement) String() (string, error) {
+// 	return "WhileStatement", nil
+// }
+
+// func (n DoWhileStatement) String() (string, error) {
+// 	return "DoWhileStatement", nil
+// }
+
+// func (n ForStatement) String() (string, error) {
+// 	return "ForStatement", nil
+// }
+
+// func (n ForInStatement) String() (string, error) {
+// 	return "ForInStatement", nil
+// }
+
+// func (n Declaration) String() (string, error) {
+// 	return "Declaration", nil
 // }

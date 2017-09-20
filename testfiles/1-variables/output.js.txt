@@ -1,5 +1,8 @@
-;(function() {
-  var a = "a";
-  var b = "b", c = "c", d = "d";
-  console.log(a, b, c, d)
+(function() {
+function main () {
+var a = "a";
+var b = "b", c = "c", d = 3;
+console.log(a, b, c, d);
+};
+main();
 })()

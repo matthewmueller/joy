@@ -1,6 +1,7 @@
 package golly_test
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path"
 	"testing"
@@ -23,7 +24,7 @@ func TestCompiler(t *testing.T) {
 		// subtests
 		t.Run(dir.Name(), func(t *testing.T) {
 			input := path.Join("./testfiles", dir.Name(), "input.go")
-			output := path.Join("./testfiles", dir.Name(), "output.js")
+			output := path.Join("./testfiles", dir.Name(), "output.js.txt")
 
 			// read the output
 			js, e := ioutil.ReadFile(output)
@@ -40,6 +41,7 @@ func TestCompiler(t *testing.T) {
 
 			if string(js) != out {
 				golly.PrintAST(input)
+				fmt.Println(out)
 			}
 
 			assert.Equal(t, string(js), out)
