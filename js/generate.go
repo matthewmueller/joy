@@ -180,6 +180,8 @@ func (n Literal) String() (string, error) {
 		return strconv.Itoa(t), nil
 	case float32:
 		return strconv.FormatFloat(float64(t), 'f', -1, 32), nil
+	case nil:
+		return "null", nil
 	default:
 		return "", fmt.Errorf("literal needs to handle %t", reflect.TypeOf(t))
 	}

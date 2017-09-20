@@ -178,3 +178,4 @@ func CreateMemberExpression(object IExpression, property IExpression, computed b
 		Computed: computed,
 	}
 }
+
