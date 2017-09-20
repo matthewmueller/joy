@@ -1,55 +1,99 @@
 package js
 
 // interface inheritance assertions
+var _ INode = (*Identifier)(nil)
 var _ IExpression = (*Identifier)(nil)
 var _ IPattern = (*Identifier)(nil)
+var _ INode = (*Literal)(nil)
 var _ IExpression = (*Literal)(nil)
+var _ INode = (*RegExpLiteral)(nil)
+var _ IExpression = (*RegExpLiteral)(nil)
 var _ ILiteral = (*RegExpLiteral)(nil)
 var _ INode = (*Program)(nil)
 var _ INode = (*Function)(nil)
 var _ INode = (*Statement)(nil)
+var _ INode = (*ExpressionStatement)(nil)
 var _ IStatement = (*ExpressionStatement)(nil)
+var _ INode = (*Directive)(nil)
+var _ IStatement = (*Directive)(nil)
 var _ IExpressionStatement = (*Directive)(nil)
+var _ INode = (*BlockStatement)(nil)
 var _ IStatement = (*BlockStatement)(nil)
+var _ INode = (*FunctionBody)(nil)
+var _ IStatement = (*FunctionBody)(nil)
 var _ IBlockStatement = (*FunctionBody)(nil)
+var _ INode = (*EmptyStatement)(nil)
 var _ IStatement = (*EmptyStatement)(nil)
+var _ INode = (*DebuggerStatement)(nil)
 var _ IStatement = (*DebuggerStatement)(nil)
+var _ INode = (*WithStatement)(nil)
 var _ IStatement = (*WithStatement)(nil)
+var _ INode = (*ReturnStatement)(nil)
 var _ IStatement = (*ReturnStatement)(nil)
+var _ INode = (*LabeledStatement)(nil)
 var _ IStatement = (*LabeledStatement)(nil)
+var _ INode = (*BreakStatement)(nil)
 var _ IStatement = (*BreakStatement)(nil)
+var _ INode = (*ContinueStatement)(nil)
 var _ IStatement = (*ContinueStatement)(nil)
+var _ INode = (*IfStatement)(nil)
 var _ IStatement = (*IfStatement)(nil)
+var _ INode = (*SwitchStatement)(nil)
 var _ IStatement = (*SwitchStatement)(nil)
 var _ INode = (*SwitchCase)(nil)
+var _ INode = (*ThrowStatement)(nil)
 var _ IStatement = (*ThrowStatement)(nil)
+var _ INode = (*TryStatement)(nil)
 var _ IStatement = (*TryStatement)(nil)
 var _ INode = (*CatchClause)(nil)
+var _ INode = (*WhileStatement)(nil)
 var _ IStatement = (*WhileStatement)(nil)
+var _ INode = (*ForStatement)(nil)
 var _ IStatement = (*ForStatement)(nil)
+var _ INode = (*ForInStatement)(nil)
 var _ IStatement = (*ForInStatement)(nil)
+var _ INode = (*Declaration)(nil)
 var _ IStatement = (*Declaration)(nil)
+var _ INode = (*FunctionDeclaration)(nil)
+var _ IStatement = (*FunctionDeclaration)(nil)
 var _ IFunction = (*FunctionDeclaration)(nil)
 var _ IDeclaration = (*FunctionDeclaration)(nil)
+var _ INode = (*VariableDeclaration)(nil)
+var _ IStatement = (*VariableDeclaration)(nil)
 var _ IDeclaration = (*VariableDeclaration)(nil)
 var _ INode = (*VariableDeclarator)(nil)
 var _ INode = (*Expression)(nil)
+var _ INode = (*ThisExpression)(nil)
 var _ IExpression = (*ThisExpression)(nil)
+var _ INode = (*ArrayExpression)(nil)
 var _ IExpression = (*ArrayExpression)(nil)
+var _ INode = (*ObjectExpression)(nil)
 var _ IExpression = (*ObjectExpression)(nil)
 var _ INode = (*Property)(nil)
+var _ INode = (*FunctionExpression)(nil)
 var _ IFunction = (*FunctionExpression)(nil)
 var _ IExpression = (*FunctionExpression)(nil)
+var _ INode = (*UnaryExpression)(nil)
 var _ IExpression = (*UnaryExpression)(nil)
+var _ INode = (*UpdateExpression)(nil)
 var _ IExpression = (*UpdateExpression)(nil)
+var _ INode = (*BinaryExpression)(nil)
 var _ IExpression = (*BinaryExpression)(nil)
+var _ INode = (*AssignmentExpression)(nil)
 var _ IExpression = (*AssignmentExpression)(nil)
+var _ INode = (*LogicalExpression)(nil)
 var _ IExpression = (*LogicalExpression)(nil)
+var _ INode = (*MemberExpression)(nil)
 var _ IExpression = (*MemberExpression)(nil)
+var _ INode = (*MemberExpression)(nil)
 var _ IPattern = (*MemberExpression)(nil)
+var _ INode = (*ConditionalExpression)(nil)
 var _ IExpression = (*ConditionalExpression)(nil)
+var _ INode = (*CallExpression)(nil)
 var _ IExpression = (*CallExpression)(nil)
+var _ INode = (*NewExpression)(nil)
 var _ IExpression = (*NewExpression)(nil)
+var _ INode = (*SequenceExpression)(nil)
 var _ IExpression = (*SequenceExpression)(nil)
 var _ INode = (*Pattern)(nil)
 
@@ -123,6 +167,13 @@ type Identifier struct {
 	Name string `json:"name,omitempty"`
 }
 
+// Node fn
+func (n Identifier) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
 // Expression fn
 func (n Identifier) Expression() Expression {
 	return Expression{
@@ -143,6 +194,13 @@ type Literal struct {
 	Value interface{} `json:"value,omitempty"` // string | boolean | null | number | RegExp;
 }
 
+// Node fn
+func (n Literal) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
 // Expression fn
 func (n Literal) Expression() Expression {
 	return Expression{
@@ -158,6 +216,20 @@ type RegExpLiteral struct {
 		Pattern string `json:"pattern,omitempty"`
 		Flags   string `json:"flags,omitempty"`
 	} `json:"regex,omitempty"`
+}
+
+// Node fn
+func (n RegExpLiteral) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
+// Expression fn
+func (n RegExpLiteral) Expression() Expression {
+	return Expression{
+		Type: n.Type,
+	}
 }
 
 // Literal fn
@@ -187,7 +259,7 @@ func (n Program) Node() Node {
 type Function struct {
 	Type   string
 	ID     *Identifier  `json:"id,omitempty"`
-	Params []Pattern    `json:"params,omitempty"`
+	Params []IPattern   `json:"params,omitempty"`
 	Body   FunctionBody `json:"body,omitempty"`
 }
 
@@ -212,8 +284,15 @@ func (n Statement) Node() Node {
 
 // ExpressionStatement struct
 type ExpressionStatement struct {
-	Type       string     `json:"type,omitempty"`
-	Expression Expression `json:"expression,omitempty"`
+	Type       string      `json:"type,omitempty"`
+	Expression IExpression `json:"expression,omitempty"`
+}
+
+// Node fn
+func (n ExpressionStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Statement fn
@@ -225,9 +304,23 @@ func (n ExpressionStatement) Statement() Statement {
 
 // Directive struct
 type Directive struct {
-	Type       string     `json:"type,omitempty"`
-	Expression Expression `json:"expression,omitempty"`
-	Directive  string     `json:"directive,omitempty"`
+	Type       string      `json:"type,omitempty"`
+	Expression IExpression `json:"expression,omitempty"`
+	Directive  string      `json:"directive,omitempty"`
+}
+
+// Node fn
+func (n Directive) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
+// Statement fn
+func (n Directive) Statement() Statement {
+	return Statement{
+		Type: n.Type,
+	}
 }
 
 // ExpressionStatement fn
@@ -252,6 +345,13 @@ type BlockStatement struct {
 	Body []interface{} `json:"body,omitempty"`
 }
 
+// Node fn
+func (n BlockStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
 // Statement fn
 func (n BlockStatement) Statement() Statement {
 	return Statement{
@@ -267,6 +367,20 @@ type FunctionBody struct {
 	Body []interface{} `json:"body,omitempty"`
 }
 
+// Node fn
+func (n FunctionBody) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
+// Statement fn
+func (n FunctionBody) Statement() Statement {
+	return Statement{
+		Type: n.Type,
+	}
+}
+
 // BlockStatement fn
 func (n FunctionBody) BlockStatement() BlockStatement {
 	return BlockStatement{
@@ -278,6 +392,13 @@ func (n FunctionBody) BlockStatement() BlockStatement {
 // EmptyStatement struct
 type EmptyStatement struct {
 	Type string `json:"type,omitempty"`
+}
+
+// Node fn
+func (n EmptyStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Statement fn
@@ -292,6 +413,13 @@ type DebuggerStatement struct {
 	Type string `json:"type,omitempty"`
 }
 
+// Node fn
+func (n DebuggerStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
 // Statement fn
 func (n DebuggerStatement) Statement() Statement {
 	return Statement{
@@ -301,9 +429,16 @@ func (n DebuggerStatement) Statement() Statement {
 
 // WithStatement struct
 type WithStatement struct {
-	Type   string     `json:"type,omitempty"`
-	Object Expression `json:"object,omitempty"`
-	Body   Statement  `json:"body,omitempty"`
+	Type   string      `json:"type,omitempty"`
+	Object IExpression `json:"object,omitempty"`
+	Body   IStatement  `json:"body,omitempty"`
+}
+
+// Node fn
+func (n WithStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Statement fn
@@ -315,8 +450,15 @@ func (n WithStatement) Statement() Statement {
 
 // ReturnStatement struct
 type ReturnStatement struct {
-	Type     string      `json:"type,omitempty"`
-	Argument *Expression `json:"argument,omitempty"`
+	Type     string       `json:"type,omitempty"`
+	Argument *IExpression `json:"argument,omitempty"`
+}
+
+// Node fn
+func (n ReturnStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Statement fn
@@ -330,7 +472,14 @@ func (n ReturnStatement) Statement() Statement {
 type LabeledStatement struct {
 	Type  string     `json:"type,omitempty"`
 	Label Identifier `json:"label,omitempty"`
-	Body  Statement  `json:"body,omitempty"`
+	Body  IStatement `json:"body,omitempty"`
+}
+
+// Node fn
+func (n LabeledStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Statement fn
@@ -346,6 +495,13 @@ type BreakStatement struct {
 	Label *Identifier `json:"label,omitempty"`
 }
 
+// Node fn
+func (n BreakStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
 // Statement fn
 func (n BreakStatement) Statement() Statement {
 	return Statement{
@@ -359,6 +515,13 @@ type ContinueStatement struct {
 	Label *Identifier `json:"label,omitempty"`
 }
 
+// Node fn
+func (n ContinueStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
 // Statement fn
 func (n ContinueStatement) Statement() Statement {
 	return Statement{
@@ -368,10 +531,17 @@ func (n ContinueStatement) Statement() Statement {
 
 // IfStatement struct
 type IfStatement struct {
-	Type       string     `json:"type,omitempty"`
-	Test       Expression `json:"test,omitempty"`
-	Consequent Statement  `json:"consequent,omitempty"`
-	Alternate  *Statement `json:"alternate,omitempty"`
+	Type       string      `json:"type,omitempty"`
+	Test       IExpression `json:"test,omitempty"`
+	Consequent IStatement  `json:"consequent,omitempty"`
+	Alternate  *IStatement `json:"alternate,omitempty"`
+}
+
+// Node fn
+func (n IfStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Statement fn
@@ -384,8 +554,15 @@ func (n IfStatement) Statement() Statement {
 // SwitchStatement struct
 type SwitchStatement struct {
 	Type         string       `json:"type,omitempty"`
-	Discriminant Expression   `json:"discriminant,omitempty"`
+	Discriminant IExpression  `json:"discriminant,omitempty"`
 	Cases        []SwitchCase `json:"cases,omitempty"`
+}
+
+// Node fn
+func (n SwitchStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Statement fn
@@ -397,9 +574,9 @@ func (n SwitchStatement) Statement() Statement {
 
 // SwitchCase struct
 type SwitchCase struct {
-	Type       string      `json:"type,omitempty"`
-	Test       *Expression `json:"test,omitempty"`
-	Consequent []Statement `json:"consequent,omitempty"`
+	Type       string       `json:"type,omitempty"`
+	Test       *IExpression `json:"test,omitempty"`
+	Consequent []IStatement `json:"consequent,omitempty"`
 }
 
 // Node fn
@@ -411,8 +588,15 @@ func (n SwitchCase) Node() Node {
 
 // ThrowStatement struct
 type ThrowStatement struct {
-	Type     string     `json:"type,omitempty"`
-	Argument Expression `json:"argument,omitempty"`
+	Type     string      `json:"type,omitempty"`
+	Argument IExpression `json:"argument,omitempty"`
+}
+
+// Node fn
+func (n ThrowStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Statement fn
@@ -424,10 +608,17 @@ func (n ThrowStatement) Statement() Statement {
 
 // TryStatement struct
 type TryStatement struct {
-	Type      string          `json:"type,omitempty"`
-	Block     BlockStatement  `json:"block,omitempty"`
-	Handler   *CatchClause    `json:"handler,omitempty"`
-	Finalizer *BlockStatement `json:"finalizer,omitempty"`
+	Type      string           `json:"type,omitempty"`
+	Block     IBlockStatement  `json:"block,omitempty"`
+	Handler   *CatchClause     `json:"handler,omitempty"`
+	Finalizer *IBlockStatement `json:"finalizer,omitempty"`
+}
+
+// Node fn
+func (n TryStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Statement fn
@@ -439,9 +630,9 @@ func (n TryStatement) Statement() Statement {
 
 // CatchClause struct
 type CatchClause struct {
-	Type  string         `json:"type,omitempty"`
-	Param Pattern        `json:"param,omitempty"`
-	Body  BlockStatement `json:"body,omitempty"`
+	Type  string          `json:"type,omitempty"`
+	Param IPattern        `json:"param,omitempty"`
+	Body  IBlockStatement `json:"body,omitempty"`
 }
 
 // Node fn
@@ -453,9 +644,16 @@ func (n CatchClause) Node() Node {
 
 // WhileStatement struct
 type WhileStatement struct {
-	Type string     `json:"type,omitempty"`
-	Test Expression `json:"test,omitempty"`
-	Body Statement  `json:"body,omitempty"`
+	Type string      `json:"type,omitempty"`
+	Test IExpression `json:"test,omitempty"`
+	Body IStatement  `json:"body,omitempty"`
+}
+
+// Node fn
+func (n WhileStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Statement fn
@@ -467,9 +665,16 @@ func (n WhileStatement) Statement() Statement {
 
 // DoWhileStatement struct
 type DoWhileStatement struct {
-	Type string     `json:"type,omitempty"`
-	Body Statement  `json:"body,omitempty"`
-	Test Expression `json:"test,omitempty"`
+	Type string      `json:"type,omitempty"`
+	Body IStatement  `json:"body,omitempty"`
+	Test IExpression `json:"test,omitempty"`
+}
+
+// Node fn
+func (n DoWhileStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Statement fn
@@ -481,11 +686,18 @@ func (n DoWhileStatement) Statement() Statement {
 
 // ForStatement struct
 type ForStatement struct {
-	Type   string      `json:"type,omitempty"`
-	Init   interface{} `json:"init,omitempty"` //  VariableDeclaration | Expression | null
-	Test   *Expression `json:"test,omitempty"`
-	Update *Expression `json:"update,omitempty"`
-	Body   Statement   `json:"body,omitempty"`
+	Type   string       `json:"type,omitempty"`
+	Init   interface{}  `json:"init,omitempty"` //  VariableDeclaration | Expression | null
+	Test   *IExpression `json:"test,omitempty"`
+	Update *IExpression `json:"update,omitempty"`
+	Body   IStatement   `json:"body,omitempty"`
+}
+
+// Node fn
+func (n ForStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Statement fn
@@ -499,8 +711,15 @@ func (n ForStatement) Statement() Statement {
 type ForInStatement struct {
 	Type  string      `json:"type,omitempty"`
 	Left  interface{} `json:"left,omitempty"` // VariableDeclaration |  Pattern
-	Right Expression  `json:"right,omitempty"`
-	Body  Statement   `json:"body,omitempty"`
+	Right IExpression `json:"right,omitempty"`
+	Body  IStatement  `json:"body,omitempty"`
+}
+
+// Node fn
+func (n ForInStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Statement fn
@@ -515,6 +734,13 @@ type Declaration struct {
 	Type string `json:"type,omitempty"`
 }
 
+// Node fn
+func (n Declaration) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
 // Statement fn
 func (n Declaration) Statement() Statement {
 	return Statement{
@@ -526,8 +752,22 @@ func (n Declaration) Statement() Statement {
 type FunctionDeclaration struct {
 	Type   string      `json:"type,omitempty"`
 	ID     *Identifier `json:"id,omitempty"`
-	Params []Pattern
+	Params []IPattern
 	Body   FunctionBody
+}
+
+// Node fn
+func (n FunctionDeclaration) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
+// Statement fn
+func (n FunctionDeclaration) Statement() Statement {
+	return Statement{
+		Type: n.Type,
+	}
 }
 
 // Declaration fn
@@ -554,6 +794,20 @@ type VariableDeclaration struct {
 	Kind         string               `json:"kind,omitempty"` // "var"
 }
 
+// Node fn
+func (n VariableDeclaration) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
+// Statement fn
+func (n VariableDeclaration) Statement() Statement {
+	return Statement{
+		Type: n.Type,
+	}
+}
+
 // Declaration fn
 func (n VariableDeclaration) Declaration() Declaration {
 	return Declaration{
@@ -563,9 +817,9 @@ func (n VariableDeclaration) Declaration() Declaration {
 
 // VariableDeclarator struct
 type VariableDeclarator struct {
-	Type string      `json:"type,omitempty"`
-	ID   Pattern     `json:"id,omitempty"`
-	Init *Expression `json:"init,omitempty"`
+	Type string       `json:"type,omitempty"`
+	ID   IPattern     `json:"id,omitempty"`
+	Init *IExpression `json:"init,omitempty"`
 }
 
 // Node fn
@@ -592,6 +846,13 @@ type ThisExpression struct {
 	Type string `json:"type,omitempty"`
 }
 
+// Node fn
+func (n ThisExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
 // Expression fn
 func (n ThisExpression) Expression() Expression {
 	return Expression{
@@ -601,8 +862,15 @@ func (n ThisExpression) Expression() Expression {
 
 // ArrayExpression struct
 type ArrayExpression struct {
-	Type     string        `json:"type,omitempty"`
-	Elements []*Expression `json:"elements,omitempty"`
+	Type     string         `json:"type,omitempty"`
+	Elements []*IExpression `json:"elements,omitempty"`
+}
+
+// Node fn
+func (n ArrayExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Expression fn
@@ -618,6 +886,13 @@ type ObjectExpression struct {
 	Properties []Property `json:"properties,omitempty"`
 }
 
+// Node fn
+func (n ObjectExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
 // Expression fn
 func (n ObjectExpression) Expression() Expression {
 	return Expression{
@@ -629,7 +904,7 @@ func (n ObjectExpression) Expression() Expression {
 type Property struct {
 	Type  string      `json:"type,omitempty"`
 	Key   interface{} `json:"key,omitempty"` // Literal | Identifier
-	Value Expression  `json:"value,omitempty"`
+	Value IExpression `json:"value,omitempty"`
 	Kind  string      `json:"kind,omitempty"` // "init" | "get" | "set"
 }
 
@@ -644,8 +919,15 @@ func (n Property) Node() Node {
 type FunctionExpression struct {
 	Type   string `json:"type,omitempty"`
 	ID     *Identifier
-	Params []Pattern
+	Params []IPattern
 	Body   FunctionBody
+}
+
+// Node fn
+func (n FunctionExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Function fn
@@ -670,7 +952,14 @@ type UnaryExpression struct {
 	Type     string        `json:"type,omitempty"`
 	Operator UnaryOperator `json:"operator,omitempty"`
 	Prefix   bool          `json:"prefix,omitempty"`
-	Argument Expression    `json:"argument,omitempty"`
+	Argument IExpression   `json:"argument,omitempty"`
+}
+
+// Node fn
+func (n UnaryExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Expression fn
@@ -688,8 +977,15 @@ type UnaryOperator string
 type UpdateExpression struct {
 	Type     string         `json:"type,omitempty"`
 	Operator UpdateOperator `json:"operator,omitempty"`
-	Argument Expression     `json:"argument,omitempty"`
+	Argument IExpression    `json:"argument,omitempty"`
 	Prefix   bool           `json:"prefix,omitempty"`
+}
+
+// Node fn
+func (n UpdateExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Expression fn
@@ -707,8 +1003,15 @@ type UpdateOperator string
 type BinaryExpression struct {
 	Type     string         `json:"type,omitempty"`
 	Operator BinaryOperator `json:"operator,omitempty"`
-	Left     Expression     `json:"left,omitempty"`
-	Right    Expression     `json:"right,omitempty"`
+	Left     IExpression    `json:"left,omitempty"`
+	Right    IExpression    `json:"right,omitempty"`
+}
+
+// Node fn
+func (n BinaryExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Expression fn
@@ -732,7 +1035,14 @@ type AssignmentExpression struct {
 	Type     string             `json:"type,omitempty"`
 	Operator AssignmentOperator `json:"operator,omitempty"`
 	Left     interface{}        `json:"left,omitempty"` // Pattern | Expression
-	Right    Expression         `json:"right,omitempty"`
+	Right    IExpression        `json:"right,omitempty"`
+}
+
+// Node fn
+func (n AssignmentExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Expression fn
@@ -752,8 +1062,15 @@ type AssignmentOperator string
 type LogicalExpression struct {
 	Type     string          `json:"type,omitempty"`
 	Operator LogicalOperator `json:"operator,omitempty"`
-	Left     Expression      `json:"left,omitempty"`
-	Right    Expression      `json:"right,omitempty"`
+	Left     IExpression     `json:"left,omitempty"`
+	Right    IExpression     `json:"right,omitempty"`
+}
+
+// Node fn
+func (n LogicalExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Expression fn
@@ -774,10 +1091,17 @@ type LogicalOperator string
 // If computed is false, the node corresponds to a static (a.b) member
 // expression and property is an Identifier.
 type MemberExpression struct {
-	Type     string     `json:"type,omitempty"`
-	Object   Expression `json:"object,omitempty"`
-	Property Expression `json:"property,omitempty"`
-	Computed bool       `json:"computed,omitempty"`
+	Type     string      `json:"type,omitempty"`
+	Object   IExpression `json:"object,omitempty"`
+	Property IExpression `json:"property,omitempty"`
+	Computed bool        `json:"computed,omitempty"`
+}
+
+// Node fn
+func (n MemberExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Expression fn
@@ -798,10 +1122,17 @@ func (n MemberExpression) Pattern() Pattern {
 //
 // A conditional expression, i.e., a ternary ?/: expression.
 type ConditionalExpression struct {
-	Type       string     `json:"type,omitempty"`
-	Test       Expression `json:"test,omitempty"`
-	Alternate  Expression `json:"alternate,omitempty"`
-	Consequent Expression `json:"consequent,omitempty"`
+	Type       string      `json:"type,omitempty"`
+	Test       IExpression `json:"test,omitempty"`
+	Alternate  IExpression `json:"alternate,omitempty"`
+	Consequent IExpression `json:"consequent,omitempty"`
+}
+
+// Node fn
+func (n ConditionalExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Expression fn
@@ -815,9 +1146,16 @@ func (n ConditionalExpression) Expression() Expression {
 //
 // A function or method call expression.
 type CallExpression struct {
-	Type      string       `json:"type,omitempty"`
-	Callee    Expression   `json:"callee,omitempty"`
-	Arguments []Expression `json:"arguments,omitempty"`
+	Type      string        `json:"type,omitempty"`
+	Callee    IExpression   `json:"callee,omitempty"`
+	Arguments []IExpression `json:"arguments,omitempty"`
+}
+
+// Node fn
+func (n CallExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Expression fn
@@ -831,9 +1169,16 @@ func (n CallExpression) Expression() Expression {
 //
 // A `new` expression.
 type NewExpression struct {
-	Type      string       `json:"type,omitempty"`
-	Callee    Expression   `json:"callee,omitempty"`
-	Arguments []Expression `json:"arguments,omitempty"`
+	Type      string        `json:"type,omitempty"`
+	Callee    IExpression   `json:"callee,omitempty"`
+	Arguments []IExpression `json:"arguments,omitempty"`
+}
+
+// Node fn
+func (n NewExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Expression fn
@@ -847,8 +1192,15 @@ func (n NewExpression) Expression() Expression {
 //
 // A sequence expression, i.e., a comma-separated sequence of expressions.
 type SequenceExpression struct {
-	Type        string       `json:"type,omitempty"`
-	Expressions []Expression `json:"expressions,omitempty"`
+	Type        string        `json:"type,omitempty"`
+	Expressions []IExpression `json:"expressions,omitempty"`
+}
+
+// Node fn
+func (n SequenceExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
 }
 
 // Expression fn

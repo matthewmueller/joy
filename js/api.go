@@ -90,14 +90,9 @@ func CreateProgram(body ...interface{}) Program {
 
 // CreateFunction fn
 func CreateFunction(id *Identifier, params []IPattern, body FunctionBody) Function {
-	var args []Pattern
-	for _, a := range params {
-		args = append(args, a.Pattern())
-	}
-
 	return Function{
 		ID:     id,
-		Params: args,
+		Params: params,
 		Body:   body,
 	}
 }
@@ -111,28 +106,23 @@ func CreateEmptyStatement() EmptyStatement {
 
 // CreateCallExpression fn
 func CreateCallExpression(callee IExpression, arguments []IExpression) CallExpression {
-	var args []Expression
-	for _, argument := range arguments {
-		args = append(args, argument.Expression())
-	}
+	// var args []Expression
+	// for _, argument := range arguments {
+	// 	args = append(args, argument.Expression())
+	// }
 
 	return CallExpression{
 		Type:      "CallExpression",
-		Callee:    callee.Expression(),
-		Arguments: args,
+		Callee:    callee,
+		Arguments: arguments,
 	}
 }
 
 // CreateFunctionExpression fn
 func CreateFunctionExpression(id *Identifier, params []IPattern, body FunctionBody) FunctionExpression {
-	var ps []Pattern
-	for _, param := range params {
-		ps = append(ps, param.Pattern())
-	}
-
 	return FunctionExpression{
 		Type:   "FunctionExpression",
-		Params: ps,
+		Params: params,
 		Body:   body,
 	}
 }
@@ -162,7 +152,7 @@ func CreateFunctionBody(body ...interface{}) FunctionBody {
 func CreateExpressionStatement(expression IExpression) ExpressionStatement {
 	return ExpressionStatement{
 		Type:       "ExpressionStatement",
-		Expression: expression.Expression(),
+		Expression: expression,
 	}
 }
 
@@ -183,8 +173,8 @@ func CreateBlockStatement(body ...IStatement) BlockStatement {
 func CreateMemberExpression(object IExpression, property IExpression, computed bool) MemberExpression {
 	return MemberExpression{
 		Type:     "MemberExpression",
-		Object:   object.Expression(),
-		Property: property.Expression(),
+		Object:   object,
+		Property: property,
 		Computed: computed,
 	}
 }

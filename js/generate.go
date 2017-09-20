@@ -2,6 +2,9 @@ package js
 
 import (
 	"errors"
+	"fmt"
+	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -9,6 +12,8 @@ import (
 type Stringer interface {
 	String() (string, error)
 }
+
+var _ Stringer = (*CallExpression)(nil)
 
 // Generate JS from the AST
 func Generate(node interface{}) (string, error) {
@@ -18,6 +23,30 @@ func Generate(node interface{}) (string, error) {
 	}
 
 	return "", errors.New("ast must start with a program")
+}
+
+func stringify(node interface{}) (string, error) {
+	// cast to stringer
+	stringer, ok := node.(Stringer)
+	if !ok {
+		n := node.(INode)
+		return "", fmt.Errorf("%s does not implement stringer", n.Node().Type)
+	}
+	return stringer.String()
+}
+
+func stringifyEach(nodes ...interface{}) ([]string, error) {
+	var out []string
+
+	for _, node := range nodes {
+		s, e := stringify(node)
+		if e != nil {
+			return nil, e
+		}
+		out = append(out, s)
+	}
+
+	return out, nil
 }
 
 func (p *Program) String() (string, error) {
@@ -34,32 +63,134 @@ func (p *Program) String() (string, error) {
 			return "", errors.New("a program's body must contain either directives or statements")
 		}
 
-		// cast to stringer
-		stringer, ok := child.(Stringer)
-		if !ok {
-			return "", errors.New("child does not implement stringer")
-		}
-
 		// string
-		s, e := stringer.String()
+		s, e := stringify(child)
 		if e != nil {
 			return "", e
 		}
 		results = append(results, s)
 	}
 
-	return strings.Join(results, "\n"), nil
+	return strings.Join(results, ";"), nil
 }
 
 func (n ExpressionStatement) String() (string, error) {
-	return "ExpressionStatement", nil
+	return stringify(n.Expression)
+	// s, e := stringify(n.Expression)
+	// if e != nil {
+	// 	return "", e
+	// }
+	// return "(" + s + ")", nil
 }
+
+func (n CallExpression) String() (string, error) {
+	var args []string
+	for _, arg := range n.Arguments {
+		s, e := stringify(arg)
+		if e != nil {
+			return "", e
+		}
+		args = append(args, s)
+	}
+	p := strings.Join(args, ", ")
+
+	s, e := stringify(n.Callee)
+	if e != nil {
+		return "", e
+	}
+
+	switch n.Callee.(type) {
+	case FunctionExpression:
+		return "(" + s + ")(" + p + ")", nil
+	case MemberExpression:
+		return s + "(" + p + ")", nil
+	default:
+		calleeType := n.Callee.(INode).Node().Type
+		return "", fmt.Errorf("call expression needs to handle %s", calleeType)
+	}
+}
+
+func (n FunctionExpression) String() (string, error) {
+	var params []string
+	for _, param := range n.Params {
+		s, e := stringify(param)
+		if e != nil {
+			return "", e
+		}
+		params = append(params, s)
+	}
+
+	body, e := stringify(n.Body)
+	if e != nil {
+		return "", e
+	}
+
+	fn := "function(" + strings.Join(params, ", ") + ") { " + body + " }"
+
+	return fn, nil
+}
+
+func (n FunctionBody) String() (string, error) {
+	var stmts []string
+
+	// TODO: statement | directive
+	for _, statement := range n.Body {
+		s, e := stringify(statement)
+		if e != nil {
+			return "", e
+		}
+		stmts = append(stmts, s)
+	}
+
+	return strings.Join(stmts, ";"), nil
+}
+
+func (n MemberExpression) String() (string, error) {
+	obj, e := stringify(n.Object)
+	if e != nil {
+		return "", e
+	}
+
+	prop, e := stringify(n.Property)
+	if e != nil {
+		return "", e
+	}
+
+	// e.g. hi[world]
+	if n.Computed {
+		return obj + "[" + prop + "]", nil
+	}
+
+	// hi.world
+	return obj + "." + prop, nil
+}
+
+func (n Identifier) String() (string, error) {
+	return n.Name, nil
+}
+
+// TODO: Move this into the syntax itself
+func (n Literal) String() (string, error) {
+	switch t := n.Value.(type) {
+	case string:
+		return "'" + t + "'", nil
+	case bool:
+		return strconv.FormatBool(t), nil
+	case int:
+		return strconv.Itoa(t), nil
+	case float32:
+		return strconv.FormatFloat(float64(t), 'f', -1, 32), nil
+	default:
+		return "", fmt.Errorf("literal needs to handle %t", reflect.TypeOf(t))
+	}
+}
+
 func (n BlockStatement) String() (string, error) {
 	return "BlockStatement", nil
 }
 
 func (n EmptyStatement) String() (string, error) {
-	return "EmptyStatement", nil
+	return "", nil
 }
 
 func (n DebuggerStatement) String() (string, error) {
