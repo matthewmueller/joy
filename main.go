@@ -7,6 +7,7 @@ import (
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
+	"github.com/matthewmueller/golly/js"
 )
 
 // Test struct
@@ -22,6 +23,38 @@ func main() {
 	if err != nil {
 		log.WithError(err).Fatalf("couldn't read from stdin")
 	}
+	_ = gosrc
 
-	fmt.Println(string(gosrc))
+	// "type": "Program",
+	// "start": 0,
+	// "end": 47,
+	// "body": [
+	//   {
+	//     "type": "EmptyStatement",
+	//     "start": 0,
+	//     "end": 1
+	//   },
+
+	
+	program := js.Program{
+		Type: "Program",
+		Body: []interface{}{
+			js.EmptyStatement{
+				Type: "EmptyStatement",
+			},
+		},
+	}
+
+	jssrc, err := js.Generate(program)
+	if err != nil {
+		log.WithError(err).Fatalf("syntax error")
+	}
+	fmt.Println(jssrc)
+
+	// ast, err := json.MarshalIndent(program, "", "  ")
+	// if err != nil {
+	// 	log.WithError(err).Fatalf("couldn't marshal json")
+	// }
+
+	// fmt.Println(string(ast))
 }
