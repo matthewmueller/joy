@@ -1,0 +1,5 @@
+;(function() {
+  var a = "a";
+  var b = "b", c = "c", d = "d";
+  console.log(a, b, c, d)
+})()
