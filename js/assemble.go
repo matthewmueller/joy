@@ -31,7 +31,7 @@ func Assemble(node interface{}) (string, error) {
 
 func stringify(node interface{}) (string, error) {
 	if node == nil {
-		return "", errors.New("node is nil")
+		return "", nil
 	}
 	// cast to stringer
 	stringer, ok := node.(Stringer)
@@ -373,6 +373,57 @@ func (n LogicalExpression) String() (string, error) {
 	}
 
 	return l + " " + string(n.Operator) + " " + r, nil
+}
+
+func (n ForStatement) String() (string, error) {
+	var cond []string
+	var e error
+
+	// since this is a union type, we'll need to typecheck
+	var init string
+	switch n.Init.(type) {
+	case VariableDeclaration, IExpression:
+		init, e = stringify(n.Init)
+	case nil:
+		init = ""
+	default:
+		return "", fmt.Errorf("ForStatement: init can only be VariableDeclaration | Expression | null, but got %s", reflect.TypeOf(n.Init))
+	}
+	if e != nil {
+		return "", e
+	}
+	cond = append(cond, init)
+
+	// expression
+	test, e := stringify(n.Test)
+	if e != nil {
+		return "", e
+	}
+	cond = append(cond, test)
+
+	// expression
+	update, e := stringify(n.Update)
+	if e != nil {
+		return "", e
+	}
+	cond = append(cond, update)
+
+	// for body
+	b, e := stringify(n.Body)
+	if e != nil {
+		return "", e
+	}
+
+	return "for (" + strings.Join(cond, "; ") + ") {\n" + b + "\n}", nil
+}
+
+func (n UpdateExpression) String() (string, error) {
+	x, e := stringify(n.Argument)
+	if e != nil {
+		return "", e
+	}
+
+	return x + string(n.Operator), nil
 }
 
 // func (n DebuggerStatement) String() (string, error) {

@@ -256,3 +256,24 @@ func CreateLogicalExpression(left IExpression, operator LogicalOperator, right I
 		Right:    right,
 	}
 }
+
+// CreateForStatement fn
+func CreateForStatement(init interface{}, test IExpression, update IExpression, body IStatement) ForStatement {
+	return ForStatement{
+		Type:   "ForStatement",
+		Init:   init,
+		Test:   test,
+		Update: update,
+		Body:   body,
+	}
+}
+
+// CreateUpdateExpression fn
+func CreateUpdateExpression(argument IExpression, operator UpdateOperator, prefix bool) UpdateExpression {
+	return UpdateExpression{
+		Type:     "UpdateExpression",
+		Argument: argument,
+		Operator: operator,
+		Prefix:   prefix,
+	}
+}

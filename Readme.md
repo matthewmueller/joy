@@ -29,10 +29,11 @@ program := js.CreateProgram(
 
 ## High-level:
 
-- [ ] implement structs
-- [ ] implement if statements
+- [x] implement if statements
 - [ ] implement loops
+- [ ] implement structs
 - [ ] implement classes
+- [ ] implement switch statements
 - [ ] implement scope
 - [ ] implement packaging
 - [ ] write basic document package

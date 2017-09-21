@@ -6,7 +6,9 @@ import (
 	"go/token"
 	"reflect"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/js"
+	"github.com/pkg/errors"
 )
 
 // Translate from a Go AST to a Javascript AST
@@ -141,6 +143,8 @@ func funcStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, stmt ast.
 		return assignStatement(fset, f, fn, t)
 	case *ast.ReturnStmt:
 		return returnStatement(fset, f, fn, t)
+	case *ast.ForStmt:
+		return forStmt(fset, f, fn, t)
 	default:
 		return nil, unhandled("funcStatement", stmt)
 	}
@@ -161,9 +165,6 @@ func exprStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr *ast
 
 func ifStmt(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.IfStmt) (j js.IStatement, err error) {
 	var e error
-
-	// var consequent js.IBlockStatement
-	// var alternate js.IBlockStatement
 
 	// condition: if [(...)] { ... } else { ... }
 	var test js.IExpression
@@ -215,26 +216,72 @@ func ifStmt(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.IfStmt) (
 	), nil
 }
 
+func forStmt(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.ForStmt) (j js.IStatement, err error) {
+
+	init, e := statement(fset, f, fn, n.Init)
+	if e != nil {
+		return nil, errors.Wrap(e, "forStmt")
+	}
+
+	cond, e := expression(fset, f, fn, n.Cond)
+	if e != nil {
+		return nil, errors.Wrap(e, "forStmt")
+	}
+
+	post, e := statement(fset, f, fn, n.Post)
+	if e != nil {
+		return nil, errors.Wrap(e, "forStmt")
+	}
+
+	body, e := blockStmt(fset, f, fn, n.Body)
+	if e != nil {
+		return nil, errors.Wrap(e, "forStmt")
+	}
+
+	// In Go the post condition is a statement,
+	// in JS it's an expression
+	//
+	// it can also be nil in the case of for { ... }
+	var postexpr js.IExpression
+	switch t := post.(type) {
+	case js.ExpressionStatement:
+		postexpr = t.Expression
+	case nil:
+		postexpr = nil
+	default:
+		return nil, unhandled("forStmt<post>", post)
+	}
+
+	return js.CreateForStatement(
+		init,
+		cond,
+		postexpr,
+		body,
+	), nil
+}
+
+func statement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n ast.Stmt) (j js.IStatement, err error) {
+	switch t := n.(type) {
+	case nil:
+		return nil, nil
+	case *ast.AssignStmt:
+		return assignStatement(fset, f, fn, t)
+	case *ast.IncDecStmt:
+		return incDecStmt(fset, f, fn, t)
+	case *ast.ExprStmt:
+		return exprStatement(fset, f, fn, t)
+	default:
+		return nil, unhandled("statement", n)
+	}
+}
+
 func blockStmt(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.BlockStmt) (j js.IBlockStatement, err error) {
 	var stmts []js.IStatement
 
 	for _, stmt := range n.List {
-		var v js.IStatement
-		var e error
-		switch t := stmt.(type) {
-		case *ast.ExprStmt:
-			v, e = exprStatement(fset, f, fn, t)
-		case *ast.IfStmt:
-			v, e = ifStmt(fset, f, fn, t)
-		case *ast.AssignStmt:
-			v, e = assignStatement(fset, f, fn, t)
-		case *ast.ReturnStmt:
-			v, e = returnStatement(fset, f, fn, t)
-		default:
-			return nil, unhandled("ifStmt<body>", stmt)
-		}
+		v, e := statement(fset, f, fn, stmt)
 		if e != nil {
-			return nil, e
+			return nil, errors.Wrap(e, "blockStmt")
 		}
 		stmts = append(stmts, v)
 	}
@@ -272,6 +319,29 @@ func assignStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, as *ast
 	}
 
 	return j, fmt.Errorf("assignStatement: unbalanced variables not implemented yet")
+}
+
+func incDecStmt(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.IncDecStmt) (j js.IStatement, err error) {
+	var op js.UpdateOperator
+
+	x, e := expression(fset, f, fn, n.X)
+	if e != nil {
+		return nil, errors.Wrap(e, "incDecStmt")
+	}
+
+	log.Infof("n.Tok.String(): %s", n.Tok.String())
+	switch n.Tok.String() {
+	case "++":
+		op = js.UpdateOperator("++")
+	case "--":
+		op = js.UpdateOperator("--")
+	default:
+		return nil, unhandled("incDecStmt", n.Tok)
+	}
+
+	return js.CreateExpressionStatement(
+		js.CreateUpdateExpression(x, op, false),
+	), nil
 }
 
 func returnStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.ReturnStmt) (j js.IStatement, err error) {
@@ -329,7 +399,6 @@ func callExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr *as
 	), nil
 }
 
-// TODO: move into the respective functions, the translation is not 1:1
 func expression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr ast.Expr) (j js.IExpression, err error) {
 	switch t := expr.(type) {
 	case *ast.Ident:
@@ -342,6 +411,8 @@ func expression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr ast.Exp
 		return binaryExpression(fset, f, fn, t)
 	case *ast.CompositeLit:
 		return compositeLiteral(fset, f, fn, t)
+	case nil:
+		return nil, nil
 	default:
 		return nil, fmt.Errorf("expression(): unhandled type: %s", reflect.TypeOf(expr))
 	}
