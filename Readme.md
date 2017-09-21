@@ -30,15 +30,15 @@ program := js.CreateProgram(
 ## High-level:
 
 - [x] implement if statements
-- [ ] implement loops
-- [ ] implement structs
+- [x] implement loops
+- [ ] implement nested structs
 - [ ] implement classes
 - [ ] implement switch statements
 - [ ] implement scope
 - [ ] implement packaging
-- [ ] write basic document package
+- [ ] write basic DOM package
 - [ ] write preact package
-- [ ] write async 
+- [ ] write async (temporarily embed regenerator for now)
 - [ ] write fetch package
 
 ## Design

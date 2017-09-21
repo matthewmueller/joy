@@ -375,18 +375,7 @@ func callExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr *as
 
 	var args []js.IExpression
 	for _, arg := range expr.Args {
-		var v js.IExpression
-		var e error
-		switch t := arg.(type) {
-		case *ast.BasicLit:
-			v, e = basiclit(fset, f, fn, t)
-		case *ast.Ident:
-			v, e = identifier(fset, f, fn, t)
-		case *ast.SelectorExpr:
-			v, e = selectorExpr(fset, f, fn, t)
-		default:
-			return j, unhandled("callExpression", arg)
-		}
+		v, e := expression(fset, f, fn, arg)
 		if e != nil {
 			return j, e
 		}
@@ -411,6 +400,12 @@ func expression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr ast.Exp
 		return binaryExpression(fset, f, fn, t)
 	case *ast.CompositeLit:
 		return compositeLiteral(fset, f, fn, t)
+	case *ast.SelectorExpr:
+		return selectorExpr(fset, f, fn, t)
+	case *ast.IndexExpr:
+		return indexExpr(fset, f, fn, t)
+	// case *ast.KeyValueExpr:
+	// 	return keyValueExpr(fset, f, fn, t)
 	case nil:
 		return nil, nil
 	default:
@@ -469,100 +464,74 @@ func basiclit(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, lit *ast.Basic
 	return js.CreateString(lit.Value), nil
 }
 
-func compositeLiteral(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.ObjectExpression, err error) {
+func compositeLiteral(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.IExpression, err error) {
+	switch n.Type.(type) {
+	case *ast.Ident:
+		return jsObjectExpression(fset, f, fn, n)
+	case *ast.ArrayType:
+		return jsArrayExpression(fset, f, fn, n)
+	default:
+		return nil, unhandled("compositeLiteral<type>", n.Type)
+	}
+}
+
+func jsObjectExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.ObjectExpression, err error) {
 	var props []js.Property
 
 	for _, elt := range n.Elts {
 		var prop js.Property
+		var e error
+
 		switch t := elt.(type) {
 		case *ast.KeyValueExpr:
-			p, e := keyValueExpr(fset, f, fn, t)
-			if e != nil {
-				return j, e
-			}
-			prop = p
-		case *ast.CompositeLit:
-			// k, e := t.Type
-			// t.Type
-			// t.Elts[]
-			// v, e := compositeLiteral(fset, f, fn, t)
-			// if e != nil {
-			// 	return j, e
-			// }
-
-			// prop = v
+			prop, e = keyValueExpr(fset, f, fn, t)
 		default:
-			return j, fmt.Errorf("compositeLiteral(): not sure what this type is %s", reflect.TypeOf(elt))
+			return j, unhandled("jsObjectExpression", elt)
 		}
-
+		if e != nil {
+			return j, e
+		}
 		props = append(props, prop)
 	}
 
 	return js.CreateObjectExpression(props), nil
 }
 
-func keyValueExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.KeyValueExpr) (j js.Property, err error) {
-	var key interface{}
-	var value js.IExpression
+func jsArrayExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.ArrayExpression, err error) {
+	var elements []js.IExpression
 
-	// get the key
-	switch t := n.Key.(type) {
-	case *ast.Ident:
-		k, e := identifier(fset, f, fn, t)
+	for _, elt := range n.Elts {
+		el, e := expression(fset, f, fn, elt)
 		if e != nil {
 			return j, e
 		}
-		key = k
-	default:
-		return j, unhandled("keyValueExpr<key>", n.Key)
+		elements = append(elements, el)
+	}
+
+	return js.CreateArrayExpression(elements...), nil
+}
+
+func keyValueExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.KeyValueExpr) (j js.Property, err error) {
+	// get the key
+	key, e := expression(fset, f, fn, n.Key)
+	if e != nil {
+		return j, e
 	}
 
 	// get the value
-	switch t := n.Value.(type) {
-	case *ast.BasicLit:
-		v, e := basiclit(fset, f, fn, t)
-		if e != nil {
-			return j, e
-		}
-		value = v
-	case *ast.CompositeLit:
-		v, e := compositeLiteral(fset, f, fn, t)
-		if e != nil {
-			return j, e
-		}
-		value = v
-	case *ast.Ident:
-		v, e := identifier(fset, f, fn, t)
-		if e != nil {
-			return j, e
-		}
-		value = v
-	default:
-		return j, unhandled("keyValueExpr<value>", n.Value)
+	value, e := expression(fset, f, fn, n.Value)
+	if e != nil {
+		return j, e
 	}
 
 	return js.CreateProperty(key, value, "init"), nil
 }
 
 func selectorExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.SelectorExpr) (j js.IExpression, err error) {
-	var lhs js.IExpression
-	switch t := n.X.(type) {
 	// (user.phone).number
-	case *ast.SelectorExpr:
-		x, e := selectorExpr(fset, f, fn, t)
-		if e != nil {
-			return nil, e
-		}
-		lhs = x
-	// (user).phone
-	case *ast.Ident:
-		x, e := identifier(fset, f, fn, t)
-		if e != nil {
-			return nil, e
-		}
-		lhs = x
-	default:
-		return nil, unhandled("selectorExpr", n.X)
+	x, e := expression(fset, f, fn, n.X)
+	if e != nil {
+		return nil, e
 	}
 
 	// user.phone.(number)
@@ -571,7 +540,23 @@ func selectorExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.Sel
 		return nil, e
 	}
 
-	return js.CreateMemberExpression(lhs, s, false), nil
+	return js.CreateMemberExpression(x, s, false), nil
+}
+
+func indexExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.IndexExpr) (j js.MemberExpression, err error) {
+	// (i)[0]
+	x, e := expression(fset, f, fn, n.X)
+	if e != nil {
+		return j, e
+	}
+
+	// i([0])
+	i, e := expression(fset, f, fn, n.Index)
+	if e != nil {
+		return j, e
+	}
+
+	return js.CreateMemberExpression(x, i, true), nil
 }
 
 func unhandled(fn string, n interface{}) error {
