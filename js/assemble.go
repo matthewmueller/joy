@@ -6,8 +6,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-
-	"github.com/kr/pretty"
 )
 
 // Stringer interface
@@ -19,7 +17,7 @@ var _ Stringer = (*CallExpression)(nil)
 
 // Assemble JS from the AST
 func Assemble(node interface{}) (string, error) {
-	pretty.Println(node)
+	// pretty.Println(node)
 
 	switch t := node.(type) {
 	case Program:
@@ -424,6 +422,42 @@ func (n UpdateExpression) String() (string, error) {
 	}
 
 	return x + string(n.Operator), nil
+}
+
+func (n AssignmentExpression) String() (string, error) {
+	l, e := stringify(n.Left)
+	if e != nil {
+		return "", e
+	}
+
+	r, e := stringify(n.Right)
+	if e != nil {
+		return "", e
+	}
+
+	return l + " " + string(n.Operator) + " " + r, nil
+}
+
+func (n ThisExpression) String() (string, error) {
+	return "this", nil
+}
+
+func (n NewExpression) String() (string, error) {
+	c, e := stringify(n.Callee)
+	if e != nil {
+		return "", e
+	}
+
+	var args []string
+	for _, arg := range n.Arguments {
+		a, e := stringify(arg)
+		if e != nil {
+			return "", e
+		}
+		args = append(args, a)
+	}
+
+	return "new " + c + "(" + strings.Join(args, ", ") + ")", nil
 }
 
 // func (n DebuggerStatement) String() (string, error) {

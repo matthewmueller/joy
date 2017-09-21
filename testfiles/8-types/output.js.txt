@@ -1,0 +1,28 @@
+(function() {
+function User (o) {
+this.FirstName = o.FirstName;
+this.LastName = o.LastName;
+this.Phones = o.Phones;
+};
+function Phone (o) {
+this.Type = o.Type;
+this.Number = o.Number;
+this.Main = o.Main;
+};
+function main () {
+var user = new User({
+  FirstName: "Matt",
+  Phones: [new Phone({
+  Type: "HOME",
+  Number: "1234125",
+  Main: false
+}), new Phone({
+  Type: "CELL",
+  Number: "1231411",
+  Main: true
+})]
+});
+console.log(user.Phones[1].Number);
+};
+main();
+})()

@@ -24,7 +24,7 @@ func fileToProgram(fset *token.FileSet, f *ast.File) (p js.Program, err error) {
 	// TODO: can i use additional interfaces to tighten this up?
 	stmts := []interface{}{}
 	for i := 0; i < l; i++ {
-		stmt, e := declToStatement(fset, f, decls[i])
+		stmt, e := decl(fset, f, decls[i])
 		if e != nil {
 			return p, e
 		}
@@ -52,12 +52,14 @@ func fileToProgram(fset *token.FileSet, f *ast.File) (p js.Program, err error) {
 	return js.CreateProgram(wrap), nil
 }
 
-func declToStatement(fset *token.FileSet, f *ast.File, decl ast.Decl) (s js.IStatement, err error) {
+func decl(fset *token.FileSet, f *ast.File, decl ast.Decl) (s js.IStatement, err error) {
 	switch d := decl.(type) {
 	case *ast.FuncDecl:
 		return function(fset, f, d)
+	case *ast.GenDecl:
+		return genDecl(fset, f, d)
 	default:
-		return js.CreateEmptyStatement(), nil
+		return nil, unhandled("decl", decl)
 	}
 }
 
@@ -72,8 +74,8 @@ func function(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl) (j js.IStateme
 		return j, fmt.Errorf("function: anon functions not yet supported")
 	}
 
-	// create the params
-	name := js.CreateIdentifier((*fn.Name).Name)
+	// the name of the fn
+	fnname := js.CreateIdentifier((*fn.Name).Name)
 
 	// build argument list
 	// var args
@@ -99,10 +101,135 @@ func function(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl) (j js.IStateme
 		body = append(body, jsStmt)
 	}
 
+	// no receiver means it's a classless function
+	if fn.Recv == nil {
+		return js.CreateFunctionDeclaration(
+			&fnname,
+			params,
+			js.CreateFunctionBody(body...),
+		), nil
+	}
+
+	if len(fn.Recv.List) != 1 {
+		return nil, fmt.Errorf("function<recv>: only expected 1 func receiver but got %d", len(fn.Recv.List))
+	}
+
+	recv := fn.Recv.List[0]
+	x, e := expression(fset, f, fn, recv.Type)
+	if e != nil {
+		return nil, e
+	}
+
+	// {recv}.prototype.{name} = function ({params}) {
+	//   {body}
+	// }
+	return js.CreateExpressionStatement(
+		js.CreateAssignmentExpression(
+			js.CreateMemberExpression(
+				js.CreateMemberExpression(
+					x,
+					js.CreateIdentifier("prototype"),
+					false,
+				),
+				fnname,
+				false,
+			),
+			js.AssignmentOperator("="),
+			js.CreateFunctionExpression(
+				nil,
+				params,
+				js.CreateFunctionBody(body...),
+			),
+		),
+	), nil
+
+}
+
+func genDecl(fset *token.FileSet, f *ast.File, n *ast.GenDecl) (j js.IStatement, err error) {
+	switch n.Tok.String() {
+	case "type":
+		if len(n.Specs) != 1 {
+			return nil, fmt.Errorf("genDecl: expected type to only have 1 spec but it has %d", len(n.Specs))
+		}
+		t, ok := n.Specs[0].(*ast.TypeSpec)
+		if !ok {
+			return nil, unhandled("genDecl<typespec>", n.Specs[0])
+		}
+		return typeSpec(fset, f, t)
+	case "import":
+		log.Infof("ignoring import statement")
+		return js.CreateEmptyStatement(), nil
+	default:
+		return nil, fmt.Errorf("genDecl: unhandled token %s", n.Tok.String())
+	}
+
+	// // specs := n.Specs
+	// for _, spec := range n.Specs {
+	// 	switch t := spec.(type) {
+	// 	// case *ast.ImportSpec:
+	// 	// 	return importSpec(fset, f, t)
+	// 	case *ast.TypeSpec:
+	// 		// type defs will only have 1 spec
+	// 		return typeSpec(fset, f, t)
+	// 	default:
+	// 		return nil, unhandled("genDecl", spec)
+	// 	}
+	// }
+
+	// return js.CreateEmptyStatement(), nil
+}
+
+// func importSpec(fset *token.FileSet, f *ast.File, n *ast.ImportSpec) (j js.IStatement, err error) {
+// 	return nil, nil
+// }
+
+func typeSpec(fset *token.FileSet, f *ast.File, n *ast.TypeSpec) (j js.IStatement, err error) {
+	switch t := n.Type.(type) {
+	case *ast.StructType:
+		// we turn these into contructor functions
+		// so more functions can get attached to them
+		return jsConstructorFunction(fset, f, n.Name, t.Fields)
+	default:
+		return nil, unhandled("typeSpec", n.Type)
+	}
+
+	// return js.CreateEmptyStatement(), nil
+}
+
+func jsConstructorFunction(fset *token.FileSet, f *ast.File, id *ast.Ident, fields *ast.FieldList) (j js.FunctionDeclaration, err error) {
+	name := js.CreateIdentifier(id.Name)
+
+	// instance variables
+	// TODO: this should actually be: []js.IExpressionStatement
+	// but CreateFunctionBody accepts an []interface{} currently
+	var ivars []interface{}
+
+	for _, field := range fields.List {
+		for _, name := range field.Names {
+			// this.$name = o.$name
+			ivars = append(ivars, js.CreateExpressionStatement(
+				js.CreateAssignmentExpression(
+					js.CreateMemberExpression(
+						js.CreateThisExpression(),
+						js.CreateIdentifier(name.Name),
+						false,
+					),
+					js.AssignmentOperator("="),
+					js.CreateMemberExpression(
+						js.CreateIdentifier("o"),
+						js.CreateIdentifier(name.Name),
+						false,
+					),
+				),
+			))
+		}
+	}
+
 	return js.CreateFunctionDeclaration(
 		&name,
-		params,
-		js.CreateFunctionBody(body...),
+		// TODO: make API for this
+		[]js.IPattern{js.CreateIdentifier("o")},
+		js.CreateFunctionBody(ivars...),
 	), nil
 }
 
@@ -404,6 +531,8 @@ func expression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr ast.Exp
 		return selectorExpr(fset, f, fn, t)
 	case *ast.IndexExpr:
 		return indexExpr(fset, f, fn, t)
+	case *ast.StarExpr:
+		return starExpr(fset, f, fn, t)
 	// case *ast.KeyValueExpr:
 	// 	return keyValueExpr(fset, f, fn, t)
 	case nil:
@@ -447,8 +576,11 @@ func binaryExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, b *ast
 }
 
 func identifier(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, ident *ast.Ident) (j js.IExpression, err error) {
+
 	// TODO: lookup table
 	switch ident.Name {
+	case "nil":
+		return js.CreateNull(), nil
 	case "println":
 		return js.CreateMemberExpression(
 			js.CreateIdentifier("console"),
@@ -460,6 +592,16 @@ func identifier(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, ident *ast.I
 	}
 }
 
+func starExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.StarExpr) (j js.IExpression, err error) {
+	// for now, we're ignoring the pointer
+	x, e := expression(fset, f, fn, n.X)
+	if e != nil {
+		return nil, e
+	}
+
+	return x, nil
+}
+
 func basiclit(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, lit *ast.BasicLit) (j js.IExpression, err error) {
 	return js.CreateString(lit.Value), nil
 }
@@ -467,7 +609,7 @@ func basiclit(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, lit *ast.Basic
 func compositeLiteral(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.IExpression, err error) {
 	switch n.Type.(type) {
 	case *ast.Ident:
-		return jsObjectExpression(fset, f, fn, n)
+		return jsNewFunction(fset, f, fn, n)
 	case *ast.ArrayType:
 		return jsArrayExpression(fset, f, fn, n)
 	default:
@@ -495,6 +637,39 @@ func jsObjectExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *a
 	}
 
 	return js.CreateObjectExpression(props), nil
+}
+
+func jsNewFunction(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.NewExpression, err error) {
+	var props []js.Property
+	var fnname string
+
+	switch t := n.Type.(type) {
+	case *ast.Ident:
+		fnname = t.Name
+	default:
+		return j, unhandled("jsNewFunction", n.Type)
+	}
+
+	for _, elt := range n.Elts {
+		var prop js.Property
+		var e error
+
+		switch t := elt.(type) {
+		case *ast.KeyValueExpr:
+			prop, e = keyValueExpr(fset, f, fn, t)
+		default:
+			return j, unhandled("jsObjectExpression", elt)
+		}
+		if e != nil {
+			return j, e
+		}
+		props = append(props, prop)
+	}
+
+	return js.CreateNewExpression(
+		js.CreateIdentifier(fnname),
+		[]js.IExpression{js.CreateObjectExpression(props)},
+	), nil
 }
 
 func jsArrayExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.ArrayExpression, err error) {

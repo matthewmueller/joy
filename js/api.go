@@ -277,3 +277,29 @@ func CreateUpdateExpression(argument IExpression, operator UpdateOperator, prefi
 		Prefix:   prefix,
 	}
 }
+
+// CreateAssignmentExpression fn
+func CreateAssignmentExpression(left interface{}, operator AssignmentOperator, right IExpression) AssignmentExpression {
+	return AssignmentExpression{
+		Type:     "AssignmentExpression",
+		Left:     left,
+		Operator: operator,
+		Right:    right,
+	}
+}
+
+// CreateThisExpression fn
+func CreateThisExpression() ThisExpression {
+	return ThisExpression{
+		Type: "ThisExpression",
+	}
+}
+
+// CreateNewExpression fn
+func CreateNewExpression(callee IExpression, arguments []IExpression) NewExpression {
+	return NewExpression{
+		Type:      "NewExpression",
+		Callee:    callee,
+		Arguments: arguments,
+	}
+}

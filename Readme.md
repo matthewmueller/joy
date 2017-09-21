@@ -27,19 +27,55 @@ program := js.CreateProgram(
 )
 ```
 
-## High-level:
+## Open Questions
+
+- How does the JS scope differ from the Go scope and what do I need to account for?
+- How will we deal with existing Go standard libraries?
+- How will the different base Go types map to javascript types? (like maps)
+  - This is where Golly may have to be more strict than Go (e.g. map[boolean]string)
+- How will we make DOM typesafe, but not include it in the build?
+  - DOM will be an API like js/api, but emit JS AST nodes!
+  - Javascripter interface to know if Golly should turn into an AST or not!
+- Do Go's interfaces show up in the emitted Javascript in any form?
+
+## High-level TODO:
+
+Files:
 
 - [x] implement if statements
 - [x] implement loops
-- [ ] implement nested structs
-- [ ] implement classes
+- [x] implement nested structs
+- [x] implement classes
+- [ ] implement arrays
+- [ ] implement maps
+- [ ] implement built-in functions (append, copy, len, make)
+- [ ] implement spreads (...)
+- [ ] implement functions with multiple return values
 - [ ] implement switch statements
-- [ ] implement scope
-- [ ] implement packaging
-- [ ] write basic DOM package
+- [ ] breaks, continues, panics, 
+
+Packages:
+
+- [ ] support multiple files
+- [ ] write basic DOM package using Typescript's libdefs
+
+Hard:
+
+- [ ] support goroutines and channels (using async/await)
+- [ ] implement scope for variable rewrites
+
+Before I can use
+
 - [ ] write preact package
-- [ ] write async (temporarily embed regenerator for now)
 - [ ] write fetch package
+- [ ] basic development server
+
+Later:
+
+- [ ] implement defer function () { ... }
+- [ ] recover statement
+- [ ] goto statements
+- [ ] support select statements
 
 ## Design
 

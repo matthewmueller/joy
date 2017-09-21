@@ -1,19 +1,29 @@
 (function() {
-;
-;
+function User(o) {
+  this.FirstName = o.FirstName
+  this.LastName = o.LastName
+  this.Phones = o.Phones
+}
+
+function Phone(o) {
+  this.Type = o.Type
+  this.Number = o.Number
+  this.Main = o.Main
+}
+
 function main () {
-var user = {
+var user = new User({
   FirstName: "Matt",
   LastName: "Mueller",
-  Phones: [{
+  Phones: [new Phone({
   Type: "HOME",
   Number: "1234123"
-}, {
+}), new Phone({
   Type: "CELL",
   Number: "0923123",
   Main: true
-}]
-};
+})]
+});
 console.log(user.FirstName + ": " + user.Phones[0].Number);
 };
 main();

@@ -17,19 +17,18 @@ type Phone struct {
 func main() {
 	user := User{
 		FirstName: "Matt",
-		LastName:  "Mueller",
 		Phones: []Phone{
 			Phone{
 				Type:   "HOME",
-				Number: "1234123",
+				Number: "1234125",
+				Main:   false,
 			},
 			Phone{
 				Type:   "CELL",
-				Number: "0923123",
+				Number: "1231411",
 				Main:   true,
 			},
 		},
 	}
-
-	println(user.FirstName + ": " + user.Phones[0].Number)
+	println(user.Phones[1].Number)
 }
