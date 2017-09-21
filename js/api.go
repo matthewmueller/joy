@@ -156,7 +156,7 @@ func CreateExpressionStatement(expression IExpression) ExpressionStatement {
 func CreateBlockStatement(body ...IStatement) BlockStatement {
 	var args []interface{}
 	for _, argument := range body {
-		args = append(args, argument.Statement())
+		args = append(args, argument.(interface{}))
 	}
 
 	return BlockStatement{
@@ -216,5 +216,43 @@ func CreateBinaryExpression(l IExpression, op BinaryOperator, r IExpression) Bin
 		Left:     l,
 		Operator: op,
 		Right:    r,
+	}
+}
+
+// CreateProperty fn
+func CreateProperty(key interface{}, value IExpression, kind string) Property {
+	return Property{
+		Type:  "Property",
+		Key:   key,
+		Value: value,
+		Kind:  kind,
+	}
+}
+
+// CreateObjectExpression fn
+func CreateObjectExpression(properties []Property) ObjectExpression {
+	return ObjectExpression{
+		Type:       "ObjectExpression",
+		Properties: properties,
+	}
+}
+
+// CreateIfStatement fn
+func CreateIfStatement(test IExpression, consequent IStatement, alternate IStatement) IfStatement {
+	return IfStatement{
+		Type:       "IfStatement",
+		Test:       test,
+		Consequent: consequent,
+		Alternate:  alternate,
+	}
+}
+
+// CreateLogicalExpression fn
+func CreateLogicalExpression(left IExpression, operator LogicalOperator, right IExpression) LogicalExpression {
+	return LogicalExpression{
+		Type:     "LogicalExpression",
+		Left:     left,
+		Operator: operator,
+		Right:    right,
 	}
 }

@@ -86,12 +86,6 @@ func function(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl) (j js.IStateme
 			}
 		}
 	}
-	// if fn.Recv != nil {
-	// 	fn.Recv.List
-	// }
-	// for _, field := range fn.Recv {
-
-	// }
 
 	// create the body
 	var body []interface{}
@@ -138,22 +132,24 @@ func function(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl) (j js.IStateme
 // }
 
 func funcStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, stmt ast.Stmt) (j js.IStatement, err error) {
-	switch s := stmt.(type) {
+	switch t := stmt.(type) {
 	case *ast.ExprStmt:
-		return exprStatement(fset, f, fn, s)
+		return exprStatement(fset, f, fn, t)
+	case *ast.IfStmt:
+		return ifStmt(fset, f, fn, t)
 	case *ast.AssignStmt:
-		return assignStatement(fset, f, fn, s)
+		return assignStatement(fset, f, fn, t)
 	case *ast.ReturnStmt:
-		return returnStatement(fset, f, fn, s)
+		return returnStatement(fset, f, fn, t)
 	default:
-		return nil, fmt.Errorf("funcStatement: unhandled type %s", reflect.TypeOf(stmt))
+		return nil, unhandled("funcStatement", stmt)
 	}
 }
 
-func exprStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr *ast.ExprStmt) (j js.IStatement, err error) {
-	switch s := expr.X.(type) {
+func exprStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr *ast.ExprStmt) (j js.IExpressionStatement, err error) {
+	switch t := expr.X.(type) {
 	case *ast.CallExpr:
-		x, e := callExpression(fset, f, fn, s)
+		x, e := callExpression(fset, f, fn, t)
 		if e != nil {
 			return nil, e
 		}
@@ -161,6 +157,89 @@ func exprStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr *ast
 	default:
 		return nil, fmt.Errorf("exprStatement: unhandled type: %s", reflect.TypeOf(expr))
 	}
+}
+
+func ifStmt(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.IfStmt) (j js.IStatement, err error) {
+	var e error
+
+	// var consequent js.IBlockStatement
+	// var alternate js.IBlockStatement
+
+	// condition: if [(...)] { ... } else { ... }
+	var test js.IExpression
+	switch t := n.Cond.(type) {
+	case *ast.BinaryExpr:
+		test, e = binaryExpression(fset, f, fn, t)
+	case *ast.Ident:
+		test, e = identifier(fset, f, fn, t)
+	default:
+		return nil, unhandled("ifStmt<cond>", n.Cond)
+	}
+	if e != nil {
+		return nil, e
+	}
+
+	// body : if (...) [{ ... }] else { ... }
+	body, e := blockStmt(fset, f, fn, n.Body)
+	if e != nil {
+		return nil, e
+	}
+
+	// else: if (...) { ... } else [{ ... }]
+	elseBlock := n.Else
+	var alt js.IStatement
+	switch t := elseBlock.(type) {
+	case *ast.BlockStmt:
+		alt, e = blockStmt(fset, f, fn, t)
+	case *ast.ExprStmt:
+		alt, e = exprStatement(fset, f, fn, t)
+	case *ast.IfStmt:
+		alt, e = ifStmt(fset, f, fn, t)
+	case *ast.AssignStmt:
+		alt, e = assignStatement(fset, f, fn, t)
+	case *ast.ReturnStmt:
+		alt, e = returnStatement(fset, f, fn, t)
+	case nil:
+		alt = js.CreateEmptyStatement()
+	default:
+		return nil, unhandled("ifStmt<else>", elseBlock)
+	}
+	if e != nil {
+		return nil, e
+	}
+
+	return js.CreateIfStatement(
+		test,
+		body,
+		alt,
+	), nil
+}
+
+func blockStmt(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.BlockStmt) (j js.IBlockStatement, err error) {
+	var stmts []js.IStatement
+
+	for _, stmt := range n.List {
+		var v js.IStatement
+		var e error
+		switch t := stmt.(type) {
+		case *ast.ExprStmt:
+			v, e = exprStatement(fset, f, fn, t)
+		case *ast.IfStmt:
+			v, e = ifStmt(fset, f, fn, t)
+		case *ast.AssignStmt:
+			v, e = assignStatement(fset, f, fn, t)
+		case *ast.ReturnStmt:
+			v, e = returnStatement(fset, f, fn, t)
+		default:
+			return nil, unhandled("ifStmt<body>", stmt)
+		}
+		if e != nil {
+			return nil, e
+		}
+		stmts = append(stmts, v)
+	}
+
+	return js.CreateBlockStatement(stmts...), nil
 }
 
 func assignStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, as *ast.AssignStmt) (j js.IStatement, err error) {
@@ -218,19 +297,30 @@ func returnStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.
 	return js.CreateReturnStatement(args[0]), nil
 }
 
-func callExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr *ast.CallExpr) (j js.IExpression, err error) {
+func callExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr *ast.CallExpr) (j js.CallExpression, err error) {
 	callee, e := expression(fset, f, fn, expr.Fun)
 	if e != nil {
-		return nil, e
+		return j, e
 	}
 
 	var args []js.IExpression
 	for _, arg := range expr.Args {
-		a, e := expression(fset, f, fn, arg)
-		if e != nil {
-			return nil, e
+		var v js.IExpression
+		var e error
+		switch t := arg.(type) {
+		case *ast.BasicLit:
+			v, e = basiclit(fset, f, fn, t)
+		case *ast.Ident:
+			v, e = identifier(fset, f, fn, t)
+		case *ast.SelectorExpr:
+			v, e = selectorExpr(fset, f, fn, t)
+		default:
+			return j, unhandled("callExpression", arg)
 		}
-		args = append(args, a)
+		if e != nil {
+			return j, e
+		}
+		args = append(args, v)
 	}
 
 	return js.CreateCallExpression(
@@ -239,6 +329,7 @@ func callExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr *as
 	), nil
 }
 
+// TODO: move into the respective functions, the translation is not 1:1
 func expression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr ast.Expr) (j js.IExpression, err error) {
 	switch t := expr.(type) {
 	case *ast.Ident:
@@ -249,11 +340,16 @@ func expression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr ast.Exp
 		return callExpression(fset, f, fn, t)
 	case *ast.BinaryExpr:
 		return binaryExpression(fset, f, fn, t)
+	case *ast.CompositeLit:
+		return compositeLiteral(fset, f, fn, t)
 	default:
-		return nil, fmt.Errorf("expression: unhandled type: %s", reflect.TypeOf(expr))
+		return nil, fmt.Errorf("expression(): unhandled type: %s", reflect.TypeOf(expr))
 	}
 }
 
+// binary expressions in Go can be either:
+//    Binaryexpression || LogicalExpression
+// in JS.
 func binaryExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, b *ast.BinaryExpr) (j js.IExpression, err error) {
 	x, e := expression(fset, f, fn, b.X)
 	if e != nil {
@@ -265,12 +361,23 @@ func binaryExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, b *ast
 	}
 
 	if !b.Op.IsOperator() {
-		return nil, fmt.Errorf("binaryExpression: not sure how to handle this operator: %s", b.Op.String())
+		return nil, unhandled("binaryExpression<not op>", b.Op)
 	}
 
-	op := js.BinaryOperator(b.Op.String())
-
-	return js.CreateBinaryExpression(x, op, y), nil
+	op := b.Op.String()
+	switch op {
+	case "||", "&&":
+		return js.CreateLogicalExpression(x, js.LogicalOperator(op), y), nil
+	// TODO: prune. should be only values that are possible in Go
+	case "==", "!=", "===", "!==",
+		"<", "<=", ">", ">=", "<<",
+		">>", ">>>", "+", "-", "*",
+		"/", "%", "|", "^", "&",
+		"in", "instanceof":
+		return js.CreateBinaryExpression(x, js.BinaryOperator(op), y), nil
+	default:
+		return nil, unhandled("binaryExpression<unknown op>", op)
+	}
 }
 
 func identifier(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, ident *ast.Ident) (j js.IExpression, err error) {
@@ -289,4 +396,113 @@ func identifier(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, ident *ast.I
 
 func basiclit(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, lit *ast.BasicLit) (j js.IExpression, err error) {
 	return js.CreateString(lit.Value), nil
+}
+
+func compositeLiteral(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.ObjectExpression, err error) {
+	var props []js.Property
+
+	for _, elt := range n.Elts {
+		var prop js.Property
+		switch t := elt.(type) {
+		case *ast.KeyValueExpr:
+			p, e := keyValueExpr(fset, f, fn, t)
+			if e != nil {
+				return j, e
+			}
+			prop = p
+		case *ast.CompositeLit:
+			// k, e := t.Type
+			// t.Type
+			// t.Elts[]
+			// v, e := compositeLiteral(fset, f, fn, t)
+			// if e != nil {
+			// 	return j, e
+			// }
+
+			// prop = v
+		default:
+			return j, fmt.Errorf("compositeLiteral(): not sure what this type is %s", reflect.TypeOf(elt))
+		}
+
+		props = append(props, prop)
+	}
+
+	return js.CreateObjectExpression(props), nil
+}
+
+func keyValueExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.KeyValueExpr) (j js.Property, err error) {
+	var key interface{}
+	var value js.IExpression
+
+	// get the key
+	switch t := n.Key.(type) {
+	case *ast.Ident:
+		k, e := identifier(fset, f, fn, t)
+		if e != nil {
+			return j, e
+		}
+		key = k
+	default:
+		return j, unhandled("keyValueExpr<key>", n.Key)
+	}
+
+	// get the value
+	switch t := n.Value.(type) {
+	case *ast.BasicLit:
+		v, e := basiclit(fset, f, fn, t)
+		if e != nil {
+			return j, e
+		}
+		value = v
+	case *ast.CompositeLit:
+		v, e := compositeLiteral(fset, f, fn, t)
+		if e != nil {
+			return j, e
+		}
+		value = v
+	case *ast.Ident:
+		v, e := identifier(fset, f, fn, t)
+		if e != nil {
+			return j, e
+		}
+		value = v
+	default:
+		return j, unhandled("keyValueExpr<value>", n.Value)
+	}
+
+	return js.CreateProperty(key, value, "init"), nil
+}
+
+func selectorExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.SelectorExpr) (j js.IExpression, err error) {
+	var lhs js.IExpression
+	switch t := n.X.(type) {
+	// (user.phone).number
+	case *ast.SelectorExpr:
+		x, e := selectorExpr(fset, f, fn, t)
+		if e != nil {
+			return nil, e
+		}
+		lhs = x
+	// (user).phone
+	case *ast.Ident:
+		x, e := identifier(fset, f, fn, t)
+		if e != nil {
+			return nil, e
+		}
+		lhs = x
+	default:
+		return nil, unhandled("selectorExpr", n.X)
+	}
+
+	// user.phone.(number)
+	s, e := identifier(fset, f, fn, n.Sel)
+	if e != nil {
+		return nil, e
+	}
+
+	return js.CreateMemberExpression(lhs, s, false), nil
+}
+
+func unhandled(fn string, n interface{}) error {
+	return fmt.Errorf("%s(): not sure what this type is %s", fn, reflect.TypeOf(n))
 }

@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/kr/pretty"
 )
 
 // Stringer interface
@@ -17,6 +19,8 @@ var _ Stringer = (*CallExpression)(nil)
 
 // Assemble JS from the AST
 func Assemble(node interface{}) (string, error) {
+	pretty.Println(node)
+
 	switch t := node.(type) {
 	case Program:
 		return t.String()
@@ -26,12 +30,16 @@ func Assemble(node interface{}) (string, error) {
 }
 
 func stringify(node interface{}) (string, error) {
+	if node == nil {
+		return "", errors.New("node is nil")
+	}
 	// cast to stringer
 	stringer, ok := node.(Stringer)
 	if !ok {
 		n := node.(INode)
-		return "", fmt.Errorf("%s does not implement stringer", n.Node().Type)
+		return "", fmt.Errorf("%s || %s does not implement stringer", n.Node().Type, reflect.TypeOf(node))
 	}
+
 	return stringer.String()
 }
 
@@ -76,37 +84,33 @@ func (p *Program) String() (string, error) {
 
 func (n ExpressionStatement) String() (string, error) {
 	return stringify(n.Expression)
-	// s, e := stringify(n.Expression)
-	// if e != nil {
-	// 	return "", e
-	// }
-	// return "(" + s + ")", nil
 }
 
 func (n CallExpression) String() (string, error) {
 	var args []string
 	for _, arg := range n.Arguments {
-		s, e := stringify(arg)
+		v, e := stringify(arg)
 		if e != nil {
 			return "", e
 		}
-		args = append(args, s)
+		args = append(args, v)
 	}
-	p := strings.Join(args, ", ")
 
-	s, e := stringify(n.Callee)
+	c, e := stringify(n.Callee)
 	if e != nil {
 		return "", e
 	}
 
+	// call expressions are handled
+	// differently if the callee is
+	// a function expression
 	switch n.Callee.(type) {
+	case Identifier, MemberExpression:
+		return c + "(" + strings.Join(args, ", ") + ")", nil
 	case FunctionExpression:
-		return "(" + s + ")(" + p + ")", nil
-	case MemberExpression, Identifier:
-		return s + "(" + p + ")", nil
+		return "(" + c + ")(" + strings.Join(args, ", ") + ")", nil
 	default:
-		calleeType := n.Callee.(INode).Node().Type
-		return "", fmt.Errorf("call expression needs to handle %s", calleeType)
+		return "", fmt.Errorf("Assembler/CallExpression: unhandled call expression type %s", reflect.TypeOf(n.Callee))
 	}
 }
 
@@ -126,7 +130,6 @@ func (n FunctionExpression) String() (string, error) {
 	}
 
 	fn := "function(" + strings.Join(params, ", ") + ") {\n" + body + "\n}"
-
 	return fn, nil
 }
 
@@ -286,9 +289,91 @@ func (n BinaryOperator) String() (string, error) {
 // 	return "BlockStatement", nil
 // }
 
-// func (n EmptyStatement) String() (string, error) {
-// 	return "", nil
-// }
+func (n EmptyStatement) String() (string, error) {
+	return "", nil
+}
+
+func (n ObjectExpression) String() (string, error) {
+	var props []string
+
+	for _, prop := range n.Properties {
+		k, e := stringify(prop.Key)
+		if e != nil {
+			return "", e
+		}
+
+		v, e := stringify(prop.Value)
+		if e != nil {
+			return "", e
+		}
+
+		props = append(props, "  "+k+": "+v)
+	}
+
+	return "{\n" + strings.Join(props, ",\n") + "\n}", nil
+}
+
+func (n IfStatement) String() (string, error) {
+	t, e := stringify(n.Test)
+	if e != nil {
+		return "", e
+	}
+
+	c, e := stringify(n.Consequent)
+	if e != nil {
+		return "", e
+	}
+
+	if n.Alternate == nil {
+		return "if (" + t + ") " + c + "", nil
+	}
+
+	a, e := stringify(n.Alternate)
+	if e != nil {
+		return "", e
+	}
+
+	return "if (" + t + ") " + c + " else " + a + "", nil
+}
+
+func (n BlockStatement) String() (string, error) {
+	var stmts []string
+
+	for _, stmt := range n.Body {
+		switch t := stmt.(type) {
+		case IStatement:
+			s, e := stringify(t)
+			if e != nil {
+				return "", e
+			}
+			stmts = append(stmts, s)
+		default:
+			return "", fmt.Errorf("block statements can only contain statements, but we got %s", reflect.TypeOf(stmt))
+		}
+	}
+
+	return "{\n" + strings.Join(stmts, "\n") + "\n}", nil
+}
+
+func (n LogicalExpression) String() (string, error) {
+	l, e := stringify(n.Left)
+	if e != nil {
+		return "", e
+	}
+
+	r, e := stringify(n.Right)
+	if e != nil {
+		return "", e
+	}
+
+	switch string(n.Operator) {
+	case "&&", "||":
+	default:
+		return "", errors.New("LogicalExpression: logical expression must be either && or ||")
+	}
+
+	return l + " " + string(n.Operator) + " " + r, nil
+}
 
 // func (n DebuggerStatement) String() (string, error) {
 // 	return "DebuggerStatement", nil

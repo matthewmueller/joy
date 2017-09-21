@@ -1,0 +1,16 @@
+(function() {
+function main () {
+var name = "anki";
+var b = true;
+if (name == "matt" || name == "mark") {
+console.log("matt or mark")
+} else if (name == "anki" && b) {
+console.log("anki")
+} else if (b) {
+console.log("truthy")
+} else {
+console.log("something else")
+};
+};
+main();
+})()

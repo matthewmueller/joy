@@ -36,6 +36,7 @@ func TestCompiler(t *testing.T) {
 			out, e := golly.CompileFile(input)
 			if e != nil {
 				golly.PrintAST(input)
+				fmt.Println(e)
 				t.Fatal(e)
 			}
 

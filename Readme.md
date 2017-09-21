@@ -1,4 +1,4 @@
-Golly gee, it's a minimal Go to JS (ES3) compiler.
+Golly gee, it's another Go to JS compiler.
 
 ```go
 program := js.CreateProgram(
@@ -27,9 +27,23 @@ program := js.CreateProgram(
 )
 ```
 
+## High-level:
+
+- [ ] implement structs
+- [ ] implement if statements
+- [ ] implement loops
+- [ ] implement classes
+- [ ] implement scope
+- [ ] implement packaging
+- [ ] write basic document package
+- [ ] write preact package
+- [ ] write async 
+- [ ] write fetch package
+
 ## Design
 
-- Minimal, performant Javascript that runs in all browsers
+- Small browser builds that run in all browsers
+- Compiles to ES3, the most supported JS dialect
 - The "bucklescript" for Go
 - Fast builds
 
@@ -45,6 +59,6 @@ program := js.CreateProgram(
 
 **Golly is learn once, write everywhere. Not a write once, run everywhere**
 
-Just because your code is running in Go does not mean it will run on Golly without modification. For everything that browserify & webpack brought to the community, it also brought with it mysteriously large builds.
+Just because your code is running in Go does not mean it will run on Golly without modification. For everything that browserify & webpack brought to the community,they also brought with it mysteriously large builds.
 
 Golly aims to generate clean, minimal & performant ES3 code that works in every browser. It will not jump hoops to make your Go code work inside the browser. GopherJS is much better suited for that task.

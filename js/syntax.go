@@ -1,24 +1,30 @@
 package js
 
 // interface inheritance assertions
+var _ INode = (*Node)(nil)
 var _ INode = (*Identifier)(nil)
 var _ IExpression = (*Identifier)(nil)
 var _ IPattern = (*Identifier)(nil)
 var _ INode = (*Literal)(nil)
+var _ ILiteral = (*Literal)(nil)
 var _ IExpression = (*Literal)(nil)
 var _ INode = (*RegExpLiteral)(nil)
 var _ IExpression = (*RegExpLiteral)(nil)
 var _ ILiteral = (*RegExpLiteral)(nil)
 var _ INode = (*Program)(nil)
 var _ INode = (*Function)(nil)
+var _ IFunction = (*Function)(nil)
 var _ INode = (*Statement)(nil)
+var _ IStatement = (*Statement)(nil)
 var _ INode = (*ExpressionStatement)(nil)
 var _ IStatement = (*ExpressionStatement)(nil)
+var _ IExpressionStatement = (*ExpressionStatement)(nil)
 var _ INode = (*Directive)(nil)
 var _ IStatement = (*Directive)(nil)
 var _ IExpressionStatement = (*Directive)(nil)
 var _ INode = (*BlockStatement)(nil)
 var _ IStatement = (*BlockStatement)(nil)
+var _ IBlockStatement = (*BlockStatement)(nil)
 var _ INode = (*FunctionBody)(nil)
 var _ IStatement = (*FunctionBody)(nil)
 var _ IBlockStatement = (*FunctionBody)(nil)
@@ -54,6 +60,7 @@ var _ INode = (*ForInStatement)(nil)
 var _ IStatement = (*ForInStatement)(nil)
 var _ INode = (*Declaration)(nil)
 var _ IStatement = (*Declaration)(nil)
+var _ IDeclaration = (*Declaration)(nil)
 var _ INode = (*FunctionDeclaration)(nil)
 var _ IStatement = (*FunctionDeclaration)(nil)
 var _ IFunction = (*FunctionDeclaration)(nil)
@@ -63,6 +70,7 @@ var _ IStatement = (*VariableDeclaration)(nil)
 var _ IDeclaration = (*VariableDeclaration)(nil)
 var _ INode = (*VariableDeclarator)(nil)
 var _ INode = (*Expression)(nil)
+var _ IExpression = (*Expression)(nil)
 var _ INode = (*ThisExpression)(nil)
 var _ IExpression = (*ThisExpression)(nil)
 var _ INode = (*ArrayExpression)(nil)
@@ -96,6 +104,7 @@ var _ IExpression = (*NewExpression)(nil)
 var _ INode = (*SequenceExpression)(nil)
 var _ IExpression = (*SequenceExpression)(nil)
 var _ INode = (*Pattern)(nil)
+var _ IPattern = (*Pattern)(nil)
 
 // INode interface
 type INode interface {
@@ -104,41 +113,49 @@ type INode interface {
 
 // IExpression interface
 type IExpression interface {
+	INode
 	Expression() Expression
 }
 
 // IStatement interface
 type IStatement interface {
+	INode
 	Statement() Statement
 }
 
 // IPattern interface
 type IPattern interface {
+	INode
 	Pattern() Pattern
 }
 
 // ILiteral interface
 type ILiteral interface {
+	IExpression
 	Literal() Literal
 }
 
 // IExpressionStatement interface
 type IExpressionStatement interface {
+	IStatement
 	ExpressionStatement() ExpressionStatement
 }
 
 // IBlockStatement interface
 type IBlockStatement interface {
+	IStatement
 	BlockStatement() BlockStatement
 }
 
 // IDeclaration interface
 type IDeclaration interface {
+	IStatement
 	Declaration() Declaration
 }
 
 // IFunction interface
 type IFunction interface {
+	INode
 	Function() Function
 }
 
@@ -159,6 +176,11 @@ type SourceLocation struct {
 type Node struct {
 	Type string          `json:"type,omitempty"`
 	Loc  *SourceLocation `json:"loc,omitempty"`
+}
+
+// Node fn
+func (n Node) Node() Node {
+	return n
 }
 
 // Identifier struct
@@ -206,6 +228,11 @@ func (n Literal) Expression() Expression {
 	return Expression{
 		Type: n.Type,
 	}
+}
+
+// Literal fn
+func (n Literal) Literal() Literal {
+	return n
 }
 
 // RegExpLiteral struct
@@ -270,6 +297,11 @@ func (n Function) Node() Node {
 	}
 }
 
+// Function fn
+func (n Function) Function() Function {
+	return n
+}
+
 // Statement struct
 type Statement struct {
 	Type string
@@ -280,6 +312,11 @@ func (n Statement) Node() Node {
 	return Node{
 		Type: n.Type,
 	}
+}
+
+// Statement fn
+func (n Statement) Statement() Statement {
+	return n
 }
 
 // ExpressionStatement struct
@@ -300,6 +337,11 @@ func (n ExpressionStatement) Statement() Statement {
 	return Statement{
 		Type: n.Type,
 	}
+}
+
+// ExpressionStatement fn
+func (n ExpressionStatement) ExpressionStatement() ExpressionStatement {
+	return n
 }
 
 // Directive struct
@@ -357,6 +399,11 @@ func (n BlockStatement) Statement() Statement {
 	return Statement{
 		Type: n.Type,
 	}
+}
+
+// BlockStatement fn
+func (n BlockStatement) BlockStatement() BlockStatement {
+	return n
 }
 
 // FunctionBody struct
@@ -748,6 +795,11 @@ func (n Declaration) Statement() Statement {
 	}
 }
 
+// Declaration fn
+func (n Declaration) Declaration() Declaration {
+	return n
+}
+
 // FunctionDeclaration struct
 type FunctionDeclaration struct {
 	Type   string      `json:"type,omitempty"`
@@ -839,6 +891,11 @@ func (n Expression) Node() Node {
 	return Node{
 		Type: n.Type,
 	}
+}
+
+// Expression fn
+func (n Expression) Expression() Expression {
+	return n
 }
 
 // ThisExpression struct
@@ -1224,4 +1281,9 @@ func (n Pattern) Node() Node {
 	return Node{
 		Type: n.Type,
 	}
+}
+
+// Pattern fn
+func (n Pattern) Pattern() Pattern {
+	return n
 }

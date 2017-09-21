@@ -1,0 +1,20 @@
+(function() {
+function main () {
+var user = {
+  FirstName: "Matt",
+  LastName:  "Mueller",
+  Phones: [
+    {
+      Type:   "HOME",
+      Number: "1234123",
+    },
+    {
+      Type:   "CELL",
+      Number: "0923123",
+      Main:   true,
+    }
+  ]
+}
+console.log(user.Name + " " + user.Phones[0].Number)
+}
+})()
