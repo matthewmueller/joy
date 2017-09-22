@@ -9,6 +9,9 @@ import (
 )
 
 // Stringer interface
+// TODO: error handling should be done in the public API
+// once we make this internal, we should remove all error
+// handling here.
 type Stringer interface {
 	String() (string, error)
 }
