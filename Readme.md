@@ -126,6 +126,7 @@ program := js.CreateProgram(
 
 - [ ] support goroutines and channels (using async/await)
   - we need some async functionality for things like AJAX
+    - otherwise callback hell in Go? 🤷‍♂️
   - probably makes sense to prototype this as a babel transform first 
   - for cross-browser we can run it through this: https://github.com/facebook/regenerator
     - this process relies on a Promise polyfill, but if written
