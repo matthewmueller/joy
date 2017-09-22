@@ -56,6 +56,7 @@ program := js.CreateProgram(
     <li><strong>es6.js</strong>: test file</li>
   </ul>
 </details>
+<br/>
 <strong>testfiles/</strong> all our tests and expected responses (TODO: the tests will always fail at this point)<br/>
 <strong>golly.go:</strong> public API for golly<br/>
 <strong>cmd/golly/main.go:</strong> CLI for golly
@@ -85,7 +86,7 @@ program := js.CreateProgram(
 
 ## High-level TODO:
 
-File-Level:
+### File-Level:
 
 - [x] implement if statements
 - [x] implement loops
@@ -103,7 +104,7 @@ File-Level:
 - [ ] custom types (type Blah = string)
 - [ ] global variables, constants, etc.
 
-Package-Level:
+### Package-Level:
 
 - [ ] support multiple files
   - files are wrapped in closures and the package wraps the file closures in another closure calling main()
@@ -112,7 +113,7 @@ Package-Level:
   - Source: https://github.com/Microsoft/TypeScript/blob/master/lib/lib.dom.d.ts
   - Typescript has a script to generate these files, so maybe we can use that 
 
-Hard but probably necessary:
+### Hard but probably necessary:
 
 - [ ] support goroutines and channels (using async/await)
   - we need some async functionality for things like AJAX
@@ -122,13 +123,13 @@ Hard but probably necessary:
     to use generators, we no longer need promises.
 - [ ] handle differences in variable scope between JS <-> Golang
 
-Before I can use:
+### Before I can use:
 
 - [ ] write preact package (~1000LOC)
 - [ ] write fetch package (https://github.com/developit/unfetch ~50LOC)
 - [ ] basic development server (livereload is fine for now)
 
-Later:
+### Later:
 
 - [ ] add spacing (space, tab, newline) tokens into the JS AST to improve our JS output format
 - [ ] implement defer function () { ... }
