@@ -130,7 +130,7 @@ program := js.CreateProgram(
     to use generators, we no longer need promises.
 - [ ] handle differences in variable scope between JS <-> Golang
 
-### Before I can use:
+### Before you can use it everyday:
 
 - [ ] write basic DOM package using Typescript's libdefs
   - Source: https://github.com/Microsoft/TypeScript/blob/master/lib/lib.dom.d.ts
