@@ -1,31 +1,6 @@
 Golly gee, it's another Go to JS compiler.
 
-```go
-program := js.CreateProgram(
-  js.CreateEmptyStatement(),
-  js.CreateExpressionStatement(
-    js.CreateCallExpression(
-      js.CreateFunctionExpression(nil, []js.IPattern{},
-        js.CreateFunctionBody(
-          js.CreateExpressionStatement(
-            js.CreateCallExpression(
-              js.CreateMemberExpression(
-                js.CreateIdentifier("console"),
-                js.CreateIdentifier("log"),
-                false,
-              ),
-              []js.IExpression{
-                js.CreateString("hi world!"),
-              },
-            ),
-          ),
-        ),
-      ),
-      []js.IExpression{},
-    ),
-  ),
-)
-```
+![img](https://cldup.com/uQb67D_DJT.png)
 
 ## Directory Structure
 
