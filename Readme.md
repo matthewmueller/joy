@@ -56,7 +56,15 @@ program := js.CreateProgram(
     <li><strong>es6.js</strong>: test file</li>
   </ul>
 </details>
+<details>
+<summary><strong>modules/</strong></summary>
+  <ul>
+    <li><strong>preact:</strong>experimental preact in Golang</li>
+    <li><strong>unfetch:</strong>experimental fetch library in Golang</li>
+  </ul>
+</details>
 <br/>
+<strong>dom/</strong> The DOM written in Go
 <strong>testfiles/</strong> all our tests and expected responses (TODO: the tests will always fail at this point)<br/>
 <strong>golly.go:</strong> public API for golly<br/>
 <strong>cmd/golly/main.go:</strong> CLI for golly
