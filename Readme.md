@@ -59,8 +59,8 @@ program := js.CreateProgram(
 <details>
 <summary><strong>modules/</strong></summary>
   <ul>
-    <li><strong>preact:</strong>experimental preact in Golang</li>
-    <li><strong>unfetch:</strong>experimental fetch library in Golang</li>
+    <li><strong>preact:</strong> experimental preact in Golang</li>
+    <li><strong>unfetch:</strong> experimental fetch library in Golang</li>
   </ul>
 </details>
 <br/>
@@ -102,8 +102,9 @@ program := js.CreateProgram(
 - [x] implement classes
 - [x] implement arrays
 - [x] implement maps
+- [ ] implement slices
 - [ ] implement functions with multiple return values
-- [ ] anonymous functions
+- [ ] implement anonymous functions
 - [ ] implement built-in functions (append, copy, len, make)
 - [ ] implement spreads (users...)
 - [ ] implement switch statements
@@ -163,12 +164,12 @@ program := js.CreateProgram(
 
 ## Tradeoffs
 
-**Golly is learn once, write everywhere. Not a write once, run everywhere**
+**Go runs Golly code, but Golly may not run Go code**
 
 Just because your code is running in Go does not mean it will run on Golly without modification. For everything that browserify & webpack brought to the community,they also brought with it mysteriously large builds.
 
 Golly aims to generate clean, minimal & performant ES3 code that works in every browser. It will not jump hoops to make your Go code work inside the browser. GopherJS is much better suited for that task.
 
-**Golly doesn't include Go's standard library**
+**Golly doesn't include Go's wonderful standard library**
 
-All 3rd party packages are opt-in. This is to make sure that our builds remain purposeful and small.
+All 3rd party packages are opt-in. This is to make sure that our builds remain purposeful and small. Over time, Golly will add compatibility with certain standard library packages where it makes sense.
