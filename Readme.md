@@ -94,6 +94,8 @@ program := js.CreateProgram(
 
 ## High-level TODO:
 
+In no particular order.
+
 ### File-Level:
 
 - [x] implement if statements
@@ -163,7 +165,6 @@ program := js.CreateProgram(
 - Even with WebAssembly, Javascript will be supported for years to come
 - Go has a minimal syntax and clear future priorities
 - Go is both easy to read and easy to maintain
-- Golly code runs in Go (not necessarily the other way around, see below)
 
 ## Tradeoffs
 
