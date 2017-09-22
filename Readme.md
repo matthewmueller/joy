@@ -147,6 +147,7 @@ program := js.CreateProgram(
 - [ ] recover statement
 - [ ] goto + label statements
 - [ ] support go's select statement
+- [ ] track functions declarations in use to do topological sort and pruning
 
 ## Design
 
