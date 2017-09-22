@@ -64,7 +64,7 @@ program := js.CreateProgram(
   </ul>
 </details>
 <br/>
-<strong>dom/</strong> The DOM written in Go
+<strong>dom/</strong> The DOM API written in Go. This acts like jsdom on server-side and has interfaces for golly to generate browser-side code<br/>
 <strong>testfiles/</strong> all our tests and expected responses (TODO: the tests will always fail at this point)<br/>
 <strong>golly.go:</strong> public API for golly<br/>
 <strong>cmd/golly/main.go:</strong> CLI for golly
