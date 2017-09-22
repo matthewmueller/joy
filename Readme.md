@@ -118,9 +118,6 @@ program := js.CreateProgram(
 - [ ] support multiple files
   - files are wrapped in closures and the package wraps the file closures in another closure calling main()
   - we can be clever and do topological dependency sorting to eliminate this later (look to rollup for inspiration here)
-- [ ] write basic DOM package using Typescript's libdefs
-  - Source: https://github.com/Microsoft/TypeScript/blob/master/lib/lib.dom.d.ts
-  - Typescript has a script to generate these files, so maybe we can use that 
 
 ### Hard but probably necessary:
 
@@ -135,6 +132,9 @@ program := js.CreateProgram(
 
 ### Before I can use:
 
+- [ ] write basic DOM package using Typescript's libdefs
+  - Source: https://github.com/Microsoft/TypeScript/blob/master/lib/lib.dom.d.ts
+  - Typescript has a script to generate these files, so maybe we can use that 
 - [ ] write preact package (~1000LOC)
 - [ ] write fetch package (https://github.com/developit/unfetch ~50LOC)
 - [ ] basic development server (livereload is fine for now)
