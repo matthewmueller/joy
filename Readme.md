@@ -56,6 +56,7 @@ program := js.CreateProgram(
     <li><strong>es6.js</strong>: test file</li>
   </ul>
 </details>
+<strong>testfiles/</strong> all our tests and expected responses (TODO: the tests will always fail at this point)<br/>
 <strong>golly.go:</strong> public API for golly<br/>
 <strong>cmd/golly/main.go:</strong> CLI for golly
 
