@@ -29,8 +29,8 @@ program := js.CreateProgram(
 
 ## Directory Structure
 
-<strong>golly.go:</strong> public API for golly
-<strong>cmd/golly/main.go:</strong> CLI for golly
+<strong>golly.go:</strong> public API for golly<br/>
+<strong>cmd/golly/main.go:</strong> CLI for golly<br/>
 <details>
 <summary><strong>js/</strong></summary>
 syntax.go: this is the AST format for Javascript (ES3) (TODO: move to internal/)<br/>
