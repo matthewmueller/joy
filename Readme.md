@@ -90,6 +90,7 @@ program := js.CreateProgram(
 - [ ] How does the JS variable scope differ from the Go's scope and what do we need to account for?
 - [ ] Should Go's interfaces show up in the emitted Javascript in any form?
 - [ ] Is it possible to "upgrade" an existing Go package to use Golly when you don't control the package's source, e.g. "fmt"?
+- [ ] What is a []byte? Can it just be a string? How does that map?
 - [ ] Should we rename this project to Jolly? :-D
 
 ## High-level TODO:
