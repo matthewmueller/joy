@@ -60,6 +60,12 @@ program := js.CreateProgram(
 <strong>golly.go:</strong> public API for golly<br/>
 <strong>cmd/golly/main.go:</strong> CLI for golly
 
+## Helpful Resources
+
+- https://astexplorer.net/: I've been using this to figure out how to build the JS tree
+- http://goast.yuroyoro.net/: Simple Go AST viewer
+- https://github.com/estree/estree/blob/master/es5.md: Link to the ES3 AST format, this is implemented in syntax.go
+
 ## Open Questions
 
 - [x] How will we deal with existing Go standard libraries?
