@@ -29,8 +29,10 @@ program := js.CreateProgram(
 
 ## Directory Structure
 
-<strong>golly.go:</strong> public API for golly<br/>
-<strong>cmd/golly/main.go:</strong> CLI for golly
+<ul>
+  <li><strong>golly.go:</strong> public API for golly</li>
+  <li><strong>cmd/golly/main.go:</strong> CLI for golly</li>
+</ul>
 <details>
 <summary><strong>js/</strong></summary>
   <ul>
