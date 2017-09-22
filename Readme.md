@@ -36,7 +36,11 @@ js/
   api.go: this is the public interface for creating JS AST nodes
 translator/
   translate.go: this translates our Go AST into a JS AST
+nodejs/
+  node: the oldest node binary I could compile (0.6.0). no promises, generators, async/await. I've just been using this for testing
+regenerator/: this just is some test files for trying to wrap my head around how this transform works
 golly.go: public API for golly
+cmd/golly/main.go: CLI for golly
 ```
 
 ## Open Questions
