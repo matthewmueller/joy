@@ -33,22 +33,30 @@ program := js.CreateProgram(
 <strong>cmd/golly/main.go:</strong> CLI for golly
 <details>
 <summary><strong>js/</strong></summary>
-syntax.go: this is the AST format for Javascript (ES3) (TODO: move to internal/)<br/>
-assemble.go: this will turn JS AST nodes into Javascript source code (TODO: move to internal/)<br/>
-api.go: this is the public interface for creating JS AST nodes
+  <ul>
+    <li><strong>syntax.go</strong>: this is the AST format for Javascript (ES3) (TODO: move to internal/)</li>
+    <li><strong>assemble.go</strong>: this will turn JS AST nodes into Javascript source code (TODO: move to internal/)</li>
+    <li><strong>api.go</strong>: this is the public interface for creating JS AST nodes</li>
+  </ul>
 </details>
 <details>
 <summary><strong>translator/</strong></summary>
-  translate.go: this translates our Go AST into a JS AST. This file is the bread & butter of the project
+  <ul>
+    <li><strong>translate.go</strong>: this translates our Go AST into a JS AST. This file is the bread & butter of the project</li>
+  </ul>
 </details>
 <details>
 <summary><strong>nodejs/</strong></summary>
-  node: the oldest node binary I could compile (0.6.0). no promises, generators, async/await. I've just been using this for testing
+  <ul>
+    <li><strong>node</strong>: the oldest node binary I could compile (0.6.0). no promises, generators, async/await. I've just been using this for testing</li>
+  </ul>
 </details>
 <details>
 <summary><strong>regenerator/</strong></summary>
-  node_modules/.bin/regenerator: binary to compile async/await to ES5<br/>
-  es6.js: test file<br/>
+  <ul>
+    <li><strong>node_modules/.bin/regenerator</strong>: binary to compile async/await to ES5</li>
+    <li><strong>es6.js</strong>: test file</li>
+  </ul>
 </details>
 
 ## Open Questions
