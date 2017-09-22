@@ -45,15 +45,20 @@ cmd/golly/main.go: CLI for golly
 
 ## Open Questions
 
-- How does the JS scope differ from the Go scope and what do I need to account for?
-- How will we deal with existing Go standard libraries?
-- How will the different base Go types map to javascript types? (like maps)
+- [x] How will we deal with existing Go standard libraries?
+  - Standard libraries are opt-in and won't work out of the box (these + DOM are the only libraries internal to Golly)
+- [x] How will the different base Go types map to javascript types? (like maps)
   - This is where Golly may have to be more strict than Go (e.g. map[boolean]string)
-- How will we make DOM typesafe, but not include it in the build?
+- [x] How will we make DOM typesafe, but not include it in the build?
   - DOM will be by default be an server-side API (like jsdom), but include interfaces to JS AST Nodes that Golly will call into over transpiling the Go code into JS
-- Do Go's interfaces show up in the emitted Javascript in any form?
-- Is it possible to "upgrade" an existing Go package to use Golly when you don't control the package's source, e.g. "fmt"?
-- Should we rename this project to Jolly? :-D
+- [ ] How will React/Preact look and work inside Go?
+- [x] How can we implement the DOM's massive API
+  - We'll try to generate this using Typescript's definitions
+- [ ] How can we turn goroutines and channels into async/await?
+- [ ] How does the JS variable scope differ from the Go's scope and what do we need to account for?
+- [ ] Should Go's interfaces show up in the emitted Javascript in any form?
+- [ ] Is it possible to "upgrade" an existing Go package to use Golly when you don't control the package's source, e.g. "fmt"?
+- [ ] Should we rename this project to Jolly? :-D
 
 ## High-level TODO:
 
