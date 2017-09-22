@@ -29,19 +29,29 @@ program := js.CreateProgram(
 
 ## Directory Structure
 
-```
-js/
-  syntax.go: this is the AST format for Javascript (ES3) (TODO: move to internal/)
-  assemble.go: this will turn JS AST nodes into Javascript source code (TODO: move to internal/)
-  api.go: this is the public interface for creating JS AST nodes
-translator/
-  translate.go: this translates our Go AST into a JS AST
-      ^ this file is the bread & butter of the project
-nodejs/
-  node: the oldest node binary I could compile (0.6.0). no promises, generators, async/await. I've just been using this for testing
-regenerator/: this just is some test files for trying to wrap my head around how this transform works
-golly.go: public API for golly
-cmd/golly/main.go: CLI for golly
+<details>
+<summary><strong>js/</strong></summary>
+<strong>syntax.go:</strong> this is the AST format for Javascript (ES3) (TODO: move to internal/)
+<strong>assemble.go:</strong> this will turn JS AST nodes into Javascript source code (TODO: move to internal/)
+<strong>api.go:</strong> this is the public interface for creating JS AST nodes
+</details>
+<details>
+<summary><strong>translator/</strong></summary>
+  <strong>translate.go:</strong> this translates our Go AST into a JS AST. This file is the bread & butter of the project
+</details>
+<details>
+<summary><strong>nodejs/</strong></summary>
+  <strong>node</strong>: the oldest node binary I could compile (0.6.0). no promises, generators, async/await. I've just been using this for testing
+</details>
+<details>
+<summary><strong>regenerator/</strong></summary>
+this just is some test files for trying to wrap my head around how this transform works
+<details>
+<strong>golly.go</strong>: public API for golly
+<details>
+<strong>cmd/golly/main.go</strong>
+CLI for golly
+</details>
 ```
 
 ## Open Questions
