@@ -612,6 +612,8 @@ func compositeLiteral(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast
 		return jsNewFunction(fset, f, fn, n)
 	case *ast.ArrayType:
 		return jsArrayExpression(fset, f, fn, n)
+	case *ast.MapType:
+		return jsObjectExpression(fset, f, fn, n)
 	default:
 		return nil, unhandled("compositeLiteral<type>", n.Type)
 	}
@@ -641,13 +643,16 @@ func jsObjectExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *a
 
 func jsNewFunction(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.NewExpression, err error) {
 	var props []js.Property
+	var obj *ast.Object
+	_ = obj
 	var fnname string
 
 	switch t := n.Type.(type) {
 	case *ast.Ident:
 		fnname = t.Name
+		obj = t.Obj
 	default:
-		return j, unhandled("jsNewFunction", n.Type)
+		return j, unhandled("jsNewFunction<name>", n.Type)
 	}
 
 	for _, elt := range n.Elts {
@@ -657,8 +662,11 @@ func jsNewFunction(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.Co
 		switch t := elt.(type) {
 		case *ast.KeyValueExpr:
 			prop, e = keyValueExpr(fset, f, fn, t)
+		// case *ast.BasicLit:
+		// TODO: handle User{"a"}, by looking up the fields in obj
+
 		default:
-			return j, unhandled("jsObjectExpression", elt)
+			return j, unhandled("jsNewFunction<elts>", elt)
 		}
 		if e != nil {
 			return j, e
@@ -735,5 +743,5 @@ func indexExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.IndexE
 }
 
 func unhandled(fn string, n interface{}) error {
-	return fmt.Errorf("%s(): not sure what this type is %s", fn, reflect.TypeOf(n))
+	return fmt.Errorf("%s in %s() is not implemented yet", reflect.TypeOf(n), fn)
 }

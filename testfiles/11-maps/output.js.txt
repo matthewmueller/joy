@@ -1,0 +1,19 @@
+(function() {
+function main () {
+var names = {
+  "a": "a",
+  "b": "b"
+};
+var nested = {
+  "a": {
+  "a": "a"
+},
+  "b": {
+  "b": "b"
+}
+};
+console.log(names["a"]);
+console.log(nested["b"]["b"]);
+};
+main();
+})()
