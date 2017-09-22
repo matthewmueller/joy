@@ -56,10 +56,8 @@ program := js.CreateProgram(
     <li><strong>es6.js</strong>: test file</li>
   </ul>
 </details>
-<ul>
-  <li><strong>golly.go:</strong> public API for golly</li>
-  <li><strong>cmd/golly/main.go:</strong> CLI for golly</li>
-</ul>
+<strong>golly.go:</strong> public API for golly<br/>
+<strong>cmd/golly/main.go:</strong> CLI for golly
 
 ## Open Questions
 
