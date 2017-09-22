@@ -29,10 +29,6 @@ program := js.CreateProgram(
 
 ## Directory Structure
 
-<ul>
-  <li><strong>golly.go:</strong> public API for golly</li>
-  <li><strong>cmd/golly/main.go:</strong> CLI for golly</li>
-</ul>
 <details>
 <summary><strong>js/</strong></summary>
   <ul>
@@ -60,6 +56,10 @@ program := js.CreateProgram(
     <li><strong>es6.js</strong>: test file</li>
   </ul>
 </details>
+<ul>
+  <li><strong>golly.go:</strong> public API for golly</li>
+  <li><strong>cmd/golly/main.go:</strong> CLI for golly</li>
+</ul>
 
 ## Open Questions
 
