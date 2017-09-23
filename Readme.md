@@ -49,6 +49,8 @@ Golly gee, it's another Go to JS compiler.
 - https://astexplorer.net/: I've been using this to figure out how to build the JS tree
 - http://goast.yuroyoro.net/: Simple Go AST viewer
 - https://github.com/estree/estree/blob/master/es5.md: Link to the ES3 AST format, this is implemented in syntax.go
+- To run individual tests: `go test -v -run Compiler/3`
+- `pretty.Println(ast)` will pretty print the JS AST
 
 ## Open Questions
 
