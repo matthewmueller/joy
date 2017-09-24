@@ -83,9 +83,9 @@ In no particular order.
 - [x] implement classes
 - [x] implement arrays
 - [x] implement maps
+- [x] implement functions with multiple return values
+- [x] implement anonymous functions
 - [ ] implement slices
-- [ ] implement functions with multiple return values
-- [ ] implement anonymous functions
 - [ ] implement built-in functions (append, copy, len, make)
 - [ ] implement spreads (users...)
 - [ ] implement switch statements
