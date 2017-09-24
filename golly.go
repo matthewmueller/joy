@@ -43,10 +43,7 @@ func compile(file, src string) (string, error) {
 	}
 
 	// Assemble JS source from JS AST
-	javascript, err := js.Assemble(program)
-	if err != nil {
-		return "", errors.Wrap(err, "couldn't assemble JS AST to javascript source")
-	}
+	javascript := js.Assemble(program)
 
 	return javascript, nil
 }

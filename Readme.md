@@ -50,6 +50,7 @@ Golly gee, it's another Go to JS compiler.
 - http://goast.yuroyoro.net/: Simple Go AST viewer
 - https://github.com/estree/estree/blob/master/es5.md: Link to the ES3 AST format, this is implemented in syntax.go
 - To run individual tests: `go test -v -run Compiler/3`
+- To run output files: `./nodejs/node testfiles/7-classes/output.js.txt`
 - `pretty.Println(ast)` will pretty print the JS AST
 
 ## Open Questions

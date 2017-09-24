@@ -148,17 +148,12 @@ func function(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl) (j js.IStateme
 func genDecl(fset *token.FileSet, f *ast.File, n *ast.GenDecl) (j js.IStatement, err error) {
 	switch n.Tok.String() {
 	case "type":
-		if len(n.Specs) != 1 {
-			return nil, fmt.Errorf("genDecl: expected type to only have 1 spec but it has %d", len(n.Specs))
-		}
-		t, ok := n.Specs[0].(*ast.TypeSpec)
-		if !ok {
-			return nil, unhandled("genDecl<typespec>", n.Specs[0])
-		}
-		return typeSpec(fset, f, t)
+		return typeSpec(fset, f, n)
 	case "import":
 		log.Infof("ignoring import statement")
 		return js.CreateEmptyStatement(), nil
+	case "var":
+		return varSpec(fset, f, n)
 	default:
 		return nil, fmt.Errorf("genDecl: unhandled token %s", n.Tok.String())
 	}
@@ -183,17 +178,60 @@ func genDecl(fset *token.FileSet, f *ast.File, n *ast.GenDecl) (j js.IStatement,
 // 	return nil, nil
 // }
 
-func typeSpec(fset *token.FileSet, f *ast.File, n *ast.TypeSpec) (j js.IStatement, err error) {
-	switch t := n.Type.(type) {
+func typeSpec(fset *token.FileSet, f *ast.File, n *ast.GenDecl) (j js.IStatement, err error) {
+	if len(n.Specs) != 1 {
+		return nil, fmt.Errorf("genDecl: expected type to only have 1 spec but it has %d", len(n.Specs))
+	}
+
+	s, ok := n.Specs[0].(*ast.TypeSpec)
+	if !ok {
+		return nil, unhandled("typespec", n.Specs[0])
+	}
+
+	switch t := s.Type.(type) {
 	case *ast.StructType:
 		// we turn these into contructor functions
 		// so more functions can get attached to them
-		return jsConstructorFunction(fset, f, n.Name, t.Fields)
+		return jsConstructorFunction(fset, f, s.Name, t.Fields)
 	default:
-		return nil, unhandled("typeSpec", n.Type)
+		return nil, unhandled("typeSpec", s.Type)
+	}
+}
+
+func varSpec(fset *token.FileSet, f *ast.File, n *ast.GenDecl) (j js.IStatement, err error) {
+	var decls []js.VariableDeclarator
+
+	for _, spec := range n.Specs {
+		var id js.IPattern
+		var e error
+		_, _ = id, e
+
+		switch t := spec.(type) {
+		case *ast.ValueSpec:
+			if len(t.Names) != len(t.Values) {
+				return nil, unhandled("varSpec<unbalanced>", spec)
+			}
+
+			// handle balanced destructuring
+			for i, ident := range t.Names {
+				lh := js.CreateIdentifier(ident.Name)
+
+				rh, e := expression(fset, f, nil, t.Values[i])
+				if e != nil {
+					return j, e
+				}
+
+				decl := js.CreateVariableDeclarator(lh, rh)
+				decls = append(decls, decl)
+			}
+
+		default:
+			return nil, unhandled("varSpec", spec)
+		}
 	}
 
-	// return js.CreateEmptyStatement(), nil
+	return js.CreateVariableDeclaration("var", decls...), nil
+	// return nil, nil
 }
 
 func jsConstructorFunction(fset *token.FileSet, f *ast.File, id *ast.Ident, fields *ast.FieldList) (j js.FunctionDeclaration, err error) {
@@ -272,8 +310,19 @@ func funcStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, stmt ast.
 		return returnStatement(fset, f, fn, t)
 	case *ast.ForStmt:
 		return forStmt(fset, f, fn, t)
+	case *ast.DeclStmt:
+		return declStmt(fset, f, fn, t)
 	default:
 		return nil, unhandled("funcStatement", stmt)
+	}
+}
+
+func declStmt(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.DeclStmt) (j js.IStatement, err error) {
+	switch t := n.Decl.(type) {
+	case *ast.GenDecl:
+		return genDecl(fset, f, t)
+	default:
+		return nil, unhandled("declStmt", n)
 	}
 }
 
@@ -423,14 +472,20 @@ func assignStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, as *ast
 	// handle balanced destructuring
 	var decls []js.VariableDeclarator
 	if len(lhs) == len(rhs) {
-		for i, expr := range lhs {
+		for i, lh := range lhs {
 			var id js.IPattern
+			var e error
 
-			switch t := expr.(type) {
+			switch t := lh.(type) {
 			case *ast.Ident:
 				id = js.CreateIdentifier(t.Name)
+			case *ast.SelectorExpr:
+				id, e = selectorExpr(fset, f, fn, t)
 			default:
-				return j, fmt.Errorf("assignStatement: unhandled type: %s", reflect.TypeOf(expr))
+				return j, fmt.Errorf("assignStatement: unhandled type: %s", reflect.TypeOf(lh))
+			}
+			if e != nil {
+				return j, e
 			}
 
 			rh, e := expression(fset, f, fn, rhs[i])
@@ -441,11 +496,49 @@ func assignStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, as *ast
 			decl := js.CreateVariableDeclarator(id, rh)
 			decls = append(decls, decl)
 		}
+		return js.CreateVariableDeclaration("var", decls...), nil
+	}
+
+	// a, err := test()
+	// => var $a = test(), a = $a[0], err = $a[1]
+	// TODO: clean up this is terrible
+	if len(lhs) > len(rhs) && len(lhs) > 0 && len(rhs) > 0 {
+
+		t, ok := lhs[0].(*ast.Ident)
+		if !ok {
+			return j, fmt.Errorf("assignStatement<lhs[0]>: unhandled type: %s", reflect.TypeOf(lhs[0]))
+		}
+		lh := js.CreateIdentifier("$" + t.Name)
+
+		rh, e := expression(fset, f, fn, rhs[0])
+		if e != nil {
+			return j, e
+		}
+
+		decl := js.CreateVariableDeclarator(lh, rh)
+		decls = append(decls, decl)
+
+		for i := 0; i < len(lhs); i++ {
+			t, ok := lhs[i].(*ast.Ident)
+			if !ok {
+				return j, fmt.Errorf("assignStatement<lhs[i]>: unhandled type: %s", reflect.TypeOf(lhs[i]))
+			}
+
+			decl := js.CreateVariableDeclarator(
+				js.CreateIdentifier(t.Name),
+				js.CreateMemberExpression(
+					lh,
+					js.CreateInt(i),
+					true,
+				),
+			)
+			decls = append(decls, decl)
+		}
 
 		return js.CreateVariableDeclaration("var", decls...), nil
 	}
 
-	return j, fmt.Errorf("assignStatement: unbalanced variables not implemented yet")
+	return j, fmt.Errorf("assignStatement: more values on right than left, is this possible?")
 }
 
 func incDecStmt(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.IncDecStmt) (j js.IStatement, err error) {
@@ -477,10 +570,6 @@ func returnStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.
 		return js.CreateReturnStatement(nil), nil
 	}
 
-	if len(n.Results) > 1 {
-		return nil, fmt.Errorf("returnStatement: multiple return values not implement yet")
-	}
-
 	var args []js.IExpression
 	for _, arg := range n.Results {
 		a, e := expression(fset, f, fn, arg)
@@ -490,11 +579,30 @@ func returnStatement(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.
 		args = append(args, a)
 	}
 
-	// return an array (TODO: be smarter later)
+	// return an array
+	if len(n.Results) > 1 {
+		return js.CreateReturnStatement(js.CreateArrayExpression(args...)), nil
+	}
+
+	// return the value by itself
 	return js.CreateReturnStatement(args[0]), nil
 }
 
-func callExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr *ast.CallExpr) (j js.CallExpression, err error) {
+func callExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr *ast.CallExpr) (j js.IExpression, err error) {
+	calleeSrc, e := expressionToString(expr.Fun)
+	if e != nil {
+		return j, e
+	}
+
+	// TODO: make sure js.Raw points to golly/js
+	if calleeSrc == "js.Raw" && len(expr.Args) >= 1 {
+		argSrc, e := expressionToString(expr.Args[0])
+		if e != nil {
+			return nil, e
+		}
+		return js.Parse(argSrc)
+	}
+
 	callee, e := expression(fset, f, fn, expr.Fun)
 	if e != nil {
 		return j, e
@@ -533,6 +641,10 @@ func expression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr ast.Exp
 		return indexExpr(fset, f, fn, t)
 	case *ast.StarExpr:
 		return starExpr(fset, f, fn, t)
+	case *ast.UnaryExpr:
+		return unaryExpr(fset, f, fn, t)
+	case *ast.FuncLit:
+		return funcLit(fset, f, fn, t)
 	// case *ast.KeyValueExpr:
 	// 	return keyValueExpr(fset, f, fn, t)
 	case nil:
@@ -540,6 +652,51 @@ func expression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, expr ast.Exp
 	default:
 		return nil, fmt.Errorf("expression(): unhandled type: %s", reflect.TypeOf(expr))
 	}
+}
+
+func expressionToString(expr ast.Expr) (string, error) {
+	switch t := expr.(type) {
+	case *ast.Ident:
+		return t.Name, nil
+	case *ast.SelectorExpr:
+		x, e := expressionToString(t.X)
+		if e != nil {
+			return "", e
+		}
+		return x + "." + t.Sel.Name, nil
+	case *ast.BasicLit:
+		return t.Value, nil
+	default:
+		return "", nil
+	}
+}
+
+func funcLit(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.FuncLit) (j js.IExpression, err error) {
+	// build argument list
+	// var args
+	var params []js.IPattern
+	if n.Type != nil && n.Type.Params != nil {
+		fields := n.Type.Params.List
+		for _, field := range fields {
+			// names because: (a, b string, c int) = [[a, b], c]
+			for _, name := range field.Names {
+				id := js.CreateIdentifier(name.Name)
+				params = append(params, id)
+			}
+		}
+	}
+
+	// create the body
+	var body []interface{}
+	for _, stmt := range n.Body.List {
+		jsStmt, e := funcStatement(fset, f, fn, stmt)
+		if e != nil {
+			return j, e
+		}
+		body = append(body, jsStmt)
+	}
+
+	return js.CreateFunctionExpression(nil, params, js.CreateFunctionBody(body...)), nil
 }
 
 // binary expressions in Go can be either:
@@ -576,7 +733,6 @@ func binaryExpression(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, b *ast
 }
 
 func identifier(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, ident *ast.Ident) (j js.IExpression, err error) {
-
 	// TODO: lookup table
 	switch ident.Name {
 	case "nil":
@@ -593,6 +749,16 @@ func identifier(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, ident *ast.I
 }
 
 func starExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.StarExpr) (j js.IExpression, err error) {
+	// for now, we're ignoring the pointer
+	x, e := expression(fset, f, fn, n.X)
+	if e != nil {
+		return nil, e
+	}
+
+	return x, nil
+}
+
+func unaryExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.UnaryExpr) (j js.IExpression, err error) {
 	// for now, we're ignoring the pointer
 	x, e := expression(fset, f, fn, n.X)
 	if e != nil {
@@ -710,17 +876,17 @@ func keyValueExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.Key
 	return js.CreateProperty(key, value, "init"), nil
 }
 
-func selectorExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.SelectorExpr) (j js.IExpression, err error) {
+func selectorExpr(fset *token.FileSet, f *ast.File, fn *ast.FuncDecl, n *ast.SelectorExpr) (j js.MemberExpression, err error) {
 	// (user.phone).number
 	x, e := expression(fset, f, fn, n.X)
 	if e != nil {
-		return nil, e
+		return j, e
 	}
 
 	// user.phone.(number)
 	s, e := identifier(fset, f, fn, n.Sel)
 	if e != nil {
-		return nil, e
+		return j, e
 	}
 
 	return js.CreateMemberExpression(x, s, false), nil

@@ -1,520 +1,370 @@
 package js
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/kr/pretty"
 )
 
-// Stringer interface
-// TODO: error handling should be done in the public API
-// once we make this internal, we should remove all error
-// handling here.
-type Stringer interface {
-	String() (string, error)
-}
+// interface compliance
+var _ fmt.Stringer = (*Identifier)(nil)
+var _ fmt.Stringer = (*Literal)(nil)
+var _ fmt.Stringer = (*RegExpLiteral)(nil)
+var _ fmt.Stringer = (*Program)(nil)
 
-var _ Stringer = (*CallExpression)(nil)
+// var _ fmt.Stringer = (*Function)(nil)
+var _ fmt.Stringer = (*ExpressionStatement)(nil)
+
+// var _ fmt.Stringer = (*Directive)(nil)
+var _ fmt.Stringer = (*BlockStatement)(nil)
+var _ fmt.Stringer = (*FunctionBody)(nil)
+var _ fmt.Stringer = (*EmptyStatement)(nil)
+
+// var _ fmt.Stringer = (*DebuggerStatement)(nil)
+// var _ fmt.Stringer = (*WithStatement)(nil)
+var _ fmt.Stringer = (*ReturnStatement)(nil)
+
+// var _ fmt.Stringer = (*LabeledStatement)(nil)
+// var _ fmt.Stringer = (*BreakStatement)(nil)
+// var _ fmt.Stringer = (*ContinueStatement)(nil)
+var _ fmt.Stringer = (*IfStatement)(nil)
+
+// var _ fmt.Stringer = (*SwitchStatement)(nil)
+// var _ fmt.Stringer = (*SwitchCase)(nil)
+// var _ fmt.Stringer = (*ThrowStatement)(nil)
+// var _ fmt.Stringer = (*TryStatement)(nil)
+// var _ fmt.Stringer = (*CatchClause)(nil)
+// var _ fmt.Stringer = (*WhileStatement)(nil)
+var _ fmt.Stringer = (*ForStatement)(nil)
+
+// var _ fmt.Stringer = (*ForInStatement)(nil)
+// var _ fmt.Stringer = (*Declaration)(nil)
+var _ fmt.Stringer = (*FunctionDeclaration)(nil)
+var _ fmt.Stringer = (*VariableDeclarator)(nil)
+var _ fmt.Stringer = (*ThisExpression)(nil)
+var _ fmt.Stringer = (*ArrayExpression)(nil)
+var _ fmt.Stringer = (*ObjectExpression)(nil)
+
+// var _ fmt.Stringer = (*Property)(nil)
+var _ fmt.Stringer = (*FunctionExpression)(nil)
+
+// var _ fmt.Stringer = (*UnaryExpression)(nil)
+var _ fmt.Stringer = (*UpdateExpression)(nil)
+var _ fmt.Stringer = (*BinaryExpression)(nil)
+var _ fmt.Stringer = (*AssignmentExpression)(nil)
+var _ fmt.Stringer = (*LogicalExpression)(nil)
+var _ fmt.Stringer = (*MemberExpression)(nil)
+
+// var _ fmt.Stringer = (*ConditionalExpression)(nil)
+var _ fmt.Stringer = (*CallExpression)(nil)
+var _ fmt.Stringer = (*NewExpression)(nil)
+
+// var _ fmt.Stringer = (*SequenceExpression)(nil)
+// var _ fmt.Stringer = (*Pattern)(nil)
 
 // Assemble JS from the AST
-func Assemble(node interface{}) (string, error) {
-	// pretty.Println(node)
-
-	switch t := node.(type) {
-	case Program:
-		return t.String()
-	}
-
-	return "", errors.New("ast must start with a program")
+func Assemble(node interface{}) string {
+	pretty.Println(node)
+	return stringify(node)
 }
 
-func stringify(node interface{}) (string, error) {
+func stringify(node interface{}) string {
 	if node == nil {
-		return "", nil
+		return ""
 	}
+
 	// cast to stringer
-	stringer, ok := node.(Stringer)
+	stringer, ok := node.(fmt.Stringer)
 	if !ok {
 		n := node.(INode)
-		return "", fmt.Errorf("%s || %s does not implement stringer", n.Node().Type, reflect.TypeOf(node))
+		panic(fmt.Errorf("%s || %s does not implement stringer", n.Node().Type, reflect.TypeOf(node)))
 	}
 
 	return stringer.String()
 }
 
-func stringifyEach(nodes ...interface{}) ([]string, error) {
-	var out []string
-
-	for _, node := range nodes {
-		s, e := stringify(node)
-		if e != nil {
-			return nil, e
-		}
-		out = append(out, s)
+func (n Program) String() string {
+	var a []string
+	for _, child := range n.Body {
+		a = append(a, stringify(child))
 	}
-
-	return out, nil
+	return strings.Join(a, ";\n")
 }
 
-func (p *Program) String() (string, error) {
-	results := []string{}
-	body := p.Body
-	l := len(body)
-
-	for i := 0; i < l; i++ {
-		child := body[i]
-		switch child.(type) {
-		// statements || directives
-		case IStatement, Directive:
-		default:
-			return "", errors.New("a program's body must contain either directives or statements")
-		}
-
-		// string
-		s, e := stringify(child)
-		if e != nil {
-			return "", e
-		}
-		results = append(results, s)
-	}
-
-	return strings.Join(results, ";\n"), nil
-}
-
-func (n ExpressionStatement) String() (string, error) {
+func (n ExpressionStatement) String() string {
 	return stringify(n.Expression)
 }
 
-func (n CallExpression) String() (string, error) {
-	var args []string
-	for _, arg := range n.Arguments {
-		v, e := stringify(arg)
-		if e != nil {
-			return "", e
-		}
-		args = append(args, v)
+func (n CallExpression) String() string {
+	var a []string
+	for _, child := range n.Arguments {
+		a = append(a, stringify(child))
 	}
 
-	c, e := stringify(n.Callee)
-	if e != nil {
-		return "", e
-	}
+	c := stringify(n.Callee)
 
 	// call expressions are handled
 	// differently if the callee is
 	// a function expression
 	switch n.Callee.(type) {
 	case Identifier, MemberExpression:
-		return c + "(" + strings.Join(args, ", ") + ")", nil
+		return c + "(" + strings.Join(a, ", ") + ")"
 	case FunctionExpression:
-		return "(" + c + ")(" + strings.Join(args, ", ") + ")", nil
+		return "(" + c + ")(" + strings.Join(a, ", ") + ")"
 	default:
-		return "", fmt.Errorf("Assembler/CallExpression: unhandled call expression type %s", reflect.TypeOf(n.Callee))
+		panic(fmt.Errorf("Assembler/CallExpression: unhandled call expression type %s", reflect.TypeOf(n.Callee)))
 	}
 }
 
-func (n FunctionExpression) String() (string, error) {
-	var params []string
-	for _, param := range n.Params {
-		s, e := stringify(param)
-		if e != nil {
-			return "", e
-		}
-		params = append(params, s)
+func (n FunctionExpression) String() string {
+	var a []string
+	for _, child := range n.Params {
+		a = append(a, stringify(child))
 	}
 
-	body, e := stringify(n.Body)
-	if e != nil {
-		return "", e
-	}
+	body := stringify(n.Body)
 
-	fn := "function(" + strings.Join(params, ", ") + ") {\n" + body + "\n}"
-	return fn, nil
+	return "function(" + strings.Join(a, ", ") + ") {\n" + body + "\n}"
 }
 
-func (n FunctionDeclaration) String() (string, error) {
-	var params []string
-	for _, param := range n.Params {
-		s, e := stringify(param)
-		if e != nil {
-			return "", e
-		}
-		params = append(params, s)
+func (n FunctionDeclaration) String() string {
+	var a []string
+	for _, child := range n.Params {
+		a = append(a, stringify(child))
 	}
 
-	body, e := stringify(n.Body)
-	if e != nil {
-		return "", e
-	}
+	body := stringify(n.Body)
 
 	name := ""
 	if n.ID != nil {
-		n, e := stringify(*n.ID)
-		if e != nil {
-			return "", e
-		}
+		n := stringify(*n.ID)
 		name = " " + n
 	}
 
-	fn := "function" + name + " (" + strings.Join(params, ", ") + ") { \n" + body + "\n}"
-	return fn, nil
+	fn := "function" + name + " (" + strings.Join(a, ", ") + ") { \n" + body + "\n}"
+	return fn
 }
 
-func (n FunctionBody) String() (string, error) {
-	var stmts []string
+func (n FunctionBody) String() string {
 
-	// TODO: statement | directive
-	for _, statement := range n.Body {
-		s, e := stringify(statement)
-		if e != nil {
-			return "", e
-		}
-		stmts = append(stmts, s)
+	var a []string
+	for _, child := range n.Body {
+		a = append(a, stringify(child))
 	}
 
-	return strings.Join(stmts, ";\n") + ";", nil
+	return strings.Join(a, ";\n") + ";"
 }
 
-func (n MemberExpression) String() (string, error) {
-	obj, e := stringify(n.Object)
-	if e != nil {
-		return "", e
-	}
-
-	prop, e := stringify(n.Property)
-	if e != nil {
-		return "", e
-	}
+func (n MemberExpression) String() string {
+	obj := stringify(n.Object)
+	prop := stringify(n.Property)
 
 	// e.g. hi[world]
 	if n.Computed {
-		return obj + "[" + prop + "]", nil
+		return obj + "[" + prop + "]"
 	}
 
 	// hi.world
-	return obj + "." + prop, nil
+	return obj + "." + prop
 }
 
-func (n Identifier) String() (string, error) {
-	return n.Name, nil
+func (n Identifier) String() string {
+	return n.Name
 }
 
 // TODO: Move this into the syntax itself
-func (n Literal) String() (string, error) {
+func (n Literal) String() string {
 	switch t := n.Value.(type) {
 	case string:
-		return t, nil
+		return t
 	case bool:
-		return strconv.FormatBool(t), nil
+		return strconv.FormatBool(t)
 	case int:
-		return strconv.Itoa(t), nil
+		return strconv.Itoa(t)
 	case float32:
-		return strconv.FormatFloat(float64(t), 'f', -1, 32), nil
+		return strconv.FormatFloat(float64(t), 'f', -1, 32)
 	case nil:
-		return "null", nil
+		return "null"
 	default:
-		return "", fmt.Errorf("literal needs to handle %t", reflect.TypeOf(t))
+		panic(fmt.Errorf("literal needs to handle %t", reflect.TypeOf(t)))
 	}
 }
 
-func (n VariableDeclaration) String() (string, error) {
-	var decls []string
-	for _, decl := range n.Declarations {
-		d, e := stringify(decl)
-		if e != nil {
-			return "", e
-		}
-		decls = append(decls, d)
-	}
-
-	return n.Kind + " " + strings.Join(decls, ", "), nil
+func (n RegExpLiteral) String() string {
+	panic("RegExpLiteral stringer not implemented yet")
 }
 
-func (n VariableDeclarator) String() (string, error) {
-	v, e := stringify(n.ID)
-	if e != nil {
-		return "", e
+func (n VariableDeclaration) String() string {
+	var a []string
+	for _, child := range n.Declarations {
+		a = append(a, stringify(child))
 	}
-	x, e := stringify(n.Init)
-	if e != nil {
-		return "", e
-	}
-	return v + " = " + x, nil
+	return n.Kind + " " + strings.Join(a, ", ")
 }
 
-func (n ReturnStatement) String() (string, error) {
-	r, e := stringify(n.Argument)
-	if e != nil {
-		return "", e
-	}
-
-	return "return " + r, nil
+func (n VariableDeclarator) String() string {
+	v := stringify(n.ID)
+	x := stringify(n.Init)
+	return v + " = " + x
 }
 
-func (n ArrayExpression) String() (string, error) {
-	var decls []string
-	for _, decl := range n.Elements {
-		d, e := stringify(decl)
-		if e != nil {
-			return "", e
-		}
-		decls = append(decls, d)
-	}
-	return "[" + strings.Join(decls, ", ") + "]", nil
+func (n ReturnStatement) String() string {
+	r := stringify(n.Argument)
+	return "return " + r
 }
 
-func (n BinaryExpression) String() (string, error) {
-	l, e := stringify(n.Left)
-	if e != nil {
-		return "", e
+func (n ArrayExpression) String() string {
+	var a []string
+	for _, child := range n.Elements {
+		a = append(a, stringify(child))
 	}
-	o, e := stringify(n.Operator)
-	if e != nil {
-		return "", e
-	}
-	r, e := stringify(n.Right)
-	if e != nil {
-		return "", e
-	}
-
-	return l + " " + o + " " + r, nil
+	return "[" + strings.Join(a, ", ") + "]"
 }
 
-func (n BinaryOperator) String() (string, error) {
-	return string(n), nil
+func (n BinaryExpression) String() string {
+	l := stringify(n.Left)
+	o := stringify(n.Operator)
+	r := stringify(n.Right)
+	return l + " " + o + " " + r
 }
 
-// func (n BlockStatement) String() (string, error) {
-// 	return "BlockStatement", nil
-// }
-
-func (n EmptyStatement) String() (string, error) {
-	return "", nil
+func (n BinaryOperator) String() string {
+	return string(n)
 }
 
-func (n ObjectExpression) String() (string, error) {
+func (n EmptyStatement) String() string {
+	return ""
+}
+
+func (n ObjectExpression) String() string {
 	var props []string
-
 	for _, prop := range n.Properties {
-		k, e := stringify(prop.Key)
-		if e != nil {
-			return "", e
-		}
-
-		v, e := stringify(prop.Value)
-		if e != nil {
-			return "", e
-		}
-
+		k := stringify(prop.Key)
+		v := stringify(prop.Value)
 		props = append(props, "  "+k+": "+v)
 	}
-
-	return "{\n" + strings.Join(props, ",\n") + "\n}", nil
+	return "{\n" + strings.Join(props, ",\n") + "\n}"
 }
 
-func (n IfStatement) String() (string, error) {
-	t, e := stringify(n.Test)
-	if e != nil {
-		return "", e
-	}
-
-	c, e := stringify(n.Consequent)
-	if e != nil {
-		return "", e
-	}
+func (n IfStatement) String() string {
+	t := stringify(n.Test)
+	c := stringify(n.Consequent)
 
 	if n.Alternate == nil {
-		return "if (" + t + ") " + c + "", nil
+		return "if (" + t + ") " + c + ""
 	}
+	a := stringify(n.Alternate)
 
-	a, e := stringify(n.Alternate)
-	if e != nil {
-		return "", e
-	}
-
-	return "if (" + t + ") " + c + " else " + a + "", nil
+	return "if (" + t + ") " + c + " else " + a + ""
 }
 
-func (n BlockStatement) String() (string, error) {
-	var stmts []string
-
-	for _, stmt := range n.Body {
-		switch t := stmt.(type) {
-		case IStatement:
-			s, e := stringify(t)
-			if e != nil {
-				return "", e
-			}
-			stmts = append(stmts, s)
-		default:
-			return "", fmt.Errorf("block statements can only contain statements, but we got %s", reflect.TypeOf(stmt))
-		}
+func (n BlockStatement) String() string {
+	var a []string
+	for _, child := range n.Body {
+		a = append(a, stringify(child))
 	}
-
-	return "{\n" + strings.Join(stmts, "\n") + "\n}", nil
+	return "{\n" + strings.Join(a, "\n") + "\n}"
 }
 
-func (n LogicalExpression) String() (string, error) {
-	l, e := stringify(n.Left)
-	if e != nil {
-		return "", e
-	}
-
-	r, e := stringify(n.Right)
-	if e != nil {
-		return "", e
-	}
-
-	switch string(n.Operator) {
-	case "&&", "||":
-	default:
-		return "", errors.New("LogicalExpression: logical expression must be either && or ||")
-	}
-
-	return l + " " + string(n.Operator) + " " + r, nil
+func (n LogicalExpression) String() string {
+	l := stringify(n.Left)
+	r := stringify(n.Right)
+	return l + " " + string(n.Operator) + " " + r
 }
 
-func (n ForStatement) String() (string, error) {
+func (n ForStatement) String() string {
 	var cond []string
-	var e error
 
-	// since this is a union type, we'll need to typecheck
-	var init string
-	switch n.Init.(type) {
-	case VariableDeclaration, IExpression:
-		init, e = stringify(n.Init)
-	case nil:
-		init = ""
-	default:
-		return "", fmt.Errorf("ForStatement: init can only be VariableDeclaration | Expression | null, but got %s", reflect.TypeOf(n.Init))
-	}
-	if e != nil {
-		return "", e
-	}
-	cond = append(cond, init)
-
-	// expression
-	test, e := stringify(n.Test)
-	if e != nil {
-		return "", e
-	}
-	cond = append(cond, test)
-
-	// expression
-	update, e := stringify(n.Update)
-	if e != nil {
-		return "", e
-	}
-	cond = append(cond, update)
+	cond = append(cond, stringify(n.Init))
+	cond = append(cond, stringify(n.Test))
+	cond = append(cond, stringify(n.Update))
 
 	// for body
-	b, e := stringify(n.Body)
-	if e != nil {
-		return "", e
-	}
-
-	return "for (" + strings.Join(cond, "; ") + ") {\n" + b + "\n}", nil
+	body := stringify(n.Body)
+	return "for (" + strings.Join(cond, "; ") + ") {\n" + body + "\n}"
 }
 
-func (n UpdateExpression) String() (string, error) {
-	x, e := stringify(n.Argument)
-	if e != nil {
-		return "", e
-	}
-
-	return x + string(n.Operator), nil
+func (n UpdateExpression) String() string {
+	x := stringify(n.Argument)
+	return x + string(n.Operator)
 }
 
-func (n AssignmentExpression) String() (string, error) {
-	l, e := stringify(n.Left)
-	if e != nil {
-		return "", e
-	}
-
-	r, e := stringify(n.Right)
-	if e != nil {
-		return "", e
-	}
-
-	return l + " " + string(n.Operator) + " " + r, nil
+func (n AssignmentExpression) String() string {
+	l := stringify(n.Left)
+	r := stringify(n.Right)
+	return l + " " + string(n.Operator) + " " + r
 }
 
-func (n ThisExpression) String() (string, error) {
-	return "this", nil
+func (n ThisExpression) String() string {
+	return "this"
 }
 
-func (n NewExpression) String() (string, error) {
-	c, e := stringify(n.Callee)
-	if e != nil {
-		return "", e
+func (n NewExpression) String() string {
+	c := stringify(n.Callee)
+
+	var a []string
+	for _, child := range n.Arguments {
+		a = append(a, stringify(child))
 	}
 
-	var args []string
-	for _, arg := range n.Arguments {
-		a, e := stringify(arg)
-		if e != nil {
-			return "", e
-		}
-		args = append(args, a)
-	}
-
-	return "new " + c + "(" + strings.Join(args, ", ") + ")", nil
+	return "new " + c + "(" + strings.Join(a, ", ") + ")"
 }
 
-// func (n DebuggerStatement) String() (string, error) {
+// func (n DebuggerStatement) String() string {
 // 	return "DebuggerStatement", nil
 // }
 
-// func (n WithStatement) String() (string, error) {
+// func (n WithStatement) String() string {
 // 	return "WithStatement", nil
 // }
 
-// func (n LabeledStatement) String() (string, error) {
+// func (n LabeledStatement) String() string {
 // 	return "LabeledStatement", nil
 // }
 
-// func (n BreakStatement) String() (string, error) {
+// func (n BreakStatement) String() string {
 // 	return "BreakStatement", nil
 // }
 
-// func (n ContinueStatement) String() (string, error) {
+// func (n ContinueStatement) String() string {
 // 	return "ContinueStatement", nil
 // }
 
-// func (n IfStatement) String() (string, error) {
+// func (n IfStatement) String() string {
 // 	return "IfStatement", nil
 // }
 
-// func (n SwitchStatement) String() (string, error) {
+// func (n SwitchStatement) String() string {
 // 	return "SwitchStatement", nil
 // }
 
-// func (n ThrowStatement) String() (string, error) {
+// func (n ThrowStatement) String() string {
 // 	return "ThrowStatement", nil
 // }
 
-// func (n TryStatement) String() (string, error) {
+// func (n TryStatement) String() string {
 // 	return "TryStatement", nil
 // }
 
-// func (n WhileStatement) String() (string, error) {
+// func (n WhileStatement) String() string {
 // 	return "WhileStatement", nil
 // }
 
-// func (n DoWhileStatement) String() (string, error) {
+// func (n DoWhileStatement) String() string {
 // 	return "DoWhileStatement", nil
 // }
 
-// func (n ForStatement) String() (string, error) {
+// func (n ForStatement) String() string {
 // 	return "ForStatement", nil
 // }
 
-// func (n ForInStatement) String() (string, error) {
+// func (n ForInStatement) String() string {
 // 	return "ForInStatement", nil
 // }
 
-// func (n Declaration) String() (string, error) {
+// func (n Declaration) String() string {
 // 	return "Declaration", nil
 // }

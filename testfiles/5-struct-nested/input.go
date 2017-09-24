@@ -8,6 +8,7 @@ type User struct {
 
 // Phone struct
 type Phone struct {
+	Type   string
 	Number string
 	Main   bool
 }
@@ -22,4 +23,5 @@ func main() {
 	}
 
 	println(user.Phone.Number)
+	user.Phone.Type = "CELL"
 }

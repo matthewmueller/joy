@@ -1,8 +1,13 @@
 (function() {
 function main () {
 var a = "a";
-var b = "b", c = "c", d = 3;
-console.log(a, b, c, d);
+var b = "b", c = "c", d = "d";
+var e = 3;
+var $f = (function() {
+return ["f", "g"];
+})(), f = $f[0], g = $f[1];
+var h = "h", i = "i", j = "j", k = "k";
+console.log(a, b, c, d, e, f, g, h, i, j, k);
 };
 main();
 })()
