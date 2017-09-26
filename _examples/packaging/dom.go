@@ -8,3 +8,11 @@ import (
 func main() {
 	println("hi " + dep.Get() + " " + Side() + " " + dep2.AnotherGet())
 }
+
+func Test() string {
+	return "another test"
+}
+
+func hi() string {
+	return "hi"
+}
