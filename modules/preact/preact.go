@@ -1,8 +1,11 @@
 package preact
 
+import "github.com/matthewmueller/golly/modules/preact/document"
+
 // VNode struct
 type VNode struct {
 	NodeName   string
+	NodeValue  string
 	Attributes map[string]interface{}
 	Children   []VNode
 }
@@ -35,9 +38,22 @@ type Preact struct {
 
 // Render fn
 // preact.render(<Page class="hi" />, document.body, document.body.firstChild)
-func Render(vnode VNode) {
+func Render(vnode VNode, root document.Node) {
+	root.AppendChild(document.CreateElement("hi world!"))
+}
 
-	return
+// Div creates a div
+func Div(text string) VNode {
+	return VNode{
+		NodeName:   "div",
+		Attributes: nil,
+		Children: []VNode{
+			VNode{
+				NodeName:  "#text",
+				NodeValue: text,
+			},
+		},
+	}
 }
 
 // // Cops holds COntext, Props and State received in the lifecycle methods.

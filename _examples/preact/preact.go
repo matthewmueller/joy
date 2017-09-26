@@ -1,14 +1,14 @@
 package main
 
 import (
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/modules/preact"
 )
 
 func main() {
 	component := preact.New(NewPage(Props{}))
+	preact.Render()
 	// preact.Render(preact.H(component, ))
-	log.Infof("got component", component)
+	// log.Infof("got component", component)
 }
 
 // Props struct
@@ -29,5 +29,5 @@ type Page struct {
 
 // Render the page
 func (p *Page) Render() *preact.VNode {
-	return nil
+	return preact.Div("hi world!")
 }

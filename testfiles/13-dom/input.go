@@ -1,7 +1,9 @@
 package main
 
+import "github.com/matthewmueller/golly/js"
+
 func main() {
-	document := Document{}
+	document := New()
 	div := document.CreateElement("div")
 	strong := document.CreateElement("strong")
 	strong.TextContent("nice!")
@@ -10,42 +12,55 @@ func main() {
 }
 
 func getText(div *Node) string {
-	return div.children[0].children[0].nodeValue
+	return div.Children[0].Children[0].NodeValue
+}
+
+// New Document
+func New() Document {
+	return Document{}
 }
 
 // Document struct
 type Document struct {
+	Body *Node `js:"body"`
+}
+
+// golly map
+var golly = map[string]func(js.INode) (js.INode, error){
+	"Document": func(existing js.INode) (js.INode, error) {
+		return nil, nil
+	},
 }
 
 // CreateElement struct
 func (d *Document) CreateElement(nodeName string) *Node {
 	return &Node{
-		nodeType: 1,
-		nodeName: nodeName,
-		children: []*Node{},
+		NodeType: 1,
+		NodeName: nodeName,
+		Children: []*Node{},
 	}
 }
 
 // Node struct
 type Node struct {
-	nodeType  int
-	nodeName  string
-	nodeValue string
-	children  []*Node
+	NodeType  int
+	NodeName  string
+	NodeValue string
+	Children  []*Node
 }
 
 // TextContent fn
 func (n *Node) TextContent(text string) {
-	n.children = append(n, &Node{
-		nodeType:  3,
-		nodeName:  "#text",
-		nodeValue: text,
+	n.Children = append(n.Children, &Node{
+		NodeType:  3,
+		NodeName:  "#text",
+		NodeValue: text,
 	})
 }
 
 // AppendChild fn
 func (n *Node) AppendChild(child *Node) *Node {
-	n.children = append(n.children, child)
+	n.Children = append(n.Children, child)
 	return n
 }
 

@@ -5,8 +5,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-
-	"github.com/kr/pretty"
 )
 
 // interface compliance
@@ -67,7 +65,7 @@ var _ fmt.Stringer = (*NewExpression)(nil)
 
 // Assemble JS from the AST
 func Assemble(node interface{}) string {
-	pretty.Println(node)
+	// pretty.Println(node)
 	return stringify(node)
 }
 
