@@ -60,11 +60,24 @@ func CompilePackage(packagePath string) (string, error) {
 	var spkgs []interface{}
 	for _, dep := range deps {
 		info := pkgs.Package(dep)
+
+		// translate the package returning a self-executing
+		// function that returns the public (capitalized)
+		// values.
+		//
+		// Example:
+		//
+		//  (function () {
+		//    ...body...
+		//    return { main: main, Another: Another }
+		//  })()
+		//
 		pkgfn, err := translatePackage(info)
 		if err != nil {
 			return "", errors.Wrapf(err, "error translating %s into a JS package", info.Pkg.Name())
 		}
 
+		// create: pkg["$dep"] = (function () { $yourPkg })()
 		wrap := js.CreateExpressionStatement(
 			js.CreateAssignmentExpression(
 				js.CreateMemberExpression(
