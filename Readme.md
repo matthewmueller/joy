@@ -7,6 +7,7 @@ Golly gee, it's another Go to JS compiler.
 - https://astexplorer.net/: I've been using this to figure out how to build the JS tree
 - http://goast.yuroyoro.net/: Simple Go AST viewer
 - https://github.com/estree/estree/blob/master/es5.md: Link to the ES3 AST format, this is implemented in syntax.go
+- To run examples: `go run cmd/golly/main.go --pkg $(PWD)/_examples/dom`
 - To run individual tests: `go test -v -run Compiler/3`
   - TODO: needs updating
 - To run output files: `./nodejs/node testfiles/7-classes/output.js.txt`
