@@ -98,7 +98,6 @@ In no particular order.
 
 - [x] support multiple files
   - files are wrapped in closures and the package wraps the file closures in another closure calling main()
-  - we can be clever and do topological dependency sorting to eliminate this later (look to rollup for inspiration here)
 - [ ] see if we can mimic rollup to decrease filesize further
 
 ### Hard but probably necessary:
