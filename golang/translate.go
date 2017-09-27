@@ -3,6 +3,7 @@ package golang
 import (
 	"fmt"
 	"go/ast"
+	"go/types"
 	"path"
 	"reflect"
 	"strings"
@@ -54,6 +55,8 @@ func translatePackage(info *loader.PackageInfo) (j js.IExpression, err error) {
 		body = append(body, stmt)
 	}
 
+	// creates a self-invoking function containing our package
+	// e.g. (function() { ... })()
 	pkgfn := js.CreateCallExpression(
 		js.CreateFunctionExpression(nil, []js.IPattern{},
 			js.CreateFunctionBody(body...),
@@ -64,14 +67,9 @@ func translatePackage(info *loader.PackageInfo) (j js.IExpression, err error) {
 	return pkgfn, nil
 }
 
-// Translate from a Go AST to a Javascript AST
 func translateFile(pkg *loader.PackageInfo, f *ast.File) (j []js.IStatement, err error) {
-	// ast.SortImports(pkg, f)
-	return fileToProgram(pkg, f)
-	// return j, nil
-}
+	// ast.Print(nil, f)
 
-func fileToProgram(pkg *loader.PackageInfo, f *ast.File) (j []js.IStatement, err error) {
 	var stmts []js.IStatement
 	for i := 0; i < len(f.Decls); i++ {
 		stmt, e := decl(pkg, f, f.Decls[i])
@@ -81,77 +79,7 @@ func fileToProgram(pkg *loader.PackageInfo, f *ast.File) (j []js.IStatement, err
 		stmts = append(stmts, stmt)
 	}
 	return stmts, nil
-	// call main()
-	// get the public functions, variables and types
-	// exports, err := getExports(decls)
-	// if err != nil {
-	// 	return nil, errors.Wrap(err, "unable to get exports")
-	// }
-
-	// range over the file's scope objects
-	// var exports []string
-	// for name := range f.Scope.Objects {
-	// 	if name == "main" || unicode.IsUpper(rune(name[0])) {
-	// 		exports = append(exports, name)
-	// 	}
-	// }
-
-	// pretty.Println(f.Scope.Objects)
-	// // get the public variables
-	// exports := pkg.Scopes[f].Parent().Names()
-	// f.Scope.Objects
-	// var props []js.Property
-	// for _, export := range exports {
-	// 	props = append(props, js.CreateProperty(
-	// 		js.CreateIdentifier(export),
-	// 		js.CreateIdentifier(export),
-	// 		"init",
-	// 	))
-	// }
-	// exportobj := js.CreateReturnStatement(js.CreateObjectExpression(props))
-
-	// log.Infof("exports %+v", exports)
-	// for i := 0; i < l; i++ {
-	// 	log.Infof("decl %s", decls[i])
-
-	// }
-	// callmain := js.CreateExpressionStatement(
-	// 	js.CreateCallExpression(
-	// 		js.CreateIdentifier("main"),
-	// 		[]js.IExpression{},
-	// 	),
-	// )
-
-	// return js.CreateCallExpression(
-	// 	js.CreateFunctionExpression(nil, []js.IPattern{},
-	// 		js.CreateFunctionBody(append(stmts, exportobj)...),
-	// 	),
-	// 	[]js.IExpression{},
-	// ), nil
 }
-
-// TODO: there's probably a better way to do this
-// func getExports(decls []ast.Decl) (exports []string, err error) {
-// 	for _, n := range decls {
-// 		switch t := n.(type) {
-// 		case *ast.FuncDecl:
-// 			// check if uppercase
-// 			if t.Name == nil || len(t.Name.Name) == 0 || !unicode.IsUpper(rune(t.Name.Name[0])) {
-// 				continue
-// 			}
-// 			exports = append(exports, t.Name.Name)
-// 		case *ast.GenDecl:
-// 			switch t.Tok.String() {
-// 			case "var":
-// 				// case ""
-// 			}
-// 		default:
-// 			return nil, unhandled("getExports", n)
-// 		}
-// 	}
-
-// 	return exports, nil
-// }
 
 func decl(pkg *loader.PackageInfo, f *ast.File, n ast.Decl) (s js.IStatement, err error) {
 	switch d := n.(type) {
@@ -288,8 +216,13 @@ func typeSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IState
 		return nil, unhandled("typespec", n.Specs[0])
 	}
 
+	log.Infof("full path of type declaration %+v", pkg.TypeOf(s.Name))
+
 	switch t := s.Type.(type) {
 	case *ast.StructType:
+		if n.Doc != nil {
+			return js.CreateExpressionStatement(js.CreateIdentifier("lol")), nil
+		}
 		// we turn these into contructor functions
 		// so more functions can get attached to them
 		return jsConstructorFunction(pkg, f, s.Name, t.Fields)
@@ -606,19 +539,32 @@ func assignStatement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as 
 			var id js.IPattern
 			var e error
 
-			switch t := lh.(type) {
-			case *ast.Ident:
-				id = js.CreateIdentifier(t.Name)
-			case *ast.SelectorExpr:
-				id, e = selectorExpr(pkg, f, fn, t)
-			default:
-				return j, fmt.Errorf("assignStatement: unhandled type: %s", reflect.TypeOf(lh))
-			}
+			rh, e := expression(pkg, f, fn, rhs[i])
 			if e != nil {
 				return j, e
 			}
 
-			rh, e := expression(pkg, f, fn, rhs[i])
+			switch t := lh.(type) {
+			case *ast.Ident:
+				id = js.CreateIdentifier(t.Name)
+			// exit early if it's a member expression
+			// e.g. document.test = 'hi'
+			// TODO: cleanup
+			case *ast.SelectorExpr:
+				memberExpr, e := selectorExpr(pkg, f, fn, t)
+				if e != nil {
+					return j, e
+				}
+				return js.CreateExpressionStatement(
+					js.CreateAssignmentExpression(
+						memberExpr,
+						js.AssignmentOperator("="),
+						rh,
+					),
+				), nil
+			default:
+				return j, fmt.Errorf("assignStatement: unhandled type: %s", reflect.TypeOf(lh))
+			}
 			if e != nil {
 				return j, e
 			}
@@ -862,9 +808,17 @@ func binaryExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, b 
 	}
 }
 
-func identifier(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, ident *ast.Ident) (j js.IExpression, err error) {
+func identifier(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ident) (j js.IExpression, err error) {
+	// kind := path.Base(pkg.Types[n].Type.String())
+	// log.Infof("scopes %+v", pkg.Scopes[n])
+	log.Infof("identifier type %s %+v %+v", n.Name, pkg.Types[n].Type, reflect.TypeOf(n))
+
+	// log.Infof("%+v", pkg.TypeOf(n))
+	// log.Infof("objectof %+v", pkg.ObjectOf(n).Type().(*ast.StructType))
+	// log.Infof("typeof %+v", pkg.TypeOf(n).(*ast.StructType))
+
 	// TODO: lookup table
-	switch ident.Name {
+	switch n.Name {
 	case "nil":
 		return js.CreateNull(), nil
 	case "println":
@@ -874,7 +828,7 @@ func identifier(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, ident *a
 			false,
 		), nil
 	default:
-		return js.CreateIdentifier(ident.Name), nil
+		return js.CreateIdentifier(n.Name), nil
 	}
 }
 
@@ -904,7 +858,7 @@ func basiclit(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, lit *ast.B
 
 func compositeLiteral(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.IExpression, err error) {
 	switch n.Type.(type) {
-	case *ast.Ident:
+	case *ast.Ident, *ast.SelectorExpr:
 		return jsNewFunction(pkg, f, fn, n)
 	case *ast.ArrayType:
 		return jsArrayExpression(pkg, f, fn, n)
@@ -937,16 +891,21 @@ func jsObjectExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, 
 	return js.CreateObjectExpression(props), nil
 }
 
-func jsNewFunction(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.NewExpression, err error) {
+func jsNewFunction(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.IExpression, err error) {
+	var fnname js.IExpression
 	var props []js.Property
-	var obj *ast.Object
-	_ = obj
-	var fnname string
 
 	switch t := n.Type.(type) {
+	// e.g. Document{}
 	case *ast.Ident:
-		fnname = t.Name
-		obj = t.Obj
+		fnname = js.CreateIdentifier(t.Name)
+	// e.g. dom.Document{}
+	case *ast.SelectorExpr:
+		sel, e := selectorExpr(pkg, f, fn, t)
+		if e != nil {
+			return j, e
+		}
+		fnname = sel
 	default:
 		return j, unhandled("jsNewFunction<name>", n.Type)
 	}
@@ -960,7 +919,6 @@ func jsNewFunction(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *as
 			prop, e = keyValueExpr(pkg, f, fn, t)
 		// case *ast.BasicLit:
 		// TODO: handle User{"a"}, by looking up the fields in obj
-
 		default:
 			return j, unhandled("jsNewFunction<elts>", elt)
 		}
@@ -971,7 +929,7 @@ func jsNewFunction(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *as
 	}
 
 	return js.CreateNewExpression(
-		js.CreateIdentifier(fnname),
+		fnname,
 		[]js.IExpression{js.CreateObjectExpression(props)},
 	), nil
 }
@@ -1019,7 +977,45 @@ func selectorExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast
 		return j, e
 	}
 
-	return js.CreateMemberExpression(x, s, false), nil
+	obj := pkg.ObjectOf(n.Sel).Type()
+	// ref := reflect.TypeOf(n.Sel)
+	log.Infof("got type... %s: %+v", n.Sel.Name, types.TypeString(obj, nil))
+
+	member := js.CreateMemberExpression(x, s, false)
+	log.Infof("member %s", member.String())
+	// TODO: can I
+	// var namesByType typeutil.Map
+
+	// scope := typeutil.NewScope(nil)
+	// t := typeutil.Expr_to_decl(n, scope)
+
+	// t := namesByType.At(pkg.ObjectOf(n.Sel).Type())
+	// log.Infof("got t %+v", t)
+	// pkg.ObjectOf(n).Type()
+
+	// kind := path.Base(pkg.TypeOf(n).String())
+	// switch kind {
+	// case "dom.Node":
+	// 	log.Infof("got a node!")
+	// case "dom.Document":
+	// 	r, e := DOM["dom.Document"](n)
+	// 	if e != nil {
+	// 		return j, e
+	// 	}
+	// 	_ = r
+	// 	return j, nil
+	// 	// return js.CreateMemberExpression(x, r, false), nil
+	// 	// log.Infof("r %+v", r)
+	// 	// // log.Infof("")
+	// 	// log.Infof("got a document")
+	// default:
+	// 	log.Infof("smething else %s", kind)
+	// }
+
+	// kind := path.Base(pkg.Types[n].Type.String())
+	// log.Infof("member expression type %s", kind)
+
+	return member, nil
 }
 
 func indexExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.IndexExpr) (j js.MemberExpression, err error) {

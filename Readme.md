@@ -2,48 +2,6 @@ Golly gee, it's another Go to JS compiler.
 
 ![img](https://cldup.com/uQb67D_DJT.png)
 
-## Directory Structure
-
-<details>
-<summary><strong>js/</strong></summary>
-  <ul>
-    <li><strong>syntax.go</strong>: this is the AST format for Javascript (ES3) (TODO: move to internal/)</li>
-    <li><strong>assemble.go</strong>: this will turn JS AST nodes into Javascript source code (TODO: move to internal/)</li>
-    <li><strong>api.go</strong>: this is the public interface for creating JS AST nodes</li>
-  </ul>
-</details>
-<details>
-<summary><strong>translator/</strong></summary>
-  <ul>
-    <li><strong>translate.go</strong>: this translates our Go AST into a JS AST. This file is the bread & butter of the project</li>
-  </ul>
-</details>
-<details>
-<summary><strong>nodejs/</strong></summary>
-  <ul>
-    <li><strong>node</strong>: the oldest node binary I could compile (0.6.0). no promises, generators, async/await. I've just been using this for testing</li>
-  </ul>
-</details>
-<details>
-<summary><strong>regenerator/</strong></summary>
-  <ul>
-    <li><strong>node_modules/.bin/regenerator</strong>: binary to compile async/await to ES5</li>
-    <li><strong>es6.js</strong>: test file</li>
-  </ul>
-</details>
-<details>
-<summary><strong>modules/</strong></summary>
-  <ul>
-    <li><strong>preact:</strong> experimental preact in Golang</li>
-    <li><strong>unfetch:</strong> experimental fetch library in Golang</li>
-  </ul>
-</details>
-<br/>
-<strong>dom/</strong> The DOM API written in Go. This acts like jsdom on server-side and has interfaces for golly to generate browser-side code<br/>
-<strong>testfiles/</strong> all our tests and expected responses (TODO: the tests will always fail at this point)<br/>
-<strong>golly.go:</strong> public API for golly<br/>
-<strong>cmd/golly/main.go:</strong> CLI for golly
-
 ## Helpful Resources
 
 - https://astexplorer.net/: I've been using this to figure out how to build the JS tree
