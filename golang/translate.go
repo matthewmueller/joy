@@ -3,7 +3,10 @@ package golang
 import (
 	"fmt"
 	"go/ast"
+	"path"
 	"reflect"
+	"strings"
+	"unicode"
 
 	"golang.org/x/tools/go/loader"
 
@@ -12,79 +15,174 @@ import (
 	"github.com/pkg/errors"
 )
 
+func translatePackage(info *loader.PackageInfo) (j js.IExpression, err error) {
+	var files []js.IStatement
+
+	// translate each file into an array of statements
+	for _, file := range info.Files {
+		stmts, e := translateFile(info, file)
+		if e != nil {
+			return j, errors.Wrapf(e, "error translating %s", file.Name.Name)
+		}
+		files = append(files, stmts...)
+	}
+
+	// find all the exported fields
+	exports := []string{}
+	pkgscope := info.Pkg.Scope().Names()
+	for _, name := range pkgscope {
+		if name == "main" || unicode.IsUpper(rune(name[0])) {
+			exports = append(exports, name)
+		}
+	}
+
+	// create a return statement for the exported fieldss
+	var props []js.Property
+	for _, export := range exports {
+		props = append(props, js.CreateProperty(
+			js.CreateIdentifier(export),
+			js.CreateIdentifier(export),
+			"init",
+		))
+	}
+	exportobj := js.CreateReturnStatement(
+		js.CreateObjectExpression(props),
+	)
+
+	var body []interface{}
+	for _, stmt := range append(files, exportobj) {
+		body = append(body, stmt)
+	}
+
+	pkgfn := js.CreateCallExpression(
+		js.CreateFunctionExpression(nil, []js.IPattern{},
+			js.CreateFunctionBody(body...),
+		),
+		[]js.IExpression{},
+	)
+
+	return pkgfn, nil
+}
+
 // Translate from a Go AST to a Javascript AST
-func Translate(pkg *loader.PackageInfo, f *ast.File) (j js.Program, err error) {
+func translateFile(pkg *loader.PackageInfo, f *ast.File) (j []js.IStatement, err error) {
 	// ast.SortImports(pkg, f)
 	return fileToProgram(pkg, f)
 	// return j, nil
 }
 
-func fileToProgram(pkg *loader.PackageInfo, f *ast.File) (j js.Program, err error) {
-	decls := f.Decls
-	l := len(decls)
-
-	// TODO: can i use additional interfaces to tighten this up?
-	stmts := []interface{}{}
-	for i := 0; i < l; i++ {
-		stmt, e := decl(pkg, f, decls[i])
+func fileToProgram(pkg *loader.PackageInfo, f *ast.File) (j []js.IStatement, err error) {
+	var stmts []js.IStatement
+	for i := 0; i < len(f.Decls); i++ {
+		stmt, e := decl(pkg, f, f.Decls[i])
 		if e != nil {
 			return j, e
 		}
 		stmts = append(stmts, stmt)
 	}
-
+	return stmts, nil
 	// call main()
-	callmain := js.CreateExpressionStatement(
-		js.CreateCallExpression(
-			js.CreateIdentifier("main"),
-			[]js.IExpression{},
-		),
-	)
+	// get the public functions, variables and types
+	// exports, err := getExports(decls)
+	// if err != nil {
+	// 	return nil, errors.Wrap(err, "unable to get exports")
+	// }
 
-	// self-executing
-	wrap := js.CreateExpressionStatement(
-		js.CreateCallExpression(
-			js.CreateFunctionExpression(nil, []js.IPattern{},
-				js.CreateFunctionBody(append(stmts, callmain)...),
-			),
-			[]js.IExpression{},
-		),
-	)
+	// range over the file's scope objects
+	// var exports []string
+	// for name := range f.Scope.Objects {
+	// 	if name == "main" || unicode.IsUpper(rune(name[0])) {
+	// 		exports = append(exports, name)
+	// 	}
+	// }
 
-	// golly := f.Scope.Lookup("golly")
-	return js.CreateProgram(wrap), nil
+	// pretty.Println(f.Scope.Objects)
+	// // get the public variables
+	// exports := pkg.Scopes[f].Parent().Names()
+	// f.Scope.Objects
+	// var props []js.Property
+	// for _, export := range exports {
+	// 	props = append(props, js.CreateProperty(
+	// 		js.CreateIdentifier(export),
+	// 		js.CreateIdentifier(export),
+	// 		"init",
+	// 	))
+	// }
+	// exportobj := js.CreateReturnStatement(js.CreateObjectExpression(props))
+
+	// log.Infof("exports %+v", exports)
+	// for i := 0; i < l; i++ {
+	// 	log.Infof("decl %s", decls[i])
+
+	// }
+	// callmain := js.CreateExpressionStatement(
+	// 	js.CreateCallExpression(
+	// 		js.CreateIdentifier("main"),
+	// 		[]js.IExpression{},
+	// 	),
+	// )
+
+	// return js.CreateCallExpression(
+	// 	js.CreateFunctionExpression(nil, []js.IPattern{},
+	// 		js.CreateFunctionBody(append(stmts, exportobj)...),
+	// 	),
+	// 	[]js.IExpression{},
+	// ), nil
 }
 
-func decl(pkg *loader.PackageInfo, f *ast.File, decl ast.Decl) (s js.IStatement, err error) {
-	switch d := decl.(type) {
+// TODO: there's probably a better way to do this
+// func getExports(decls []ast.Decl) (exports []string, err error) {
+// 	for _, n := range decls {
+// 		switch t := n.(type) {
+// 		case *ast.FuncDecl:
+// 			// check if uppercase
+// 			if t.Name == nil || len(t.Name.Name) == 0 || !unicode.IsUpper(rune(t.Name.Name[0])) {
+// 				continue
+// 			}
+// 			exports = append(exports, t.Name.Name)
+// 		case *ast.GenDecl:
+// 			switch t.Tok.String() {
+// 			case "var":
+// 				// case ""
+// 			}
+// 		default:
+// 			return nil, unhandled("getExports", n)
+// 		}
+// 	}
+
+// 	return exports, nil
+// }
+
+func decl(pkg *loader.PackageInfo, f *ast.File, n ast.Decl) (s js.IStatement, err error) {
+	switch d := n.(type) {
 	case *ast.FuncDecl:
 		return function(pkg, f, d)
 	case *ast.GenDecl:
 		return genDecl(pkg, f, d)
 	default:
-		return nil, unhandled("decl", decl)
+		return nil, unhandled("decl", n)
 	}
 }
 
-func function(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl) (j js.IStatement, err error) {
+func function(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j js.IStatement, err error) {
 	// e.g. func hi()
-	if fn.Body == nil {
+	if n.Body == nil {
 		return js.CreateEmptyStatement(), nil
 	}
 
 	// anonymous fns
-	if fn.Name == nil {
+	if n.Name == nil {
 		return j, fmt.Errorf("function: anon functions not yet supported")
 	}
 
 	// the name of the fn
-	fnname := js.CreateIdentifier((*fn.Name).Name)
+	fnname := js.CreateIdentifier((*n.Name).Name)
 
 	// build argument list
 	// var args
 	var params []js.IPattern
-	if fn.Type != nil && fn.Type.Params != nil {
-		fields := fn.Type.Params.List
+	if n.Type != nil && n.Type.Params != nil {
+		fields := n.Type.Params.List
 		for _, field := range fields {
 			// names because: (a, b string, c int) = [[a, b], c]
 			for _, name := range field.Names {
@@ -96,8 +194,8 @@ func function(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl) (j js.ISta
 
 	// create the body
 	var body []interface{}
-	for _, stmt := range fn.Body.List {
-		jsStmt, e := funcStatement(pkg, f, fn, stmt)
+	for _, stmt := range n.Body.List {
+		jsStmt, e := funcStatement(pkg, f, n, stmt)
 		if e != nil {
 			return j, e
 		}
@@ -105,7 +203,7 @@ func function(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl) (j js.ISta
 	}
 
 	// no receiver means it's a classless function
-	if fn.Recv == nil {
+	if n.Recv == nil {
 		return js.CreateFunctionDeclaration(
 			&fnname,
 			params,
@@ -113,12 +211,12 @@ func function(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl) (j js.ISta
 		), nil
 	}
 
-	if len(fn.Recv.List) != 1 {
-		return nil, fmt.Errorf("function<recv>: only expected 1 func receiver but got %d", len(fn.Recv.List))
+	if len(n.Recv.List) != 1 {
+		return nil, fmt.Errorf("function<recv>: only expected 1 func receiver but got %d", len(n.Recv.List))
 	}
 
-	recv := fn.Recv.List[0]
-	x, e := expression(pkg, f, fn, recv.Type)
+	recv := n.Recv.List[0]
+	x, e := expression(pkg, f, n, recv.Type)
 	if e != nil {
 		return nil, e
 	}
@@ -150,11 +248,10 @@ func function(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl) (j js.ISta
 
 func genDecl(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatement, err error) {
 	switch n.Tok.String() {
+	case "import":
+		return importSpec(pkg, f, n)
 	case "type":
 		return typeSpec(pkg, f, n)
-	case "import":
-		log.Infof("ignoring import statement")
-		return js.CreateEmptyStatement(), nil
 	case "var":
 		return varSpec(pkg, f, n)
 	default:
@@ -201,14 +298,44 @@ func typeSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IState
 	}
 }
 
+func importSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatement, err error) {
+	var decls []js.VariableDeclarator
+
+	for _, spec := range n.Specs {
+		switch t := spec.(type) {
+		case *ast.ImportSpec:
+			var lh js.Identifier
+			p := t.Path.Value
+
+			// import dep "pkg/dep"
+			if t.Name != nil {
+				lh = js.CreateIdentifier(t.Name.Name)
+			} else if p != "" {
+				lh = js.CreateIdentifier(path.Base(strings.Trim(p, `"`)))
+			} else {
+				return nil, unhandled("importSpec<empty>", spec)
+			}
+
+			rh := js.CreateMemberExpression(
+				js.CreateIdentifier("pkg"),
+				js.CreateString(t.Path.Value),
+				true,
+			)
+
+			decl := js.CreateVariableDeclarator(lh, rh)
+			decls = append(decls, decl)
+		default:
+			return nil, unhandled("importSpec", spec)
+		}
+	}
+
+	return js.CreateVariableDeclaration("var", decls...), nil
+}
+
 func varSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatement, err error) {
 	var decls []js.VariableDeclarator
 
 	for _, spec := range n.Specs {
-		var id js.IPattern
-		var e error
-		_, _ = id, e
-
 		switch t := spec.(type) {
 		case *ast.ValueSpec:
 			if len(t.Names) != len(t.Values) {
