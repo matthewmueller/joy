@@ -220,9 +220,9 @@ func typeSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IState
 
 	switch t := s.Type.(type) {
 	case *ast.StructType:
-		if n.Doc != nil {
-			return js.CreateExpressionStatement(js.CreateIdentifier("lol")), nil
-		}
+		// if n.Doc != nil {
+		// 	return js.CreateExpressionStatement(js.CreateIdentifier("lol")), nil
+		// }
 		// we turn these into contructor functions
 		// so more functions can get attached to them
 		return jsConstructorFunction(pkg, f, s.Name, t.Fields)
