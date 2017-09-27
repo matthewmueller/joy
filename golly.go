@@ -12,10 +12,7 @@ import (
 
 // Compile the package, file or source
 func Compile(path string, source string) (string, error) {
-	if e := golang.CompilePackage(path); e != nil {
-		return "", e
-	}
-	return "", nil
+	return golang.CompilePackage(path)
 }
 
 // // Compile source

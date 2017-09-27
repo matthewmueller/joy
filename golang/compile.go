@@ -4,14 +4,13 @@ import (
 	"go/build"
 	"sort"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/js"
 	"github.com/pkg/errors"
 	"golang.org/x/tools/go/loader"
 )
 
 // CompilePackage compiles a package by it's path
-func CompilePackage(packagePath string) error {
+func CompilePackage(packagePath string) (string, error) {
 	var conf loader.Config
 	conf.Import(packagePath)
 
@@ -31,7 +30,7 @@ func CompilePackage(packagePath string) error {
 	// load the package
 	pkgs, err := conf.Load()
 	if err != nil {
-		return errors.Wrap(err, "unable to load the go package")
+		return "", errors.Wrap(err, "unable to load the go package")
 	}
 
 	// get a deterministic toposort of the imports
@@ -47,36 +46,35 @@ func CompilePackage(packagePath string) error {
 		deps = append(deps, lvl...)
 	}
 	deps = reverse(deps)
-	// sort.Reverse(deps)
-	// deps = strings.Re
-
-	for _, dep := range deps {
-		log.Infof("dep: %s", dep)
-	}
-
-	var body []interface{}
-	var stmts []interface{}
 
 	// translate each file to their Javascript counterpart
-	for _, info := range pkgs.AllPackages {
-		// log.Infof("building... %s", pkg.Name())
-		for _, file := range info.Files {
-			// log.Infof("translating... %s", info.Pkg.Path())
-			stmt, e := Translate(info, file)
-			if e != nil {
-				return errors.Wrapf(e, "error translating %s", file.Name.Name)
-			}
-
-			filepath := info.Pkg.Path()
-			log.Infof("filepath %s", filepath)
-			stmts = append(stmts, stmt)
-			// log.Infof("translated: %s\n%s", file.Name.Name, ast)
+	pkgmap := map[string]js.IExpression{}
+	for pkg, info := range pkgs.AllPackages {
+		pkgfn, err := translatePackage(info)
+		if err != nil {
+			return "", errors.Wrapf(err, "error translating %s into a JS package", pkg.Name())
 		}
-
-		// TODO: bundle each file by package
-
+		pkgmap[pkg.Path()] = pkgfn
 	}
 
+	// wrap & sort the packages in topological orders
+	var spkgs []interface{}
+	for _, dep := range deps {
+		wrap := js.CreateExpressionStatement(
+			js.CreateAssignmentExpression(
+				js.CreateMemberExpression(
+					js.CreateIdentifier("pkg"),
+					js.CreateString(`"`+dep+`"`),
+					true,
+				),
+				js.AssignmentOperator("="),
+				pkgmap[dep],
+			),
+		)
+		spkgs = append(spkgs, wrap)
+	}
+
+	// create: `var pkg = {}`
 	init := js.CreateVariableDeclaration(
 		"var",
 		js.CreateVariableDeclarator(
@@ -85,6 +83,7 @@ func CompilePackage(packagePath string) error {
 		),
 	)
 
+	// create `pkg[$main].main()`
 	callmain := js.CreateExpressionStatement(
 		js.CreateCallExpression(
 			js.CreateMemberExpression(
@@ -100,24 +99,26 @@ func CompilePackage(packagePath string) error {
 		),
 	)
 
-	body = append(body, init)
-	body = append(body, stmts...)
-	body = append(body, callmain)
+	// create the program body
+	var pbody []interface{}
+	pbody = append(pbody, init)
+	pbody = append(pbody, spkgs...)
+	pbody = append(pbody, callmain)
 
+	// put everything together into a program
 	prog := js.CreateProgram(
 		js.CreateExpressionStatement(
 			js.CreateCallExpression(
 				js.CreateFunctionExpression(nil, []js.IPattern{},
-					js.CreateFunctionBody(body...),
+					js.CreateFunctionBody(pbody...),
 				),
 				[]js.IExpression{},
 			),
 		),
 	)
-	_ = prog
-	// log.Infof("%s", prog)
 
-	return nil
+	// assemble that program
+	return prog.String(), nil
 }
 
 func reverse(s []string) []string {

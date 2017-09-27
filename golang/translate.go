@@ -15,47 +15,28 @@ import (
 	"github.com/pkg/errors"
 )
 
-// Translate from a Go AST to a Javascript AST
-func Translate(pkg *loader.PackageInfo, f *ast.File) (j js.IStatement, err error) {
-	// ast.SortImports(pkg, f)
-	return fileToProgram(pkg, f)
-	// return j, nil
-}
+func translatePackage(info *loader.PackageInfo) (j js.IExpression, err error) {
+	var files []js.IStatement
 
-func fileToProgram(pkg *loader.PackageInfo, f *ast.File) (j js.IStatement, err error) {
-	filepath := pkg.Pkg.Path()
-	decls := f.Decls
-	l := len(decls)
-
-	// TODO: can i use additional interfaces to tighten this up?
-	stmts := []interface{}{}
-	for i := 0; i < l; i++ {
-		stmt, e := decl(pkg, f, decls[i])
+	// translate each file into an array of statements
+	for _, file := range info.Files {
+		stmts, e := translateFile(info, file)
 		if e != nil {
-			return j, e
+			return j, errors.Wrapf(e, "error translating %s", file.Name.Name)
 		}
-		stmts = append(stmts, stmt)
+		files = append(files, stmts...)
 	}
 
-	// call main()
-	// get the public functions, variables and types
-	// exports, err := getExports(decls)
-	// if err != nil {
-	// 	return nil, errors.Wrap(err, "unable to get exports")
-	// }
-
-	// range over the file's scope objects
-	var exports []string
-	for name := range f.Scope.Objects {
+	// find all the exported fields
+	exports := []string{}
+	pkgscope := info.Pkg.Scope().Names()
+	for _, name := range pkgscope {
 		if name == "main" || unicode.IsUpper(rune(name[0])) {
 			exports = append(exports, name)
 		}
 	}
 
-	// pretty.Println(f.Scope.Objects)
-	// // get the public variables
-	// exports := pkg.Scopes[f].Parent().Names()
-	// f.Scope.Objects
+	// create a return statement for the exported fieldss
 	var props []js.Property
 	for _, export := range exports {
 		props = append(props, js.CreateProperty(
@@ -64,7 +45,70 @@ func fileToProgram(pkg *loader.PackageInfo, f *ast.File) (j js.IStatement, err e
 			"init",
 		))
 	}
-	exportobj := js.CreateReturnStatement(js.CreateObjectExpression(props))
+	exportobj := js.CreateReturnStatement(
+		js.CreateObjectExpression(props),
+	)
+
+	var body []interface{}
+	for _, stmt := range append(files, exportobj) {
+		body = append(body, stmt)
+	}
+
+	pkgfn := js.CreateCallExpression(
+		js.CreateFunctionExpression(nil, []js.IPattern{},
+			js.CreateFunctionBody(body...),
+		),
+		[]js.IExpression{},
+	)
+
+	return pkgfn, nil
+}
+
+// Translate from a Go AST to a Javascript AST
+func translateFile(pkg *loader.PackageInfo, f *ast.File) (j []js.IStatement, err error) {
+	// ast.SortImports(pkg, f)
+	return fileToProgram(pkg, f)
+	// return j, nil
+}
+
+func fileToProgram(pkg *loader.PackageInfo, f *ast.File) (j []js.IStatement, err error) {
+	var stmts []js.IStatement
+	for i := 0; i < len(f.Decls); i++ {
+		stmt, e := decl(pkg, f, f.Decls[i])
+		if e != nil {
+			return j, e
+		}
+		stmts = append(stmts, stmt)
+	}
+	return stmts, nil
+	// call main()
+	// get the public functions, variables and types
+	// exports, err := getExports(decls)
+	// if err != nil {
+	// 	return nil, errors.Wrap(err, "unable to get exports")
+	// }
+
+	// range over the file's scope objects
+	// var exports []string
+	// for name := range f.Scope.Objects {
+	// 	if name == "main" || unicode.IsUpper(rune(name[0])) {
+	// 		exports = append(exports, name)
+	// 	}
+	// }
+
+	// pretty.Println(f.Scope.Objects)
+	// // get the public variables
+	// exports := pkg.Scopes[f].Parent().Names()
+	// f.Scope.Objects
+	// var props []js.Property
+	// for _, export := range exports {
+	// 	props = append(props, js.CreateProperty(
+	// 		js.CreateIdentifier(export),
+	// 		js.CreateIdentifier(export),
+	// 		"init",
+	// 	))
+	// }
+	// exportobj := js.CreateReturnStatement(js.CreateObjectExpression(props))
 
 	// log.Infof("exports %+v", exports)
 	// for i := 0; i < l; i++ {
@@ -78,51 +122,36 @@ func fileToProgram(pkg *loader.PackageInfo, f *ast.File) (j js.IStatement, err e
 	// 	),
 	// )
 
-	// self-executing
-	// pkg[path] = (function () {})()
-	assignment := js.CreateExpressionStatement(
-		js.CreateAssignmentExpression(
-			js.CreateMemberExpression(
-				js.CreateIdentifier("pkg"),
-				js.CreateString(`"`+filepath+`"`),
-				true,
-			),
-			js.AssignmentOperator("="),
-			js.CreateCallExpression(
-				js.CreateFunctionExpression(nil, []js.IPattern{},
-					js.CreateFunctionBody(append(stmts, exportobj)...),
-				),
-				[]js.IExpression{},
-			),
-		),
-	)
-
-	// golly := f.Scope.Lookup("golly")
-	return assignment, nil
+	// return js.CreateCallExpression(
+	// 	js.CreateFunctionExpression(nil, []js.IPattern{},
+	// 		js.CreateFunctionBody(append(stmts, exportobj)...),
+	// 	),
+	// 	[]js.IExpression{},
+	// ), nil
 }
 
 // TODO: there's probably a better way to do this
-func getExports(decls []ast.Decl) (exports []string, err error) {
-	for _, n := range decls {
-		switch t := n.(type) {
-		case *ast.FuncDecl:
-			// check if uppercase
-			if t.Name == nil || len(t.Name.Name) == 0 || !unicode.IsUpper(rune(t.Name.Name[0])) {
-				continue
-			}
-			exports = append(exports, t.Name.Name)
-		case *ast.GenDecl:
-			switch t.Tok.String() {
-			case "var":
-				// case ""
-			}
-		default:
-			return nil, unhandled("getExports", n)
-		}
-	}
+// func getExports(decls []ast.Decl) (exports []string, err error) {
+// 	for _, n := range decls {
+// 		switch t := n.(type) {
+// 		case *ast.FuncDecl:
+// 			// check if uppercase
+// 			if t.Name == nil || len(t.Name.Name) == 0 || !unicode.IsUpper(rune(t.Name.Name[0])) {
+// 				continue
+// 			}
+// 			exports = append(exports, t.Name.Name)
+// 		case *ast.GenDecl:
+// 			switch t.Tok.String() {
+// 			case "var":
+// 				// case ""
+// 			}
+// 		default:
+// 			return nil, unhandled("getExports", n)
+// 		}
+// 	}
 
-	return exports, nil
-}
+// 	return exports, nil
+// }
 
 func decl(pkg *loader.PackageInfo, f *ast.File, n ast.Decl) (s js.IStatement, err error) {
 	switch d := n.(type) {
