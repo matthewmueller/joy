@@ -606,19 +606,32 @@ func assignStatement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as 
 			var id js.IPattern
 			var e error
 
-			switch t := lh.(type) {
-			case *ast.Ident:
-				id = js.CreateIdentifier(t.Name)
-			case *ast.SelectorExpr:
-				id, e = selectorExpr(pkg, f, fn, t)
-			default:
-				return j, fmt.Errorf("assignStatement: unhandled type: %s", reflect.TypeOf(lh))
-			}
+			rh, e := expression(pkg, f, fn, rhs[i])
 			if e != nil {
 				return j, e
 			}
 
-			rh, e := expression(pkg, f, fn, rhs[i])
+			switch t := lh.(type) {
+			case *ast.Ident:
+				id = js.CreateIdentifier(t.Name)
+			// exit early if it's a member expression
+			// e.g. document.test = 'hi'
+			// TODO: cleanup
+			case *ast.SelectorExpr:
+				memberExpr, e := selectorExpr(pkg, f, fn, t)
+				if e != nil {
+					return j, e
+				}
+				return js.CreateExpressionStatement(
+					js.CreateAssignmentExpression(
+						memberExpr,
+						js.AssignmentOperator("="),
+						rh,
+					),
+				), nil
+			default:
+				return j, fmt.Errorf("assignStatement: unhandled type: %s", reflect.TypeOf(lh))
+			}
 			if e != nil {
 				return j, e
 			}
@@ -904,7 +917,7 @@ func basiclit(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, lit *ast.B
 
 func compositeLiteral(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.IExpression, err error) {
 	switch n.Type.(type) {
-	case *ast.Ident:
+	case *ast.Ident, *ast.SelectorExpr:
 		return jsNewFunction(pkg, f, fn, n)
 	case *ast.ArrayType:
 		return jsArrayExpression(pkg, f, fn, n)
@@ -938,15 +951,20 @@ func jsObjectExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, 
 }
 
 func jsNewFunction(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.NewExpression, err error) {
+	var fnname js.IExpression
 	var props []js.Property
-	var obj *ast.Object
-	_ = obj
-	var fnname string
 
 	switch t := n.Type.(type) {
+	// e.g. Document{}
 	case *ast.Ident:
-		fnname = t.Name
-		obj = t.Obj
+		fnname = js.CreateIdentifier(t.Name)
+	// e.g. dom.Document{}
+	case *ast.SelectorExpr:
+		sel, e := selectorExpr(pkg, f, fn, t)
+		if e != nil {
+			return j, e
+		}
+		fnname = sel
 	default:
 		return j, unhandled("jsNewFunction<name>", n.Type)
 	}
@@ -960,7 +978,6 @@ func jsNewFunction(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *as
 			prop, e = keyValueExpr(pkg, f, fn, t)
 		// case *ast.BasicLit:
 		// TODO: handle User{"a"}, by looking up the fields in obj
-
 		default:
 			return j, unhandled("jsNewFunction<elts>", elt)
 		}
@@ -971,7 +988,7 @@ func jsNewFunction(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *as
 	}
 
 	return js.CreateNewExpression(
-		js.CreateIdentifier(fnname),
+		fnname,
 		[]js.IExpression{js.CreateObjectExpression(props)},
 	), nil
 }
