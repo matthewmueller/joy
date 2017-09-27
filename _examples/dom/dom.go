@@ -12,6 +12,14 @@ var document = dom.Document{
 
 func main() {
 	// document.
-	document.Body.InnerHTML = "matt"
+	body := document.Body
+	body.InnerHTML = "matt"
+	// document.Body.InnerHTML = "matt"
+	// google := test()
+	// println(google)
 	// fmt.Printf(document)
 }
+
+// func test() string {
+// 	return "test"
+// }

@@ -4,6 +4,8 @@
 package dom
 
 // Document struct
+//
+// js:"document,global"
 type Document struct {
 	Body *Node `js:"body"`
 }

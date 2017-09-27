@@ -2,6 +2,7 @@ package golang
 
 import (
 	"go/build"
+	"go/parser"
 	"sort"
 
 	"github.com/matthewmueller/golly/js"
@@ -19,6 +20,7 @@ func CompilePackage(packagePath string) (string, error) {
 	imports := map[string][]string{}
 
 	// load each of the imports
+	// NOTE: we can override import here
 	conf.FindPackage = func(ctx *build.Context, importPath, fromDir string, mode build.ImportMode) (*build.Package, error) {
 		if imports[fromDir] == nil {
 			order = append(order, fromDir)
@@ -26,6 +28,9 @@ func CompilePackage(packagePath string) (string, error) {
 		imports[fromDir] = append(imports[fromDir], importPath)
 		return ctx.Import(importPath, fromDir, mode)
 	}
+
+	// add comments to the AST
+	conf.ParserMode = parser.ParseComments
 
 	// load the package
 	pkgs, err := conf.Load()
@@ -48,18 +53,18 @@ func CompilePackage(packagePath string) (string, error) {
 	deps = reverse(deps)
 
 	// translate each file to their Javascript counterpart
-	pkgmap := map[string]js.IExpression{}
-	for pkg, info := range pkgs.AllPackages {
-		pkgfn, err := translatePackage(info)
-		if err != nil {
-			return "", errors.Wrapf(err, "error translating %s into a JS package", pkg.Name())
-		}
-		pkgmap[pkg.Path()] = pkgfn
-	}
-
-	// wrap & sort the packages in topological orders
+	// this is done in topological order to ensure that
+	// we have all the type information by the time we
+	// need to use it and also so JS initializes in the
+	// right order
 	var spkgs []interface{}
 	for _, dep := range deps {
+		info := pkgs.Package(dep)
+		pkgfn, err := translatePackage(info)
+		if err != nil {
+			return "", errors.Wrapf(err, "error translating %s into a JS package", info.Pkg.Name())
+		}
+
 		wrap := js.CreateExpressionStatement(
 			js.CreateAssignmentExpression(
 				js.CreateMemberExpression(
@@ -68,9 +73,10 @@ func CompilePackage(packagePath string) (string, error) {
 					true,
 				),
 				js.AssignmentOperator("="),
-				pkgmap[dep],
+				pkgfn,
 			),
 		)
+
 		spkgs = append(spkgs, wrap)
 	}
 
