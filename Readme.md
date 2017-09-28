@@ -61,6 +61,7 @@ Golly gee, it's another Go to JS compiler.
 - [x] implement anonymous functions
 - [ ] implement slices
 - [ ] implement built-in functions (append, copy, len, make)
+- [ ] special types like `time.Time`
 - [ ] implement spreads (users...)
 - [ ] implement switch statements
 - [ ] handle User{"a"}
