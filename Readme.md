@@ -126,3 +126,9 @@ All 3rd party packages are opt-in. This is to make sure that our builds remain p
 **Golly aims to be a browser solution, not a node.js solution**
 
 While there's a good chance Golly programs will work in node.js, it's not the focus of this project. The stack we're going for here is Go on the backend and Go on the frontend compiled with Golly.
+
+## Additional Motivation
+
+The source code to metadata has got out of hand. Let's change this:
+
+![img](https://cldup.com/4EtJ3jqzdw.png)
