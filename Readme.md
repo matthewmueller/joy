@@ -4,7 +4,7 @@ Golly gee, it's another Go to JS compiler.
 
 ### On Deck Tasks:
 
-- [x] [Matt] Fix up the test suite to test packages that it's actually starting to compile working stuff
+- [x] [Matt] Fix up the test suite to test packages now that it's actually starting to compile working stuff
 - [ ] Handle empty values in struct (https://github.com/matthewmueller/golly/issues/3)
 - [ ] Build out the DOM implementation (starting with level 1 or if these can be scripted... amazeee)
 - [ ] Implement a goroutine & channel => async/await or generator runtime
