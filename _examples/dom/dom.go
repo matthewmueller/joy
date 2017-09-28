@@ -12,7 +12,9 @@ func main() {
 	div := document.CreateElement("div")
 	div.InnerHTML = "some title"
 
-	div.AddEventListener("click", func(e dom.Event) {
-		println(e.Type)
-	})
+	div.AddEventListener("click", onClick)
+}
+
+func onClick(e dom.Event) {
+	println(e.Type)
 }

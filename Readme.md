@@ -2,6 +2,18 @@ Golly gee, it's another Go to JS compiler.
 
 ![img](https://cldup.com/uQb67D_DJT.png)
 
+### On Deck Tasks:
+
+- [ ] [Matt] Fix up the test suite now to test packages that it's actually starting to compile working stuff
+- [ ] Build out the DOM implementation (starting with level 1 or if all can be scripted, amazeee)
+- [ ] Implement a goroutine & channel => async/await or generator runtime
+- [ ] Start writing libraries and application code
+  - [ ] Preact (@matthewmueller will probably try to translate this completely into Go code)
+  - [ ] D3 (good example to test bindings with external libraries) 
+  - [ ] fetch (100 LOC using https://github.com/developit/unfetch)
+  - [ ] VNode helper (something like: https://github.com/matthewmueller/vcom)
+- [ ] Bug fix and add features as needed. Rinse & repeat.
+
 ## Helpful Resources
 
 - https://astexplorer.net/: I've been using this to figure out how to build the JS tree
@@ -25,7 +37,7 @@ Golly gee, it's another Go to JS compiler.
   - DOM will be by default be an server-side API (like jsdom), but include interfaces to JS AST Nodes that Golly will call into over transpiling the Go code into JS
 - [x] How can we implement the DOM's massive API as quickly as possible
   - We'll try to generate this using Typescript's definitions
-- [ ] How will we translate and rewrite Go code when encountering global DOM objects like window and document?
+- [x] How will we translate and rewrite Go code when encountering global DOM objects like window and document?
 - [ ] How can we turn goroutines and channels into async/await or generators?
 - [ ] What is a []byte? Can it just be a string? How does that map?
 - [ ] How does the JS variable scope differ from the Go's scope and what do we need to account for?
@@ -35,8 +47,6 @@ Golly gee, it's another Go to JS compiler.
 - [ ] Should we rename this project to Jolly? :-D
 
 ## High-level TODO:
-
-In no particular order.
 
 ### File-Level:
 
