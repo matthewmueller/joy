@@ -1,0 +1,29 @@
+(function() {
+var pkg = {
+
+};
+pkg["github.com/matthewmueller/golly/testdata/06-structs"] = (function() {
+function main () {
+var doc = New();
+var el = doc.GetElementByID("canvas");
+console.log("got element " + el);
+};
+function New () {
+return new Document({
+  Version: 1
+});
+};
+function Document (o) {
+this.Version = o.Version;
+};
+Document.prototype.GetElementByID = function(id) {
+return "#" + id;
+};
+return {
+  Document: Document,
+  New: New,
+  main: main
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/06-structs"].main();
+})()

@@ -303,3 +303,11 @@ func CreateNewExpression(callee IExpression, arguments []IExpression) NewExpress
 		Arguments: arguments,
 	}
 }
+
+// CreateBreakStatement fn
+func CreateBreakStatement(label *Identifier) BreakStatement {
+	return BreakStatement{
+		Type:  "BreakStatement",
+		Label: label,
+	}
+}

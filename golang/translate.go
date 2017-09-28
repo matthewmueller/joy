@@ -187,9 +187,11 @@ func function(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j js.IStat
 	// itself.
 	//
 	// TODO: This code may panic, make more robust
-	typeof := pkg.TypeOf(recv.Names[0])
-	if typeof != nil && aliases[typeof.String()] != nil && aliases[typeof.String()].HasOption("global") {
-		return js.CreateEmptyStatement(), nil
+	if len(recv.Names) > 0 {
+		typeof := pkg.TypeOf(recv.Names[0])
+		if typeof != nil && aliases[typeof.String()] != nil && aliases[typeof.String()].HasOption("global") {
+			return js.CreateEmptyStatement(), nil
+		}
 	}
 
 	// {recv}.prototype.{name} = function ({params}) {
@@ -516,6 +518,15 @@ func ifStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.IfStm
 	), nil
 }
 
+func branchStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.BranchStmt) (j js.IStatement, err error) {
+	switch n.Tok.String() {
+	case "break":
+		return js.CreateBreakStatement(nil), nil
+	default:
+		return nil, fmt.Errorf("unhandled branchStmt: %s", n.Tok.String())
+	}
+}
+
 func forStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ForStmt) (j js.IStatement, err error) {
 
 	init, e := statement(pkg, f, fn, n.Init)
@@ -570,6 +581,10 @@ func statement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n ast.Stm
 		return incDecStmt(pkg, f, fn, t)
 	case *ast.ExprStmt:
 		return exprStatement(pkg, f, fn, t)
+	case *ast.IfStmt:
+		return ifStmt(pkg, f, fn, t)
+	case *ast.BranchStmt:
+		return branchStmt(pkg, f, fn, t)
 	default:
 		return nil, unhandled("statement", n)
 	}

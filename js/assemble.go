@@ -26,7 +26,8 @@ var _ fmt.Stringer = (*EmptyStatement)(nil)
 var _ fmt.Stringer = (*ReturnStatement)(nil)
 
 // var _ fmt.Stringer = (*LabeledStatement)(nil)
-// var _ fmt.Stringer = (*BreakStatement)(nil)
+var _ fmt.Stringer = (*BreakStatement)(nil)
+
 // var _ fmt.Stringer = (*ContinueStatement)(nil)
 var _ fmt.Stringer = (*IfStatement)(nil)
 
@@ -142,7 +143,7 @@ func (n FunctionDeclaration) String() string {
 		name = " " + n
 	}
 
-	fn := "function" + name + " (" + strings.Join(a, ", ") + ") { \n" + body + "\n}"
+	fn := "function" + name + " (" + strings.Join(a, ", ") + ") {\n" + body + "\n}"
 	return fn
 }
 
@@ -311,6 +312,10 @@ func (n NewExpression) String() string {
 	return "new " + c + "(" + strings.Join(a, ", ") + ")"
 }
 
+func (n BreakStatement) String() string {
+	return "break"
+}
+
 // func (n DebuggerStatement) String() string {
 // 	return "DebuggerStatement", nil
 // }
@@ -321,10 +326,6 @@ func (n NewExpression) String() string {
 
 // func (n LabeledStatement) String() string {
 // 	return "LabeledStatement", nil
-// }
-
-// func (n BreakStatement) String() string {
-// 	return "BreakStatement", nil
 // }
 
 // func (n ContinueStatement) String() string {

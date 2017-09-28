@@ -1,0 +1,18 @@
+(function() {
+var pkg = {
+
+};
+pkg["github.com/matthewmueller/golly/testdata/03-function"] = (function() {
+function main () {
+var greet = hello("anki");
+console.log(greet);
+};
+function hello (name) {
+return "hello " + name;
+};
+return {
+  main: main
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/03-function"].main();
+})()

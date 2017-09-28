@@ -1,0 +1,15 @@
+(function() {
+var pkg = {
+
+};
+pkg["github.com/matthewmueller/golly/testdata/11-array-of-arrays"] = (function() {
+function main () {
+var names = [["matt"], ["tejas"], ["tj"]];
+console.log(names[1][0]);
+};
+return {
+  main: main
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/11-array-of-arrays"].main();
+})()

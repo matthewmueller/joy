@@ -4,16 +4,20 @@ Golly gee, it's another Go to JS compiler.
 
 ### On Deck Tasks:
 
-- [ ] [Matt] Fix up the test suite to test packages that it's actually starting to compile working stuff
+- [x] [Matt] Fix up the test suite to test packages that it's actually starting to compile working stuff
 - [ ] Handle empty values in struct (https://github.com/matthewmueller/golly/issues/3)
-- [ ] Build out the DOM implementation (starting with level 1 or if all can be generated, amazeee)
+- [ ] Build out the DOM implementation (starting with level 1 or if these can be scripted... amazeee)
 - [ ] Implement a goroutine & channel => async/await or generator runtime
+- [ ] Start implementing pieces of the standard library (e.g. json.Marshal => JSON.stringify) and have a way to import these over the Go implementations
+- [ ] Unused functions from libraries should be excluded from the output (this should be relatively the same technique that DOM renaming uses)
+- [ ] Prettier javascript (not hugely important, but right now the JS we emit is fugly and hard to scan without running it)
 - [ ] Start writing libraries and application code
-  - [ ] Preact (@matthewmueller will probably try to translate this completely into Go code)
+  - [ ] [Matt] Preact (will probably try to translate this completely into Go code)
   - [ ] D3 (good example to test bindings with external libraries) 
-  - [ ] fetch (100 LOC using https://github.com/developit/unfetch)
-  - [ ] VNode helper (something like: https://github.com/matthewmueller/vcom)
+  - [ ] [Matt] fetch (100 LOC using https://github.com/developit/unfetch)
+  - [ ] [Matt] Generate VNode helper library (something like: https://github.com/matthewmueller/vcom)
 - [ ] Bug fix and add features as needed. Rinse & repeat.
+
 
 ## Helpful Resources
 
@@ -21,10 +25,8 @@ Golly gee, it's another Go to JS compiler.
 - http://goast.yuroyoro.net/: Simple Go AST viewer
 - https://github.com/estree/estree/blob/master/es5.md: Link to the ES3 AST format, this is implemented in syntax.go
 - To run examples: `go run cmd/golly/main.go --pkg $(PWD)/_examples/dom`
-- To run individual tests: `go test -v -run Compiler/3`
-  - TODO: needs updating
-- To run output files: `./nodejs/node testfiles/7-classes/output.js.txt`
-  - TODO: needs updating
+- To run all tests: `go test -v`
+- To run individual tests: `go test -v -run Test/08`
 - `pretty.Println(ast)` will pretty print the JS AST
 - `ast.Print(nil, node)` will pretty print the Go AST
 
@@ -59,13 +61,15 @@ Golly gee, it's another Go to JS compiler.
 - [x] implement maps
 - [x] implement functions with multiple return values
 - [x] implement anonymous functions
+- [x] break
+- [ ] continue
 - [ ] implement slices
-- [ ] implement built-in functions (append, copy, len, make)
-- [ ] special types like `time.Time`
+- [ ] implement built-in function maps (append, copy, len, make)
+- [ ] special types like `[]byte`, `time.Time`, `error`
 - [ ] implement spreads (users...)
 - [ ] implement switch statements
 - [ ] handle User{"a"}
-- [ ] breaks, continues, panics
+- [ ] panics
 - [ ] custom types (type Blah = string)
 - [ ] global variables, constants, etc.
 

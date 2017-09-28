@@ -1,7 +1,0 @@
-(function() {
-function main () {
-var names = ["matt", "anki", "tj"];
-console.log(names[1]);
-};
-main();
-})()

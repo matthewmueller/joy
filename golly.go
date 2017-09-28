@@ -5,14 +5,56 @@ import (
 	"go/parser"
 	"go/token"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	"github.com/matthewmueller/golly/golang"
 	"github.com/pkg/errors"
 )
 
-// Compile the package, file or source
-func Compile(path string, source string) (string, error) {
-	return golang.CompilePackage(path)
+// Compile compiles the package
+func Compile(path string) (string, error) {
+	p, e := normalize(path)
+	if e != nil {
+		return "", e
+	}
+
+	return golang.CompilePackage(p)
+}
+
+// CompileFile compiles a single file
+func CompileFile(path string) (string, error) {
+	p, e := normalize(path)
+	if e != nil {
+		return "", e
+	}
+
+	return golang.CompilePackage(p)
+}
+
+// CompileString a source string
+func CompileString(path, source string) (string, error) {
+	return "", nil
+}
+
+// support relative and absolute paths
+// TODO: fix crappy code, there's gotta
+// be an easier way to do this
+func normalize(pkgpath string) (string, error) {
+	if !filepath.IsAbs(pkgpath) {
+		cwd, e := os.Getwd()
+		if e != nil {
+			return "", e
+		}
+		pkgpath = filepath.Join(cwd, pkgpath)
+	}
+
+	path, e := filepath.Rel(os.Getenv("GOPATH")+"/src", pkgpath)
+	if e != nil {
+		return "", e
+	}
+
+	return path, nil
 }
 
 // // Compile source

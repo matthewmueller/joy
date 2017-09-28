@@ -1,65 +1,92 @@
 package golly_test
 
-// func TestCompiler(t *testing.T) {
-// 	dirs, err := ioutil.ReadDir("./testfiles")
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+	"os/exec"
+	"path"
+	"strings"
+	"testing"
 
-// 	for _, dir := range dirs {
-// 		if !dir.IsDir() {
-// 			continue
-// 		}
+	"github.com/apex/log"
+	"github.com/apex/log/handlers/text"
+	"github.com/matthewmueller/golly"
+)
 
-// 		// subtests
-// 		t.Run(dir.Name(), func(t *testing.T) {
-// 			input := path.Join("./testfiles", dir.Name(), "input.go")
-// 			output := path.Join("./testfiles", dir.Name(), "output.js.txt")
+// little invisibles helper
+func invisibles(str string) string {
+	str = strings.Replace(str, " ", "·", -1)
+	str = strings.Replace(str, "\r", "¬", -1)
+	str = strings.Replace(str, "\n", "¬", -1)
+	str = strings.Replace(str, "\t", "‣", -1)
+	return str
+}
 
-// 			// read the output
-// 			js, e := ioutil.ReadFile(output)
-// 			if e != nil {
-// 				t.Fatal(e)
-// 			}
+func Test(t *testing.T) {
+	log.SetHandler(text.New(os.Stderr))
 
-// 			// compile the file
-// 			out, e := golly.CompileFile(input)
-// 			if e != nil {
-// 				golly.PrintAST(input)
-// 				fmt.Println(e)
-// 				t.Fatal(e)
-// 			}
+	dirs, err := ioutil.ReadDir("./testdata")
+	if err != nil {
+		t.Fatal(err)
+	}
 
-// 			if string(js) != out {
-// 				// golly.PrintAST(input)
-// 				fmt.Println(out)
-// 			}
+	cwd, e := os.Getwd()
+	if e != nil {
+		t.Fatal(e)
+	}
 
-// 			// assert.Equal(t, string(js), out)
-// 		})
-// 	}
-// }
+	for _, dir := range dirs {
+		if !dir.IsDir() {
+			continue
+		}
 
-// func TestConsole(t *testing.T) {
-// 	// Create the AST by parsing src.
-// 	fset := token.NewFileSet() // positions are relative to fset
-// 	f, err := parser.ParseFile(fset, "main.go", nil, 0)
-// 	if err != nil {
-// 		panic(err)
-// 	}
+		// subtests
+		t.Run(dir.Name(), func(t *testing.T) {
+			if strings.HasPrefix(dir.Name(), "_") {
+				log.Warnf("Skipping '%s'", dir.Name())
+				return
+			}
 
-// 	// Inspect the AST and print all identifiers and literals.
-// 	ast.Inspect(f, func(n ast.Node) bool {
-// 		var s string
-// 		switch x := n.(type) {
-// 		case *ast.BasicLit:
-// 			s = x.Value
-// 		case *ast.Ident:
-// 			s = x.Name
-// 		}
-// 		if s != "" {
-// 			fmt.Printf("%s:\t%s\n", fset.Position(n.Pos()), s)
-// 		}
-// 		return true
-// 	})
-// }
+			// compile the file
+			src, e := golly.Compile(path.Join(cwd, "testdata", dir.Name()))
+			if e != nil {
+				t.Fatal(e)
+			}
+
+			jspath := path.Join(cwd, "testdata", dir.Name(), "expected.js.txt")
+			js, e := ioutil.ReadFile(jspath)
+			if e != nil {
+				t.Fatalf("no '%s' file found", jspath)
+			}
+
+			// compile the code
+			if src != string(js) {
+				t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(js), src))
+			}
+
+			resultpath := path.Join(cwd, "testdata", dir.Name(), "expected.txt")
+			if _, err := os.Stat(resultpath); os.IsNotExist(err) {
+				log.Warnf("'%s' doesn't exist, skipping node execution", resultpath)
+				return
+			}
+
+			// run the code
+			cmd := exec.Command("./nodejs/node", jspath)
+			buf, e := cmd.CombinedOutput()
+			if e != nil {
+				t.Fatalf("javascript error: %s", buf)
+			}
+
+			result, e := ioutil.ReadFile(resultpath)
+			if e != nil {
+				t.Fatalf("no '%s' file found", resultpath)
+			}
+
+			// compare the result path
+			if string(buf) != string(result) {
+				t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(result), string(buf)))
+			}
+		})
+	}
+}

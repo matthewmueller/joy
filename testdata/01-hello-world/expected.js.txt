@@ -1,0 +1,14 @@
+(function() {
+var pkg = {
+
+};
+pkg["github.com/matthewmueller/golly/testdata/01-hello-world"] = (function() {
+function main () {
+console.log("hi world!");
+};
+return {
+  main: main
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/01-hello-world"].main();
+})()

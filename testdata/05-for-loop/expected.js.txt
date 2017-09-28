@@ -1,0 +1,31 @@
+(function() {
+var pkg = {
+
+};
+pkg["github.com/matthewmueller/golly/testdata/05-for-loop"] = (function() {
+function main () {
+for (var i = 0; i < 5; i++) {
+{
+console.log(i)
+}
+};
+var j = 5;
+var k = 0;
+for (; ; ) {
+{
+j--
+if (j < 0) {
+break
+} else {
+k++
+}
+}
+};
+console.log(k);
+};
+return {
+  main: main
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/05-for-loop"].main();
+})()

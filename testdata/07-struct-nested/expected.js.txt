@@ -1,0 +1,33 @@
+(function() {
+var pkg = {
+
+};
+pkg["github.com/matthewmueller/golly/testdata/07-struct-nested"] = (function() {
+function User (o) {
+this.Name = o.Name;
+this.Phone = o.Phone;
+};
+function Phone (o) {
+this.Type = o.Type;
+this.Number = o.Number;
+this.Main = o.Main;
+};
+function main () {
+var user = new User({
+  Name: "Matt",
+  Phone: new Phone({
+  Number: "1234511",
+  Main: false
+})
+});
+console.log(user.Phone.Number);
+user.Phone.Type = "CELL";
+};
+return {
+  Phone: Phone,
+  User: User,
+  main: main
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/07-struct-nested"].main();
+})()
