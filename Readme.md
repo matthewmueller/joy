@@ -129,6 +129,8 @@ While there's a good chance Golly programs will work in node.js, it's not the fo
 
 ## Additional Motivation
 
-The source code to metadata has got out of hand. Let's change this:
+The source code to metadata ratio is out of wack nowadays.
 
 ![img](https://cldup.com/4EtJ3jqzdw.png)
+
+Let's change this.
