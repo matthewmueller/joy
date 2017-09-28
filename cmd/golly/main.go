@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"time"
@@ -40,6 +41,6 @@ func main() {
 	if e != nil {
 		log.WithError(e).Fatalf("error loading go package")
 	}
-	log.Infof("src %s", src)
 	log.Infof("compiled %s in %s", pkgpath, time.Since(start))
+	fmt.Println(src)
 }
