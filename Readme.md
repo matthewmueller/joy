@@ -4,7 +4,7 @@ Golly gee, it's another Go to JS compiler.
 
 ### On Deck Tasks:
 
-- [ ] [Matt] Fix up the test suite now to test packages that it's actually starting to compile working stuff
+- [ ] [Matt] Fix up the test suite to test packages that it's actually starting to compile working stuff
 - [ ] Build out the DOM implementation (starting with level 1 or if all can be generated, amazeee)
 - [ ] Implement a goroutine & channel => async/await or generator runtime
 - [ ] Start writing libraries and application code
