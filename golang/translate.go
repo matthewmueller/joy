@@ -3,7 +3,6 @@ package golang
 import (
 	"fmt"
 	"go/ast"
-	"go/types"
 	"path"
 	"reflect"
 	"strings"
@@ -11,10 +10,13 @@ import (
 
 	"golang.org/x/tools/go/loader"
 
-	"github.com/apex/log"
+	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/js"
 	"github.com/pkg/errors"
 )
+
+// TODO: should be within struct, not global
+var aliases = map[string]*structtag.Tag{}
 
 func translatePackage(info *loader.PackageInfo) (j js.IExpression, err error) {
 	var files []js.IStatement
@@ -30,25 +32,41 @@ func translatePackage(info *loader.PackageInfo) (j js.IExpression, err error) {
 
 	// find all the exported fields
 	exports := []string{}
-	pkgscope := info.Pkg.Scope().Names()
-	for _, name := range pkgscope {
+	pkgscope := info.Pkg.Scope()
+	for _, name := range pkgscope.Names() {
+		obj := pkgscope.Lookup(name)
+
+		// don't export globals
+		if obj != nil &&
+			obj.Type() != nil &&
+			aliases[obj.Type().String()] != nil &&
+			aliases[obj.Type().String()].HasOption("global") {
+			continue
+		}
+
 		if name == "main" || unicode.IsUpper(rune(name[0])) {
 			exports = append(exports, name)
 		}
 	}
 
-	// create a return statement for the exported fieldss
-	var props []js.Property
-	for _, export := range exports {
-		props = append(props, js.CreateProperty(
-			js.CreateIdentifier(export),
-			js.CreateIdentifier(export),
-			"init",
-		))
+	var exportobj js.IStatement
+
+	// create a return statement for the exported fields
+	if len(exports) > 0 {
+		var props []js.Property
+		for _, export := range exports {
+			props = append(props, js.CreateProperty(
+				js.CreateIdentifier(export),
+				js.CreateIdentifier(export),
+				"init",
+			))
+		}
+		exportobj = js.CreateReturnStatement(
+			js.CreateObjectExpression(props),
+		)
+	} else {
+		exportobj = js.CreateEmptyStatement()
 	}
-	exportobj := js.CreateReturnStatement(
-		js.CreateObjectExpression(props),
-	)
 
 	var body []interface{}
 	for _, stmt := range append(files, exportobj) {
@@ -103,7 +121,19 @@ func function(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j js.IStat
 		return j, fmt.Errorf("function: anon functions not yet supported")
 	}
 
-	// the name of the fn
+	// get js:"..." tag on top of function if there is one
+	tag, e := getCommentTag(n.Doc)
+	if e != nil {
+		return j, e
+	}
+
+	// potentially rename functions
+	objectof := pkg.ObjectOf(n.Name)
+	if tag != nil && objectof != nil {
+		aliases[objectof.String()] = tag
+	}
+
+	// get the name of the function
 	fnname := js.CreateIdentifier((*n.Name).Name)
 
 	// build argument list
@@ -147,6 +177,19 @@ func function(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j js.IStat
 	x, e := expression(pkg, f, n, recv.Type)
 	if e != nil {
 		return nil, e
+	}
+
+	// This is to determine if the function should be excluded
+	// from the final output because it's already a global DOM node.
+	//
+	// Lookup the receiver's type, note that this has nothing to do
+	// with whether or not there's a comment on the function
+	// itself.
+	//
+	// TODO: This code may panic, make more robust
+	typeof := pkg.TypeOf(recv.Names[0])
+	if typeof != nil && aliases[typeof.String()] != nil && aliases[typeof.String()].HasOption("global") {
+		return js.CreateEmptyStatement(), nil
 	}
 
 	// {recv}.prototype.{name} = function ({params}) {
@@ -213,22 +256,77 @@ func typeSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IState
 
 	s, ok := n.Specs[0].(*ast.TypeSpec)
 	if !ok {
-		return nil, unhandled("typespec", n.Specs[0])
+		return nil, unhandled("typeSpec<TypeSpec>", n.Specs[0])
 	}
 
-	log.Infof("full path of type declaration %+v", pkg.TypeOf(s.Name))
-
-	switch t := s.Type.(type) {
-	case *ast.StructType:
-		// if n.Doc != nil {
-		// 	return js.CreateExpressionStatement(js.CreateIdentifier("lol")), nil
-		// }
-		// we turn these into contructor functions
-		// so more functions can get attached to them
-		return jsConstructorFunction(pkg, f, s.Name, t.Fields)
-	default:
-		return nil, unhandled("typeSpec", s.Type)
+	t, ok := s.Type.(*ast.StructType)
+	if !ok {
+		return nil, unhandled("typeSpec<StructType>", s.Type)
 	}
+
+	tag, e := getCommentTag(n.Doc)
+	if e != nil {
+		return nil, e
+	}
+
+	// store the tag for later renaming
+	objectof := pkg.ObjectOf(s.Name)
+	typeof := pkg.TypeOf(s.Name)
+	if tag != nil && objectof != nil {
+		aliases[objectof.String()] = tag
+		aliases[typeof.String()] = tag
+		// TODO: not sure if this is a good idea or not
+		// but it's to handle pointer receivers in 1 spot
+		aliases["*"+typeof.String()] = tag
+	}
+
+	var ivars []interface{}
+	for _, field := range t.Fields.List {
+		for _, name := range field.Names {
+			objectof := pkg.ObjectOf(name)
+			// TODO: this doesn't need to be parsed for each field name
+			// though I'm not sure how you can have multiple field names
+			// per struct tag
+			if field.Tag != nil {
+				tags, err := structtag.Parse(field.Tag.Value[1 : len(field.Tag.Value)-1])
+				if err != nil {
+					return j, err
+				}
+				if tag, err := tags.Get("js"); err == nil {
+					aliases[objectof.String()] = tag
+				}
+			}
+
+			// this.$name = o.$name
+			ivars = append(ivars, js.CreateExpressionStatement(
+				js.CreateAssignmentExpression(
+					js.CreateMemberExpression(
+						js.CreateThisExpression(),
+						js.CreateIdentifier(name.Name),
+						false,
+					),
+					js.AssignmentOperator("="),
+					js.CreateMemberExpression(
+						js.CreateIdentifier("o"),
+						js.CreateIdentifier(name.Name),
+						false,
+					),
+				),
+			))
+		}
+	}
+
+	if tag != nil && tag.HasOption("global") {
+		return js.CreateEmptyStatement(), nil
+	}
+
+	ident := js.CreateIdentifier(s.Name.Name)
+	return js.CreateFunctionDeclaration(
+		&ident,
+		// TODO: make API for this
+		[]js.IPattern{js.CreateIdentifier("o")},
+		js.CreateFunctionBody(ivars...),
+	), nil
 }
 
 func importSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatement, err error) {
@@ -295,43 +393,6 @@ func varSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatem
 
 	return js.CreateVariableDeclaration("var", decls...), nil
 	// return nil, nil
-}
-
-func jsConstructorFunction(pkg *loader.PackageInfo, f *ast.File, id *ast.Ident, fields *ast.FieldList) (j js.FunctionDeclaration, err error) {
-	name := js.CreateIdentifier(id.Name)
-
-	// instance variables
-	// TODO: this should actually be: []js.IExpressionStatement
-	// but CreateFunctionBody accepts an []interface{} currently
-	var ivars []interface{}
-
-	for _, field := range fields.List {
-		for _, name := range field.Names {
-			// this.$name = o.$name
-			ivars = append(ivars, js.CreateExpressionStatement(
-				js.CreateAssignmentExpression(
-					js.CreateMemberExpression(
-						js.CreateThisExpression(),
-						js.CreateIdentifier(name.Name),
-						false,
-					),
-					js.AssignmentOperator("="),
-					js.CreateMemberExpression(
-						js.CreateIdentifier("o"),
-						js.CreateIdentifier(name.Name),
-						false,
-					),
-				),
-			))
-		}
-	}
-
-	return js.CreateFunctionDeclaration(
-		&name,
-		// TODO: make API for this
-		[]js.IPattern{js.CreateIdentifier("o")},
-		js.CreateFunctionBody(ivars...),
-	), nil
 }
 
 // func mainFunc(pkg *loader.PackageInfo,  f *ast.File, fn *ast.FuncDecl) (j js.IStatement, err error) {
@@ -625,7 +686,6 @@ func incDecStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.I
 		return nil, errors.Wrap(e, "incDecStmt")
 	}
 
-	log.Infof("n.Tok.String(): %s", n.Tok.String())
 	switch n.Tok.String() {
 	case "++":
 		op = js.UpdateOperator("++")
@@ -809,14 +869,6 @@ func binaryExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, b 
 }
 
 func identifier(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ident) (j js.IExpression, err error) {
-	// kind := path.Base(pkg.Types[n].Type.String())
-	// log.Infof("scopes %+v", pkg.Scopes[n])
-	log.Infof("identifier type %s %+v %+v", n.Name, pkg.Types[n].Type, reflect.TypeOf(n))
-
-	// log.Infof("%+v", pkg.TypeOf(n))
-	// log.Infof("objectof %+v", pkg.ObjectOf(n).Type().(*ast.StructType))
-	// log.Infof("typeof %+v", pkg.TypeOf(n).(*ast.StructType))
-
 	// TODO: lookup table
 	switch n.Name {
 	case "nil":
@@ -901,6 +953,18 @@ func jsNewFunction(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *as
 		fnname = js.CreateIdentifier(t.Name)
 	// e.g. dom.Document{}
 	case *ast.SelectorExpr:
+		// this will convert `dom.Document{}` into
+		// var document = window.document
+		// where the js tag is `js:"document,global"`
+		objectof := pkg.ObjectOf(t.Sel)
+		if objectof != nil && aliases[objectof.String()] != nil && aliases[objectof.String()].HasOption("global") {
+			return js.CreateMemberExpression(
+				js.CreateIdentifier("window"),
+				js.CreateIdentifier(aliases[objectof.String()].Name),
+				false,
+			), nil
+		}
+
 		sel, e := selectorExpr(pkg, f, fn, t)
 		if e != nil {
 			return j, e
@@ -965,56 +1029,40 @@ func keyValueExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast
 }
 
 func selectorExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.SelectorExpr) (j js.MemberExpression, err error) {
+	var x js.IExpression
+	var s js.IExpression
+
+	// first check if we have an alias already
+	// typeof := pkg.TypeOf(n.X)
+	// if typeof != nil && aliases[typeof.String()] != nil {
+	// 	x = js.CreateIdentifier(aliases[typeof.String()].Name)
+	// }
+
 	// (user.phone).number
-	x, e := expression(pkg, f, fn, n.X)
-	if e != nil {
-		return j, e
+	if x == nil {
+		ex, e := expression(pkg, f, fn, n.X)
+		if e != nil {
+			return j, e
+		}
+		x = ex
+	}
+
+	// first check if we have an alias already
+	objectof := pkg.ObjectOf(n.Sel)
+	if objectof != nil && aliases[objectof.String()] != nil {
+		s = js.CreateIdentifier(aliases[objectof.String()].Name)
 	}
 
 	// user.phone.(number)
-	s, e := identifier(pkg, f, fn, n.Sel)
-	if e != nil {
-		return j, e
+	if s == nil {
+		se, e := identifier(pkg, f, fn, n.Sel)
+		if e != nil {
+			return j, e
+		}
+		s = se
 	}
 
-	obj := pkg.ObjectOf(n.Sel).Type()
-	// ref := reflect.TypeOf(n.Sel)
-	log.Infof("got type... %s: %+v", n.Sel.Name, types.TypeString(obj, nil))
-
 	member := js.CreateMemberExpression(x, s, false)
-	log.Infof("member %s", member.String())
-	// TODO: can I
-	// var namesByType typeutil.Map
-
-	// scope := typeutil.NewScope(nil)
-	// t := typeutil.Expr_to_decl(n, scope)
-
-	// t := namesByType.At(pkg.ObjectOf(n.Sel).Type())
-	// log.Infof("got t %+v", t)
-	// pkg.ObjectOf(n).Type()
-
-	// kind := path.Base(pkg.TypeOf(n).String())
-	// switch kind {
-	// case "dom.Node":
-	// 	log.Infof("got a node!")
-	// case "dom.Document":
-	// 	r, e := DOM["dom.Document"](n)
-	// 	if e != nil {
-	// 		return j, e
-	// 	}
-	// 	_ = r
-	// 	return j, nil
-	// 	// return js.CreateMemberExpression(x, r, false), nil
-	// 	// log.Infof("r %+v", r)
-	// 	// // log.Infof("")
-	// 	// log.Infof("got a document")
-	// default:
-	// 	log.Infof("smething else %s", kind)
-	// }
-
-	// kind := path.Base(pkg.Types[n].Type.String())
-	// log.Infof("member expression type %s", kind)
-
 	return member, nil
 }
 
@@ -1036,4 +1084,31 @@ func indexExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.In
 
 func unhandled(fn string, n interface{}) error {
 	return fmt.Errorf("%s in %s() is not implemented yet", reflect.TypeOf(n), fn)
+}
+
+func getCommentTag(n *ast.CommentGroup) (*structtag.Tag, error) {
+	if n == nil {
+		return nil, nil
+	}
+
+	comments := n.List
+	for _, comment := range comments {
+		if !strings.Contains(comment.Text, "js:") {
+			continue
+		}
+
+		tags, err := structtag.Parse(comment.Text[2:])
+		if err != nil {
+			return nil, err
+		}
+
+		jstag, err := tags.Get("js")
+		if err != nil {
+			return nil, err
+		}
+
+		return jstag, nil
+	}
+
+	return nil, nil
 }

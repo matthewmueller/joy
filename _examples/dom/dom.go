@@ -4,22 +4,15 @@ import (
 	"github.com/matthewmueller/golly/dom"
 )
 
-var document = dom.Document{
-	Body: &dom.Node{
-		NodeName: "body",
-	},
-}
-
 func main() {
-	// document.
+	var document = dom.Document{}
 	body := document.Body
 	body.InnerHTML = "matt"
-	// document.Body.InnerHTML = "matt"
-	// google := test()
-	// println(google)
-	// fmt.Printf(document)
-}
 
-// func test() string {
-// 	return "test"
-// }
+	div := document.CreateElement("div")
+	div.InnerHTML = "some title"
+
+	div.AddEventListener("click", func(e dom.Event) {
+		println(e.Type)
+	})
+}
