@@ -5,6 +5,7 @@ Golly gee, it's another Go to JS compiler.
 ### On Deck Tasks:
 
 - [x] [Matt] Fix up the test suite to test packages now that it's actually starting to compile working stuff
+- [ ] [Matt] Build basic DOM library (based on https://github.com/developit/undom). This is the minimum viable DOM needed for supporting virtual dom libraries like Preact. There's a bunch of bug fixes I need to make along the way to make this work.
 - [ ] Handle empty values in struct (https://github.com/matthewmueller/golly/issues/3)
 - [ ] Build out the DOM implementation (starting with level 1 or if these can be scripted... amazeee)
 - [ ] Implement a goroutine & channel => async/await or generator runtime
@@ -12,8 +13,8 @@ Golly gee, it's another Go to JS compiler.
 - [ ] Unused functions from libraries should be excluded from the output (this should be relatively the same technique that DOM renaming uses)
 - [ ] Prettier javascript (not hugely important, but right now the JS we emit is fugly and hard to scan without running it)
 - [ ] Start writing libraries and application code
-  - [ ] [Matt] Preact (will probably try to translate this completely into Go code)
-  - [ ] D3 (good example to test bindings with external libraries) 
+  - [ ] [Matt] Preact (will probably try to translate this completely into Go code to test compiler, though bindings are probably a better idea in long run)
+  - [ ] D3 (another good example to test bindings with external libraries) 
   - [ ] [Matt] fetch (100 LOC using https://github.com/developit/unfetch)
   - [ ] [Matt] Generate VNode helper library (something like: https://github.com/matthewmueller/vcom)
 - [ ] Bug fix and add features as needed. Rinse & repeat.
@@ -24,9 +25,10 @@ Golly gee, it's another Go to JS compiler.
 - https://astexplorer.net/: I've been using this to figure out how to build the JS tree
 - http://goast.yuroyoro.net/: Simple Go AST viewer
 - https://github.com/estree/estree/blob/master/es5.md: Link to the ES3 AST format, this is implemented in syntax.go
-- To run examples: `go run cmd/golly/main.go --pkg $(PWD)/_examples/dom`
 - To run all tests: `go test -v`
 - To run individual tests: `go test -v -run Test/08`
+- To run examples: `go run cmd/golly/main.go --pkg $(PWD)/_examples/dom`
+- To see a callgraph: `go run cmd/golly/main.go --pkg $(PWD)/_examples/dom --graph`
 - `pretty.Println(ast)` will pretty print the JS AST
 - `ast.Print(nil, node)` will pretty print the Go AST
 
@@ -62,29 +64,35 @@ Golly gee, it's another Go to JS compiler.
 - [x] implement functions with multiple return values
 - [x] implement anonymous functions
 - [x] break
+- [x] append
+- [ ] range
+- [ ] len
 - [ ] continue
 - [ ] implement slices
-- [ ] implement built-in function maps (append, copy, len, make)
+- [ ] implement other built-in functions (copy, make)
 - [ ] special types like `[]byte`, `time.Time`, `error`
 - [ ] implement spreads (users...)
 - [ ] implement switch statements
 - [ ] handle User{"a"}
+- [ ] iota
 - [ ] panics
 - [ ] custom types (type Blah = string)
-- [ ] global variables, constants, etc.
+- [ ] global constants, iota, etc.
 
 ### Package-Level:
 
 - [x] support multiple files
   - files are wrapped in closures and the package wraps the file closures in another closure calling main()
 - [ ] see if we can mimic rollup to decrease filesize further
+- [ ] We can also inspect the callgraph to eliminate deadcode, though it's pretty expensive to do (maybe only for production builds?). I think there's a faster way of doing this by keeping a tally of the types that we use for each identifier as we traverse the Go AST and then including/excluding functions at the end based on if they're used or not. We just need a way to build out (potentially big) standard libraries without worrying about the build size blowing up.
 
 ### Hard but probably necessary:
 
 - [ ] support goroutines and channels(using async/await)
+  - the hardest thing here is turning the functions into async once we discover a goroutine and then marking all their parents as async too.
   - we need some async functionality for things like AJAX
     - otherwise callback hell in Go? 🤷‍♂️
-  - probably makes sense to prototype this as a babel transform first 
+
   - if too hard or too costly, maybe just mutexes? gopherjs does seem to have a working implementation of goroutines and channels
   - for cross-browser we can run it through this: https://github.com/facebook/regenerator
     - this process relies on a Promise polyfill, but if written

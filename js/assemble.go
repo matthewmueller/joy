@@ -61,7 +61,8 @@ var _ fmt.Stringer = (*MemberExpression)(nil)
 var _ fmt.Stringer = (*CallExpression)(nil)
 var _ fmt.Stringer = (*NewExpression)(nil)
 
-// var _ fmt.Stringer = (*SequenceExpression)(nil)
+var _ fmt.Stringer = (*SequenceExpression)(nil)
+
 // var _ fmt.Stringer = (*Pattern)(nil)
 
 // Assemble JS from the AST
@@ -206,6 +207,10 @@ func (n VariableDeclaration) String() string {
 
 func (n VariableDeclarator) String() string {
 	v := stringify(n.ID)
+	if n.Init == nil {
+		return v
+	}
+
 	x := stringify(n.Init)
 	return v + " = " + x
 }
@@ -314,6 +319,14 @@ func (n NewExpression) String() string {
 
 func (n BreakStatement) String() string {
 	return "break"
+}
+
+func (n SequenceExpression) String() string {
+	var exprs []string
+	for _, expr := range n.Expressions {
+		exprs = append(exprs, stringify(expr))
+	}
+	return strings.Join(exprs, ", ")
 }
 
 // func (n DebuggerStatement) String() string {

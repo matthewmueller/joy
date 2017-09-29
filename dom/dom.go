@@ -13,11 +13,11 @@ type Document struct {
 
 // CreateElement struct
 // js:"createElement"
-func (d *Document) CreateElement(nodeName string) *Node {
-	return &Node{
+func (d *Document) CreateElement(nodeName string) Node {
+	return Node{
 		NodeType: 1,
 		NodeName: nodeName,
-		Children: []*Node{},
+		Children: []Node{},
 	}
 }
 
@@ -27,7 +27,7 @@ type Node struct {
 	NodeType  int
 	NodeName  string
 	NodeValue string
-	Children  []*Node
+	Children  []Node
 
 	// functions
 	InnerHTML string `js:"innerHTML"`
@@ -44,18 +44,3 @@ type Event struct {
 func (n *Node) AddEventListener(event string, fn func(e Event)) {
 
 }
-
-// // TextContent fn
-// func (n *Node) TextContent(text string) {
-// 	n.Children = append(n.Children, &Node{
-// 		NodeType:  3,
-// 		NodeName:  "#text",
-// 		NodeValue: text,
-// 	})
-// }
-
-// // AppendChild fn
-// func (n *Node) AppendChild(child *Node) *Node {
-// 	n.Children = append(n.Children, child)
-// 	return n
-// }

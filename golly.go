@@ -37,6 +37,17 @@ func CompileString(path, source string) (string, error) {
 	return "", nil
 }
 
+// CallGraph fn
+func CallGraph(path string) error {
+	p, e := normalize(path)
+	if e != nil {
+		return e
+	}
+
+	golang.CallGraph(p)
+	return nil
+}
+
 // support relative and absolute paths
 // TODO: fix crappy code, there's gotta
 // be an easier way to do this

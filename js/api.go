@@ -311,3 +311,11 @@ func CreateBreakStatement(label *Identifier) BreakStatement {
 		Label: label,
 	}
 }
+
+// CreateSequenceExpression fn
+func CreateSequenceExpression(expressions ...IExpression) SequenceExpression {
+	return SequenceExpression{
+		Type:        "SequenceExpression",
+		Expressions: expressions,
+	}
+}

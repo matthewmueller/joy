@@ -1,20 +1,91 @@
 package preact
 
+import (
+	"github.com/apex/log"
+	"github.com/matthewmueller/golly/dom"
+)
+
+// IProps interface
+type IProps interface{}
+
+// IState interface
+type IState interface{}
+
+// IContext interface
+type IContext interface{}
+
 // VNode struct
 type VNode struct {
+	NodeType   int
 	NodeName   string
+	NodeValue  string
+	Component  IComponent
 	Children   []VNode
-	Attributes *map[string]interface{}
+	Attributes map[string]interface{}
 	Key        *string
 }
 
-// H creates a VNode
-func H(nodeName string, attributes *map[string]interface{}, children ...VNode) VNode {
+// IComponent interfaces
+type IComponent interface {
+	Render(props IProps, state IState) *VNode
+}
+
+// C creates a VNode from a Component
+func C(component IComponent, props map[string]interface{}, children ...VNode) VNode {
 	return VNode{
-		NodeName:   nodeName,
-		Attributes: attributes,
+		NodeType:   0,
+		Component:  component,
+		Attributes: props,
 		Children:   children,
 	}
+}
+
+// H creates a VNode from an HTML element
+func H(tag string, attrs map[string]interface{}, children ...VNode) VNode {
+	return VNode{
+		NodeType:   1,
+		NodeName:   tag,
+		Attributes: attrs,
+		Children:   children,
+	}
+}
+
+// T creates a textnode
+func T(text string) VNode {
+	return VNode{
+		NodeType:  3,
+		NodeValue: text,
+	}
+}
+
+// Render a function
+func Render(vnode VNode, parent *dom.Node, merge *dom.Node) *dom.Node {
+	return diff(merge, vnode, nil, false, parent, false)
+}
+
+/** Queue of components that have been mounted and are awaiting componentDidMount */
+var mounts = []IComponent{}
+
+/** Diff recursion count, used to track the end of the diff cycle. */
+var diffLevel = 0
+
+/** Global flag indicating if the diff is currently within an SVG */
+var isSvgMode = false
+
+/** Global flag indicating if the diff is performing hydration */
+var hydrating = false
+
+func diff(
+	dom *dom.Node,
+	vnode VNode,
+	context IContext,
+	mountAll bool,
+	parent *dom.Node,
+	componentRoot bool,
+) *dom.Node {
+
+	log.Infof("got all?")
+	return nil
 }
 
 // New fn
