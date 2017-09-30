@@ -356,7 +356,7 @@ func importSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.ISta
 
 			rh := js.CreateMemberExpression(
 				js.CreateIdentifier("pkg"),
-				js.CreateString(t.Path.Value),
+				js.CreateLiteral(t.Path.Value),
 				true,
 			)
 
@@ -461,18 +461,208 @@ func funcStatement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, stmt 
 func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.RangeStmt) (j js.IStatement, err error) {
 	id, ok := n.Key.(*ast.Ident)
 	if !ok {
-		return j, unhandled("rangeStmt<ident>", n.Key)
+		return nil, unhandled("rangeStmt<ident>", n.Key)
 	}
 
 	if id.Obj == nil {
-		return j, unhandled("rangeStmt<obj>", id.Obj)
+		return nil, unhandled("rangeStmt<obj>", id.Obj)
 	}
 
 	asn, ok := id.Obj.Decl.(*ast.AssignStmt)
 	if !ok {
-		return j, unhandled("rangeStmt<decl>", id.Obj.Decl)
+		return nil, unhandled("rangeStmt<decl>", id.Obj)
 	}
-	_ = asn
+
+	if len(asn.Lhs) == 0 {
+		return nil, fmt.Errorf("rangeStmt: didn't expect len(lhs) == 0")
+	}
+
+	// create the condition
+	if len(asn.Rhs) == 0 {
+		return nil, fmt.Errorf("rangeStmt: didn't expect len(rhs) == 0")
+	}
+
+	rh, e := expression(pkg, f, fn, asn.Rhs[0])
+	if e != nil {
+		return nil, e
+	}
+
+	var inits []js.VariableDeclarator
+	idx, ok := asn.Lhs[0].(*ast.Ident)
+	if !ok {
+		return nil, unhandled("rangeStmt<idx>", asn.Lhs[0])
+	}
+	inits = append(inits, js.CreateVariableDeclarator(
+		js.CreateIdentifier(idx.Name),
+		js.CreateInt(0),
+	))
+
+	var val *ast.Ident
+	if len(asn.Lhs) >= 2 {
+		val, ok = asn.Lhs[1].(*ast.Ident)
+		if !ok {
+			return nil, unhandled("rangeStmt<val>", asn.Lhs[1])
+		}
+		inits = append(inits, js.CreateVariableDeclarator(
+			js.CreateIdentifier(val.Name),
+			nil,
+		))
+	}
+
+	init := js.CreateVariableDeclaration("var", inits...)
+
+	cond := js.CreateBinaryExpression(
+		js.CreateIdentifier(idx.Name),
+		js.BinaryOperator("<"),
+		js.CreateMemberExpression(
+			rh,
+			js.CreateIdentifier("length"),
+			false,
+		),
+	)
+
+	postexpr := js.CreateUpdateExpression(
+		js.CreateIdentifier(idx.Name),
+		js.UpdateOperator("++"),
+		false,
+	)
+
+	// build the body
+	var stmts []js.IStatement
+	if val != nil {
+		stmts = append(stmts, js.CreateVariableDeclaration(
+			"var",
+			js.CreateVariableDeclarator(
+				js.CreateIdentifier(val.Name),
+				js.CreateMemberExpression(
+					rh,
+					js.CreateIdentifier(idx.Name),
+					true,
+				),
+			),
+		))
+	}
+	for _, stmt := range n.Body.List {
+		v, e := statement(pkg, f, fn, stmt)
+		if e != nil {
+			return nil, errors.Wrap(e, "rangeStmt<body>")
+		}
+		stmts = append(stmts, v)
+	}
+	body := js.CreateBlockStatement(stmts...)
+
+	// TODO:
+	// Range expression                              1st value          2nd value
+	// [x] array or slice  a  [n]E, *[n]E, or []E    index    i  int    a[i]       E
+	// [ ] string          s  string type            index    i  int    see below  rune
+	// [ ] map             m  map[K]V                key      k  K      m[k]       V
+	// [ ] channel         c  chan E, <-chan E       element  e  E
+	kind, e := getObjectType(asn.Rhs[0])
+	if e != nil {
+		return nil, e
+	}
+
+	// ast.
+	// ast.Print(nil, asn.Rhs[0])
+
+	switch kind.(type) {
+	case *ast.ArrayType:
+		return js.CreateForStatement(
+			init,
+			cond,
+			postexpr,
+			body,
+		), nil
+	default:
+		return nil, unhandled("rangeStmt<rhs.obj.type>", id.Obj)
+	}
+
+	// switch asn.Rhs[0].
+
+	// // parse lefthand side
+	// lhs := asn.Lhs
+	// llhs := len(asn.Lhs)
+
+	// if llhs == 0 {
+	// 	return nil, fmt.Errorf("rangeStmt: didn't expect len(lhs) == 0")
+	// }
+
+	// var inits []js.VariableDeclarator
+
+	// idx, ok := lhs[0].(*ast.Ident)
+	// if !ok {
+	// 	return nil, unhandled("rangeStmt<idx>", lhs[0])
+	// }
+	// inits = append(inits, js.CreateVariableDeclarator(
+	// 	js.CreateIdentifier(idx.Name),
+	// 	js.CreateInt(0),
+	// ))
+
+	// // handle the value if there is one
+	// var val *ast.Ident
+	// if llhs == 2 {
+	// 	val, ok = lhs[1].(*ast.Ident)
+	// 	if !ok {
+	// 		return nil, unhandled("rangeStmt<val>", lhs[1])
+	// 	}
+	// 	inits = append(inits, js.CreateVariableDeclarator(
+	// 		js.CreateIdentifier(val.Name),
+	// 		nil,
+	// 	))
+	// }
+
+	// ux, ok := asn.Rhs[0].(*ast.UnaryExpr)
+	// if !ok {
+	// 	return nil, unhandled("rangeStmt<rhs[0]>", asn.Rhs[0])
+	// }
+
+	// var rh js.IExpression
+	// switch t := ux.X.(type) {
+	// case *ast.Ident:
+	// 	rh = js.CreateMemberExpression(
+	// 		js.CreateIdentifier(t.Name),
+	// 		js.CreateIdentifier("length"),
+	// 		false,
+	// 	)
+	// default:
+	// 	return nil, unhandled("rangeStmt<rh>", ux.X)
+	// }
+
+	// for _, lhs := range asn.Lhs {
+	// 	switch t := lhs.(type) {
+	// 	case *ast.Ident:
+	// 		decls = append(decls, js.CreateVariableDeclarator(
+	// 			js.CreateIdentifier(t.Name),
+	// 			nil,
+	// 		))
+	// 	default:
+	// 		return nil, unhandled("rangeStmt<lhs>", lhs)
+	// 	}
+	// }
+	// init := js.CreateVariableDeclaration("var", decls...)
+	// _ = init
+
+	// stmt, expr, e := VariableHandler(id.Obj.Decl)
+	// if e != nil {
+	// 	return nil, e
+	// }
+
+	// log.Infof("stmt %s", stmt)
+	// log.Infof("expr %s", expr)
+
+	// variables
+	// pairs := variablePairs(asn)
+
+	// for _, asn := range asn.Lhs {
+	// 	switch {
+	// 		case *ast.Ident;
+
+	// 	}
+	// }
+
+	// ast.Print(nil, asn)
+	// log.Infof("asn %s", asn)
+	// _ = asn
 	// if
 	// lhs := asn.Lhs
 	// llhs := len(lhs)
@@ -520,11 +710,11 @@ func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ra
 	// 	return nil, errors.Wrap(e, "forStmt")
 	// }
 
-	body, e := blockStmt(pkg, f, fn, n.Body)
-	if e != nil {
-		return nil, errors.Wrap(e, "rangeStmt")
-	}
-	_ = body
+	// body, e := blockStmt(pkg, f, fn, n.Body)
+	// if e != nil {
+	// 	return nil, errors.Wrap(e, "rangeStmt")
+	// }
+	// _ = body
 	// In Go the post condition is a statement,
 	// in JS it's an expression
 	//
@@ -539,7 +729,7 @@ func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ra
 	// 	return nil, unhandled("forStmt<post>", post)
 	// }
 
-	return js.CreateEmptyStatement(), nil
+	// return js.CreateEmptyStatement(), nil
 
 	// return js.CreateForStatement(
 	// 	init,
@@ -1151,7 +1341,7 @@ func unaryExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Un
 }
 
 func basiclit(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, lit *ast.BasicLit) (j js.IExpression, err error) {
-	return js.CreateString(lit.Value), nil
+	return js.CreateLiteral(lit.Value), nil
 }
 
 func compositeLiteral(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.IExpression, err error) {
@@ -1412,4 +1602,34 @@ func isUnderscoreVariable(expr ast.Expr) bool {
 
 func arrayType(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ArrayType) (js.IExpression, error) {
 	return js.CreateArrayExpression(), nil
+}
+
+// get the identifier when possible
+func getObjectType(expr ast.Expr) (ast.Expr, error) {
+	var id *ast.Ident
+	switch t := expr.(type) {
+	case *ast.UnaryExpr:
+		return getObjectType(t.X)
+	case *ast.SelectorExpr:
+		return getObjectType(t.Sel)
+	case *ast.Ident:
+		id = t
+	default:
+		return nil, unhandled("getObjectType<expr>", expr)
+	}
+
+	obj := id.Obj
+	if obj == nil {
+		return nil, fmt.Errorf("getObjectType object nil")
+	}
+
+	switch t := obj.Decl.(type) {
+	case *ast.ValueSpec:
+		if t.Type == nil {
+			return nil, fmt.Errorf("getObjectType type nil")
+		}
+		return t.Type, nil
+	default:
+		return nil, unhandled("getObjectType<decl>", expr)
+	}
 }

@@ -1,0 +1,31 @@
+(function() {
+var pkg = {
+
+};
+pkg["github.com/matthewmueller/golly/testdata/16-range"] = (function() {
+function Node (o) {
+this.NodeName = o.NodeName;
+};
+function main () {
+var nodes = [];
+nodes = nodes.concat(new Node({
+  NodeName: "div"
+}), new Node({
+  NodeName: "strong"
+}));
+for (var i = 0, node; i < nodes.length; i++) {
+var node = nodes[i]
+console.log(i)
+console.log(node.NodeName)
+};
+for (var i = 0; i < nodes.length; i++) {
+console.log(i)
+};
+};
+return {
+  Node: Node,
+  main: main
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/16-range"].main();
+})()

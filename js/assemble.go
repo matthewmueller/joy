@@ -288,7 +288,7 @@ func (n ForStatement) String() string {
 
 	// for body
 	body := stringify(n.Body)
-	return "for (" + strings.Join(cond, "; ") + ") {\n" + body + "\n}"
+	return "for (" + strings.Join(cond, "; ") + ") " + body
 }
 
 func (n UpdateExpression) String() string {

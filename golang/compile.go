@@ -82,7 +82,7 @@ func CompilePackage(packagePath string) (string, error) {
 			js.CreateAssignmentExpression(
 				js.CreateMemberExpression(
 					js.CreateIdentifier("pkg"),
-					js.CreateString(`"`+dep+`"`),
+					js.CreateString(dep),
 					true,
 				),
 				js.AssignmentOperator("="),
@@ -108,7 +108,7 @@ func CompilePackage(packagePath string) (string, error) {
 			js.CreateMemberExpression(
 				js.CreateMemberExpression(
 					js.CreateIdentifier("pkg"),
-					js.CreateString(`"`+packagePath+`"`),
+					js.CreateString(packagePath),
 					true,
 				),
 				js.CreateIdentifier("main"),

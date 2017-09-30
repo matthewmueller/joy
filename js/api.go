@@ -12,11 +12,19 @@ func CreateIdentifier(name string) Identifier {
 	}
 }
 
+// CreateLiteral fn
+func CreateLiteral(name string) Identifier {
+	return Identifier{
+		Type: "Identifier",
+		Name: name,
+	}
+}
+
 // CreateString fn
 func CreateString(value string) Literal {
 	return Literal{
 		Type:  "Literal",
-		Value: value,
+		Value: `"` + value + `"`,
 	}
 }
 
