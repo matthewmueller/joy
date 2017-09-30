@@ -96,13 +96,43 @@ func CreateProgram(body ...interface{}) Program {
 	}
 }
 
-// CreateFunctionDeclaration fn
-func CreateFunctionDeclaration(id *Identifier, params []IPattern, body FunctionBody) FunctionDeclaration {
+// CreateFunction fn
+func CreateFunction(id *Identifier, params []IPattern, body FunctionBody) FunctionDeclaration {
 	return FunctionDeclaration{
 		Type:   "FunctionDeclaration",
 		ID:     id,
 		Params: params,
 		Body:   body,
+	}
+}
+
+// CreateGeneratorFunction fn
+func CreateGeneratorFunction(id *Identifier, params []IPattern, body FunctionBody) FunctionDeclaration {
+	return FunctionDeclaration{
+		Type:      "FunctionDeclaration",
+		ID:        id,
+		Params:    params,
+		Body:      body,
+		Generator: true,
+	}
+}
+
+// CreateAsyncFunction fn
+func CreateAsyncFunction(id *Identifier, params []IPattern, body FunctionBody) FunctionDeclaration {
+	return FunctionDeclaration{
+		Type:   "FunctionDeclaration",
+		ID:     id,
+		Params: params,
+		Body:   body,
+		Async:  true,
+	}
+}
+
+// CreateAwaitExpression fn
+func CreateAwaitExpression(argument IExpression) AwaitExpression {
+	return AwaitExpression{
+		Type:     "AwaitExpression",
+		Argument: argument,
 	}
 }
 

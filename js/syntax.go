@@ -103,6 +103,8 @@ var _ INode = (*NewExpression)(nil)
 var _ IExpression = (*NewExpression)(nil)
 var _ INode = (*SequenceExpression)(nil)
 var _ IExpression = (*SequenceExpression)(nil)
+var _ INode = (*AwaitExpression)(nil)
+var _ IExpression = (*AwaitExpression)(nil)
 var _ INode = (*Pattern)(nil)
 var _ IPattern = (*Pattern)(nil)
 
@@ -802,10 +804,12 @@ func (n Declaration) Declaration() Declaration {
 
 // FunctionDeclaration struct
 type FunctionDeclaration struct {
-	Type   string      `json:"type,omitempty"`
-	ID     *Identifier `json:"id,omitempty"`
-	Params []IPattern
-	Body   FunctionBody
+	Type      string      `json:"type,omitempty"`
+	ID        *Identifier `json:"id,omitempty"`
+	Params    []IPattern
+	Body      FunctionBody
+	Generator bool
+	Async     bool
 }
 
 // Node fn
@@ -1286,4 +1290,24 @@ func (n Pattern) Node() Node {
 // Pattern fn
 func (n Pattern) Pattern() Pattern {
 	return n
+}
+
+// AwaitExpression struct
+type AwaitExpression struct {
+	Type     string      `json:"type,omitempty"`
+	Argument IExpression `json:"argument,omitempty"`
+}
+
+// Node fn
+func (n AwaitExpression) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
+// Expression fn
+func (n AwaitExpression) Expression() Expression {
+	return Expression{
+		Type: n.Type,
+	}
 }

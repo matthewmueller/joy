@@ -101,7 +101,7 @@ func translateFile(pkg *loader.PackageInfo, f *ast.File) (j []js.IStatement, err
 func decl(pkg *loader.PackageInfo, f *ast.File, n ast.Decl) (s js.IStatement, err error) {
 	switch d := n.(type) {
 	case *ast.FuncDecl:
-		return function(pkg, f, d)
+		return funcDecl(pkg, f, d)
 	case *ast.GenDecl:
 		return genDecl(pkg, f, d)
 	default:
@@ -109,7 +109,7 @@ func decl(pkg *loader.PackageInfo, f *ast.File, n ast.Decl) (s js.IStatement, er
 	}
 }
 
-func function(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j js.IStatement, err error) {
+func funcDecl(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j js.IStatement, err error) {
 	// e.g. func hi()
 	if n.Body == nil {
 		return js.CreateEmptyStatement(), nil
@@ -126,10 +126,17 @@ func function(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j js.IStat
 		return j, e
 	}
 
+	// get the fullname of this function
+	obj := pkg.ObjectOf(n.Name)
+	if obj == nil {
+		log.Warnf("no object of")
+	} else {
+		log.Infof(obj.String())
+	}
+
 	// potentially rename functions
-	objectof := pkg.ObjectOf(n.Name)
-	if tag != nil && objectof != nil {
-		aliases[objectof.String()] = tag
+	if tag != nil && obj != nil {
+		aliases[obj.String()] = tag
 	}
 
 	// get the name of the function
@@ -161,7 +168,7 @@ func function(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j js.IStat
 
 	// no receiver means it's a classless function
 	if n.Recv == nil {
-		return js.CreateFunctionDeclaration(
+		return js.CreateFunction(
 			&fnname,
 			params,
 			js.CreateFunctionBody(body...),
@@ -328,7 +335,7 @@ func typeSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IState
 	}
 
 	ident := js.CreateIdentifier(s.Name.Name)
-	return js.CreateFunctionDeclaration(
+	return js.CreateFunction(
 		&ident,
 		// TODO: make API for this
 		[]js.IPattern{js.CreateIdentifier("o")},
@@ -453,9 +460,51 @@ func funcStatement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, stmt 
 		return forStmt(pkg, f, fn, t)
 	case *ast.DeclStmt:
 		return declStmt(pkg, f, fn, t)
+	case *ast.GoStmt:
+		return goStmt(pkg, f, fn, t)
+	case *ast.SendStmt:
+		return sendStmt(pkg, f, fn, t)
 	default:
 		return nil, unhandled("funcStatement", stmt)
 	}
+}
+
+func goStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.GoStmt) (j js.IStatement, err error) {
+	c, e := callExpression(pkg, f, fn, n.Call)
+	if e != nil {
+		return nil, e
+	}
+
+	// ast.
+	// log.Infof("Scope %+v", f.Scope.Lookup(n))
+
+	return js.CreateExpressionStatement(c), nil
+	// return nil, nil
+}
+
+func sendStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.SendStmt) (j js.IStatement, err error) {
+	ch, e := expression(pkg, f, fn, n.Chan)
+	if e != nil {
+		return nil, e
+	}
+
+	val, e := expression(pkg, f, fn, n.Value)
+	if e != nil {
+		return nil, e
+	}
+
+	return js.CreateExpressionStatement(
+		js.CreateAwaitExpression(
+			js.CreateCallExpression(
+				js.CreateMemberExpression(
+					ch,
+					js.CreateIdentifier("Send"),
+					false,
+				),
+				[]js.IExpression{val},
+			),
+		),
+	), nil
 }
 
 func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.RangeStmt) (j js.IStatement, err error) {
@@ -1217,6 +1266,8 @@ func expression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, expr ast
 		return funcLit(pkg, f, fn, t)
 	case *ast.ArrayType:
 		return arrayType(pkg, f, fn, t)
+	case *ast.ChanType:
+		return chanType(pkg, f, fn, t)
 	// case *ast.KeyValueExpr:
 	// 	return keyValueExpr(pkg, f, fn, t)
 	case nil:
@@ -1305,6 +1356,19 @@ func binaryExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, b 
 }
 
 func identifier(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ident) (j js.IExpression, err error) {
+	// a, e := getObjectType(n)
+	// if e != nil {
+	// 	return nil, e
+	// }
+	obj := pkg.ObjectOf(n)
+	if obj == nil {
+		log.Warnf("no object of")
+	} else {
+		log.Infof(obj.String())
+	}
+	// fmt.Println(n.Obj)
+	// fmt.Printf("%+v\n", a)
+
 	// TODO: lookup table
 	switch n.Name {
 	case "nil":
@@ -1337,7 +1401,21 @@ func unaryExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Un
 		return nil, e
 	}
 
-	return x, nil
+	switch n.Op.String() {
+	case "<-":
+		return js.CreateAwaitExpression(
+			js.CreateCallExpression(
+				js.CreateMemberExpression(
+					x,
+					js.CreateIdentifier("Recv"),
+					false,
+				),
+				[]js.IExpression{},
+			),
+		), nil
+	default:
+		return x, nil
+	}
 }
 
 func basiclit(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, lit *ast.BasicLit) (j js.IExpression, err error) {
@@ -1561,6 +1639,7 @@ func checkBuiltin(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast
 	case "len":
 	case "copy":
 	case "make":
+		return expression(pkg, f, fn, n.Args[0])
 	}
 
 	return nil, nil
@@ -1602,6 +1681,13 @@ func isUnderscoreVariable(expr ast.Expr) bool {
 
 func arrayType(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ArrayType) (js.IExpression, error) {
 	return js.CreateArrayExpression(), nil
+}
+
+func chanType(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ChanType) (js.IExpression, error) {
+	return js.CreateNewExpression(
+		js.CreateIdentifier("Channel"),
+		[]js.IExpression{},
+	), nil
 }
 
 // get the identifier when possible

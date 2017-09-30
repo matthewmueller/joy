@@ -62,6 +62,7 @@ var _ fmt.Stringer = (*CallExpression)(nil)
 var _ fmt.Stringer = (*NewExpression)(nil)
 
 var _ fmt.Stringer = (*SequenceExpression)(nil)
+var _ fmt.Stringer = (*AwaitExpression)(nil)
 
 // var _ fmt.Stringer = (*Pattern)(nil)
 
@@ -144,7 +145,18 @@ func (n FunctionDeclaration) String() string {
 		name = " " + n
 	}
 
-	fn := "function" + name + " (" + strings.Join(a, ", ") + ") {\n" + body + "\n}"
+	async := ""
+	if n.Async {
+		async = "async "
+	}
+
+	generator := ""
+	if n.Generator {
+		generator = " *"
+	}
+
+	fn := async + "function" + generator + name + " (" + strings.Join(a, ", ") + ") {\n" + body + "\n}"
+
 	return fn
 }
 
@@ -327,6 +339,10 @@ func (n SequenceExpression) String() string {
 		exprs = append(exprs, stringify(expr))
 	}
 	return strings.Join(exprs, ", ")
+}
+
+func (n AwaitExpression) String() string {
+	return "await " + stringify(n.Argument)
 }
 
 // func (n DebuggerStatement) String() string {
