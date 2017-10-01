@@ -115,11 +115,6 @@ func funcDecl(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j js.IStat
 		return js.CreateEmptyStatement(), nil
 	}
 
-	// anonymous fns
-	if n.Name == nil {
-		return j, fmt.Errorf("function: anon functions not yet supported")
-	}
-
 	// get js:"..." tag on top of function if there is one
 	tag, e := getCommentTag(n.Doc)
 	if e != nil {
@@ -1295,6 +1290,9 @@ func expressionToString(expr ast.Expr) (string, error) {
 }
 
 func funcLit(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.FuncLit) (j js.IExpression, err error) {
+
+	// log.Infof("anonymous func %+v", pkg.(n.Type))
+
 	// build argument list
 	// var args
 	var params []js.IPattern
