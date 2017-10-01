@@ -12,15 +12,15 @@ import (
 
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/golly/jsast"
 	"github.com/pkg/errors"
 )
 
 // TODO: should be within struct, not global
 var aliases = map[string]*structtag.Tag{}
 
-func translatePackage(info *loader.PackageInfo) (j js.IExpression, err error) {
-	var files []js.IStatement
+func translatePackage(info *loader.PackageInfo) (j jsast.IExpression, err error) {
+	var files []jsast.IStatement
 
 	// translate each file into an array of statements
 	for _, file := range info.Files {
@@ -50,23 +50,23 @@ func translatePackage(info *loader.PackageInfo) (j js.IExpression, err error) {
 		}
 	}
 
-	var exportobj js.IStatement
+	var exportobj jsast.IStatement
 
 	// create a return statement for the exported fields
 	if len(exports) > 0 {
-		var props []js.Property
+		var props []jsast.Property
 		for _, export := range exports {
-			props = append(props, js.CreateProperty(
-				js.CreateIdentifier(export),
-				js.CreateIdentifier(export),
+			props = append(props, jsast.CreateProperty(
+				jsast.CreateIdentifier(export),
+				jsast.CreateIdentifier(export),
 				"init",
 			))
 		}
-		exportobj = js.CreateReturnStatement(
-			js.CreateObjectExpression(props),
+		exportobj = jsast.CreateReturnStatement(
+			jsast.CreateObjectExpression(props),
 		)
 	} else {
-		exportobj = js.CreateEmptyStatement()
+		exportobj = jsast.CreateEmptyStatement()
 	}
 
 	var body []interface{}
@@ -76,18 +76,18 @@ func translatePackage(info *loader.PackageInfo) (j js.IExpression, err error) {
 
 	// creates a self-invoking function containing our package
 	// e.g. (function() { ... })()
-	pkgfn := js.CreateCallExpression(
-		js.CreateFunctionExpression(nil, []js.IPattern{},
-			js.CreateFunctionBody(body...),
+	pkgfn := jsast.CreateCallExpression(
+		jsast.CreateFunctionExpression(nil, []jsast.IPattern{},
+			jsast.CreateFunctionBody(body...),
 		),
-		[]js.IExpression{},
+		[]jsast.IExpression{},
 	)
 
 	return pkgfn, nil
 }
 
-func translateFile(pkg *loader.PackageInfo, f *ast.File) (j []js.IStatement, err error) {
-	var stmts []js.IStatement
+func translateFile(pkg *loader.PackageInfo, f *ast.File) (j []jsast.IStatement, err error) {
+	var stmts []jsast.IStatement
 	for i := 0; i < len(f.Decls); i++ {
 		stmt, e := decl(pkg, f, f.Decls[i])
 		if e != nil {
@@ -98,7 +98,7 @@ func translateFile(pkg *loader.PackageInfo, f *ast.File) (j []js.IStatement, err
 	return stmts, nil
 }
 
-func decl(pkg *loader.PackageInfo, f *ast.File, n ast.Decl) (s js.IStatement, err error) {
+func decl(pkg *loader.PackageInfo, f *ast.File, n ast.Decl) (s jsast.IStatement, err error) {
 	switch d := n.(type) {
 	case *ast.FuncDecl:
 		return funcDecl(pkg, f, d)
@@ -109,10 +109,10 @@ func decl(pkg *loader.PackageInfo, f *ast.File, n ast.Decl) (s js.IStatement, er
 	}
 }
 
-func funcDecl(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j js.IStatement, err error) {
+func funcDecl(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j jsast.IStatement, err error) {
 	// e.g. func hi()
 	if n.Body == nil {
-		return js.CreateEmptyStatement(), nil
+		return jsast.CreateEmptyStatement(), nil
 	}
 
 	// get js:"..." tag on top of function if there is one
@@ -135,17 +135,17 @@ func funcDecl(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j js.IStat
 	}
 
 	// get the name of the function
-	fnname := js.CreateIdentifier((*n.Name).Name)
+	fnname := jsast.CreateIdentifier((*n.Name).Name)
 
 	// build argument list
 	// var args
-	var params []js.IPattern
+	var params []jsast.IPattern
 	if n.Type != nil && n.Type.Params != nil {
 		fields := n.Type.Params.List
 		for _, field := range fields {
 			// names because: (a, b string, c int) = [[a, b], c]
 			for _, name := range field.Names {
-				id := js.CreateIdentifier(name.Name)
+				id := jsast.CreateIdentifier(name.Name)
 				params = append(params, id)
 			}
 		}
@@ -163,10 +163,10 @@ func funcDecl(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j js.IStat
 
 	// no receiver means it's a classless function
 	if n.Recv == nil {
-		return js.CreateFunction(
+		return jsast.CreateFunction(
 			&fnname,
 			params,
-			js.CreateFunctionBody(body...),
+			jsast.CreateFunctionBody(body...),
 		), nil
 	}
 
@@ -191,36 +191,36 @@ func funcDecl(pkg *loader.PackageInfo, f *ast.File, n *ast.FuncDecl) (j js.IStat
 	if len(recv.Names) > 0 {
 		typeof := pkg.TypeOf(recv.Names[0])
 		if typeof != nil && aliases[typeof.String()] != nil && aliases[typeof.String()].HasOption("global") {
-			return js.CreateEmptyStatement(), nil
+			return jsast.CreateEmptyStatement(), nil
 		}
 	}
 
 	// {recv}.prototype.{name} = function ({params}) {
 	//   {body}
 	// }
-	return js.CreateExpressionStatement(
-		js.CreateAssignmentExpression(
-			js.CreateMemberExpression(
-				js.CreateMemberExpression(
+	return jsast.CreateExpressionStatement(
+		jsast.CreateAssignmentExpression(
+			jsast.CreateMemberExpression(
+				jsast.CreateMemberExpression(
 					x,
-					js.CreateIdentifier("prototype"),
+					jsast.CreateIdentifier("prototype"),
 					false,
 				),
 				fnname,
 				false,
 			),
-			js.AssignmentOperator("="),
-			js.CreateFunctionExpression(
+			jsast.AssignmentOperator("="),
+			jsast.CreateFunctionExpression(
 				nil,
 				params,
-				js.CreateFunctionBody(body...),
+				jsast.CreateFunctionBody(body...),
 			),
 		),
 	), nil
 
 }
 
-func genDecl(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatement, err error) {
+func genDecl(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j jsast.IStatement, err error) {
 	switch n.Tok.String() {
 	case "import":
 		return importSpec(pkg, f, n)
@@ -245,14 +245,14 @@ func genDecl(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatem
 	// 	}
 	// }
 
-	// return js.CreateEmptyStatement(), nil
+	// return jsast.CreateEmptyStatement(), nil
 }
 
-// func importSpec(pkg *loader.PackageInfo,  f *ast.File, n *ast.ImportSpec) (j js.IStatement, err error) {
+// func importSpec(pkg *loader.PackageInfo,  f *ast.File, n *ast.ImportSpec) (j jsast.IStatement, err error) {
 // 	return nil, nil
 // }
 
-func typeSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatement, err error) {
+func typeSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j jsast.IStatement, err error) {
 	if len(n.Specs) != 1 {
 		return nil, fmt.Errorf("genDecl: expected type to only have 1 spec but it has %d", len(n.Specs))
 	}
@@ -268,7 +268,7 @@ func typeSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IState
 		st = t
 	case *ast.InterfaceType:
 		log.Warnf("ignoring interface type. TODO: not sure if these would always be excluded from JS")
-		return js.CreateEmptyStatement(), nil
+		return jsast.CreateEmptyStatement(), nil
 	default:
 		return nil, unhandled("typeSpec<StructType>", s.Type)
 	}
@@ -307,17 +307,17 @@ func typeSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IState
 			}
 
 			// this.$name = o.$name
-			ivars = append(ivars, js.CreateExpressionStatement(
-				js.CreateAssignmentExpression(
-					js.CreateMemberExpression(
-						js.CreateThisExpression(),
-						js.CreateIdentifier(name.Name),
+			ivars = append(ivars, jsast.CreateExpressionStatement(
+				jsast.CreateAssignmentExpression(
+					jsast.CreateMemberExpression(
+						jsast.CreateThisExpression(),
+						jsast.CreateIdentifier(name.Name),
 						false,
 					),
-					js.AssignmentOperator("="),
-					js.CreateMemberExpression(
-						js.CreateIdentifier("o"),
-						js.CreateIdentifier(name.Name),
+					jsast.AssignmentOperator("="),
+					jsast.CreateMemberExpression(
+						jsast.CreateIdentifier("o"),
+						jsast.CreateIdentifier(name.Name),
 						false,
 					),
 				),
@@ -326,54 +326,54 @@ func typeSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IState
 	}
 
 	if tag != nil && tag.HasOption("global") {
-		return js.CreateEmptyStatement(), nil
+		return jsast.CreateEmptyStatement(), nil
 	}
 
-	ident := js.CreateIdentifier(s.Name.Name)
-	return js.CreateFunction(
+	ident := jsast.CreateIdentifier(s.Name.Name)
+	return jsast.CreateFunction(
 		&ident,
 		// TODO: make API for this
-		[]js.IPattern{js.CreateIdentifier("o")},
-		js.CreateFunctionBody(ivars...),
+		[]jsast.IPattern{jsast.CreateIdentifier("o")},
+		jsast.CreateFunctionBody(ivars...),
 	), nil
 }
 
-func importSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatement, err error) {
-	var decls []js.VariableDeclarator
+func importSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j jsast.IStatement, err error) {
+	var decls []jsast.VariableDeclarator
 
 	for _, spec := range n.Specs {
 		switch t := spec.(type) {
 		case *ast.ImportSpec:
-			var lh js.Identifier
+			var lh jsast.Identifier
 			p := t.Path.Value
 
 			// import dep "pkg/dep"
 			if t.Name != nil {
-				lh = js.CreateIdentifier(t.Name.Name)
+				lh = jsast.CreateIdentifier(t.Name.Name)
 			} else if p != "" {
-				lh = js.CreateIdentifier(path.Base(strings.Trim(p, `"`)))
+				lh = jsast.CreateIdentifier(path.Base(strings.Trim(p, `"`)))
 			} else {
 				return nil, unhandled("importSpec<empty>", spec)
 			}
 
-			rh := js.CreateMemberExpression(
-				js.CreateIdentifier("pkg"),
-				js.CreateLiteral(t.Path.Value),
+			rh := jsast.CreateMemberExpression(
+				jsast.CreateIdentifier("pkg"),
+				jsast.CreateLiteral(t.Path.Value),
 				true,
 			)
 
-			decl := js.CreateVariableDeclarator(lh, rh)
+			decl := jsast.CreateVariableDeclarator(lh, rh)
 			decls = append(decls, decl)
 		default:
 			return nil, unhandled("importSpec", spec)
 		}
 	}
 
-	return js.CreateVariableDeclaration("var", decls...), nil
+	return jsast.CreateVariableDeclaration("var", decls...), nil
 }
 
-func varSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatement, err error) {
-	var decls []js.VariableDeclarator
+func varSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j jsast.IStatement, err error) {
+	var decls []jsast.VariableDeclarator
 
 	for _, spec := range n.Specs {
 		switch t := spec.(type) {
@@ -382,9 +382,9 @@ func varSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatem
 
 			// handle balanced destructuring
 			for i, ident := range t.Names {
-				lh := js.CreateIdentifier(ident.Name)
+				lh := jsast.CreateIdentifier(ident.Name)
 
-				var rh js.IExpression
+				var rh jsast.IExpression
 				if i < lval {
 					r, e := expression(pkg, f, nil, t.Values[i])
 					if e != nil {
@@ -399,7 +399,7 @@ func varSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatem
 					rh = r
 				}
 
-				decl := js.CreateVariableDeclarator(lh, rh)
+				decl := jsast.CreateVariableDeclarator(lh, rh)
 				decls = append(decls, decl)
 			}
 
@@ -408,14 +408,14 @@ func varSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatem
 		}
 	}
 
-	return js.CreateVariableDeclaration("var", decls...), nil
+	return jsast.CreateVariableDeclaration("var", decls...), nil
 	// return nil, nil
 }
 
-// func mainFunc(pkg *loader.PackageInfo,  f *ast.File, fn *ast.FuncDecl) (j js.IStatement, err error) {
+// func mainFunc(pkg *loader.PackageInfo,  f *ast.File, fn *ast.FuncDecl) (j jsast.IStatement, err error) {
 // 	// e.g. func main()
 // 	if fn.Body == nil {
-// 		return js.CreateEmptyStatement(), nil
+// 		return jsast.CreateEmptyStatement(), nil
 // 	}
 
 // 	// TODO: []IStatement{} instead of interface{}
@@ -428,18 +428,18 @@ func varSpec(pkg *loader.PackageInfo, f *ast.File, n *ast.GenDecl) (j js.IStatem
 // 		body = append(body, jsStmt)
 // 	}
 
-// 	return js.CreateExpressionStatement(
-// 		js.CreateCallExpression(
-// 			js.CreateFunctionExpression(nil, []js.IPattern{},
-// 				js.CreateFunctionBody(body...),
+// 	return jsast.CreateExpressionStatement(
+// 		jsast.CreateCallExpression(
+// 			jsast.CreateFunctionExpression(nil, []jsast.IPattern{},
+// 				jsast.CreateFunctionBody(body...),
 // 			),
-// 			[]js.IExpression{},
+// 			[]jsast.IExpression{},
 // 		),
 // 	), nil
 // 	// return j, nil
 // }
 
-func funcStatement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, stmt ast.Stmt) (j js.IStatement, err error) {
+func funcStatement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, stmt ast.Stmt) (j jsast.IStatement, err error) {
 	switch t := stmt.(type) {
 	case *ast.ExprStmt:
 		return exprStatement(pkg, f, fn, t)
@@ -464,7 +464,7 @@ func funcStatement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, stmt 
 	}
 }
 
-func goStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.GoStmt) (j js.IStatement, err error) {
+func goStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.GoStmt) (j jsast.IStatement, err error) {
 	c, e := callExpression(pkg, f, fn, n.Call)
 	if e != nil {
 		return nil, e
@@ -473,11 +473,11 @@ func goStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.GoStm
 	// ast.
 	// log.Infof("Scope %+v", f.Scope.Lookup(n))
 
-	return js.CreateExpressionStatement(c), nil
+	return jsast.CreateExpressionStatement(c), nil
 	// return nil, nil
 }
 
-func sendStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.SendStmt) (j js.IStatement, err error) {
+func sendStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.SendStmt) (j jsast.IStatement, err error) {
 	ch, e := expression(pkg, f, fn, n.Chan)
 	if e != nil {
 		return nil, e
@@ -488,21 +488,21 @@ func sendStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Sen
 		return nil, e
 	}
 
-	return js.CreateExpressionStatement(
-		js.CreateAwaitExpression(
-			js.CreateCallExpression(
-				js.CreateMemberExpression(
+	return jsast.CreateExpressionStatement(
+		jsast.CreateAwaitExpression(
+			jsast.CreateCallExpression(
+				jsast.CreateMemberExpression(
 					ch,
-					js.CreateIdentifier("Send"),
+					jsast.CreateIdentifier("Send"),
 					false,
 				),
-				[]js.IExpression{val},
+				[]jsast.IExpression{val},
 			),
 		),
 	), nil
 }
 
-func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.RangeStmt) (j js.IStatement, err error) {
+func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.RangeStmt) (j jsast.IStatement, err error) {
 	id, ok := n.Key.(*ast.Ident)
 	if !ok {
 		return nil, unhandled("rangeStmt<ident>", n.Key)
@@ -531,14 +531,14 @@ func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ra
 		return nil, e
 	}
 
-	var inits []js.VariableDeclarator
+	var inits []jsast.VariableDeclarator
 	idx, ok := asn.Lhs[0].(*ast.Ident)
 	if !ok {
 		return nil, unhandled("rangeStmt<idx>", asn.Lhs[0])
 	}
-	inits = append(inits, js.CreateVariableDeclarator(
-		js.CreateIdentifier(idx.Name),
-		js.CreateInt(0),
+	inits = append(inits, jsast.CreateVariableDeclarator(
+		jsast.CreateIdentifier(idx.Name),
+		jsast.CreateInt(0),
 	))
 
 	var val *ast.Ident
@@ -547,40 +547,40 @@ func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ra
 		if !ok {
 			return nil, unhandled("rangeStmt<val>", asn.Lhs[1])
 		}
-		inits = append(inits, js.CreateVariableDeclarator(
-			js.CreateIdentifier(val.Name),
+		inits = append(inits, jsast.CreateVariableDeclarator(
+			jsast.CreateIdentifier(val.Name),
 			nil,
 		))
 	}
 
-	init := js.CreateVariableDeclaration("var", inits...)
+	init := jsast.CreateVariableDeclaration("var", inits...)
 
-	cond := js.CreateBinaryExpression(
-		js.CreateIdentifier(idx.Name),
-		js.BinaryOperator("<"),
-		js.CreateMemberExpression(
+	cond := jsast.CreateBinaryExpression(
+		jsast.CreateIdentifier(idx.Name),
+		jsast.BinaryOperator("<"),
+		jsast.CreateMemberExpression(
 			rh,
-			js.CreateIdentifier("length"),
+			jsast.CreateIdentifier("length"),
 			false,
 		),
 	)
 
-	postexpr := js.CreateUpdateExpression(
-		js.CreateIdentifier(idx.Name),
-		js.UpdateOperator("++"),
+	postexpr := jsast.CreateUpdateExpression(
+		jsast.CreateIdentifier(idx.Name),
+		jsast.UpdateOperator("++"),
 		false,
 	)
 
 	// build the body
-	var stmts []js.IStatement
+	var stmts []jsast.IStatement
 	if val != nil {
-		stmts = append(stmts, js.CreateVariableDeclaration(
+		stmts = append(stmts, jsast.CreateVariableDeclaration(
 			"var",
-			js.CreateVariableDeclarator(
-				js.CreateIdentifier(val.Name),
-				js.CreateMemberExpression(
+			jsast.CreateVariableDeclarator(
+				jsast.CreateIdentifier(val.Name),
+				jsast.CreateMemberExpression(
 					rh,
-					js.CreateIdentifier(idx.Name),
+					jsast.CreateIdentifier(idx.Name),
 					true,
 				),
 			),
@@ -593,7 +593,7 @@ func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ra
 		}
 		stmts = append(stmts, v)
 	}
-	body := js.CreateBlockStatement(stmts...)
+	body := jsast.CreateBlockStatement(stmts...)
 
 	// TODO:
 	// Range expression                              1st value          2nd value
@@ -611,7 +611,7 @@ func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ra
 
 	switch kind.(type) {
 	case *ast.ArrayType:
-		return js.CreateForStatement(
+		return jsast.CreateForStatement(
 			init,
 			cond,
 			postexpr,
@@ -631,15 +631,15 @@ func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ra
 	// 	return nil, fmt.Errorf("rangeStmt: didn't expect len(lhs) == 0")
 	// }
 
-	// var inits []js.VariableDeclarator
+	// var inits []jsast.VariableDeclarator
 
 	// idx, ok := lhs[0].(*ast.Ident)
 	// if !ok {
 	// 	return nil, unhandled("rangeStmt<idx>", lhs[0])
 	// }
-	// inits = append(inits, js.CreateVariableDeclarator(
-	// 	js.CreateIdentifier(idx.Name),
-	// 	js.CreateInt(0),
+	// inits = append(inits, jsast.CreateVariableDeclarator(
+	// 	jsast.CreateIdentifier(idx.Name),
+	// 	jsast.CreateInt(0),
 	// ))
 
 	// // handle the value if there is one
@@ -649,8 +649,8 @@ func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ra
 	// 	if !ok {
 	// 		return nil, unhandled("rangeStmt<val>", lhs[1])
 	// 	}
-	// 	inits = append(inits, js.CreateVariableDeclarator(
-	// 		js.CreateIdentifier(val.Name),
+	// 	inits = append(inits, jsast.CreateVariableDeclarator(
+	// 		jsast.CreateIdentifier(val.Name),
 	// 		nil,
 	// 	))
 	// }
@@ -660,12 +660,12 @@ func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ra
 	// 	return nil, unhandled("rangeStmt<rhs[0]>", asn.Rhs[0])
 	// }
 
-	// var rh js.IExpression
+	// var rh jsast.IExpression
 	// switch t := ux.X.(type) {
 	// case *ast.Ident:
-	// 	rh = js.CreateMemberExpression(
-	// 		js.CreateIdentifier(t.Name),
-	// 		js.CreateIdentifier("length"),
+	// 	rh = jsast.CreateMemberExpression(
+	// 		jsast.CreateIdentifier(t.Name),
+	// 		jsast.CreateIdentifier("length"),
 	// 		false,
 	// 	)
 	// default:
@@ -675,15 +675,15 @@ func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ra
 	// for _, lhs := range asn.Lhs {
 	// 	switch t := lhs.(type) {
 	// 	case *ast.Ident:
-	// 		decls = append(decls, js.CreateVariableDeclarator(
-	// 			js.CreateIdentifier(t.Name),
+	// 		decls = append(decls, jsast.CreateVariableDeclarator(
+	// 			jsast.CreateIdentifier(t.Name),
 	// 			nil,
 	// 		))
 	// 	default:
 	// 		return nil, unhandled("rangeStmt<lhs>", lhs)
 	// 	}
 	// }
-	// init := js.CreateVariableDeclaration("var", decls...)
+	// init := jsast.CreateVariableDeclaration("var", decls...)
 	// _ = init
 
 	// stmt, expr, e := VariableHandler(id.Obj.Decl)
@@ -763,9 +763,9 @@ func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ra
 	// in JS it's an expression
 	//
 	// it can also be nil in the case of for { ... }
-	// var postexpr js.IExpression
+	// var postexpr jsast.IExpression
 	// switch t := post.(type) {
-	// case js.ExpressionStatement:
+	// case jsast.ExpressionStatement:
 	// 	postexpr = t.Expression
 	// case nil:
 	// 	postexpr = nil
@@ -773,9 +773,9 @@ func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ra
 	// 	return nil, unhandled("forStmt<post>", post)
 	// }
 
-	// return js.CreateEmptyStatement(), nil
+	// return jsast.CreateEmptyStatement(), nil
 
-	// return js.CreateForStatement(
+	// return jsast.CreateForStatement(
 	// 	init,
 	// 	cond,
 	// 	postexpr,
@@ -783,7 +783,7 @@ func rangeStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ra
 	// ), nil
 }
 
-func declStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.DeclStmt) (j js.IStatement, err error) {
+func declStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.DeclStmt) (j jsast.IStatement, err error) {
 	switch t := n.Decl.(type) {
 	case *ast.GenDecl:
 		return genDecl(pkg, f, t)
@@ -792,24 +792,24 @@ func declStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Dec
 	}
 }
 
-func exprStatement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, expr *ast.ExprStmt) (j js.IExpressionStatement, err error) {
+func exprStatement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, expr *ast.ExprStmt) (j jsast.IExpressionStatement, err error) {
 	switch t := expr.X.(type) {
 	case *ast.CallExpr:
 		x, e := callExpression(pkg, f, fn, t)
 		if e != nil {
 			return nil, e
 		}
-		return js.CreateExpressionStatement(x), nil
+		return jsast.CreateExpressionStatement(x), nil
 	default:
 		return nil, fmt.Errorf("exprStatement: unhandled type: %s", reflect.TypeOf(expr))
 	}
 }
 
-func ifStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.IfStmt) (j js.IStatement, err error) {
+func ifStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.IfStmt) (j jsast.IStatement, err error) {
 	var e error
 
 	// condition: if [(...)] { ... } else { ... }
-	var test js.IExpression
+	var test jsast.IExpression
 	switch t := n.Cond.(type) {
 	case *ast.BinaryExpr:
 		test, e = binaryExpression(pkg, f, fn, t)
@@ -830,7 +830,7 @@ func ifStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.IfStm
 
 	// else: if (...) { ... } else [{ ... }]
 	elseBlock := n.Else
-	var alt js.IStatement
+	var alt jsast.IStatement
 	switch t := elseBlock.(type) {
 	case *ast.BlockStmt:
 		alt, e = blockStmt(pkg, f, fn, t)
@@ -843,7 +843,7 @@ func ifStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.IfStm
 	case *ast.ReturnStmt:
 		alt, e = returnStmt(pkg, f, fn, t)
 	case nil:
-		alt = js.CreateEmptyStatement()
+		alt = jsast.CreateEmptyStatement()
 	default:
 		return nil, unhandled("ifStmt<else>", elseBlock)
 	}
@@ -851,23 +851,23 @@ func ifStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.IfStm
 		return nil, e
 	}
 
-	return js.CreateIfStatement(
+	return jsast.CreateIfStatement(
 		test,
 		body,
 		alt,
 	), nil
 }
 
-func branchStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.BranchStmt) (j js.IStatement, err error) {
+func branchStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.BranchStmt) (j jsast.IStatement, err error) {
 	switch n.Tok.String() {
 	case "break":
-		return js.CreateBreakStatement(nil), nil
+		return jsast.CreateBreakStatement(nil), nil
 	default:
 		return nil, fmt.Errorf("unhandled branchStmt: %s", n.Tok.String())
 	}
 }
 
-func forStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ForStmt) (j js.IStatement, err error) {
+func forStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ForStmt) (j jsast.IStatement, err error) {
 
 	init, e := statement(pkg, f, fn, n.Init)
 	if e != nil {
@@ -893,9 +893,9 @@ func forStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ForS
 	// in JS it's an expression
 	//
 	// it can also be nil in the case of for { ... }
-	var postexpr js.IExpression
+	var postexpr jsast.IExpression
 	switch t := post.(type) {
-	case js.ExpressionStatement:
+	case jsast.ExpressionStatement:
 		postexpr = t.Expression
 	case nil:
 		postexpr = nil
@@ -903,7 +903,7 @@ func forStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ForS
 		return nil, unhandled("forStmt<post>", post)
 	}
 
-	return js.CreateForStatement(
+	return jsast.CreateForStatement(
 		init,
 		cond,
 		postexpr,
@@ -911,7 +911,7 @@ func forStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ForS
 	), nil
 }
 
-func statement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n ast.Stmt) (j js.IStatement, err error) {
+func statement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n ast.Stmt) (j jsast.IStatement, err error) {
 	switch t := n.(type) {
 	case nil:
 		return nil, nil
@@ -932,8 +932,8 @@ func statement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n ast.Stm
 	}
 }
 
-func blockStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.BlockStmt) (j js.IBlockStatement, err error) {
-	var stmts []js.IStatement
+func blockStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.BlockStmt) (j jsast.IBlockStatement, err error) {
+	var stmts []jsast.IStatement
 
 	for _, stmt := range n.List {
 		v, e := statement(pkg, f, fn, stmt)
@@ -943,10 +943,10 @@ func blockStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Bl
 		stmts = append(stmts, v)
 	}
 
-	return js.CreateBlockStatement(stmts...), nil
+	return jsast.CreateBlockStatement(stmts...), nil
 }
 
-func assignStatement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as *ast.AssignStmt) (j js.IStatement, err error) {
+func assignStatement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as *ast.AssignStmt) (j jsast.IStatement, err error) {
 	// TODO: these are separate, but very similar functions.
 	// the reason they're separate is because the JS AST's are
 	// different. It'd be good to come up with a way to consolidate
@@ -961,8 +961,8 @@ func assignStatement(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as 
 	}
 }
 
-func jsAssignStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as *ast.AssignStmt) (j js.IStatement, err error) {
-	var exprs []js.IExpression
+func jsAssignStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as *ast.AssignStmt) (j jsast.IStatement, err error) {
+	var exprs []jsast.IExpression
 	lhs := as.Lhs
 	rhs := as.Rhs
 	llhs := len(lhs)
@@ -1001,9 +1001,9 @@ func jsAssignStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as *as
 				return nil, e
 			}
 
-			exprs = append(exprs, js.CreateAssignmentExpression(
+			exprs = append(exprs, jsast.CreateAssignmentExpression(
 				l,
-				js.AssignmentOperator("="),
+				jsast.AssignmentOperator("="),
 				r,
 			))
 		}
@@ -1031,9 +1031,9 @@ func jsAssignStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as *as
 			return nil, e
 		}
 
-		exprs = append(exprs, js.CreateAssignmentExpression(
-			js.CreateIdentifier(lname),
-			js.AssignmentOperator("="),
+		exprs = append(exprs, jsast.CreateAssignmentExpression(
+			jsast.CreateIdentifier(lname),
+			jsast.AssignmentOperator("="),
 			r,
 		))
 
@@ -1047,25 +1047,25 @@ func jsAssignStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as *as
 				return nil, e
 			}
 
-			exprs = append(exprs, js.CreateAssignmentExpression(
+			exprs = append(exprs, jsast.CreateAssignmentExpression(
 				x,
-				js.AssignmentOperator("="),
-				js.CreateMemberExpression(
-					js.CreateIdentifier(lname),
-					js.CreateInt(i),
+				jsast.AssignmentOperator("="),
+				jsast.CreateMemberExpression(
+					jsast.CreateIdentifier(lname),
+					jsast.CreateInt(i),
 					true,
 				),
 			))
 		}
 	}
 
-	return js.CreateExpressionStatement(
-		js.CreateSequenceExpression(exprs...),
+	return jsast.CreateExpressionStatement(
+		jsast.CreateSequenceExpression(exprs...),
 	), nil
 }
 
-func jsVariableDecl(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as *ast.AssignStmt) (j js.IStatement, err error) {
-	var stmts []js.VariableDeclarator
+func jsVariableDecl(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as *ast.AssignStmt) (j jsast.IStatement, err error) {
+	var stmts []jsast.VariableDeclarator
 
 	lhs := as.Lhs
 	rhs := as.Rhs
@@ -1085,8 +1085,8 @@ func jsVariableDecl(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as *
 				return nil, fmt.Errorf("jsVariableDecl<zero>: unhandled type: %s", reflect.TypeOf(lh))
 			}
 
-			stmts = append(stmts, js.CreateVariableDeclarator(
-				js.CreateIdentifier(l.Name),
+			stmts = append(stmts, jsast.CreateVariableDeclarator(
+				jsast.CreateIdentifier(l.Name),
 				nil,
 			))
 		}
@@ -1105,8 +1105,8 @@ func jsVariableDecl(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as *
 				return nil, e
 			}
 
-			stmts = append(stmts, js.CreateVariableDeclarator(
-				js.CreateIdentifier(l.Name),
+			stmts = append(stmts, jsast.CreateVariableDeclarator(
+				jsast.CreateIdentifier(l.Name),
 				r,
 			))
 		}
@@ -1125,8 +1125,8 @@ func jsVariableDecl(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as *
 			return nil, e
 		}
 
-		stmts = append(stmts, js.CreateVariableDeclarator(
-			js.CreateIdentifier(lname),
+		stmts = append(stmts, jsast.CreateVariableDeclarator(
+			jsast.CreateIdentifier(lname),
 			r,
 		))
 
@@ -1136,22 +1136,22 @@ func jsVariableDecl(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, as *
 				return nil, fmt.Errorf("jsVariableDecl<unbalanced>: unhandled type: %s", reflect.TypeOf(x))
 			}
 
-			stmts = append(stmts, js.CreateVariableDeclarator(
-				js.CreateIdentifier(x.Name),
-				js.CreateMemberExpression(
-					js.CreateIdentifier(lname),
-					js.CreateInt(i),
+			stmts = append(stmts, jsast.CreateVariableDeclarator(
+				jsast.CreateIdentifier(x.Name),
+				jsast.CreateMemberExpression(
+					jsast.CreateIdentifier(lname),
+					jsast.CreateInt(i),
 					true,
 				),
 			))
 		}
 	}
 
-	return js.CreateVariableDeclaration("var", stmts...), nil
+	return jsast.CreateVariableDeclaration("var", stmts...), nil
 }
 
-func incDecStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.IncDecStmt) (j js.IStatement, err error) {
-	var op js.UpdateOperator
+func incDecStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.IncDecStmt) (j jsast.IStatement, err error) {
+	var op jsast.UpdateOperator
 
 	x, e := expression(pkg, f, fn, n.X)
 	if e != nil {
@@ -1160,25 +1160,25 @@ func incDecStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.I
 
 	switch n.Tok.String() {
 	case "++":
-		op = js.UpdateOperator("++")
+		op = jsast.UpdateOperator("++")
 	case "--":
-		op = js.UpdateOperator("--")
+		op = jsast.UpdateOperator("--")
 	default:
 		return nil, unhandled("incDecStmt", n.Tok)
 	}
 
-	return js.CreateExpressionStatement(
-		js.CreateUpdateExpression(x, op, false),
+	return jsast.CreateExpressionStatement(
+		jsast.CreateUpdateExpression(x, op, false),
 	), nil
 }
 
-func returnStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ReturnStmt) (j js.IStatement, err error) {
+func returnStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ReturnStmt) (j jsast.IStatement, err error) {
 	// no return values
 	if len(n.Results) == 0 {
-		return js.CreateReturnStatement(nil), nil
+		return jsast.CreateReturnStatement(nil), nil
 	}
 
-	var args []js.IExpression
+	var args []jsast.IExpression
 	for _, arg := range n.Results {
 		a, e := expression(pkg, f, fn, arg)
 		if e != nil {
@@ -1189,26 +1189,26 @@ func returnStmt(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.R
 
 	// return an array
 	if len(n.Results) > 1 {
-		return js.CreateReturnStatement(js.CreateArrayExpression(args...)), nil
+		return jsast.CreateReturnStatement(jsast.CreateArrayExpression(args...)), nil
 	}
 
 	// return the value by itself
-	return js.CreateReturnStatement(args[0]), nil
+	return jsast.CreateReturnStatement(args[0]), nil
 }
 
-func callExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CallExpr) (j js.IExpression, err error) {
+func callExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CallExpr) (j jsast.IExpression, err error) {
 	// calleeSrc, e := expressionToString(expr.Fun)
 	// if e != nil {
 	// 	return j, e
 	// }
 
-	// // TODO: make sure js.Raw points to golly/js
-	// if calleeSrc == "js.Raw" && len(expr.Args) >= 1 {
+	// // TODO: make sure jsast.Raw points to golly/js
+	// if calleeSrc == "jsast.Raw" && len(expr.Args) >= 1 {
 	// 	argSrc, e := expressionToString(expr.Args[0])
 	// 	if e != nil {
 	// 		return nil, e
 	// 	}
-	// 	return js.Parse(argSrc)
+	// 	return jsast.Parse(argSrc)
 	// }
 
 	// create an expression for built-in golang functions like append
@@ -1222,7 +1222,7 @@ func callExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *a
 		return j, e
 	}
 
-	var args []js.IExpression
+	var args []jsast.IExpression
 	for _, arg := range n.Args {
 		v, e := expression(pkg, f, fn, arg)
 		if e != nil {
@@ -1231,13 +1231,13 @@ func callExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *a
 		args = append(args, v)
 	}
 
-	return js.CreateCallExpression(
+	return jsast.CreateCallExpression(
 		callee,
 		args,
 	), nil
 }
 
-func expression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, expr ast.Expr) (j js.IExpression, err error) {
+func expression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, expr ast.Expr) (j jsast.IExpression, err error) {
 	switch t := expr.(type) {
 	case *ast.Ident:
 		return identifier(pkg, f, fn, t)
@@ -1289,19 +1289,19 @@ func expressionToString(expr ast.Expr) (string, error) {
 	}
 }
 
-func funcLit(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.FuncLit) (j js.IExpression, err error) {
+func funcLit(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.FuncLit) (j jsast.IExpression, err error) {
 
 	// log.Infof("anonymous func %+v", pkg.(n.Type))
 
 	// build argument list
 	// var args
-	var params []js.IPattern
+	var params []jsast.IPattern
 	if n.Type != nil && n.Type.Params != nil {
 		fields := n.Type.Params.List
 		for _, field := range fields {
 			// names because: (a, b string, c int) = [[a, b], c]
 			for _, name := range field.Names {
-				id := js.CreateIdentifier(name.Name)
+				id := jsast.CreateIdentifier(name.Name)
 				params = append(params, id)
 			}
 		}
@@ -1317,13 +1317,13 @@ func funcLit(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Func
 		body = append(body, jsStmt)
 	}
 
-	return js.CreateFunctionExpression(nil, params, js.CreateFunctionBody(body...)), nil
+	return jsast.CreateFunctionExpression(nil, params, jsast.CreateFunctionBody(body...)), nil
 }
 
 // binary expressions in Go can be either:
 //    Binaryexpression || LogicalExpression
-// in JS.
-func binaryExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, b *ast.BinaryExpr) (j js.IExpression, err error) {
+// in jsast.
+func binaryExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, b *ast.BinaryExpr) (j jsast.IExpression, err error) {
 	x, e := expression(pkg, f, fn, b.X)
 	if e != nil {
 		return nil, e
@@ -1340,20 +1340,20 @@ func binaryExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, b 
 	op := b.Op.String()
 	switch op {
 	case "||", "&&":
-		return js.CreateLogicalExpression(x, js.LogicalOperator(op), y), nil
+		return jsast.CreateLogicalExpression(x, jsast.LogicalOperator(op), y), nil
 	// TODO: prune. should be only values that are possible in Go
 	case "==", "!=", "===", "!==",
 		"<", "<=", ">", ">=", "<<",
 		">>", ">>>", "+", "-", "*",
 		"/", "%", "|", "^", "&",
 		"in", "instanceof":
-		return js.CreateBinaryExpression(x, js.BinaryOperator(op), y), nil
+		return jsast.CreateBinaryExpression(x, jsast.BinaryOperator(op), y), nil
 	default:
 		return nil, unhandled("binaryExpression<unknown op>", op)
 	}
 }
 
-func identifier(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ident) (j js.IExpression, err error) {
+func identifier(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Ident) (j jsast.IExpression, err error) {
 	// a, e := getObjectType(n)
 	// if e != nil {
 	// 	return nil, e
@@ -1370,19 +1370,19 @@ func identifier(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.I
 	// TODO: lookup table
 	switch n.Name {
 	case "nil":
-		return js.CreateNull(), nil
+		return jsast.CreateNull(), nil
 	case "println":
-		return js.CreateMemberExpression(
-			js.CreateIdentifier("console"),
-			js.CreateIdentifier("log"),
+		return jsast.CreateMemberExpression(
+			jsast.CreateIdentifier("console"),
+			jsast.CreateIdentifier("log"),
 			false,
 		), nil
 	default:
-		return js.CreateIdentifier(n.Name), nil
+		return jsast.CreateIdentifier(n.Name), nil
 	}
 }
 
-func starExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.StarExpr) (j js.IExpression, err error) {
+func starExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.StarExpr) (j jsast.IExpression, err error) {
 	// for now, we're ignoring the pointer
 	x, e := expression(pkg, f, fn, n.X)
 	if e != nil {
@@ -1392,7 +1392,7 @@ func starExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Sta
 	return x, nil
 }
 
-func unaryExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.UnaryExpr) (j js.IExpression, err error) {
+func unaryExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.UnaryExpr) (j jsast.IExpression, err error) {
 	// for now, we're ignoring the pointer
 	x, e := expression(pkg, f, fn, n.X)
 	if e != nil {
@@ -1401,14 +1401,14 @@ func unaryExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Un
 
 	switch n.Op.String() {
 	case "<-":
-		return js.CreateAwaitExpression(
-			js.CreateCallExpression(
-				js.CreateMemberExpression(
+		return jsast.CreateAwaitExpression(
+			jsast.CreateCallExpression(
+				jsast.CreateMemberExpression(
 					x,
-					js.CreateIdentifier("Recv"),
+					jsast.CreateIdentifier("Recv"),
 					false,
 				),
-				[]js.IExpression{},
+				[]jsast.IExpression{},
 			),
 		), nil
 	default:
@@ -1416,11 +1416,11 @@ func unaryExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.Un
 	}
 }
 
-func basiclit(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, lit *ast.BasicLit) (j js.IExpression, err error) {
-	return js.CreateLiteral(lit.Value), nil
+func basiclit(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, lit *ast.BasicLit) (j jsast.IExpression, err error) {
+	return jsast.CreateLiteral(lit.Value), nil
 }
 
-func compositeLiteral(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.IExpression, err error) {
+func compositeLiteral(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j jsast.IExpression, err error) {
 	switch n.Type.(type) {
 	case *ast.Ident, *ast.SelectorExpr:
 		return jsNewFunction(pkg, f, fn, n)
@@ -1433,11 +1433,11 @@ func compositeLiteral(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n 
 	}
 }
 
-func jsObjectExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.ObjectExpression, err error) {
-	var props []js.Property
+func jsObjectExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j jsast.ObjectExpression, err error) {
+	var props []jsast.Property
 
 	for _, elt := range n.Elts {
-		var prop js.Property
+		var prop jsast.Property
 		var e error
 
 		switch t := elt.(type) {
@@ -1452,17 +1452,17 @@ func jsObjectExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, 
 		props = append(props, prop)
 	}
 
-	return js.CreateObjectExpression(props), nil
+	return jsast.CreateObjectExpression(props), nil
 }
 
-func jsNewFunction(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.IExpression, err error) {
-	var fnname js.IExpression
-	var props []js.Property
+func jsNewFunction(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j jsast.IExpression, err error) {
+	var fnname jsast.IExpression
+	var props []jsast.Property
 
 	switch t := n.Type.(type) {
 	// e.g. Document{}
 	case *ast.Ident:
-		fnname = js.CreateIdentifier(t.Name)
+		fnname = jsast.CreateIdentifier(t.Name)
 	// e.g. dom.Document{}
 	case *ast.SelectorExpr:
 		// this will convert `dom.Document{}` into
@@ -1470,9 +1470,9 @@ func jsNewFunction(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *as
 		// where the js tag is `js:"document,global"`
 		objectof := pkg.ObjectOf(t.Sel)
 		if objectof != nil && aliases[objectof.String()] != nil && aliases[objectof.String()].HasOption("global") {
-			return js.CreateMemberExpression(
-				js.CreateIdentifier("window"),
-				js.CreateIdentifier(aliases[objectof.String()].Name),
+			return jsast.CreateMemberExpression(
+				jsast.CreateIdentifier("window"),
+				jsast.CreateIdentifier(aliases[objectof.String()].Name),
 				false,
 			), nil
 		}
@@ -1487,7 +1487,7 @@ func jsNewFunction(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *as
 	}
 
 	for _, elt := range n.Elts {
-		var prop js.Property
+		var prop jsast.Property
 		var e error
 
 		switch t := elt.(type) {
@@ -1504,14 +1504,14 @@ func jsNewFunction(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *as
 		props = append(props, prop)
 	}
 
-	return js.CreateNewExpression(
+	return jsast.CreateNewExpression(
 		fnname,
-		[]js.IExpression{js.CreateObjectExpression(props)},
+		[]jsast.IExpression{jsast.CreateObjectExpression(props)},
 	), nil
 }
 
-func jsArrayExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j js.ArrayExpression, err error) {
-	var elements []js.IExpression
+func jsArrayExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CompositeLit) (j jsast.ArrayExpression, err error) {
+	var elements []jsast.IExpression
 
 	for _, elt := range n.Elts {
 		el, e := expression(pkg, f, fn, elt)
@@ -1521,10 +1521,10 @@ func jsArrayExpression(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n
 		elements = append(elements, el)
 	}
 
-	return js.CreateArrayExpression(elements...), nil
+	return jsast.CreateArrayExpression(elements...), nil
 }
 
-func keyValueExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.KeyValueExpr) (j js.Property, err error) {
+func keyValueExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.KeyValueExpr) (j jsast.Property, err error) {
 	// get the key
 	key, e := expression(pkg, f, fn, n.Key)
 	if e != nil {
@@ -1537,17 +1537,17 @@ func keyValueExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast
 		return j, e
 	}
 
-	return js.CreateProperty(key, value, "init"), nil
+	return jsast.CreateProperty(key, value, "init"), nil
 }
 
-func selectorExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.SelectorExpr) (j js.MemberExpression, err error) {
-	var x js.IExpression
-	var s js.IExpression
+func selectorExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.SelectorExpr) (j jsast.MemberExpression, err error) {
+	var x jsast.IExpression
+	var s jsast.IExpression
 
 	// first check if we have an alias already
 	// typeof := pkg.TypeOf(n.X)
 	// if typeof != nil && aliases[typeof.String()] != nil {
-	// 	x = js.CreateIdentifier(aliases[typeof.String()].Name)
+	// 	x = jsast.CreateIdentifier(aliases[typeof.String()].Name)
 	// }
 
 	// (user.phone).number
@@ -1562,7 +1562,7 @@ func selectorExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast
 	// first check if we have an alias already
 	objectof := pkg.ObjectOf(n.Sel)
 	if objectof != nil && aliases[objectof.String()] != nil {
-		s = js.CreateIdentifier(aliases[objectof.String()].Name)
+		s = jsast.CreateIdentifier(aliases[objectof.String()].Name)
 	}
 
 	// user.phone.(number)
@@ -1574,11 +1574,11 @@ func selectorExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast
 		s = se
 	}
 
-	member := js.CreateMemberExpression(x, s, false)
+	member := jsast.CreateMemberExpression(x, s, false)
 	return member, nil
 }
 
-func indexExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.IndexExpr) (j js.MemberExpression, err error) {
+func indexExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.IndexExpr) (j jsast.MemberExpression, err error) {
 	// (i)[0]
 	x, e := expression(pkg, f, fn, n.X)
 	if e != nil {
@@ -1591,7 +1591,7 @@ func indexExpr(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.In
 		return j, e
 	}
 
-	return js.CreateMemberExpression(x, i, true), nil
+	return jsast.CreateMemberExpression(x, i, true), nil
 }
 
 func unhandled(fn string, n interface{}) error {
@@ -1625,7 +1625,7 @@ func getCommentTag(n *ast.CommentGroup) (*structtag.Tag, error) {
 	return nil, nil
 }
 
-func checkBuiltin(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CallExpr) (js.IExpression, error) {
+func checkBuiltin(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.CallExpr) (jsast.IExpression, error) {
 	id, ok := n.Fun.(*ast.Ident)
 	if !ok {
 		return nil, nil
@@ -1643,8 +1643,8 @@ func checkBuiltin(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast
 	return nil, nil
 }
 
-func builtinAppend(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, ns []ast.Expr) (js.IExpression, error) {
-	var els []js.IExpression
+func builtinAppend(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, ns []ast.Expr) (jsast.IExpression, error) {
+	var els []jsast.IExpression
 	for _, n := range ns {
 		x, e := expression(pkg, f, fn, n)
 		if e != nil {
@@ -1657,10 +1657,10 @@ func builtinAppend(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, ns []
 		return els[0], nil
 	}
 
-	return js.CreateCallExpression(
-		js.CreateMemberExpression(
+	return jsast.CreateCallExpression(
+		jsast.CreateMemberExpression(
 			els[0],
-			js.CreateIdentifier("concat"),
+			jsast.CreateIdentifier("concat"),
 			false,
 		),
 		els[1:],
@@ -1677,14 +1677,14 @@ func isUnderscoreVariable(expr ast.Expr) bool {
 	return false
 }
 
-func arrayType(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ArrayType) (js.IExpression, error) {
-	return js.CreateArrayExpression(), nil
+func arrayType(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ArrayType) (jsast.IExpression, error) {
+	return jsast.CreateArrayExpression(), nil
 }
 
-func chanType(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ChanType) (js.IExpression, error) {
-	return js.CreateNewExpression(
-		js.CreateIdentifier("Channel"),
-		[]js.IExpression{},
+func chanType(pkg *loader.PackageInfo, f *ast.File, fn *ast.FuncDecl, n *ast.ChanType) (jsast.IExpression, error) {
+	return jsast.CreateNewExpression(
+		jsast.CreateIdentifier("Channel"),
+		[]jsast.IExpression{},
 	), nil
 }
 

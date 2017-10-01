@@ -48,8 +48,27 @@ func Test(t *testing.T) {
 				return
 			}
 
+			testdir := path.Join(cwd, "testdata", dir.Name())
+			testpaths, e := ioutil.ReadDir(testdir)
+			if e != nil {
+				t.Fatal(e)
+			}
+
+			var pages []string
+			multipage := true
+			for _, testpath := range testpaths {
+				if testpath.IsDir() {
+					pages = append(pages, path.Join(path.Join(testdir, testpath.Name())))
+				} else {
+					multipage = false
+				}
+			}
+			if !multipage {
+				pages = []string{testdir}
+			}
+
 			// compile the file
-			src, e := golly.Compile(path.Join(cwd, "testdata", dir.Name()))
+			src, e := golly.Compile(pages...)
 			if e != nil {
 				t.Fatal(e)
 			}
