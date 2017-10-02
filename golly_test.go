@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -49,22 +50,23 @@ func Test(t *testing.T) {
 			}
 
 			testdir := path.Join(cwd, "testdata", dir.Name())
-			testpaths, e := ioutil.ReadDir(testdir)
+			var inputs []string
+
+			// support single and multipage tests
+			inps, e := filepath.Glob(path.Join(testdir, "input.go"))
 			if e != nil {
 				t.Fatal(e)
 			}
+			inputs = append(inputs, inps...)
+			inps, e = filepath.Glob(path.Join(testdir, "*", "input.go"))
+			if e != nil {
+				t.Fatal(e)
+			}
+			inputs = append(inputs, inps...)
 
 			var pages []string
-			multipage := true
-			for _, testpath := range testpaths {
-				if testpath.IsDir() {
-					pages = append(pages, path.Join(path.Join(testdir, testpath.Name())))
-				} else {
-					multipage = false
-				}
-			}
-			if !multipage {
-				pages = []string{testdir}
+			for _, input := range inputs {
+				pages = append(pages, path.Dir(input))
 			}
 
 			// compile the file
