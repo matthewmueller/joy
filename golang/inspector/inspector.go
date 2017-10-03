@@ -132,6 +132,8 @@ func Inspect(program *loader.Program) (scripts []*Script, err error) {
 		var err error
 		ast.Inspect(declaration.node, func(node ast.Node) bool {
 			switch n := node.(type) {
+
+			// Get "js" comment tags from the top of functions
 			case *ast.FuncDecl:
 				tag, e := getJSTag(n.Doc)
 				if e != nil {
@@ -140,6 +142,8 @@ func Inspect(program *loader.Program) (scripts []*Script, err error) {
 				} else if tag != nil {
 					declaration.jstag = tag
 				}
+
+			// Get "js" comment tags from the top of types
 			case *ast.TypeSpec:
 				tag, e := getJSTag(n.Doc)
 				if e != nil {
@@ -148,8 +152,16 @@ func Inspect(program *loader.Program) (scripts []*Script, err error) {
 				} else if tag != nil {
 					declaration.jstag = tag
 				}
+
+				// if we encounter and Go statements or channels,
+			// we'll make the whole declaration asynchronous
+			// TODO: channels
 			case *ast.GoStmt:
 				declaration.async = true
+
+				// dig into our identifiers to figure out where
+			// they were defined and add those dependencies
+			// to the crawler
 			case *ast.Ident:
 				// check if we depend on any other
 				// declarations with this identifier
