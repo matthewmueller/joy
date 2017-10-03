@@ -196,18 +196,24 @@ func Inspect(program *loader.Program) (scripts []*Script, err error) {
 	return scripts, nil
 }
 
+// groupByPackages takes a dependency tree of declarations
+// and organizes them into a topologically order list of
+// packages
 func groupByPackages(d *Declaration) (pkgs []*Package) {
 	pkgmap := map[string]*Package{}
 	visited := map[string]bool{}
 	order := &[]string{}
 
-	pkgs = recursePackage(d, pkgmap, visited, order)
+	// get the list of packages from first to last referenced package
+	pkgs = recurseDeclaration(d, pkgmap, visited, order)
 
-	// reverse the packages for topological order
+	// reverse the list for topological order
 	return reverse(pkgs)
 }
 
-func recursePackage(
+// recurse the declarations, building up an ordered
+// list of packages that contain these declarations
+func recurseDeclaration(
 	d *Declaration,
 	pkgmap map[string]*Package,
 	visited map[string]bool,
@@ -234,7 +240,7 @@ func recursePackage(
 
 	// loop over each of the dependencies
 	for _, decl := range d.dependencies {
-		recursePackage(decl, pkgmap, visited, order)
+		recurseDeclaration(decl, pkgmap, visited, order)
 	}
 
 	// arrange occurding to first seen
