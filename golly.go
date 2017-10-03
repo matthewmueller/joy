@@ -28,6 +28,10 @@ func Compile(paths ...string) (string, error) {
 		return "", e
 	}
 
+	if len(files) == 0 {
+		return "", nil
+	}
+
 	// TEMPORARY
 	return files[0].Source(), nil
 }

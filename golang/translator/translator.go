@@ -21,11 +21,13 @@ type context struct {
 	info         *loader.PackageInfo
 	aliases      map[string]*structtag.Tag
 	dependencies []string
+	exported     bool
 }
 
 // Result of the translation
 type Result struct {
 	Node         jsast.INode
+	Exported     bool
 	Dependencies []string
 }
 
@@ -55,6 +57,7 @@ func Translate(info *loader.PackageInfo, decl ast.Decl) (*Result, error) {
 	return &Result{
 		Node:         node,
 		Dependencies: unique(ctx.dependencies),
+		Exported:     ctx.exported,
 	}, nil
 }
 
@@ -64,22 +67,24 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 		return jsast.CreateEmptyStatement(), nil
 	}
 
+	// get the object
+	obj := ctx.info.ObjectOf(n.Name)
+	if obj.Exported() || obj.Name() == "main" {
+		ctx.exported = true
+	}
+
 	// get js:"..." tag on top of function if there is one
 	tag, e := getCommentTag(n.Doc)
 	if e != nil {
 		return nil, e
-	}
+	} else if tag != nil {
+		// we shouldn't export global options
+		// because they're already global
+		if tag.HasOption("global") {
+			ctx.exported = false
+		}
 
-	// get the fullname of this function
-	obj := ctx.info.ObjectOf(n.Name)
-	if obj == nil {
-		// log.Warnf("no object of")
-	} else {
-		// log.Infof(obj.String())
-	}
-
-	// potentially rename functions
-	if tag != nil && obj != nil {
+		// alias the function name
 		ctx.aliases[obj.String()] = tag
 	}
 
