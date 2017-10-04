@@ -46,7 +46,7 @@ Golly gee, it's another Go to JS compiler.
 - [ ] How can we turn goroutines and channels into async/await or generators?
 - [ ] What is a []byte? Can it just be a string? How does that map?
 - [ ] How does the JS variable scope differ from the Go's scope and what do we need to account for?
-- [ ] Should Go's interfaces show up in the emitted Javascript in any form?
+- [ ] How do passing interface types and switch v.(type)'s work?
 - [ ] Is it possible to "upgrade" an existing Go package to use Golly when you don't control the package's source, e.g. "fmt"?
 - [ ] How will React/Preact look and work inside Go?
 - [ ] Should we rename this project to Jolly? :-D

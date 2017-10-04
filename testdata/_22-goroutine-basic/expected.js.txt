@@ -1,0 +1,18 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/22-goroutine-basic"] = (function() {
+var Channel = pkg["channel.js"];
+async function main () {
+var ch = new Channel();
+(async function(msg) {
+await ch.Send(msg);
+})("hi");
+console.log(await ch.Recv());
+};
+return {
+  main: main
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/22-goroutine-basic"].main();
+})()

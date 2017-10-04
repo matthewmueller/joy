@@ -161,6 +161,28 @@ func CreateFunctionExpression(id *Identifier, params []IPattern, body FunctionBo
 	}
 }
 
+// CreateAsyncFunctionExpression fn
+func CreateAsyncFunctionExpression(id *Identifier, params []IPattern, body FunctionBody) FunctionExpression {
+	return FunctionExpression{
+		Type:   "FunctionExpression",
+		ID:     id,
+		Params: params,
+		Body:   body,
+		Async:  true,
+	}
+}
+
+// CreateGeneratorFunctionExpression fn
+func CreateGeneratorFunctionExpression(id *Identifier, params []IPattern, body FunctionBody) FunctionExpression {
+	return FunctionExpression{
+		Type:      "FunctionExpression",
+		ID:        id,
+		Params:    params,
+		Body:      body,
+		Generator: true,
+	}
+}
+
 // CreateFunctionBody fn
 func CreateFunctionBody(body ...interface{}) FunctionBody {
 	// ensure the body contains either statements or directives

@@ -176,6 +176,10 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 			// we'll make the whole declaration asynchronous
 			// TODO: channels
 			case *ast.GoStmt:
+				if imports[declaration.From] == nil {
+					imports[declaration.From] = map[string]string{}
+				}
+				imports[declaration.From]["Channel"] = `"channel.js"`
 				declaration.Async = true
 
 			// dig into our identifiers to figure out where

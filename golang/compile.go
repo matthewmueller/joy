@@ -67,7 +67,8 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) 
 			var decls []interface{}
 			var exports []string
 
-			// create "requires" between packages
+			// create imports linking of the pkgs between packages
+			// e.g. var runner = pkg["github.com/gorunner/runner"]
 			var imports []jsast.VariableDeclarator
 			for name, from := range pkg.Dependencies {
 				imports = append(imports, jsast.CreateVariableDeclarator(

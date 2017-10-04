@@ -1,18 +1,7 @@
+;
 (function() {
-var pkg = {
-
-};
+var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/08-struct-nested-array"] = (function() {
-function User (o) {
-this.FirstName = o.FirstName;
-this.LastName = o.LastName;
-this.Phones = o.Phones;
-};
-function Phone (o) {
-this.Type = o.Type;
-this.Number = o.Number;
-this.Main = o.Main;
-};
 function main () {
 var user = new User({
   FirstName: "Matt",
@@ -28,10 +17,20 @@ var user = new User({
 });
 console.log(user.FirstName + ": " + user.Phones[0].Number);
 };
+function User (o) {
+this.FirstName = o.FirstName;
+this.LastName = o.LastName;
+this.Phones = o.Phones;
+};
+function Phone (o) {
+this.Type = o.Type;
+this.Number = o.Number;
+this.Main = o.Main;
+};
 return {
-  Phone: Phone,
+  main: main,
   User: User,
-  main: main
+  Phone: Phone
 };
 })();
 pkg["github.com/matthewmueller/golly/testdata/08-struct-nested-array"].main();
