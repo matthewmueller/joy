@@ -128,20 +128,22 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 		return nil, e
 	}
 
-	// This is to determine if the function should be excluded
-	// from the final output because it's already a global DOM node.
+	if len(recv.Names) != 1 {
+		return nil, fmt.Errorf("function<recv>: only expected 1 func receiver name but got %d", len(recv.Names))
+	}
+
+	// Links the function receiver to "this",
+	// Placing it on top of the function body
+	// e.g. var d = this
 	//
-	// Lookup the receiver's type, note that this has nothing to do
-	// with whether or not there's a comment on the function
-	// itself.
-	//
-	// TODO: This code may panic, make more robust
-	// if len(recv.Names) > 0 {
-	// 	typeof := ctx.info.TypeOf(recv.Names[0])
-	// 	if typeof != nil && ctx.aliases[typeof.String()] != nil && ctx.aliases[typeof.String()].HasOption("global") {
-	// 		return jsast.CreateEmptyStatement(), nil
-	// 	}
-	// }
+	// TODO: be smarter here and rename the inner body variables to "this"
+	body = append([]interface{}{jsast.CreateVariableDeclaration(
+		"var",
+		jsast.CreateVariableDeclarator(
+			jsast.CreateIdentifier(recv.Names[0].Name),
+			jsast.CreateThisExpression(),
+		),
+	)}, body...)
 
 	// {recv}.prototype.{name} = function ({params}) {
 	//   {body}
