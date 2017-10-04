@@ -5,17 +5,17 @@ Golly gee, it's another Go to JS compiler.
 ### On Deck Tasks:
 
 - [x] [Matt] Fix up the test suite to test packages now that it's actually starting to compile working stuff
-- [ ] [Matt] Build basic DOM library (based on https://github.com/developit/undom). This is the minimum viable DOM needed for supporting virtual dom libraries like Preact. There's a bunch of bug fixes I need to make along the way to make this work.
-- [ ] Handle empty values in struct (https://github.com/matthewmueller/golly/issues/3)
-- [ ] Build out the DOM implementation (starting with level 1 or if these can be scripted... amazeee)
-- [ ] Implement a goroutine & channel => async/await or generator runtime
+- [ ] [Matt] Build fetch bindings (This seems like a sufficiently complicated binding that will help me understand how binding should work)
+- [ ] Finish up a goroutine & channel => async/await
 - [ ] Start implementing pieces of the standard library (e.g. json.Marshal => JSON.stringify) and have a way to import these over the Go implementations
-- [ ] Unused functions from libraries should be excluded from the output (this should be relatively the same technique that DOM renaming uses)
+- [ ] Build basic DOM library (based on https://github.com/developit/undom). This is the minimum viable DOM needed for supporting virtual dom libraries like Preact. There's a bunch of bug fixes I need to make along the way to make this work.
+- [ ] Handle empty values in struct (https://github.com/matthewmueller/golly/issues/3)
+- [x] Unused functions from libraries should be excluded from the output (this should be relatively the same technique that DOM renaming uses)
+- [ ] Build out the DOM implementation (starting with level 1 or if these can be scripted... amazeee)
 - [ ] Prettier javascript (not hugely important, but right now the JS we emit is fugly and hard to scan without running it)
 - [ ] Start writing libraries and application code
   - [ ] [Matt] Preact (will probably try to translate this completely into Go code to test compiler, though bindings are probably a better idea in long run)
   - [ ] D3 (another good example to test bindings with external libraries) 
-  - [ ] [Matt] fetch (100 LOC using https://github.com/developit/unfetch)
   - [ ] [Matt] Generate VNode helper library (something like: https://github.com/matthewmueller/vcom)
 - [ ] Bug fix and add features as needed. Rinse & repeat.
 
@@ -65,14 +65,16 @@ Golly gee, it's another Go to JS compiler.
 - [x] implement anonymous functions
 - [x] break
 - [x] append
-- [ ] range
+- [x] range
 - [ ] len
 - [ ] continue
 - [ ] implement slices
 - [ ] implement other built-in functions (copy, make)
 - [ ] special types like `[]byte`, `time.Time`, `error`
 - [ ] implement spreads (users...)
+- [ ] handle `a.(type)`
 - [ ] implement switch statements
+- [ ] handle `switch t := a.(type)`
 - [ ] handle User{"a"}
 - [ ] iota
 - [ ] panics
@@ -84,11 +86,11 @@ Golly gee, it's another Go to JS compiler.
 - [x] support multiple files
   - files are wrapped in closures and the package wraps the file closures in another closure calling main()
 - [ ] see if we can mimic rollup to decrease filesize further
-- [ ] We can also inspect the callgraph to eliminate deadcode, though it's pretty expensive to do (maybe only for production builds?). I think there's a faster way of doing this by keeping a tally of the types that we use for each identifier as we traverse the Go AST and then including/excluding functions at the end based on if they're used or not. We just need a way to build out (potentially big) standard libraries without worrying about the build size blowing up.
+- [x] We can also inspect the callgraph to eliminate deadcode, though it's pretty expensive to do (maybe only for production builds?). I think there's a faster way of doing this by keeping a tally of the types that we use for each identifier as we traverse the Go AST and then including/excluding functions at the end based on if they're used or not. We just need a way to build out (potentially big) standard libraries without worrying about the build size blowing up.
 
 ### Hard but probably necessary:
 
-- [ ] support goroutines and channels(using async/await)
+- [ ] finish goroutines and channels support (using async/await)
   - the hardest thing here is turning the functions into async once we discover a goroutine and then marking all their parents as async too.
   - we need some async functionality for things like AJAX
     - otherwise callback hell in Go? 🤷‍♂️
