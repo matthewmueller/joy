@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/testdata/21-packages/dep"
+	zarg "github.com/matthewmueller/golly/testdata/21-packages/dep"
 )
 
 type test struct {
@@ -10,5 +10,5 @@ type test struct {
 
 func main() {
 	t := test{String: "hi"}
-	println(dep.Dep("one") + t.String)
+	println(zarg.Dep("one") + t.String)
 }

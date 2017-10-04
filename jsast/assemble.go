@@ -256,6 +256,10 @@ func (n EmptyStatement) String() string {
 }
 
 func (n ObjectExpression) String() string {
+	if len(n.Properties) == 0 {
+		return "{}"
+	}
+
 	var props []string
 	for _, prop := range n.Properties {
 		k := stringify(prop.Key)

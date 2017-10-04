@@ -11,17 +11,13 @@ import (
 	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/golang/scope"
 	"github.com/matthewmueller/golly/jsast"
+	"github.com/matthewmueller/golly/types"
 	"github.com/pkg/errors"
-
-	"golang.org/x/tools/go/loader"
 )
 
 // context struct
 type context struct {
-	info         *loader.PackageInfo
-	aliases      map[string]*structtag.Tag
-	dependencies []string
-	exported     bool
+	declaration *types.Declaration
 }
 
 // Result of the translation
@@ -32,17 +28,14 @@ type Result struct {
 }
 
 // Translate the declaration
-func Translate(info *loader.PackageInfo, decl ast.Decl) (*Result, error) {
-	sp := scope.New(decl)
-	var node jsast.INode
-	var err error
+func Translate(decl *types.Declaration) (node jsast.INode, err error) {
+	sp := scope.New(decl.Node)
 
 	ctx := &context{
-		aliases: map[string]*structtag.Tag{},
-		info:    info,
+		declaration: decl,
 	}
 
-	switch t := decl.(type) {
+	switch t := decl.Node.(type) {
 	case *ast.FuncDecl:
 		node, err = funcDecl(ctx, sp, t)
 	case *ast.GenDecl:
@@ -54,11 +47,12 @@ func Translate(info *loader.PackageInfo, decl ast.Decl) (*Result, error) {
 		return nil, err
 	}
 
-	return &Result{
-		Node:         node,
-		Dependencies: unique(ctx.dependencies),
-		Exported:     ctx.exported,
-	}, nil
+	return node, nil
+	// return &Result{
+	// 	Node:         node,
+	// 	Dependencies: unique(ctx.dependencies),
+	// 	Exported:     ctx.exported,
+	// }, nil
 }
 
 func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement, error) {
@@ -67,26 +61,26 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 		return jsast.CreateEmptyStatement(), nil
 	}
 
-	// get the object
-	obj := ctx.info.ObjectOf(n.Name)
-	if obj.Exported() || obj.Name() == "main" {
-		ctx.exported = true
-	}
+	// // get the object
+	// obj := ctx.info.ObjectOf(n.Name)
+	// if obj.Exported() || obj.Name() == "main" {
+	// 	ctx.exported = true
+	// }
 
-	// get js:"..." tag on top of function if there is one
-	tag, e := getCommentTag(n.Doc)
-	if e != nil {
-		return nil, e
-	} else if tag != nil {
-		// we shouldn't export global options
-		// because they're already global
-		if tag.HasOption("global") {
-			ctx.exported = false
-		}
+	// // get js:"..." tag on top of function if there is one
+	// tag, e := getCommentTag(n.Doc)
+	// if e != nil {
+	// 	return nil, e
+	// } else if tag != nil {
+	// 	// we shouldn't export global options
+	// 	// because they're already global
+	// 	if tag.HasOption("global") {
+	// 		ctx.exported = false
+	// 	}
 
-		// alias the function name
-		ctx.aliases[obj.String()] = tag
-	}
+	// 	// alias the function name
+	// 	ctx.aliases[obj.String()] = tag
+	// }
 
 	// get the name of the function
 	fnname := jsast.CreateIdentifier((*n.Name).Name)
@@ -142,12 +136,12 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 	// itself.
 	//
 	// TODO: This code may panic, make more robust
-	if len(recv.Names) > 0 {
-		typeof := ctx.info.TypeOf(recv.Names[0])
-		if typeof != nil && ctx.aliases[typeof.String()] != nil && ctx.aliases[typeof.String()].HasOption("global") {
-			return jsast.CreateEmptyStatement(), nil
-		}
-	}
+	// if len(recv.Names) > 0 {
+	// 	typeof := ctx.info.TypeOf(recv.Names[0])
+	// 	if typeof != nil && ctx.aliases[typeof.String()] != nil && ctx.aliases[typeof.String()].HasOption("global") {
+	// 		return jsast.CreateEmptyStatement(), nil
+	// 	}
+	// }
 
 	// {recv}.prototype.{name} = function ({params}) {
 	//   {body}
@@ -232,32 +226,32 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 	}
 
 	// store the tag for later renaming
-	objectof := ctx.info.ObjectOf(s.Name)
-	typeof := ctx.info.TypeOf(s.Name)
-	if tag != nil && objectof != nil {
-		ctx.aliases[objectof.String()] = tag
-		ctx.aliases[typeof.String()] = tag
-		// TODO: not sure if this is a good idea or not
-		// but it's to handle pointer receivers in 1 spot
-		ctx.aliases["*"+typeof.String()] = tag
-	}
+	// objectof := ctx.info.ObjectOf(s.Name)
+	// typeof := ctx.info.TypeOf(s.Name)
+	// if tag != nil && objectof != nil {
+	// 	ctx.aliases[objectof.String()] = tag
+	// 	ctx.aliases[typeof.String()] = tag
+	// 	// TODO: not sure if this is a good idea or not
+	// 	// but it's to handle pointer receivers in 1 spot
+	// 	ctx.aliases["*"+typeof.String()] = tag
+	// }
 
 	var ivars []interface{}
 	for _, field := range st.Fields.List {
 		for _, name := range field.Names {
-			objectof := ctx.info.ObjectOf(name)
-			// TODO: this doesn't need to be parsed for each field name
-			// though I'm not sure how you can have multiple field names
-			// per struct tag
-			if field.Tag != nil {
-				tags, err := structtag.Parse(field.Tag.Value[1 : len(field.Tag.Value)-1])
-				if err != nil {
-					return j, err
-				}
-				if tag, err := tags.Get("js"); err == nil {
-					ctx.aliases[objectof.String()] = tag
-				}
-			}
+			// objectof := ctx.info.ObjectOf(name)
+			// // TODO: this doesn't need to be parsed for each field name
+			// // though I'm not sure how you can have multiple field names
+			// // per struct tag
+			// if field.Tag != nil {
+			// 	tags, err := structtag.Parse(field.Tag.Value[1 : len(field.Tag.Value)-1])
+			// 	if err != nil {
+			// 		return j, err
+			// 	}
+			// 	if tag, err := tags.Get("js"); err == nil {
+			// 		ctx.aliases[objectof.String()] = tag
+			// 	}
+			// }
 
 			// this.$name = o.$name
 			ivars = append(ivars, jsast.CreateExpressionStatement(
@@ -1309,10 +1303,10 @@ func binaryExpression(ctx *context, sp *scope.Scope, b *ast.BinaryExpr) (j jsast
 func identifier(ctx *context, sp *scope.Scope, n *ast.Ident) (j jsast.IExpression, err error) {
 	// check if we depend on any other
 	// declarations with this identifier
-	obj := ctx.info.ObjectOf(n)
-	if obj != nil && obj.Pkg() != nil {
-		ctx.dependencies = append(ctx.dependencies, obj.String())
-	}
+	// obj := ctx.info.ObjectOf(n)
+	// if obj != nil && obj.Pkg() != nil {
+	// 	ctx.dependencies = append(ctx.dependencies, obj.String())
+	// }
 
 	// switch obj
 	// log.Infof("objcect type %s", obj.Type().String())
@@ -1434,14 +1428,14 @@ func jsNewFunction(ctx *context, sp *scope.Scope, n *ast.CompositeLit) (j jsast.
 		// this will convert `dom.Document{}` into
 		// var document = window.document
 		// where the js tag is `js:"document,global"`
-		objectof := ctx.info.ObjectOf(t.Sel)
-		if objectof != nil && ctx.aliases[objectof.String()] != nil && ctx.aliases[objectof.String()].HasOption("global") {
-			return jsast.CreateMemberExpression(
-				jsast.CreateIdentifier("window"),
-				jsast.CreateIdentifier(ctx.aliases[objectof.String()].Name),
-				false,
-			), nil
-		}
+		// objectof := ctx.info.ObjectOf(t.Sel)
+		// if objectof != nil && ctx.aliases[objectof.String()] != nil && ctx.aliases[objectof.String()].HasOption("global") {
+		// 	return jsast.CreateMemberExpression(
+		// 		jsast.CreateIdentifier("window"),
+		// 		jsast.CreateIdentifier(ctx.aliases[objectof.String()].Name),
+		// 		false,
+		// 	), nil
+		// }
 
 		sel, e := selectorExpr(ctx, sp, t)
 		if e != nil {
@@ -1526,10 +1520,10 @@ func selectorExpr(ctx *context, sp *scope.Scope, n *ast.SelectorExpr) (j jsast.M
 	}
 
 	// first check if we have an alias already
-	objectof := ctx.info.ObjectOf(n.Sel)
-	if objectof != nil && ctx.aliases[objectof.String()] != nil {
-		s = jsast.CreateIdentifier(ctx.aliases[objectof.String()].Name)
-	}
+	// objectof := ctx.info.ObjectOf(n.Sel)
+	// if objectof != nil && ctx.aliases[objectof.String()] != nil {
+	// 	s = jsast.CreateIdentifier(ctx.aliases[objectof.String()].Name)
+	// }
 
 	// user.phone.(number)
 	if s == nil {

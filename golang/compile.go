@@ -6,28 +6,12 @@ import (
 	"sort"
 
 	"github.com/matthewmueller/golly/golang/inspector"
+	"github.com/matthewmueller/golly/golang/translator"
+	"github.com/matthewmueller/golly/jsast"
+	"github.com/matthewmueller/golly/types"
 	"github.com/pkg/errors"
 	"golang.org/x/tools/go/loader"
 )
-
-// File interface
-type File interface {
-	Name() string
-	Source() string
-}
-
-type file struct {
-	name   string
-	source string
-}
-
-func (f *file) Name() string {
-	return f.name
-}
-
-func (f *file) Source() string {
-	return f.source
-}
 
 // Declaration struct
 type Declaration struct {
@@ -53,7 +37,7 @@ func New() *Compiler {
 }
 
 // Compile a series of packages
-func (c *Compiler) Compile(packages ...string) (files []File, err error) {
+func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) {
 	var conf loader.Config
 
 	// add all the packages as imports
@@ -70,212 +54,140 @@ func (c *Compiler) Compile(packages ...string) (files []File, err error) {
 		return files, errors.Wrap(err, "unable to load the go package")
 	}
 
-	_, err = inspector.Inspect(program)
+	scripts, err := inspector.Inspect(program)
 	if err != nil {
 		return nil, err
 	}
 
-	// return nil, nil
+	// TODO: split into functions
+	for _, script := range scripts {
 
-	// // build a map of all the declarations in all the packages
-	// // this will be used as a lookup to map object declarations
-	// // to actual AST nodes
-	// //
-	// // map[object.String()] => ast
-	// index := map[string]*Declaration{}
-	// for _, info := range pkgs.AllPackages {
-	// 	for _, file := range info.Files {
-	// 		for _, decl := range file.Decls {
-	// 			switch t := decl.(type) {
-	// 			case *ast.FuncDecl:
-	// 				obj := info.ObjectOf(t.Name)
-	// 				index[obj.String()] = &Declaration{decl, info}
-	// 			case *ast.GenDecl:
-	// 				for _, spec := range t.Specs {
-	// 					switch y := spec.(type) {
-	// 					case *ast.ValueSpec:
-	// 						for _, name := range y.Names {
-	// 							obj := info.ObjectOf(name)
-	// 							index[obj.String()] = &Declaration{decl, info}
-	// 						}
-	// 					case *ast.TypeSpec:
-	// 						obj := info.ObjectOf(y.Name)
-	// 						index[obj.String()] = &Declaration{decl, info}
-	// 					case *ast.ImportSpec:
-	// 					default:
-	// 						log.Fatalf("unknown type %s", reflect.TypeOf(y))
-	// 					}
-	// 				}
-	// 			default:
-	// 				log.Fatalf("unknown type %s", reflect.TypeOf(t))
-	// 			}
-	// 		}
-	// 	}
-	// }
+		var allpkgs []interface{}
+		for _, pkg := range script.Packages {
+			var decls []interface{}
+			var exports []string
 
-	// deps := map[string][]string{}
-	// remaining := []string{}
-	// initials := []string{}
+			// create "requires" between packages
+			var imports []jsast.VariableDeclarator
+			for name, from := range pkg.Dependencies {
+				imports = append(imports, jsast.CreateVariableDeclarator(
+					jsast.CreateIdentifier(name),
+					jsast.CreateMemberExpression(
+						jsast.CreateIdentifier("pkg"),
+						jsast.CreateLiteral(from),
+						true,
+					),
+				))
+			}
+			if len(imports) > 0 {
+				decls = append(decls, jsast.CreateVariableDeclaration(
+					"var",
+					imports...,
+				))
+			}
 
-	// // get the mains for our initial packages
-	// for _, info := range pkgs.InitialPackages() {
-	// 	main := info.Pkg.Scope().Lookup("main")
-	// 	if main == nil {
-	// 		log.Fatalf("no main() found in: %s", info.Pkg.Path())
-	// 	}
+			// create the declaration body
+			for _, decl := range pkg.Declarations {
+				ast, err := translator.Translate(decl)
+				if err != nil {
+					return nil, err
+				}
+				decls = append(decls, ast)
 
-	// 	id := main.String()
-	// 	initials = append(initials, id)
-	// 	remaining = append(remaining, id)
-	// }
+				if decl.Exported {
+					exports = append(exports, decl.Name)
+				}
+			}
 
-	// // loop through the stack adding more
-	// // packages as we translate
-	// asts := map[string]jsast.INode{}
-	// exports := map[string]bool{}
-	// for len(remaining) > 0 {
-	// 	id := remaining[0]
-	// 	remaining = remaining[1:]
-	// 	decl := index[id]
-	// 	if decl == nil {
-	// 		// log.Warnf("%s not found in index", id)
-	// 		continue
-	// 	}
+			// create a return statement for the exported fields
+			// e.g. return { $export: $export }
+			var exported interface{}
+			if len(exports) > 0 {
+				var props []jsast.Property
+				for _, export := range exports {
+					props = append(props, jsast.CreateProperty(
+						jsast.CreateIdentifier(export),
+						jsast.CreateIdentifier(export),
+						"init",
+					))
+				}
+				exported = jsast.CreateReturnStatement(
+					jsast.CreateObjectExpression(props),
+				)
 
-	// 	// translate our package from a Go AST to a Javascript AST
-	// 	result, err := translator.Translate(decl.info, decl.node)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// 	asts[id] = result.Node
+				decls = append(decls, exported)
+			}
 
-	// 	// pass along the export information
-	// 	exports[id] = result.Exported
+			// create: pkg["$dep"] = (function () { $yourPkg })()
+			wrap := jsast.CreateExpressionStatement(
+				jsast.CreateAssignmentExpression(
+					jsast.CreateMemberExpression(
+						jsast.CreateIdentifier("pkg"),
+						jsast.CreateString(pkg.Path),
+						true,
+					),
+					jsast.AssignmentOperator("="),
+					jsast.CreateCallExpression(
+						jsast.CreateFunctionExpression(nil, []jsast.IPattern{},
+							jsast.CreateFunctionBody(decls...),
+						),
+						[]jsast.IExpression{},
+					),
+				),
+			)
 
-	// 	// build a dependency graph using the
-	// 	// dependencies that the translator
-	// 	// finds
-	// 	if deps[id] == nil {
-	// 		deps[id] = []string{}
-	// 	}
-	// 	deps[id] = append(deps[id], result.Dependencies...)
+			allpkgs = append(allpkgs, wrap)
+		}
 
-	// 	// tack on this node's dependencies
-	// 	remaining = append(remaining, result.Dependencies...)
-	// }
+		// create initial varaible declaration: `var pkg = {}`
+		init := jsast.CreateVariableDeclaration(
+			"var",
+			jsast.CreateVariableDeclarator(
+				jsast.CreateIdentifier("pkg"),
+				jsast.CreateObjectExpression([]jsast.Property{}),
+			),
+		)
 
-	// // now sort topologically, group the packages
-	// // and add to their appropriate files
-	// for _, initial := range initials {
-	// 	packages := map[string][]Package{}
-	// 	sorted := toposort(deps, initial)
-	// 	order := []string{}
+		// create final call expression: `pkg[$main].main()`
+		callmain := jsast.CreateExpressionStatement(
+			jsast.CreateCallExpression(
+				jsast.CreateMemberExpression(
+					jsast.CreateMemberExpression(
+						jsast.CreateIdentifier("pkg"),
+						jsast.CreateString(script.Name),
+						true,
+					),
+					jsast.CreateIdentifier("main"),
+					false,
+				),
+				[]jsast.IExpression{},
+			),
+		)
 
-	// 	if index[initial] == nil {
-	// 		return nil, fmt.Errorf("%s expected to have an index entry", initial)
-	// 	}
-	// 	initialPath := index[initial].info.Pkg.Path()
+		// create the program body
+		var filebody []interface{}
+		filebody = append(filebody, init)
+		filebody = append(filebody, allpkgs...)
+		filebody = append(filebody, callmain)
 
-	// 	// groups declarations into their packages
-	// 	// while maintaining topological order
-	// 	for _, dep := range sorted {
-	// 		idx := index[dep]
-	// 		ast := asts[dep]
-	// 		if idx == nil {
-	// 			// log.Warnf("nil idx: %s", dep)
-	// 			continue
-	// 		} else if ast == nil {
-	// 			// log.Warnf("nil ast: %s", dep)
-	// 			continue
-	// 		}
+		// put everything together into a JS program
+		prog := jsast.CreateProgram(
+			jsast.CreateEmptyStatement(),
+			jsast.CreateExpressionStatement(
+				jsast.CreateCallExpression(
+					jsast.CreateFunctionExpression(nil, []jsast.IPattern{},
+						jsast.CreateFunctionBody(filebody...),
+					),
+					[]jsast.IExpression{},
+				),
+			),
+		)
 
-	// 		// ensure proper ordering
-	// 		pkgpath := idx.info.Pkg.Path()
-	// 		if packages[pkgpath] == nil {
-	// 			packages[pkgpath] = []interface{}{}
-	// 			order = append(order, pkgpath)
-	// 		}
-
-	// 		// convert nodes to source code
-	// 		packages[pkgpath] = append(packages[pkgpath], ast)
-	// 	}
-
-	// 	// loop over each ordered package and wrap it.
-	// 	// all the packages will be the body of the file.
-	// 	var allpkgs []interface{}
-	// 	for _, pkgpath := range order {
-
-	// 		pkgbody := jsast.CreateCallExpression(
-	// 			jsast.CreateFunctionExpression(nil, []jsast.IPattern{},
-	// 				jsast.CreateFunctionBody(packages[pkgpath]...),
-	// 			),
-	// 			[]jsast.IExpression{},
-	// 		)
-
-	// 		// create: pkg["$dep"] = (function () { $yourPkg })()
-	// 		wrap := jsast.CreateExpressionStatement(
-	// 			jsast.CreateAssignmentExpression(
-	// 				jsast.CreateMemberExpression(
-	// 					jsast.CreateIdentifier("pkg"),
-	// 					jsast.CreateString(pkgpath),
-	// 					true,
-	// 				),
-	// 				jsast.AssignmentOperator("="),
-	// 				pkgbody,
-	// 			),
-	// 		)
-
-	// 		allpkgs = append(allpkgs, wrap)
-	// 	}
-
-	// 	// create initial varaible declaration: `var pkg = {}`
-	// 	init := jsast.CreateVariableDeclaration(
-	// 		"var",
-	// 		jsast.CreateVariableDeclarator(
-	// 			jsast.CreateIdentifier("pkg"),
-	// 			jsast.CreateObjectExpression([]jsast.Property{}),
-	// 		),
-	// 	)
-
-	// 	// create final call expression: `pkg[$main].main()`
-	// 	callmain := jsast.CreateExpressionStatement(
-	// 		jsast.CreateCallExpression(
-	// 			jsast.CreateMemberExpression(
-	// 				jsast.CreateMemberExpression(
-	// 					jsast.CreateIdentifier("pkg"),
-	// 					jsast.CreateString(initialPath),
-	// 					true,
-	// 				),
-	// 				jsast.CreateIdentifier("main"),
-	// 				false,
-	// 			),
-	// 			[]jsast.IExpression{},
-	// 		),
-	// 	)
-
-	// 	// create the program body
-	// 	var filebody []interface{}
-	// 	filebody = append(filebody, init)
-	// 	filebody = append(filebody, allpkgs...)
-	// 	filebody = append(filebody, callmain)
-
-	// 	// put everything together into a JS program
-	// 	prog := jsast.CreateProgram(
-	// 		jsast.CreateExpressionStatement(
-	// 			jsast.CreateCallExpression(
-	// 				jsast.CreateFunctionExpression(nil, []jsast.IPattern{},
-	// 					jsast.CreateFunctionBody(filebody...),
-	// 				),
-	// 				[]jsast.IExpression{},
-	// 			),
-	// 		),
-	// 	)
-
-	// 	files = append(files, &file{
-	// 		name:   initialPath,
-	// 		source: prog.String(),
-	// 	})
-	// }
+		files = append(files, &types.File{
+			Name:   script.Name,
+			Source: prog.String(),
+		})
+	}
 
 	return files, nil
 }

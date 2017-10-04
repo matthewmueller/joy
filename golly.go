@@ -9,31 +9,33 @@ import (
 	"path/filepath"
 
 	"github.com/matthewmueller/golly/golang"
+	"github.com/matthewmueller/golly/types"
 	"github.com/pkg/errors"
 )
 
 // Compile compiles the package
-func Compile(paths ...string) (string, error) {
+func Compile(paths ...string) (files []*types.File, e error) {
 	for i, path := range paths {
 		p, e := normalize(path)
 		if e != nil {
-			return "", e
+			return files, e
 		}
 		paths[i] = p
 	}
 
 	compiler := golang.New()
-	files, e := compiler.Compile(paths...)
+	files, e = compiler.Compile(paths...)
 	if e != nil {
-		return "", e
+		return files, e
 	}
 
-	if len(files) == 0 {
-		return "", nil
-	}
+	return files, nil
+	// if len(files) == 0 {
+	// 	return "", nil
+	// }
 
-	// TEMPORARY
-	return files[0].Source(), nil
+	// // TEMPORARY
+	// return files[0].Source(), nil
 }
 
 // CompileFile compiles a single file
