@@ -1,21 +1,22 @@
-package golang
+package variable
 
 import (
 	"fmt"
 	"go/ast"
+	"reflect"
 
 	"github.com/matthewmueller/golly/js"
 	"github.com/pkg/errors"
 )
 
-// VariableHandler function
+// Handle function
 //
 // Unfortunately, this process has lots of interweaving parts to it.
 // That being said, this code is pretty crappy and there's lots that
 // could be improved.
 //
 // TODO: move me
-func VariableHandler(n interface{}) (js.IStatement, js.IExpression, error) {
+func Handle(n interface{}) (js.IStatement, js.IExpression, error) {
 	switch t := n.(type) {
 	case *ast.GenDecl:
 		return genDeclPairs(t)
@@ -234,109 +235,6 @@ func firstNonBlank(ns []ast.Expr) (int, error) {
 	return -1, nil
 }
 
-// func assignStmtExpr(as *ast.AssignStmt) (j js.IStatement, err error) {
-// 	var exprs []js.IExpression
-// 	lhs := as.Lhs
-// 	rhs := as.Rhs
-// 	llhs := len(lhs)
-// 	lrhs := len(rhs)
-
-// 	// ensure we're not in an invalid state
-// 	if llhs != lrhs && lrhs > 1 {
-// 		return nil, fmt.Errorf("invalid golang assignment (AFAIK)")
-// 	}
-
-// 	// nothing on right side
-// 	if lrhs == 0 {
-// 		for _, lh := range lhs {
-// 			l, e := expression(pkg, f, fn, lh)
-// 			if e != nil {
-// 				return nil, e
-// 			}
-// 			exprs = append(exprs, l)
-// 		}
-// 	}
-
-// 	// balanced on both sides
-// 	if llhs == lrhs {
-// 		for i, lh := range lhs {
-// 			if isUnderscoreVariable(lh) {
-// 				continue
-// 			}
-
-// 			l, e := expression(pkg, f, fn, lh)
-// 			if e != nil {
-// 				return nil, e
-// 			}
-
-// 			r, e := expression(pkg, f, fn, rhs[i])
-// 			if e != nil {
-// 				return nil, e
-// 			}
-
-// 			exprs = append(exprs, js.CreateAssignmentExpression(
-// 				l,
-// 				js.AssignmentOperator("="),
-// 				r,
-// 			))
-// 		}
-// 	}
-
-// 	// unbalanced
-// 	if llhs != lrhs {
-// 		var lname string
-
-// 		if isUnderscoreVariable(lhs[0]) {
-// 			return nil, unhandled("jsAssignStmt<underscore>", lhs[0])
-// 		}
-
-// 		switch t := lhs[0].(type) {
-// 		case *ast.Ident:
-// 			lname = "$" + t.Name
-// 		// case *ast.SelectorExpr:
-// 		// return unhandled("jsAssignStmt<selectorExpr>", t)
-// 		default:
-// 			return nil, unhandled("jsAssignStmt<unbalanced>", lhs[0])
-// 		}
-
-// 		r, e := expression(pkg, f, fn, rhs[0])
-// 		if e != nil {
-// 			return nil, e
-// 		}
-
-// 		exprs = append(exprs, js.CreateAssignmentExpression(
-// 			js.CreateIdentifier(lname),
-// 			js.AssignmentOperator("="),
-// 			r,
-// 		))
-
-// 		for i, l := range lhs {
-// 			if isUnderscoreVariable(lhs[0]) {
-// 				continue
-// 			}
-
-// 			x, e := expression(pkg, f, fn, l)
-// 			if e != nil {
-// 				return nil, e
-// 			}
-
-// 			exprs = append(exprs, js.CreateAssignmentExpression(
-// 				x,
-// 				js.AssignmentOperator("="),
-// 				js.CreateMemberExpression(
-// 					js.CreateIdentifier(lname),
-// 					js.CreateInt(i),
-// 					true,
-// 				),
-// 			))
-// 		}
-// 	}
-
-// 	return js.CreateExpressionStatement(
-// 		js.CreateSequenceExpression(exprs...),
-// 	), nil
-// }
-
 func getPattern(n ast.Expr, prefix string) (js.IPattern, error) {
 	switch t := n.(type) {
 	case *ast.Ident:
@@ -461,4 +359,8 @@ func getEmptyIdent(n *ast.Ident) (js.IExpression, error) {
 	default:
 		return nil, fmt.Errorf("unhandled: getEmptyIdent '%s'", n.Name)
 	}
+}
+
+func unhandled(fn string, n interface{}) error {
+	return fmt.Errorf("%s in %s() is not implemented yet", reflect.TypeOf(n), fn)
 }

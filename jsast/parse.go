@@ -1,4 +1,4 @@
-package js
+package jsast
 
 // Parse javascript src
 func Parse(src string) (IExpression, error) {

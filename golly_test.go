@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -48,8 +49,28 @@ func Test(t *testing.T) {
 				return
 			}
 
+			testdir := path.Join(cwd, "testdata", dir.Name())
+			var inputs []string
+
+			// support single and multipage tests
+			inps, e := filepath.Glob(path.Join(testdir, "input.go"))
+			if e != nil {
+				t.Fatal(e)
+			}
+			inputs = append(inputs, inps...)
+			inps, e = filepath.Glob(path.Join(testdir, "*", "input.go"))
+			if e != nil {
+				t.Fatal(e)
+			}
+			inputs = append(inputs, inps...)
+
+			var pages []string
+			for _, input := range inputs {
+				pages = append(pages, path.Dir(input))
+			}
+
 			// compile the file
-			src, e := golly.Compile(path.Join(cwd, "testdata", dir.Name()))
+			src, e := golly.Compile(pages...)
 			if e != nil {
 				t.Fatal(e)
 			}

@@ -1,4 +1,4 @@
-package golang_test
+package variable_test
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"go/token"
 	"testing"
 
-	"github.com/matthewmueller/golly/golang"
+	"github.com/matthewmueller/golly/golang/variable"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -37,7 +37,7 @@ func TestVarSingle(t *testing.T) {
 		var a = 3
 	`)
 
-	stmt, expr, err := golang.VariableHandler(f.Decls[0])
+	stmt, expr, err := variable.Handle(f.Decls[0])
 	if err != nil {
 		t.Fatal(err)
 	} else if expr != nil {
@@ -53,7 +53,7 @@ func TestVarZero(t *testing.T) {
 		var a int
 	`)
 
-	stmt, expr, err := golang.VariableHandler(f.Decls[0])
+	stmt, expr, err := variable.Handle(f.Decls[0])
 	if err != nil {
 		t.Fatal(err)
 	} else if expr != nil {
@@ -69,7 +69,7 @@ func TestVarTypeSingle(t *testing.T) {
 		var a int = 3
 	`)
 
-	stmt, expr, err := golang.VariableHandler(f.Decls[0])
+	stmt, expr, err := variable.Handle(f.Decls[0])
 	if err != nil {
 		t.Fatal(err)
 	} else if expr != nil {
@@ -88,7 +88,7 @@ func TestVarMultipleSimple(t *testing.T) {
 		)
 	`)
 
-	stmt, expr, err := golang.VariableHandler(f.Decls[0])
+	stmt, expr, err := variable.Handle(f.Decls[0])
 	if err != nil {
 		t.Fatal(err)
 	} else if expr != nil {
@@ -108,7 +108,7 @@ func TestVarMultipleZero(t *testing.T) {
 		)
 	`)
 
-	stmt, expr, err := golang.VariableHandler(f.Decls[0])
+	stmt, expr, err := variable.Handle(f.Decls[0])
 	if err != nil {
 		t.Fatal(err)
 	} else if expr != nil {
@@ -128,7 +128,7 @@ func TestVarMultipleMixed(t *testing.T) {
 		)
 	`)
 
-	stmt, expr, err := golang.VariableHandler(f.Decls[0])
+	stmt, expr, err := variable.Handle(f.Decls[0])
 	if err != nil {
 		t.Fatal(err)
 	} else if expr != nil {
@@ -147,7 +147,7 @@ func TestShortDecl(t *testing.T) {
 	`)
 
 	main := f.Decls[0].(*ast.FuncDecl).Body.List[0]
-	stmt, expr, err := golang.VariableHandler(main)
+	stmt, expr, err := variable.Handle(main)
 	if err != nil {
 		t.Fatal(err)
 	} else if expr != nil {
@@ -166,7 +166,7 @@ func TestBalancedDecl(t *testing.T) {
 	`)
 
 	main := f.Decls[0].(*ast.FuncDecl).Body.List[0]
-	stmt, expr, err := golang.VariableHandler(main)
+	stmt, expr, err := variable.Handle(main)
 	if err != nil {
 		t.Fatal(err)
 	} else if expr != nil {
@@ -185,7 +185,7 @@ func TestUnbalancedDecl(t *testing.T) {
 	`)
 
 	main := f.Decls[0].(*ast.FuncDecl).Body.List[0]
-	stmt, expr, err := golang.VariableHandler(main)
+	stmt, expr, err := variable.Handle(main)
 	if err != nil {
 		t.Fatal(err)
 	} else if expr != nil {
@@ -204,7 +204,7 @@ func TestUnderscoreDecl(t *testing.T) {
 	`)
 
 	main := f.Decls[0].(*ast.FuncDecl).Body.List[0]
-	stmt, expr, err := golang.VariableHandler(main)
+	stmt, expr, err := variable.Handle(main)
 	if err != nil {
 		t.Fatal(err)
 	} else if expr != nil {
@@ -223,7 +223,7 @@ func TestShortAssign(t *testing.T) {
 	`)
 
 	main := f.Decls[0].(*ast.FuncDecl).Body.List[0]
-	stmt, expr, err := golang.VariableHandler(main)
+	stmt, expr, err := variable.Handle(main)
 	if err != nil {
 		t.Fatal(err)
 	} else if stmt != nil {
@@ -242,7 +242,7 @@ func TestBalancedAssign(t *testing.T) {
 	`)
 
 	main := f.Decls[0].(*ast.FuncDecl).Body.List[0]
-	stmt, expr, err := golang.VariableHandler(main)
+	stmt, expr, err := variable.Handle(main)
 	if err != nil {
 		t.Fatal(err)
 	} else if stmt != nil {
@@ -261,7 +261,7 @@ func TestUnbalancedAssign(t *testing.T) {
 	`)
 
 	main := f.Decls[0].(*ast.FuncDecl).Body.List[0]
-	stmt, expr, err := golang.VariableHandler(main)
+	stmt, expr, err := variable.Handle(main)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -279,7 +279,7 @@ func TestUnderscoreAssign(t *testing.T) {
 	`)
 
 	main := f.Decls[0].(*ast.FuncDecl).Body.List[0]
-	stmt, expr, err := golang.VariableHandler(main)
+	stmt, expr, err := variable.Handle(main)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -297,7 +297,7 @@ func TestAllBlank(t *testing.T) {
 	`)
 
 	main := f.Decls[0].(*ast.FuncDecl).Body.List[0]
-	stmt, expr, err := golang.VariableHandler(main)
+	stmt, expr, err := variable.Handle(main)
 	if err != nil {
 		t.Fatal(err)
 	} else if stmt != nil {
@@ -316,7 +316,7 @@ func TestShortSel(t *testing.T) {
 	`)
 
 	main := f.Decls[0].(*ast.FuncDecl).Body.List[0]
-	stmt, expr, err := golang.VariableHandler(main)
+	stmt, expr, err := variable.Handle(main)
 	if err != nil {
 		t.Fatal(err)
 	} else if stmt != nil {
@@ -335,7 +335,7 @@ func TestBalancedSel(t *testing.T) {
 	`)
 
 	main := f.Decls[0].(*ast.FuncDecl).Body.List[0]
-	stmt, expr, err := golang.VariableHandler(main)
+	stmt, expr, err := variable.Handle(main)
 	if err != nil {
 		t.Fatal(err)
 	} else if stmt != nil {
@@ -354,7 +354,7 @@ func TestUnbalancedSel(t *testing.T) {
 	`)
 
 	main := f.Decls[0].(*ast.FuncDecl).Body.List[0]
-	stmt, expr, err := golang.VariableHandler(main)
+	stmt, expr, err := variable.Handle(main)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -372,7 +372,7 @@ func TestUnderscoreSel(t *testing.T) {
 	`)
 
 	main := f.Decls[0].(*ast.FuncDecl).Body.List[0]
-	stmt, expr, err := golang.VariableHandler(main)
+	stmt, expr, err := variable.Handle(main)
 	if err != nil {
 		t.Fatal(err)
 	}

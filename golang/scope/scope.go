@@ -10,18 +10,17 @@ type Scope struct {
 }
 
 // File scope is the outermost scope (I think... :-P)
-func File(scope *ast.Scope) *Scope {
-	return &Scope{
-		scope: scope,
-	}
-}
+// func File(scope *ast.Scope) *Scope {
+// 	return &Scope{
+// 		scope: scope,
+// 	}
+// }
 
 // New Scope based on an old scope
-func (s *Scope) New(owner ast.Node) *Scope {
+func New(owner ast.Node) *Scope {
 	return &Scope{
-		Outer: s,
 		Owner: owner,
-		scope: ast.NewScope(s.scope),
+		scope: ast.NewScope(nil),
 	}
 }
 

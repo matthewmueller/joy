@@ -1,4 +1,4 @@
-package js
+package jsast
 
 // Raw string to statement
 func Raw(str string) string {

@@ -1,148 +1,220 @@
 package golang
 
 import (
-	"go/build"
+	"go/ast"
 	"go/parser"
 	"sort"
 
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/golly/golang/inspector"
+	"github.com/matthewmueller/golly/golang/translator"
+	"github.com/matthewmueller/golly/jsast"
+	"github.com/matthewmueller/golly/types"
 	"github.com/pkg/errors"
 	"golang.org/x/tools/go/loader"
 )
 
-// CompilePackage compiles a package by it's path
-func CompilePackage(packagePath string) (string, error) {
+// Declaration struct
+type Declaration struct {
+	node ast.Decl
+	info *loader.PackageInfo
+}
+
+// Package struct
+type Package struct {
+	info  *loader.PackageInfo
+	nodes []ast.Decl
+}
+
+// Compiler struct
+type Compiler struct {
+	// index        map[string]ast.Node
+	// declarations []Declaration
+}
+
+// New Compiler
+func New() *Compiler {
+	return &Compiler{}
+}
+
+// Compile a series of packages
+func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) {
 	var conf loader.Config
-	conf.Import(packagePath)
 
-	// TODO: clean up, this is ugly
-	order := []string{}
-	imports := map[string][]string{}
-
-	// load each of the imports
-	// NOTE: we can override import here
-	conf.FindPackage = func(ctx *build.Context, importPath, fromDir string, mode build.ImportMode) (*build.Package, error) {
-		if imports[fromDir] == nil {
-			order = append(order, fromDir)
-		}
-		imports[fromDir] = append(imports[fromDir], importPath)
-		return ctx.Import(importPath, fromDir, mode)
+	// add all the packages as imports
+	for _, pkg := range packages {
+		conf.Import(pkg)
 	}
 
 	// add comments to the AST
 	conf.ParserMode = parser.ParseComments
 
-	// load the package
-	pkgs, err := conf.Load()
+	// load all the packages
+	program, err := conf.Load()
 	if err != nil {
-		return "", errors.Wrap(err, "unable to load the go package")
+		return files, errors.Wrap(err, "unable to load the go package")
 	}
 
-	// get a deterministic toposort of the imports
-	// for _, dep := range deps {
-	// 	log.Infof("dep: %s", dep)
-	// }
-
-	// get the topological sort of the dependencies
-	var deps []string
-	for _, o := range order {
-		lvl := imports[o]
-		sort.Strings(lvl)
-		deps = append(deps, lvl...)
+	scripts, err := inspector.Inspect(program)
+	if err != nil {
+		return nil, err
 	}
-	deps = reverse(deps)
 
-	// translate each file to their Javascript counterpart
-	// this is done in topological order to ensure that
-	// we have all the type information by the time we
-	// need to use it and also so JS initializes in the
-	// right order
-	var spkgs []interface{}
-	for _, dep := range deps {
-		info := pkgs.Package(dep)
+	// TODO: split into functions
+	for _, script := range scripts {
 
-		// translate the package returning a self-executing
-		// function that returns the public (capitalized)
-		// values.
-		//
-		// Example:
-		//
-		//  (function () {
-		//    ...body...
-		//    return { main: main, Another: Another }
-		//  })()
-		//
-		pkgfn, err := translatePackage(info)
-		if err != nil {
-			return "", errors.Wrapf(err, "error translating %s into a JS package", info.Pkg.Name())
+		var allpkgs []interface{}
+		for _, pkg := range script.Packages {
+			var decls []interface{}
+			var exports []string
+
+			// create "requires" between packages
+			var imports []jsast.VariableDeclarator
+			for name, from := range pkg.Dependencies {
+				imports = append(imports, jsast.CreateVariableDeclarator(
+					jsast.CreateIdentifier(name),
+					jsast.CreateMemberExpression(
+						jsast.CreateIdentifier("pkg"),
+						jsast.CreateLiteral(from),
+						true,
+					),
+				))
+			}
+			if len(imports) > 0 {
+				decls = append(decls, jsast.CreateVariableDeclaration(
+					"var",
+					imports...,
+				))
+			}
+
+			// create the declaration body
+			for _, decl := range pkg.Declarations {
+				ast, err := translator.Translate(decl)
+				if err != nil {
+					return nil, err
+				}
+				decls = append(decls, ast)
+
+				if decl.Exported {
+					exports = append(exports, decl.Name)
+				}
+			}
+
+			// create a return statement for the exported fields
+			// e.g. return { $export: $export }
+			var exported interface{}
+			if len(exports) > 0 {
+				var props []jsast.Property
+				for _, export := range exports {
+					props = append(props, jsast.CreateProperty(
+						jsast.CreateIdentifier(export),
+						jsast.CreateIdentifier(export),
+						"init",
+					))
+				}
+				exported = jsast.CreateReturnStatement(
+					jsast.CreateObjectExpression(props),
+				)
+
+				decls = append(decls, exported)
+			}
+
+			// create: pkg["$dep"] = (function () { $yourPkg })()
+			wrap := jsast.CreateExpressionStatement(
+				jsast.CreateAssignmentExpression(
+					jsast.CreateMemberExpression(
+						jsast.CreateIdentifier("pkg"),
+						jsast.CreateString(pkg.Path),
+						true,
+					),
+					jsast.AssignmentOperator("="),
+					jsast.CreateCallExpression(
+						jsast.CreateFunctionExpression(nil, []jsast.IPattern{},
+							jsast.CreateFunctionBody(decls...),
+						),
+						[]jsast.IExpression{},
+					),
+				),
+			)
+
+			allpkgs = append(allpkgs, wrap)
 		}
 
-		// create: pkg["$dep"] = (function () { $yourPkg })()
-		wrap := js.CreateExpressionStatement(
-			js.CreateAssignmentExpression(
-				js.CreateMemberExpression(
-					js.CreateIdentifier("pkg"),
-					js.CreateString(dep),
-					true,
-				),
-				js.AssignmentOperator("="),
-				pkgfn,
+		// create initial varaible declaration: `var pkg = {}`
+		init := jsast.CreateVariableDeclaration(
+			"var",
+			jsast.CreateVariableDeclarator(
+				jsast.CreateIdentifier("pkg"),
+				jsast.CreateObjectExpression([]jsast.Property{}),
 			),
 		)
 
-		spkgs = append(spkgs, wrap)
+		// create final call expression: `pkg[$main].main()`
+		callmain := jsast.CreateExpressionStatement(
+			jsast.CreateCallExpression(
+				jsast.CreateMemberExpression(
+					jsast.CreateMemberExpression(
+						jsast.CreateIdentifier("pkg"),
+						jsast.CreateString(script.Name),
+						true,
+					),
+					jsast.CreateIdentifier("main"),
+					false,
+				),
+				[]jsast.IExpression{},
+			),
+		)
+
+		// create the program body
+		var filebody []interface{}
+		filebody = append(filebody, init)
+		filebody = append(filebody, allpkgs...)
+		filebody = append(filebody, callmain)
+
+		// put everything together into a JS program
+		prog := jsast.CreateProgram(
+			jsast.CreateEmptyStatement(),
+			jsast.CreateExpressionStatement(
+				jsast.CreateCallExpression(
+					jsast.CreateFunctionExpression(nil, []jsast.IPattern{},
+						jsast.CreateFunctionBody(filebody...),
+					),
+					[]jsast.IExpression{},
+				),
+			),
+		)
+
+		files = append(files, &types.File{
+			Name:   script.Name,
+			Source: prog.String(),
+		})
 	}
 
-	// create: `var pkg = {}`
-	init := js.CreateVariableDeclaration(
-		"var",
-		js.CreateVariableDeclarator(
-			js.CreateIdentifier("pkg"),
-			js.CreateObjectExpression([]js.Property{}),
-		),
-	)
-
-	// create `pkg[$main].main()`
-	callmain := js.CreateExpressionStatement(
-		js.CreateCallExpression(
-			js.CreateMemberExpression(
-				js.CreateMemberExpression(
-					js.CreateIdentifier("pkg"),
-					js.CreateString(packagePath),
-					true,
-				),
-				js.CreateIdentifier("main"),
-				false,
-			),
-			[]js.IExpression{},
-		),
-	)
-
-	// create the program body
-	var pbody []interface{}
-	pbody = append(pbody, init)
-	pbody = append(pbody, spkgs...)
-	pbody = append(pbody, callmain)
-
-	// put everything together into a program
-	prog := js.CreateProgram(
-		js.CreateExpressionStatement(
-			js.CreateCallExpression(
-				js.CreateFunctionExpression(nil, []js.IPattern{},
-					js.CreateFunctionBody(pbody...),
-				),
-				[]js.IExpression{},
-			),
-		),
-	)
-
-	// assemble that program
-	return prog.String(), nil
+	return files, nil
 }
 
-func reverse(s []string) []string {
-	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
-		s[i], s[j] = s[j], s[i]
+// simple topological sort
+func toposort(m map[string][]string, initial string) []string {
+	var order []string
+	seen := make(map[string]bool)
+	var visitAll func(items []string)
+
+	visitAll = func(items []string) {
+		for _, item := range items {
+			if !seen[item] {
+				seen[item] = true
+				visitAll(m[item])
+				order = append(order, item)
+			}
+		}
 	}
-	return s
+
+	keys := []string{initial}
+	seen[initial] = true
+	for _, key := range m[initial] {
+		keys = append(keys, key)
+	}
+
+	sort.Strings(keys)
+	visitAll(keys)
+	return append(order, initial)
 }

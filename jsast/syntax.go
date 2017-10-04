@@ -1,4 +1,4 @@
-package js
+package jsast
 
 // interface inheritance assertions
 var _ INode = (*Node)(nil)

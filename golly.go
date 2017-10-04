@@ -9,28 +9,44 @@ import (
 	"path/filepath"
 
 	"github.com/matthewmueller/golly/golang"
+	"github.com/matthewmueller/golly/types"
 	"github.com/pkg/errors"
 )
 
 // Compile compiles the package
-func Compile(path string) (string, error) {
-	p, e := normalize(path)
-	if e != nil {
-		return "", e
+func Compile(paths ...string) (files []*types.File, e error) {
+	for i, path := range paths {
+		p, e := normalize(path)
+		if e != nil {
+			return files, e
+		}
+		paths[i] = p
 	}
 
-	return golang.CompilePackage(p)
+	compiler := golang.New()
+	files, e = compiler.Compile(paths...)
+	if e != nil {
+		return files, e
+	}
+
+	return files, nil
+	// if len(files) == 0 {
+	// 	return "", nil
+	// }
+
+	// // TEMPORARY
+	// return files[0].Source(), nil
 }
 
 // CompileFile compiles a single file
-func CompileFile(path string) (string, error) {
-	p, e := normalize(path)
-	if e != nil {
-		return "", e
-	}
+// func CompileFile(path string) (string, error) {
+// 	p, e := normalize(path)
+// 	if e != nil {
+// 		return "", e
+// 	}
 
-	return golang.CompilePackage(p)
-}
+// 	return golang.Compile(p)
+// }
 
 // CompileString a source string
 func CompileString(path, source string) (string, error) {
@@ -38,15 +54,15 @@ func CompileString(path, source string) (string, error) {
 }
 
 // CallGraph fn
-func CallGraph(path string) error {
-	p, e := normalize(path)
-	if e != nil {
-		return e
-	}
+// func CallGraph(path string) error {
+// 	p, e := normalize(path)
+// 	if e != nil {
+// 		return e
+// 	}
 
-	golang.CallGraph(p)
-	return nil
-}
+// 	callgraph.CallGraph(p)
+// 	return nil
+// }
 
 // support relative and absolute paths
 // TODO: fix crappy code, there's gotta
