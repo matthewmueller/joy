@@ -1,7 +1,6 @@
+;
 (function() {
-var pkg = {
-
-};
+var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/02-variables"] = (function() {
 function main () {
 var a = "a";

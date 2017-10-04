@@ -1,7 +1,6 @@
+;
 (function() {
-var pkg = {
-
-};
+var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/06-structs"] = (function() {
 function main () {
 var doc = New();
@@ -20,9 +19,9 @@ Document.prototype.GetElementByID = function(id) {
 return "#" + id;
 };
 return {
-  Document: Document,
+  main: main,
   New: New,
-  main: main
+  Document: Document
 };
 })();
 pkg["github.com/matthewmueller/golly/testdata/06-structs"].main();

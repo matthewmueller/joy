@@ -1,0 +1,3 @@
+bindata:
+	@go-bindata -o bindata/bindata.go -pkg bindata -ignore bindata.go bindata/...
+.PHONY: bindata

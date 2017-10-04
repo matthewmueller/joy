@@ -56,34 +56,12 @@ func Translate(decl *types.Declaration) (node jsast.INode, err error) {
 }
 
 func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement, error) {
+	isAsync := ctx.declaration.Async
+
 	// e.g. func hi()
 	if n.Body == nil {
 		return jsast.CreateEmptyStatement(), nil
 	}
-
-	// // get the object
-	// obj := ctx.info.ObjectOf(n.Name)
-	// if obj.Exported() || obj.Name() == "main" {
-	// 	ctx.exported = true
-	// }
-
-	// // get js:"..." tag on top of function if there is one
-	// tag, e := getCommentTag(n.Doc)
-	// if e != nil {
-	// 	return nil, e
-	// } else if tag != nil {
-	// 	// we shouldn't export global options
-	// 	// because they're already global
-	// 	if tag.HasOption("global") {
-	// 		ctx.exported = false
-	// 	}
-
-	// 	// alias the function name
-	// 	ctx.aliases[obj.String()] = tag
-	// }
-
-	// get the name of the function
-	fnname := jsast.CreateIdentifier((*n.Name).Name)
 
 	// build argument list
 	// var args
@@ -109,8 +87,19 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 		body = append(body, jsStmt)
 	}
 
-	// no receiver means it's a classless function
-	if n.Recv == nil {
+	fnname := jsast.CreateIdentifier(n.Name.Name)
+
+	// async function
+	if n.Recv == nil && isAsync {
+		return jsast.CreateAsyncFunction(
+			&fnname,
+			params,
+			jsast.CreateFunctionBody(body...),
+		), nil
+	}
+
+	// regular function
+	if n.Recv == nil && !isAsync {
 		return jsast.CreateFunction(
 			&fnname,
 			params,
@@ -128,7 +117,7 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 		return nil, e
 	}
 
-	if len(recv.Names) != 1 {
+	if len(recv.Names) > 1 {
 		return nil, fmt.Errorf("function<recv>: only expected 1 func receiver name but got %d", len(recv.Names))
 	}
 
@@ -137,13 +126,30 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 	// e.g. var d = this
 	//
 	// TODO: be smarter here and rename the inner body variables to "this"
-	body = append([]interface{}{jsast.CreateVariableDeclaration(
-		"var",
-		jsast.CreateVariableDeclarator(
-			jsast.CreateIdentifier(recv.Names[0].Name),
-			jsast.CreateThisExpression(),
-		),
-	)}, body...)
+	if len(recv.Names) == 1 {
+		body = append([]interface{}{jsast.CreateVariableDeclaration(
+			"var",
+			jsast.CreateVariableDeclarator(
+				jsast.CreateIdentifier(recv.Names[0].Name),
+				jsast.CreateThisExpression(),
+			),
+		)}, body...)
+	}
+
+	var fn jsast.FunctionExpression
+	if isAsync {
+		fn = jsast.CreateAsyncFunctionExpression(
+			&fnname,
+			params,
+			jsast.CreateFunctionBody(body...),
+		)
+	} else {
+		fn = jsast.CreateFunctionExpression(
+			&fnname,
+			params,
+			jsast.CreateFunctionBody(body...),
+		)
+	}
 
 	// {recv}.prototype.{name} = function ({params}) {
 	//   {body}
@@ -160,11 +166,7 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 				false,
 			),
 			jsast.AssignmentOperator("="),
-			jsast.CreateFunctionExpression(
-				nil,
-				params,
-				jsast.CreateFunctionBody(body...),
-			),
+			fn,
 		),
 	), nil
 }
@@ -414,15 +416,68 @@ func funcStatement(ctx *context, sp *scope.Scope, n ast.Stmt) (j jsast.IStatemen
 }
 
 func goStmt(ctx *context, sp *scope.Scope, n *ast.GoStmt) (j jsast.IStatement, err error) {
-	c, e := callExpression(ctx, sp, n.Call)
-	if e != nil {
-		return nil, e
+	// isAsync := ctx.declaration.Async
+
+	var args []jsast.IExpression
+	for _, arg := range n.Call.Args {
+		x, e := expression(ctx, sp, arg)
+		if e != nil {
+			return nil, e
+		}
+		args = append(args, x)
 	}
+
+	switch t := n.Call.Fun.(type) {
+	case *ast.FuncLit:
+		// build argument list
+		// var args
+		var params []jsast.IPattern
+		if t.Type != nil && t.Type.Params != nil {
+			fields := t.Type.Params.List
+			for _, field := range fields {
+				// names because: (a, b string, c int) = [[a, b], c]
+				for _, name := range field.Names {
+					id := jsast.CreateIdentifier(name.Name)
+					params = append(params, id)
+				}
+			}
+		}
+
+		var body []interface{}
+		for _, stmt := range t.Body.List {
+			s, e := statement(ctx, sp, stmt)
+			if e != nil {
+				return nil, e
+			}
+			body = append(body, s)
+		}
+
+		return jsast.CreateExpressionStatement(
+			jsast.CreateCallExpression(
+				jsast.CreateAsyncFunctionExpression(
+					nil,
+					params,
+					jsast.CreateFunctionBody(body...),
+				),
+				args,
+			),
+		), nil
+
+	// case *ast.FuncDecl:
+	// 	log.Infof("go func decl!")
+	default:
+		return nil, unhandled("goStmt", n.Call)
+	}
+
+	// c, e := callExpression(ctx, sp, n.Call)
+	// if e != nil {
+	// 	return nil, e
+	// }
 
 	// ast.
 	// log.Infof("Scope %+v", f.Scope.Lookup(n))
 
-	return jsast.CreateExpressionStatement(c), nil
+	// return jsast.CreateExpressionStatement(c), nil
 	// return nil, nil
 }
 
@@ -876,6 +931,8 @@ func statement(ctx *context, sp *scope.Scope, n ast.Stmt) (j jsast.IStatement, e
 		return branchStmt(ctx, sp, t)
 	case *ast.ReturnStmt:
 		return returnStmt(ctx, sp, t)
+	case *ast.SendStmt:
+		return sendStmt(ctx, sp, t)
 	default:
 		return nil, unhandled("statement", n)
 	}

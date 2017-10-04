@@ -1,11 +1,7 @@
+;
 (function() {
-var pkg = {
-
-};
+var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/15-append"] = (function() {
-function Node (o) {
-this.NodeName = o.NodeName;
-};
 function main () {
 var nodes = [];
 nodes = nodes.concat(new Node({
@@ -16,9 +12,12 @@ nodes = nodes.concat(new Node({
 console.log(nodes[0].NodeName);
 console.log(nodes[1].NodeName);
 };
+function Node (o) {
+this.NodeName = o.NodeName;
+};
 return {
-  Node: Node,
-  main: main
+  main: main,
+  Node: Node
 };
 })();
 pkg["github.com/matthewmueller/golly/testdata/15-append"].main();

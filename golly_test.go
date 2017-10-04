@@ -37,6 +37,8 @@ func Test(t *testing.T) {
 		t.Fatal(e)
 	}
 
+	gosrc := path.Join(os.Getenv("GOPATH"), "src")
+
 	for _, dir := range dirs {
 		if !dir.IsDir() {
 			continue
@@ -70,43 +72,48 @@ func Test(t *testing.T) {
 			}
 
 			// compile the file
-			src, e := golly.Compile(pages...)
+			files, e := golly.Compile(pages...)
 			if e != nil {
 				t.Fatal(e)
 			}
 
-			jspath := path.Join(cwd, "testdata", dir.Name(), "expected.js.txt")
-			js, e := ioutil.ReadFile(jspath)
-			if e != nil {
-				t.Fatalf("no '%s' file found", jspath)
-			}
+			for _, file := range files {
+				jspath := path.Join(gosrc, file.Name, "expected.js.txt")
+				resultpath := path.Join(gosrc, file.Name, "expected.txt")
 
-			// compile the code
-			if src != string(js) {
-				t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(js), src))
-			}
+				// read the expected js source
+				js, err := ioutil.ReadFile(jspath)
+				if err != nil {
+					t.Fatalf("no '%s' file found", jspath)
+				}
 
-			resultpath := path.Join(cwd, "testdata", dir.Name(), "expected.txt")
-			if _, err := os.Stat(resultpath); os.IsNotExist(err) {
-				log.Warnf("'%s' doesn't exist, skipping node execution", resultpath)
-				return
-			}
+				// compile the code
+				if file.Source != string(js) {
+					t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(js), file.Source))
+				}
 
-			// run the code
-			cmd := exec.Command("./nodejs/node", jspath)
-			buf, e := cmd.CombinedOutput()
-			if e != nil {
-				t.Fatalf("javascript error: %s", buf)
-			}
+				// try reading the result path
+				if _, err := os.Stat(resultpath); os.IsNotExist(err) {
+					log.Warnf("'%s' doesn't exist, skipping node execution", resultpath)
+					return
+				}
 
-			result, e := ioutil.ReadFile(resultpath)
-			if e != nil {
-				t.Fatalf("no '%s' file found", resultpath)
-			}
+				// run the code
+				cmd := exec.Command("./nodejs/node", jspath)
+				buf, e := cmd.CombinedOutput()
+				if e != nil {
+					t.Fatalf("javascript error: %s", buf)
+				}
 
-			// compare the result path
-			if string(buf) != string(result) {
-				t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(result), string(buf)))
+				result, e := ioutil.ReadFile(resultpath)
+				if e != nil {
+					t.Fatalf("no '%s' file found", resultpath)
+				}
+
+				// compare the result path
+				if string(buf) != string(result) {
+					t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(result), string(buf)))
+				}
 			}
 		})
 	}

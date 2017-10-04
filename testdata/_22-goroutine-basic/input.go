@@ -2,9 +2,9 @@ package main
 
 func main() {
 	ch := make(chan string)
-	go func() {
-		ch <- "hi"
-	}()
+	go func(msg string) {
+		ch <- msg
+	}("hi")
 
 	println(<-ch)
 }

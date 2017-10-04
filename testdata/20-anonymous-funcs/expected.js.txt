@@ -1,7 +1,6 @@
+;
 (function() {
-var pkg = {
-
-};
+var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/20-anonymous-funcs"] = (function() {
 function main () {
 (function() {

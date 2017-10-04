@@ -978,10 +978,12 @@ func (n Property) Node() Node {
 
 // FunctionExpression struct
 type FunctionExpression struct {
-	Type   string `json:"type,omitempty"`
-	ID     *Identifier
-	Params []IPattern
-	Body   FunctionBody
+	Type      string `json:"type,omitempty"`
+	ID        *Identifier
+	Params    []IPattern
+	Body      FunctionBody
+	Async     bool
+	Generator bool
 }
 
 // Node fn

@@ -128,7 +128,17 @@ func (n FunctionExpression) String() string {
 
 	body := stringify(n.Body)
 
-	return "function(" + strings.Join(a, ", ") + ") {\n" + body + "\n}"
+	async := ""
+	if n.Async {
+		async = "async "
+	}
+
+	generator := ""
+	if n.Generator {
+		generator = " * "
+	}
+
+	return async + "function" + generator + "(" + strings.Join(a, ", ") + ") {\n" + body + "\n}"
 }
 
 func (n FunctionDeclaration) String() string {
