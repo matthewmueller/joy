@@ -39,9 +39,10 @@ type Declaration struct {
 	// declarations use
 	Imports map[string]string
 
-	// available after inspection
+	// The following are available after inspection
 	JSTag        *structtag.Tag
 	Dependencies []*Declaration
+	Inline       []interface{}
 	Async        bool
 }
 

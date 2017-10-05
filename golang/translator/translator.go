@@ -56,6 +56,7 @@ func Translate(decl *types.Declaration) (node jsast.INode, err error) {
 }
 
 func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement, error) {
+	inline := ctx.declaration.Inline
 	isAsync := ctx.declaration.Async
 
 	// e.g. func hi()
@@ -79,12 +80,16 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 
 	// create the body
 	var body []interface{}
-	for _, stmt := range n.Body.List {
-		jsStmt, e := funcStatement(ctx, sp, stmt)
-		if e != nil {
-			return nil, e
+	if inline == nil {
+		for _, stmt := range n.Body.List {
+			jsStmt, e := funcStatement(ctx, sp, stmt)
+			if e != nil {
+				return nil, e
+			}
+			body = append(body, jsStmt)
 		}
-		body = append(body, jsStmt)
+	} else {
+		body = inline
 	}
 
 	fnname := jsast.CreateIdentifier(n.Name.Name)
@@ -220,6 +225,9 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 	case *ast.InterfaceType:
 		log.Warnf("ignoring interface type. TODO: not sure if these would always be excluded from JS")
 		return jsast.CreateEmptyStatement(), nil
+	// case *ast.ArrayType:
+	// 	ast.Print(nil, t)
+	// 	return nil, unhandled("typeSpec<StructType>", s.Type)
 	default:
 		return nil, unhandled("typeSpec<StructType>", s.Type)
 	}
@@ -309,7 +317,7 @@ func importSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStateme
 
 			rh := jsast.CreateMemberExpression(
 				jsast.CreateIdentifier("pkg"),
-				jsast.CreateLiteral(t.Path.Value),
+				jsast.CreateString(t.Path.Value),
 				true,
 			)
 
@@ -847,7 +855,7 @@ func ifStmt(ctx *context, sp *scope.Scope, n *ast.IfStmt) (j jsast.IStatement, e
 	case *ast.ReturnStmt:
 		alt, e = returnStmt(ctx, sp, t)
 	case nil:
-		alt = jsast.CreateEmptyStatement()
+		// let alt be <nil>
 	default:
 		return nil, unhandled("ifStmt<else>", elseBlock)
 	}
@@ -1203,20 +1211,6 @@ func returnStmt(ctx *context, sp *scope.Scope, n *ast.ReturnStmt) (j jsast.IStat
 }
 
 func callExpression(ctx *context, sp *scope.Scope, n *ast.CallExpr) (j jsast.IExpression, err error) {
-	// calleeSrc, e := expressionToString(expr.Fun)
-	// if e != nil {
-	// 	return j, e
-	// }
-
-	// // TODO: make sure jsast.Raw points to golly/js
-	// if calleeSrc == "jsast.Raw" && len(expr.Args) >= 1 {
-	// 	argSrc, e := expressionToString(expr.Args[0])
-	// 	if e != nil {
-	// 		return nil, e
-	// 	}
-	// 	return jsast.Parse(argSrc)
-	// }
-
 	// create an expression for built-in golang functions like append
 	// TODO: better name for what this does
 	if expr, e := checkBuiltin(ctx, sp, n); expr != nil || e != nil {

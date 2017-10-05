@@ -7,12 +7,18 @@ import (
 	"path"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
+	"github.com/matthewmueller/golly/jsast"
 	"github.com/matthewmueller/golly/types"
 	"golang.org/x/tools/go/loader"
 )
+
+var ignoredImports = map[string]bool{
+	"github.com/matthewmueller/golly/jsmock": true,
+}
 
 // Inspect fn
 func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
@@ -33,11 +39,10 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 	for _, info := range program.AllPackages {
 		packagePath := info.Pkg.Path()
 
-		// store the package level use statements
-		// for _, use := range info.Uses {
-
-		// 	log.Infof("pkg=%s name=%s path=%s", packagePath, use.Name(), use.Pkg().Path())
-		// }
+		// exclude certain golly packages from the build
+		if ignoredImports[packagePath] {
+			continue
+		}
 
 		for _, file := range info.Files {
 			for _, decl := range file.Decls {
@@ -97,15 +102,18 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 								imports[packagePath] = map[string]string{}
 							}
 
+							// trim the "" of package path's
+							depPath := strings.Trim(y.Path.Value, `"`)
+
 							// TODO: can y.Path be nil?
 							var name string
 							if y.Name != nil {
 								name = y.Name.Name
 							} else {
-								name = path.Base(strings.Trim(y.Path.Value, `"`))
+								name = path.Base(depPath)
 							}
 
-							imports[packagePath][name] = y.Path.Value
+							imports[packagePath][name] = depPath
 						default:
 							log.Fatalf("unknown type %s", reflect.TypeOf(y))
 						}
@@ -208,6 +216,48 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 					if !visited[child.ID] {
 						remaining = append(remaining, child)
 					}
+				}
+
+			// look for js.Raw(src) macros
+			case *ast.CallExpr:
+				sel, ok := n.Fun.(*ast.SelectorExpr)
+				if !ok {
+					return true
+				}
+
+				x, ok := sel.X.(*ast.Ident)
+				if !ok {
+					return true
+				}
+
+				if x.Name != "js" || sel.Sel.Name != "Raw" {
+					return true
+				}
+
+				if len(n.Args) == 0 {
+					return true
+				}
+
+				lit, ok := n.Args[0].(*ast.BasicLit)
+				if !ok {
+					return true
+				}
+
+				// TODO: ensure this is point to the correct js.Raw
+				id := info.ObjectOf(x)
+				_ = id
+
+				src := lit.Value[1 : len(lit.Value)-1]
+				start := time.Now()
+				stmts, e := jsast.Parse(src)
+				if e != nil {
+					err = e
+					return false
+				}
+				log.Infof("took %s", time.Since(start))
+
+				for _, stmt := range stmts {
+					declaration.Inline = append(declaration.Inline, stmt)
 				}
 			}
 
