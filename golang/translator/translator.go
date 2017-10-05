@@ -243,7 +243,7 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 	var ivars []interface{}
 
 	o := jsast.CreateIdentifier("o")
-	expr := jsast.CreateAssignmentExpression(o, jsast.AssignmentOperator("="), defaults("o", jsast.CreateObjectExpression(nil)))
+	expr := jsast.CreateAssignmentExpression(o, jsast.AssignmentOperator("="), defaulted("o", jsast.CreateObjectExpression(nil)))
 	ivars = append(ivars, jsast.CreateExpressionStatement(expr))
 
 	for _, field := range st.Fields.List {
@@ -273,7 +273,7 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 					jsast.AssignmentOperator("="),
 					jsast.CreateMemberExpression(
 						jsast.CreateIdentifier("o"),
-						zero(field.Type, name.Name),
+						zeroed(field.Type, name.Name),
 						false,
 					),
 				),
@@ -1756,8 +1756,9 @@ func unique(s []string) []string {
 	return us
 }
 
-// TODO: finish zero() and add unit tests
-func zero(expr ast.Expr, name string) jsast.IExpression {
+// zeroed returns an expression defaulted to its zero value.
+func zeroed(expr ast.Expr, name string) jsast.IExpression {
+	// TODO: finish zero() and add unit tests
 	id, ok := expr.(*ast.Ident)
 	if !ok {
 		return jsast.CreateIdentifier(name)
@@ -1765,22 +1766,23 @@ func zero(expr ast.Expr, name string) jsast.IExpression {
 
 	switch id.Name {
 	case "string":
-		return defaults(name, jsast.EmptyString)
+		return defaulted(name, jsast.EmptyString)
 	case "bool":
-		return defaults(name, jsast.False)
+		return defaulted(name, jsast.False)
 	case "int":
-		return defaults(name, jsast.Zero)
+		return defaulted(name, jsast.Zero)
 	default:
 		if id.Obj != nil {
 			id := jsast.CreateIdentifier(id.Name)
-			return defaults(name, jsast.CreateNewExpression(id, nil))
+			return defaulted(name, jsast.CreateNewExpression(id, nil))
 		}
 
-		unhandled("zero", expr)
+		unhandled("zeroed", expr)
 	}
 	return nil
 }
 
-func defaults(name string, expr jsast.IExpression) jsast.IExpression {
+// defaulted returns a defaulted identifier.
+func defaulted(name string, expr jsast.IExpression) jsast.IExpression {
 	return jsast.CreateBinaryExpression(jsast.CreateIdentifier(name), "||", expr)
 }
