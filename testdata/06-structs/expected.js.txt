@@ -13,7 +13,8 @@ return new Document({
 });
 };
 function Document (o) {
-this.Version = o.Version;
+o = o || {};
+this.Version = o.Version || 0;
 };
 Document.prototype.GetElementByID = function(id) {
 return "#" + id;

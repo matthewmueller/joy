@@ -14,13 +14,15 @@ console.log(user.Phone.Number);
 user.Phone.Type = "CELL";
 };
 function User (o) {
-this.Name = o.Name;
-this.Phone = o.Phone;
+o = o || {};
+this.Name = o.Name || "";
+this.Phone = o.Phone || new Phone();
 };
 function Phone (o) {
-this.Type = o.Type;
-this.Number = o.Number;
-this.Main = o.Main;
+o = o || {};
+this.Type = o.Type || "";
+this.Number = o.Number || "";
+this.Main = o.Main || false;
 };
 return {
   main: main,

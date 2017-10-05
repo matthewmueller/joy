@@ -19,7 +19,8 @@ console.log(i)
 };
 };
 function Node (o) {
-this.NodeName = o.NodeName;
+o = o || {};
+this.NodeName = o.NodeName || "";
 };
 return {
   main: main,

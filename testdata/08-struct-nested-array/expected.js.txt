@@ -18,14 +18,16 @@ var user = new User({
 console.log(user.FirstName + ": " + user.Phones[0].Number);
 };
 function User (o) {
-this.FirstName = o.FirstName;
-this.LastName = o.LastName;
+o = o || {};
+this.FirstName = o.FirstName || "";
+this.LastName = o.LastName || "";
 this.Phones = o.Phones;
 };
 function Phone (o) {
-this.Type = o.Type;
-this.Number = o.Number;
-this.Main = o.Main;
+o = o || {};
+this.Type = o.Type || "";
+this.Number = o.Number || "";
+this.Main = o.Main || false;
 };
 return {
   main: main,

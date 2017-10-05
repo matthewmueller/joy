@@ -4,6 +4,14 @@ import (
 	"strings"
 )
 
+// Singletons.
+var (
+	EmptyString = CreateString("")
+	True        = CreateBoolean(true)
+	False       = CreateBoolean(false)
+	Zero        = CreateInt(0)
+)
+
 // CreateIdentifier fn
 func CreateIdentifier(name string) Identifier {
 	return Identifier{
