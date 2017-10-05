@@ -5,7 +5,7 @@ import (
 	"go/ast"
 	"reflect"
 
-	"github.com/matthewmueller/golly/js"
+	js "github.com/matthewmueller/golly/jsast"
 	"github.com/pkg/errors"
 )
 
