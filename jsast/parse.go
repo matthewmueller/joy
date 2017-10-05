@@ -16,16 +16,17 @@ var parse goja.Callable
 // TODO: is there a better way to do this
 // without parsing a ton of times?
 type node struct {
-	Type       string  `json:"type,omitempty"`
-	Body       []*node `json:"body,omitempty"`
-	Argument   *node   `json:"argument,omitempty"`
-	Expression *node   `json:"expression,omitempty"`
-	Arguments  []*node `json:"arguments,omitempty"`
-	Callee     *node   `json:"callee,omitempty"`
-	Object     *node   `json:"object,omitempty"`
-	Property   *node   `json:"property,omitempty"`
-	Computed   bool    `json:"computed,omitempty"`
-	Name       string  `json:"name,omitempty"`
+	Type       string      `json:"type,omitempty"`
+	Body       []*node     `json:"body,omitempty"`
+	Argument   *node       `json:"argument,omitempty"`
+	Expression *node       `json:"expression,omitempty"`
+	Arguments  []*node     `json:"arguments,omitempty"`
+	Callee     *node       `json:"callee,omitempty"`
+	Object     *node       `json:"object,omitempty"`
+	Property   *node       `json:"property,omitempty"`
+	Computed   bool        `json:"computed,omitempty"`
+	Name       string      `json:"name,omitempty"`
+	Value      interface{} `json:"value,omitempty"`
 }
 
 // TODO: replace this with a parser written in
@@ -124,6 +125,8 @@ func expression(n node) (IExpression, error) {
 		return memberExpression(n)
 	case "Identifier":
 		return identifier(n)
+	case "Literal":
+		return literal(n)
 	default:
 		return nil, unhandled("expression", n.Type)
 	}
@@ -179,6 +182,14 @@ func memberExpression(n node) (x MemberExpression, err error) {
 
 func identifier(n node) (Identifier, error) {
 	return CreateIdentifier(n.Name), nil
+}
+
+func literal(n node) (l Literal, e error) {
+	buf, err := json.Marshal(n.Value)
+	if err != nil {
+		return l, err
+	}
+	return CreateLiteral(string(buf)), nil
 }
 
 func unhandled(fn, kind string) error {

@@ -21,10 +21,10 @@ func CreateIdentifier(name string) Identifier {
 }
 
 // CreateLiteral fn
-func CreateLiteral(name string) Identifier {
-	return Identifier{
-		Type: "Identifier",
-		Name: name,
+func CreateLiteral(value string) Literal {
+	return Literal{
+		Type:  "Identifier",
+		Value: value,
 	}
 }
 

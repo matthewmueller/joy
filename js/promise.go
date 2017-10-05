@@ -1,9 +1,5 @@
 package js
 
-// Raw statement
-func Raw(src string) {
-}
-
 // Promises struct
 type Promises struct {
 	expr   string
@@ -30,7 +26,7 @@ func (p *Promises) Catch(err error) *Promises {
 	return p
 }
 
-// String fn
-func (p *Promises) String() string {
-	return ""
-}
+// // String fn
+// func (p *Promises) String() string {
+// 	return ""
+// }

@@ -9,6 +9,7 @@ import (
 
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
+	"github.com/matthewmueller/golly/golang/binding"
 	"github.com/matthewmueller/golly/golang/scope"
 	"github.com/matthewmueller/golly/jsast"
 	"github.com/matthewmueller/golly/types"
@@ -80,7 +81,7 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 	// create the body
 	var body []interface{}
 	for _, stmt := range n.Body.List {
-		stmts, e := expandJSExpression(stmt)
+		stmts, e := binding.Bind(stmt)
 		if e != nil {
 			return nil, e
 		} else if stmts != nil {
