@@ -2,6 +2,7 @@ package golang
 
 import (
 	"go/ast"
+	"go/build"
 	"go/parser"
 	"sort"
 
@@ -48,6 +49,14 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) 
 	// add comments to the AST
 	conf.ParserMode = parser.ParseComments
 
+	// mock out "js"
+	conf.FindPackage = func(ctx *build.Context, importPath, fromDir string, mode build.ImportMode) (*build.Package, error) {
+		if importPath == "github.com/matthewmueller/golly/js" {
+			return ctx.Import(importPath+"mock", fromDir, mode)
+		}
+		return ctx.Import(importPath, fromDir, mode)
+	}
+
 	// load all the packages
 	program, err := conf.Load()
 	if err != nil {
@@ -75,7 +84,7 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) 
 					jsast.CreateIdentifier(name),
 					jsast.CreateMemberExpression(
 						jsast.CreateIdentifier("pkg"),
-						jsast.CreateLiteral(from),
+						jsast.CreateString(from),
 						true,
 					),
 				))

@@ -5,35 +5,47 @@ import (
 	"os"
 	"time"
 
+	kingpin "gopkg.in/alecthomas/kingpin.v2"
+
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
 	"github.com/matthewmueller/golly"
 )
 
-// var (
-// 	cli = kingpin.New("golly", "golang to javascript compiler")
+var (
+	cli = kingpin.New("golly", "Go to Javascript compiler")
 
-// 	// TODO: just have this be argv[1]
-// 	pkg   = cli.Flag("pkg", "package path").Required().String()
-// 	graph = cli.Flag("graph", "call graph").Bool()
-// )
+	build    = cli.Command("build", "build the packages")
+	packages = build.Arg("packages", "packages to build").Required().Strings()
+
+	serve = cli.Command("serve", "development server")
+
+	// TODO: just have this be argv[1]
+	// pkg   = cli.Flag("pkg", "package path").Required().String()
+	// graph = cli.Flag("graph", "call graph").Bool()
+)
 
 func main() {
 	log.SetHandler(text.New(os.Stderr))
 	// kingpin.MustParse(cli.Parse(os.Args[1:]))
 
-	// if *graph {
-	// 	start := time.Now()
-	// 	golly.CallGraph(*pkg)
-	// 	log.Infof("computed callgraph of %s in %s", *pkg, time.Since(start))
-	// 	return
-	// }
+	command, err := cli.Parse(os.Args[1:])
+	if err != nil {
+		cli.FatalUsage(err.Error())
+	}
 
-	// log.Infof("args %+v", os.Args[1:])
+	switch command {
+	case "build":
+		builder()
+	case "serve":
+		server()
+	}
+}
 
+func builder() {
 	log.Infof("compiling...")
 	start := time.Now()
-	files, e := golly.Compile(os.Args[1:]...)
+	files, e := golly.Compile(*packages...)
 	if e != nil {
 		log.WithError(e).Fatalf("error compiling go package")
 	}
@@ -45,4 +57,8 @@ func main() {
 		fmt.Println(file.Source)
 		fmt.Println("===")
 	}
+}
+
+func server() {
+
 }
