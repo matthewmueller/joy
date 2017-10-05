@@ -5,7 +5,7 @@ import (
 	"go/ast"
 	"reflect"
 
-	js "github.com/matthewmueller/golly/jsast"
+	"github.com/matthewmueller/golly/jsast"
 	"github.com/pkg/errors"
 )
 
@@ -16,7 +16,7 @@ import (
 // could be improved.
 //
 // TODO: move me
-func Handle(n interface{}) (js.IStatement, js.IExpression, error) {
+func Handle(n interface{}) (jsast.IStatement, jsast.IExpression, error) {
 	switch t := n.(type) {
 	case *ast.GenDecl:
 		return genDeclPairs(t)
@@ -27,8 +27,8 @@ func Handle(n interface{}) (js.IStatement, js.IExpression, error) {
 	}
 }
 
-func genDeclPairs(n *ast.GenDecl) (js.IStatement, js.IExpression, error) {
-	var decls []js.VariableDeclarator
+func genDeclPairs(n *ast.GenDecl) (jsast.IStatement, jsast.IExpression, error) {
+	var decls []jsast.VariableDeclarator
 
 	// ast.Inspect
 	for _, spec := range n.Specs {
@@ -46,14 +46,14 @@ func genDeclPairs(n *ast.GenDecl) (js.IStatement, js.IExpression, error) {
 		return nil, nil, nil
 	}
 
-	return js.CreateVariableDeclaration("var", decls...), nil, nil
+	return jsast.CreateVariableDeclaration("var", decls...), nil, nil
 }
 
-func valueSpecHandler(n *ast.ValueSpec) (decls []js.VariableDeclarator, e error) {
+func valueSpecHandler(n *ast.ValueSpec) (decls []jsast.VariableDeclarator, e error) {
 	lv := len(n.Values)
 
 	for i, name := range n.Names {
-		var val js.IExpression
+		var val jsast.IExpression
 
 		if i < lv {
 			val, e = getValue(n.Values[i])
@@ -64,8 +64,8 @@ func valueSpecHandler(n *ast.ValueSpec) (decls []js.VariableDeclarator, e error)
 			return decls, e
 		}
 
-		decls = append(decls, js.CreateVariableDeclarator(
-			js.CreateIdentifier(name.Name),
+		decls = append(decls, jsast.CreateVariableDeclarator(
+			jsast.CreateIdentifier(name.Name),
 			val,
 		))
 	}
@@ -73,9 +73,9 @@ func valueSpecHandler(n *ast.ValueSpec) (decls []js.VariableDeclarator, e error)
 	return decls, nil
 }
 
-func assignStmtPairs(n *ast.AssignStmt) (js.IStatement, js.IExpression, error) {
-	var decls []js.VariableDeclarator
-	var exprs []js.IExpression
+func assignStmtPairs(n *ast.AssignStmt) (jsast.IStatement, jsast.IExpression, error) {
+	var decls []jsast.VariableDeclarator
+	var exprs []jsast.IExpression
 	op := n.Tok.String()
 	lrh := len(n.Rhs)
 	llh := len(n.Lhs)
@@ -97,7 +97,7 @@ func assignStmtPairs(n *ast.AssignStmt) (js.IStatement, js.IExpression, error) {
 				exprs = append(exprs, x)
 			}
 		}
-		return nil, js.CreateSequenceExpression(exprs...), nil
+		return nil, jsast.CreateSequenceExpression(exprs...), nil
 	}
 
 	for i, l := range n.Lhs {
@@ -106,8 +106,8 @@ func assignStmtPairs(n *ast.AssignStmt) (js.IStatement, js.IExpression, error) {
 			r = n.Rhs[i]
 		}
 
-		var d *js.VariableDeclarator
-		var x js.IExpression
+		var d *jsast.VariableDeclarator
+		var x jsast.IExpression
 		var e error
 
 		switch op {
@@ -153,27 +153,27 @@ func assignStmtPairs(n *ast.AssignStmt) (js.IStatement, js.IExpression, error) {
 	}
 
 	if len(decls) > 0 && len(exprs) > 0 {
-		return js.CreateVariableDeclaration("var", decls...),
-			js.CreateSequenceExpression(exprs...),
+		return jsast.CreateVariableDeclaration("var", decls...),
+			jsast.CreateSequenceExpression(exprs...),
 			nil
 	}
 
 	if len(decls) > 0 {
-		return js.CreateVariableDeclaration("var", decls...),
+		return jsast.CreateVariableDeclaration("var", decls...),
 			nil,
 			nil
 	}
 
 	if len(exprs) > 0 {
 		return nil,
-			js.CreateSequenceExpression(exprs...),
+			jsast.CreateSequenceExpression(exprs...),
 			nil
 	}
 
 	return nil, nil, nil
 }
 
-func assignStmtVars(l ast.Expr, r ast.Expr, prefixLeft, prefixRight string, nth int) (*js.VariableDeclarator, error) {
+func assignStmtVars(l ast.Expr, r ast.Expr, prefixLeft, prefixRight string, nth int) (*jsast.VariableDeclarator, error) {
 	jl, e := getPattern(l, prefixLeft)
 	if e != nil {
 		return nil, e
@@ -181,7 +181,7 @@ func assignStmtVars(l ast.Expr, r ast.Expr, prefixLeft, prefixRight string, nth 
 		return nil, nil
 	}
 
-	var jr js.IExpression
+	var jr jsast.IExpression
 	if prefixRight == "" {
 		jr, e = getValue(r)
 	} else {
@@ -191,11 +191,11 @@ func assignStmtVars(l ast.Expr, r ast.Expr, prefixLeft, prefixRight string, nth 
 		return nil, e
 	}
 
-	decl := js.CreateVariableDeclarator(jl, jr)
+	decl := jsast.CreateVariableDeclarator(jl, jr)
 	return &decl, nil
 }
 
-func assignStmtExprs(l ast.Expr, r ast.Expr, prefixLeft, prefixRight string, nth int) (js.IExpression, error) {
+func assignStmtExprs(l ast.Expr, r ast.Expr, prefixLeft, prefixRight string, nth int) (jsast.IExpression, error) {
 	jl, e := getExpression(l, prefixLeft)
 	if e != nil {
 		return nil, e
@@ -203,7 +203,7 @@ func assignStmtExprs(l ast.Expr, r ast.Expr, prefixLeft, prefixRight string, nth
 		return nil, nil
 	}
 
-	var jr js.IExpression
+	var jr jsast.IExpression
 	if prefixRight == "" {
 		jr, e = getValue(r)
 	} else {
@@ -213,9 +213,9 @@ func assignStmtExprs(l ast.Expr, r ast.Expr, prefixLeft, prefixRight string, nth
 		return nil, e
 	}
 
-	return js.CreateAssignmentExpression(
+	return jsast.CreateAssignmentExpression(
 		jl,
-		js.AssignmentOperator("="),
+		jsast.AssignmentOperator("="),
 		jr,
 	), nil
 }
@@ -235,13 +235,13 @@ func firstNonBlank(ns []ast.Expr) (int, error) {
 	return -1, nil
 }
 
-func getPattern(n ast.Expr, prefix string) (js.IPattern, error) {
+func getPattern(n ast.Expr, prefix string) (jsast.IPattern, error) {
 	switch t := n.(type) {
 	case *ast.Ident:
 		if t.Name == "_" {
 			return nil, nil
 		}
-		return js.CreateIdentifier(prefix + t.Name), nil
+		return jsast.CreateIdentifier(prefix + t.Name), nil
 	case *ast.SelectorExpr:
 		return getPattern(t.X, prefix)
 	default:
@@ -249,13 +249,13 @@ func getPattern(n ast.Expr, prefix string) (js.IPattern, error) {
 	}
 }
 
-func getExpression(n ast.Expr, prefix string) (js.IExpression, error) {
+func getExpression(n ast.Expr, prefix string) (jsast.IExpression, error) {
 	switch t := n.(type) {
 	case *ast.Ident:
 		if t.Name == "_" {
 			return nil, nil
 		}
-		return js.CreateIdentifier(prefix + t.Name), nil
+		return jsast.CreateIdentifier(prefix + t.Name), nil
 	case *ast.SelectorExpr:
 		x, e := getExpression(t.X, prefix)
 		if e != nil {
@@ -264,9 +264,9 @@ func getExpression(n ast.Expr, prefix string) (js.IExpression, error) {
 			return nil, nil
 		}
 
-		return js.CreateMemberExpression(
+		return jsast.CreateMemberExpression(
 			x,
-			js.CreateIdentifier(t.Sel.Name),
+			jsast.CreateIdentifier(t.Sel.Name),
 			false,
 		), nil
 	default:
@@ -285,77 +285,77 @@ func getPatternName(n ast.Expr) (string, error) {
 	}
 }
 
-func getValue(n ast.Expr) (js.IExpression, error) {
+func getValue(n ast.Expr) (jsast.IExpression, error) {
 	// ast.Print(nil, n)
 	switch t := n.(type) {
 	case *ast.BasicLit:
-		return js.CreateLiteral(t.Value), nil
+		return jsast.CreateLiteral(t.Value), nil
 	case *ast.Ident:
-		return js.CreateIdentifier(t.Name), nil
+		return jsast.CreateIdentifier(t.Name), nil
 	case *ast.SelectorExpr:
 		x, e := getValue(t.X)
 		if e != nil {
 			return nil, e
 		}
-		return js.CreateMemberExpression(
+		return jsast.CreateMemberExpression(
 			x,
-			js.CreateIdentifier(t.Sel.Name),
+			jsast.CreateIdentifier(t.Sel.Name),
 			false,
 		), nil
 	case *ast.UnaryExpr:
 		return getValue(t.X)
 	case nil:
-		return js.CreateNull(), nil
+		return jsast.CreateNull(), nil
 	default:
 		return nil, unhandled("getValue", n)
 	}
 }
 
-func getArrayValue(n ast.Expr, prefix string, nth int) (js.IExpression, error) {
+func getArrayValue(n ast.Expr, prefix string, nth int) (jsast.IExpression, error) {
 	// ast.Print(nil, n)
 	switch t := n.(type) {
 	case *ast.BasicLit:
-		return js.CreateMemberExpression(
-			js.CreateLiteral(prefix+t.Value),
-			js.CreateInt(nth),
+		return jsast.CreateMemberExpression(
+			jsast.CreateLiteral(prefix+t.Value),
+			jsast.CreateInt(nth),
 			true,
 		), nil
 	case *ast.Ident:
-		return js.CreateMemberExpression(
-			js.CreateIdentifier(prefix+t.Name),
-			js.CreateInt(nth),
+		return jsast.CreateMemberExpression(
+			jsast.CreateIdentifier(prefix+t.Name),
+			jsast.CreateInt(nth),
 			true,
 		), nil
 	case *ast.SelectorExpr:
 		return getArrayValue(t.X, prefix, nth)
 	case nil:
-		return js.CreateNull(), nil
+		return jsast.CreateNull(), nil
 	default:
 		return nil, unhandled("getArrayValue", n)
 	}
 }
 
-func getEmpty(n ast.Expr) (js.IExpression, error) {
+func getEmpty(n ast.Expr) (jsast.IExpression, error) {
 	// ast.Print(nil, n)
 	switch t := n.(type) {
 	case *ast.Ident:
 		return getEmptyIdent(t)
 	case *ast.ArrayType:
-		return js.CreateArrayExpression(), nil
+		return jsast.CreateArrayExpression(), nil
 	default:
 		return nil, unhandled("getEmpty", n)
 	}
 }
 
-func getEmptyIdent(n *ast.Ident) (js.IExpression, error) {
+func getEmptyIdent(n *ast.Ident) (jsast.IExpression, error) {
 	switch n.Name {
 	case "int", "int8", "int16", "int32", "int64",
 		"uint8", "uint16", "uint32", "uint64":
-		return js.CreateInt(0), nil
+		return jsast.CreateInt(0), nil
 	case "string":
-		return js.CreateString(""), nil
+		return jsast.CreateString(""), nil
 	case "float", "float32", "float64":
-		return js.CreateFloat(0), nil
+		return jsast.CreateFloat(0), nil
 	default:
 		return nil, fmt.Errorf("unhandled: getEmptyIdent '%s'", n.Name)
 	}
