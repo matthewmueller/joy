@@ -56,7 +56,6 @@ func Translate(decl *types.Declaration) (node jsast.INode, err error) {
 }
 
 func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement, error) {
-	inline := ctx.declaration.Inline
 	isAsync := ctx.declaration.Async
 
 	// e.g. func hi()
@@ -80,16 +79,20 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 
 	// create the body
 	var body []interface{}
-	if inline == nil {
-		for _, stmt := range n.Body.List {
-			jsStmt, e := funcStatement(ctx, sp, stmt)
-			if e != nil {
-				return nil, e
-			}
-			body = append(body, jsStmt)
+	for _, stmt := range n.Body.List {
+		stmts, e := expandJSExpression(stmt)
+		if e != nil {
+			return nil, e
+		} else if stmts != nil {
+			body = append(body, stmts...)
+			continue
 		}
-	} else {
-		body = inline
+
+		jsStmt, e := funcStatement(ctx, sp, stmt)
+		if e != nil {
+			return nil, e
+		}
+		body = append(body, jsStmt)
 	}
 
 	fnname := jsast.CreateIdentifier(n.Name.Name)

@@ -7,11 +7,9 @@ import (
 	"path"
 	"reflect"
 	"strings"
-	"time"
 
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
-	"github.com/matthewmueller/golly/jsast"
 	"github.com/matthewmueller/golly/types"
 	"golang.org/x/tools/go/loader"
 )
@@ -170,6 +168,10 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 					declaration.JSTag = tag
 				}
 
+			// case *ast.BlockStmt:
+
+			// 	n.List
+
 			// Get "js" comment tags from the top of types
 			case *ast.TypeSpec:
 				tag, e := getJSTag(n.Doc)
@@ -180,7 +182,7 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 					declaration.JSTag = tag
 				}
 
-				// if we encounter and Go statements or channels,
+			// if we encounter and Go statements or channels,
 			// we'll make the whole declaration asynchronous
 			// TODO: channels
 			case *ast.GoStmt:
@@ -218,47 +220,9 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 					}
 				}
 
-			// look for js.Raw(src) macros
-			case *ast.CallExpr:
-				sel, ok := n.Fun.(*ast.SelectorExpr)
-				if !ok {
-					return true
-				}
+				// look for js.Raw(src) macros
+				// case *ast.CallExpr:
 
-				x, ok := sel.X.(*ast.Ident)
-				if !ok {
-					return true
-				}
-
-				if x.Name != "js" || sel.Sel.Name != "Raw" {
-					return true
-				}
-
-				if len(n.Args) == 0 {
-					return true
-				}
-
-				lit, ok := n.Args[0].(*ast.BasicLit)
-				if !ok {
-					return true
-				}
-
-				// TODO: ensure this is point to the correct js.Raw
-				id := info.ObjectOf(x)
-				_ = id
-
-				src := lit.Value[1 : len(lit.Value)-1]
-				start := time.Now()
-				stmts, e := jsast.Parse(src)
-				if e != nil {
-					err = e
-					return false
-				}
-				log.Infof("took %s", time.Since(start))
-
-				for _, stmt := range stmts {
-					declaration.Inline = append(declaration.Inline, stmt)
-				}
 			}
 
 			return true

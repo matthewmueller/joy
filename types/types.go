@@ -42,7 +42,6 @@ type Declaration struct {
 	// The following are available after inspection
 	JSTag        *structtag.Tag
 	Dependencies []*Declaration
-	Inline       []interface{}
 	Async        bool
 }
 

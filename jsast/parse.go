@@ -16,15 +16,16 @@ var parse goja.Callable
 // TODO: is there a better way to do this
 // without parsing a ton of times?
 type node struct {
-	Type      string  `json:"type,omitempty"`
-	Body      []*node `json:"body,omitempty"`
-	Argument  *node   `json:"argument,omitempty"`
-	Arguments []*node `json:"arguments,omitempty"`
-	Callee    *node   `json:"callee,omitempty"`
-	Object    *node   `json:"object,omitempty"`
-	Property  *node   `json:"property,omitempty"`
-	Computed  bool    `json:"computed,omitempty"`
-	Name      string  `json:"name,omitempty"`
+	Type       string  `json:"type,omitempty"`
+	Body       []*node `json:"body,omitempty"`
+	Argument   *node   `json:"argument,omitempty"`
+	Expression *node   `json:"expression,omitempty"`
+	Arguments  []*node `json:"arguments,omitempty"`
+	Callee     *node   `json:"callee,omitempty"`
+	Object     *node   `json:"object,omitempty"`
+	Property   *node   `json:"property,omitempty"`
+	Computed   bool    `json:"computed,omitempty"`
+	Name       string  `json:"name,omitempty"`
 }
 
 // TODO: replace this with a parser written in
@@ -105,6 +106,9 @@ func walk(program node) (stmts []IStatement, err error) {
 
 func statement(n node) (IStatement, error) {
 	switch n.Type {
+	case "ExpressionStatement":
+		return expressionStatement(n)
+
 	case "ReturnStatement":
 		return returnStatement(n)
 	default:
@@ -123,6 +127,14 @@ func expression(n node) (IExpression, error) {
 	default:
 		return nil, unhandled("expression", n.Type)
 	}
+}
+
+func expressionStatement(n node) (s ExpressionStatement, err error) {
+	x, e := expression(*n.Expression)
+	if e != nil {
+		return s, e
+	}
+	return CreateExpressionStatement(x), nil
 }
 
 func returnStatement(n node) (s ReturnStatement, err error) {

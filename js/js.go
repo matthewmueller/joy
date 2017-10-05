@@ -1,7 +1,23 @@
 package js
 
+import (
+	"github.com/matthewmueller/golly/jsast"
+)
+
+// Statement interface
+type Statement interface {
+	Statement() (jsast.IStatement, error)
+	String() string
+}
+
+// Expression interface
+type Expression interface {
+	String() string
+}
+
 // Raw statement
 func Raw(src string) {
+	jsast.Parse(src)
 }
 
 // Promises struct
@@ -28,6 +44,14 @@ func (p *Promises) Then(result interface{}) *Promises {
 func (p *Promises) Catch(err error) *Promises {
 	p.err = err
 	return p
+}
+
+// Statement fn
+func (p *Promises) Statement() (jsast.IStatement, error) {
+	return jsast.CreateExpressionStatement(
+		jsast.CreateIdentifier("PROMISE"),
+	), nil
+	// return nil, nil
 }
 
 // String fn
