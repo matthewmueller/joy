@@ -241,6 +241,11 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 	// }
 
 	var ivars []interface{}
+
+	o := jsast.CreateIdentifier("o")
+	expr := jsast.CreateAssignmentExpression(o, jsast.AssignmentOperator("="), defaults("o", jsast.CreateObjectExpression(nil)))
+	ivars = append(ivars, jsast.CreateExpressionStatement(expr))
+
 	for _, field := range st.Fields.List {
 		for _, name := range field.Names {
 			// objectof := ctx.info.ObjectOf(name)
@@ -268,7 +273,7 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 					jsast.AssignmentOperator("="),
 					jsast.CreateMemberExpression(
 						jsast.CreateIdentifier("o"),
-						jsast.CreateIdentifier(name.Name),
+						zero(field.Type, name.Name),
 						false,
 					),
 				),
@@ -1749,4 +1754,33 @@ func unique(s []string) []string {
 		}
 	}
 	return us
+}
+
+// TODO: finish zero() and add unit tests
+func zero(expr ast.Expr, name string) jsast.IExpression {
+	id, ok := expr.(*ast.Ident)
+	if !ok {
+		return jsast.CreateIdentifier(name)
+	}
+
+	switch id.Name {
+	case "string":
+		return defaults(name, jsast.EmptyString)
+	case "bool":
+		return defaults(name, jsast.False)
+	case "int":
+		return defaults(name, jsast.Zero)
+	default:
+		if id.Obj != nil {
+			id := jsast.CreateIdentifier(id.Name)
+			return defaults(name, jsast.CreateNewExpression(id, nil))
+		}
+
+		unhandled("zero", expr)
+	}
+	return nil
+}
+
+func defaults(name string, expr jsast.IExpression) jsast.IExpression {
+	return jsast.CreateBinaryExpression(jsast.CreateIdentifier(name), "||", expr)
 }

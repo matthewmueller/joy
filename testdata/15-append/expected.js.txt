@@ -13,7 +13,8 @@ console.log(nodes[0].NodeName);
 console.log(nodes[1].NodeName);
 };
 function Node (o) {
-this.NodeName = o.NodeName;
+o = o || {};
+this.NodeName = o.NodeName || "";
 };
 return {
   main: main,

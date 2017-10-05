@@ -22,7 +22,8 @@ var t = new test({
 console.log(zarg.Dep("one") + t.String);
 };
 function test (o) {
-this.String = o.String;
+o = o || {};
+this.String = o.String || "";
 };
 return {
   main: main
