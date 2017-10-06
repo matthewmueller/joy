@@ -8,7 +8,7 @@ func definition(a string, b int) ([]string, error) {
 	var err error
 	arr = append(arr, "5")
 	js.Raw(`
-		var c = String(parseInt(a) + 3)
+		var c = String(parseInt(a) + b)
 		arr.push(c)
 	`)
 	return arr, err

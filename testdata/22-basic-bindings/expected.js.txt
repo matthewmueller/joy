@@ -23,7 +23,7 @@ function definition (a, b) {
 var arr = [];
 var err = null;
 arr = arr.concat("5");
-var c = String(parseInt(a) + 3);
+var c = String(parseInt(a) + b);
 arr.push(c);
 return [arr, err];
 };
