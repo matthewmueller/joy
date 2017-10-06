@@ -25,6 +25,7 @@ var err = null;
 arr = arr.concat("5");
 var c = String(parseInt(a) + b);
 arr.push(c);
+arr = arr.concat("9");
 return [arr, err];
 };
 return {
