@@ -9,13 +9,18 @@ import (
 	"github.com/pkg/errors"
 )
 
+// TODO: this is not in use yet. I'm not sure how best to integrate
+// it at the moment, since variables can be initialized in a multitude
+// of ways. The API here may change to just structs containing the data
+// so we can turn it into a JS AST however we see fit. Once this is in
+// place we should be able to take care of variables in every way that
+// Go can.
+
 // Handle function
 //
-// Unfortunately, this process has lots of interweaving parts to it.
+// Unfortunately, this process has lots of interleaving parts to it.
 // That being said, this code is pretty crappy and there's lots that
 // could be improved.
-//
-// TODO: move me
 func Handle(n interface{}) (jsast.IStatement, jsast.IExpression, error) {
 	switch t := n.(type) {
 	case *ast.GenDecl:

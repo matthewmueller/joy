@@ -54,7 +54,7 @@ Golly gee, it's another Go to JS compiler.
 
 ## High-level TODO:
 
-### File-Level:
+### File-Level: (unordered in priority, just a list)
 
 - [x] implement if statements
 - [x] implement loops
@@ -81,6 +81,7 @@ Golly gee, it's another Go to JS compiler.
 - [ ] panics
 - [ ] custom types (type Blah = string)
 - [ ] global constants, iota, etc.
+- [ ] return value variables (e.g. func test() (arr []string, err error))
 
 ### Package-Level:
 

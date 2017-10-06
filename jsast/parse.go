@@ -16,17 +16,23 @@ var parse goja.Callable
 // TODO: is there a better way to do this
 // without parsing a ton of times?
 type node struct {
-	Type       string      `json:"type,omitempty"`
-	Body       []*node     `json:"body,omitempty"`
-	Argument   *node       `json:"argument,omitempty"`
-	Expression *node       `json:"expression,omitempty"`
-	Arguments  []*node     `json:"arguments,omitempty"`
-	Callee     *node       `json:"callee,omitempty"`
-	Object     *node       `json:"object,omitempty"`
-	Property   *node       `json:"property,omitempty"`
-	Computed   bool        `json:"computed,omitempty"`
-	Name       string      `json:"name,omitempty"`
-	Value      interface{} `json:"value,omitempty"`
+	Type         string      `json:"type,omitempty"`
+	Body         []*node     `json:"body,omitempty"`
+	Argument     *node       `json:"argument,omitempty"`
+	Expression   *node       `json:"expression,omitempty"`
+	Arguments    []*node     `json:"arguments,omitempty"`
+	Callee       *node       `json:"callee,omitempty"`
+	Object       *node       `json:"object,omitempty"`
+	Property     *node       `json:"property,omitempty"`
+	Computed     bool        `json:"computed,omitempty"`
+	Name         string      `json:"name,omitempty"`
+	Operator     string      `json:"operator,omitempty"`
+	Left         *node       `json:"left,omitempty"`
+	Right        *node       `json:"right,omitempty"`
+	Value        interface{} `json:"value,omitempty"`
+	Declarations []*node     `json:"declarations,omitempty"`
+	ID           *node       `json:"id,omitempty"`
+	Init         *node       `json:"init,omitempty"`
 }
 
 // TODO: replace this with a parser written in
@@ -109,9 +115,10 @@ func statement(n node) (IStatement, error) {
 	switch n.Type {
 	case "ExpressionStatement":
 		return expressionStatement(n)
-
 	case "ReturnStatement":
 		return returnStatement(n)
+	case "VariableDeclaration":
+		return variableDeclaration(n)
 	default:
 		return nil, unhandled("statement", n.Type)
 	}
@@ -123,6 +130,8 @@ func expression(n node) (IExpression, error) {
 		return callExpression(n)
 	case "MemberExpression":
 		return memberExpression(n)
+	case "BinaryExpression":
+		return binaryExpression(n)
 	case "Identifier":
 		return identifier(n)
 	case "Literal":
@@ -138,6 +147,24 @@ func expressionStatement(n node) (s ExpressionStatement, err error) {
 		return s, e
 	}
 	return CreateExpressionStatement(x), nil
+}
+
+func binaryExpression(n node) (b BinaryExpression, err error) {
+	l, e := expression(*n.Left)
+	if e != nil {
+		return b, e
+	}
+
+	r, e := expression(*n.Right)
+	if e != nil {
+		return b, e
+	}
+
+	return CreateBinaryExpression(
+		l,
+		BinaryOperator(n.Operator),
+		r,
+	), nil
 }
 
 func returnStatement(n node) (s ReturnStatement, err error) {
@@ -178,6 +205,33 @@ func memberExpression(n node) (x MemberExpression, err error) {
 	}
 
 	return CreateMemberExpression(o, p, n.Computed), nil
+}
+
+func variableDeclaration(n node) (v VariableDeclaration, err error) {
+	var decls []VariableDeclarator
+	for _, decl := range n.Declarations {
+		d, e := variableDeclarator(*decl)
+		if e != nil {
+			return v, e
+		}
+		decls = append(decls, d)
+	}
+
+	return CreateVariableDeclaration("var", decls...), nil
+}
+
+func variableDeclarator(n node) (v VariableDeclarator, err error) {
+	id, e := identifier(*n.ID)
+	if e != nil {
+		return v, e
+	}
+
+	x, e := expression(*n.Init)
+	if e != nil {
+		return v, e
+	}
+
+	return CreateVariableDeclarator(id, x), nil
 }
 
 func identifier(n node) (Identifier, error) {

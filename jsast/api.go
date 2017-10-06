@@ -10,6 +10,7 @@ var (
 	True        = CreateBoolean(true)
 	False       = CreateBoolean(false)
 	Zero        = CreateInt(0)
+	Null        = CreateNull()
 )
 
 // CreateIdentifier fn

@@ -274,6 +274,12 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 			// 	}
 			// }
 
+			// get the default value
+			v, e := zeroed(field.Type, name.Name)
+			if e != nil {
+				return nil, e
+			}
+
 			// this.$name = o.$name
 			ivars = append(ivars, jsast.CreateExpressionStatement(
 				jsast.CreateAssignmentExpression(
@@ -285,7 +291,7 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 					jsast.AssignmentOperator("="),
 					jsast.CreateMemberExpression(
 						jsast.CreateIdentifier("o"),
-						zeroed(field.Type, name.Name),
+						v,
 						false,
 					),
 				),
@@ -360,9 +366,9 @@ func varSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement,
 					}
 					rh = r
 				} else {
-					r, e := expression(ctx, sp, t.Type)
+					r, e := defaultValue(t.Type)
 					if e != nil {
-						return nil, e
+						return j, e
 					}
 					rh = r
 				}
@@ -1755,32 +1761,52 @@ func unique(s []string) []string {
 }
 
 // zeroed returns an expression defaulted to its zero value.
-func zeroed(expr ast.Expr, name string) jsast.IExpression {
+func zeroed(expr ast.Expr, name string) (jsast.IExpression, error) {
 	// TODO: finish zero() and add unit tests
 	id, ok := expr.(*ast.Ident)
 	if !ok {
-		return jsast.CreateIdentifier(name)
+		return jsast.CreateIdentifier(name), nil
 	}
 
-	switch id.Name {
-	case "string":
-		return defaulted(name, jsast.EmptyString)
-	case "bool":
-		return defaulted(name, jsast.False)
-	case "int":
-		return defaulted(name, jsast.Zero)
-	default:
-		if id.Obj != nil {
-			id := jsast.CreateIdentifier(id.Name)
-			return defaulted(name, jsast.CreateNewExpression(id, nil))
-		}
-
-		unhandled("zeroed", expr)
+	x, e := defaultValue(id)
+	if e != nil {
+		return nil, e
 	}
-	return nil
+
+	return defaulted(name, x), nil
 }
 
 // defaulted returns a defaulted identifier.
 func defaulted(name string, expr jsast.IExpression) jsast.IExpression {
 	return jsast.CreateBinaryExpression(jsast.CreateIdentifier(name), "||", expr)
+}
+
+func defaultValue(expr ast.Expr) (jsast.IExpression, error) {
+	switch t := expr.(type) {
+	case *ast.Ident:
+		switch t.Name {
+		case "string":
+			return jsast.EmptyString, nil
+		case "bool":
+			return jsast.False, nil
+		case "int":
+			return jsast.Zero, nil
+		case "error":
+			// TODO: should this be undefined?
+			return jsast.Null, nil
+		case "nil":
+			return jsast.Null, nil
+		default:
+			// TODO: what case(s) can id.Obj be nil?
+			if t.Obj != nil {
+				id := jsast.CreateIdentifier(t.Name)
+				return jsast.CreateNewExpression(id, nil), nil
+			}
+			return nil, unhandled("defaultValue<ident>", t.Name)
+		}
+	case *ast.ArrayType:
+		return jsast.CreateArrayExpression(), nil
+	default:
+		return nil, unhandled("defaultValue", expr)
+	}
 }

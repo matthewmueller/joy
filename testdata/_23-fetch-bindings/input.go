@@ -12,7 +12,7 @@ type FetchOptions struct {
 // Fetch fn
 func Fetch(url string, options FetchOptions) (res Response, err error) {
 	js.Promise("window.fetch(url, options)").Then(res).Catch(err)
-	return res, err
+	return res.Ok, err
 }
 
 // Response struct
