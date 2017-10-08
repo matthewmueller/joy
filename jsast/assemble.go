@@ -63,6 +63,7 @@ var _ fmt.Stringer = (*NewExpression)(nil)
 
 var _ fmt.Stringer = (*SequenceExpression)(nil)
 var _ fmt.Stringer = (*AwaitExpression)(nil)
+var _ fmt.Stringer = (*Raw)(nil)
 
 // var _ fmt.Stringer = (*Pattern)(nil)
 
@@ -357,6 +358,10 @@ func (n SequenceExpression) String() string {
 
 func (n AwaitExpression) String() string {
 	return "await " + stringify(n.Argument)
+}
+
+func (n Raw) String() string {
+	return n.Source
 }
 
 // func (n DebuggerStatement) String() string {

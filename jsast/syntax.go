@@ -1313,3 +1313,30 @@ func (n AwaitExpression) Expression() Expression {
 		Type: n.Type,
 	}
 }
+
+// Raw extension for js strings
+type Raw struct {
+	Type   string `json:"type,omitempty"`
+	Source string
+}
+
+// Node fn
+func (n Raw) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
+// Statement fn
+func (n Raw) Statement() Statement {
+	return Statement{
+		Type: n.Type,
+	}
+}
+
+// Expression fn
+func (n Raw) Expression() Expression {
+	return Expression{
+		Type: n.Type,
+	}
+}

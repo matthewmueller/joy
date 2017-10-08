@@ -19,25 +19,27 @@ import (
 // we can speed this up with scope (being able to reach backwards)
 // or marking nodes during the inspection phase.
 // TODO: better fn name? This was a hard comment to write haha
-func Bind(n ast.Stmt) ([]interface{}, error) {
-	stmts, err := Promise(n)
-	if err != nil {
-		return nil, err
-	} else if stmts != nil {
-		return stmts, nil
-	}
+func Bind(n ast.Stmt) (jsast.IStatement, error) {
+	// stmts, err := Promise(n)
+	// if err != nil {
+	// 	return nil, err
+	// } else if stmts != nil {
+	// 	return stmts, nil
+	// }
 
-	stmts, err = Raw(n)
-	if err != nil {
-		return nil, err
-	} else if stmts != nil {
-		return stmts, nil
-	}
+	// return Raw(n)
+
+	// stmts, err = Raw(n)
+	// if err != nil {
+	// 	return nil, err
+	// } else if stmts != nil {
+	// 	return stmts, nil
+	// }
 
 	return nil, nil
 }
 
-func expandJSExpression(n ast.Stmt) ([]interface{}, error) {
+func expandJSExpression(n ast.Stmt) (jsast.IStatement, error) {
 	// ast.Print(nil, n)
 
 	xs, ok := n.(*ast.ExprStmt)
@@ -86,17 +88,20 @@ func expandJSExpression(n ast.Stmt) ([]interface{}, error) {
 	// _ = id
 
 	src := lit.Value[1 : len(lit.Value)-1]
-	// start := time.Now()
-	stmts, e := jsast.Parse(src)
-	if e != nil {
-		return nil, e
-	}
-	// log.Infof("took %s", time.Since(start))
 
-	var ret []interface{}
-	for _, stmt := range stmts {
-		ret = append(ret, stmt)
-	}
+	return jsast.CreateRaw(src), nil
 
-	return ret, nil
+	// // start := time.Now()
+	// stmts, e := jsast.Parse(src)
+	// if e != nil {
+	// 	return nil, e
+	// }
+	// // log.Infof("took %s", time.Since(start))
+
+	// var ret []interface{}
+	// for _, stmt := range stmts {
+	// 	ret = append(ret, stmt)
+	// }
+
+	// return ret, nil
 }

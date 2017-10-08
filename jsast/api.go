@@ -388,3 +388,11 @@ func CreateSequenceExpression(expressions ...IExpression) SequenceExpression {
 		Expressions: expressions,
 	}
 }
+
+// CreateRaw fn
+func CreateRaw(source string) Raw {
+	return Raw{
+		Type:   "Raw",
+		Source: source,
+	}
+}

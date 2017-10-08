@@ -81,11 +81,11 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 	// create the body
 	var body []interface{}
 	for _, stmt := range n.Body.List {
-		stmts, e := binding.Bind(stmt)
+		raw, e := binding.Bind(stmt)
 		if e != nil {
 			return nil, e
-		} else if stmts != nil {
-			body = append(body, stmts...)
+		} else if raw != nil {
+			body = append(body, raw)
 			continue
 		}
 
@@ -1232,6 +1232,10 @@ func callExpression(ctx *context, sp *scope.Scope, n *ast.CallExpr) (j jsast.IEx
 		return expr, e
 	}
 
+	if expr, e := checkJSRaw(ctx, sp, n); expr != nil || e != nil {
+		return expr, e
+	}
+
 	callee, e := expression(ctx, sp, n.Fun)
 	if e != nil {
 		return j, e
@@ -1711,7 +1715,11 @@ func arrayType(ctx *context, sp *scope.Scope, n *ast.ArrayType) (jsast.IExpressi
 
 func chanType(ctx *context, sp *scope.Scope, n *ast.ChanType) (jsast.IExpression, error) {
 	return jsast.CreateNewExpression(
-		jsast.CreateIdentifier("Channel"),
+		jsast.CreateMemberExpression(
+			jsast.CreateIdentifier("runtime"),
+			jsast.CreateIdentifier("Channel"),
+			false,
+		),
 		[]jsast.IExpression{},
 	), nil
 }
@@ -1809,4 +1817,36 @@ func defaultValue(expr ast.Expr) (jsast.IExpression, error) {
 	default:
 		return nil, unhandled("defaultValue", expr)
 	}
+}
+
+func checkJSRaw(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpression, error) {
+	sel, ok := cx.Fun.(*ast.SelectorExpr)
+	if !ok {
+		return nil, nil
+	}
+
+	x, ok := sel.X.(*ast.Ident)
+	if !ok {
+		return nil, nil
+	}
+
+	if x.Name != "js" || sel.Sel.Name != "Raw" {
+		return nil, nil
+	}
+
+	if len(cx.Args) == 0 {
+		return nil, nil
+	}
+
+	lit, ok := cx.Args[0].(*ast.BasicLit)
+	if !ok {
+		return nil, nil
+	}
+
+	// TODO: ensure this is point to the correct js.Raw
+	// id := info.ObjectOf(x)
+	// _ = id
+
+	src := lit.Value[1 : len(lit.Value)-1]
+	return jsast.CreateRaw(src), nil
 }

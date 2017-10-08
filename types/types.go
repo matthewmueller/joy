@@ -29,6 +29,7 @@ type Declaration struct {
 	ID       string
 	Node     ast.Decl
 	Name     string
+	
 
 	// Note that this represents *all*
 	// imports in the file, not just
@@ -37,7 +38,9 @@ type Declaration struct {
 	// to fill in the package dependencies
 	// are *only* the imports the
 	// declarations use
-	Imports map[string]string
+	// Imports map[string]string
+
+	// Includes []*File
 
 	// The following are available after inspection
 	JSTag        *structtag.Tag

@@ -3,7 +3,10 @@ package golang
 import (
 	"go/ast"
 	"go/parser"
+	"os"
 	"path"
+	"path/filepath"
+	"runtime"
 	"sort"
 
 	"github.com/matthewmueller/golly/golang/inspector"
@@ -50,16 +53,20 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) 
 		}
 	}
 
+	// import the runtime by default
+	// TODO: there's gotta be a better way to do this
+	_, file, _, ok := runtime.Caller(0)
+	if !ok {
+		return nil, errors.New("unable to get the filepath")
+	}
+	runtimePkg, err := filepath.Rel(path.Join(os.Getenv("GOPATH"), "src"), path.Join(path.Dir(path.Dir(file)), "runtime"))
+	if err != nil {
+		return nil, err
+	}
+	conf.Import(runtimePkg)
+
 	// add comments to the AST
 	conf.ParserMode = parser.ParseComments
-
-	// mock out "js"
-	// conf.FindPackage = func(ctx *build.Context, importPath, fromDir string, mode build.ImportMode) (*build.Package, error) {
-	// 	if importPath == "github.com/matthewmueller/golly/js" {
-	// 		return ctx.Import(importPath+"mock", fromDir, mode)
-	// 	}
-	// 	return ctx.Import(importPath, fromDir, mode)
-	// }
 
 	// load all the packages
 	program, err := conf.Load()

@@ -7,7 +7,7 @@ import (
 )
 
 // Raw fn
-func Raw(n ast.Stmt) ([]interface{}, error) {
+func Raw(n ast.Stmt) (jsast.IStatement, error) {
 	xs, ok := n.(*ast.ExprStmt)
 	if !ok {
 		return nil, nil
@@ -46,17 +46,18 @@ func Raw(n ast.Stmt) ([]interface{}, error) {
 	// _ = id
 
 	src := lit.Value[1 : len(lit.Value)-1]
-	// start := time.Now()
-	stmts, e := jsast.Parse(src)
-	if e != nil {
-		return nil, e
-	}
-	// log.Infof("took %s", time.Since(start))
+	return jsast.CreateRaw(src), nil
 
-	var ret []interface{}
-	for _, stmt := range stmts {
-		ret = append(ret, stmt)
-	}
+	// stmts, e := jsast.Parse(src)
+	// if e != nil {
+	// 	return nil, e
+	// }
+	// // log.Infof("took %s", time.Since(start))
 
-	return ret, nil
+	// var ret []interface{}
+	// for _, stmt := range stmts {
+	// 	ret = append(ret, stmt)
+	// }
+
+	// return ret, nil
 }

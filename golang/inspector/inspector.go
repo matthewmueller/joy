@@ -1,11 +1,15 @@
 package inspector
 
 import (
+	"errors"
 	"fmt"
 	"go/ast"
 	gotypes "go/types"
+	"os"
 	"path"
+	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 
 	"github.com/apex/log"
@@ -14,14 +18,19 @@ import (
 	"golang.org/x/tools/go/loader"
 )
 
-var ignoredImports = map[string]bool{
-	"github.com/matthewmueller/golly/jsmock": true,
-}
-
 // Inspect fn
 func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 	// map[packagePath]map[variableName]dependencyPath
 	imports := map[string]map[string]string{}
+
+	// human-friendly pointers to the runtime declarations
+	runtimeDecls := map[string]*types.Declaration{}
+
+	// get the runtime path
+	runtimePath, err := getRuntimePath()
+	if err != nil {
+		return nil, err
+	}
 
 	// build a map of all the declarations in all the packages
 	// this will be used as a lookup to map object declarations
@@ -36,18 +45,11 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 	index := map[string]*types.Declaration{}
 	for _, info := range program.AllPackages {
 		packagePath := info.Pkg.Path()
-
-		// exclude certain golly packages from the build
-		if ignoredImports[packagePath] {
-			continue
-		}
-
 		for _, file := range info.Files {
 			for _, decl := range file.Decls {
 				switch t := decl.(type) {
 				case *ast.FuncDecl:
 					obj := info.ObjectOf(t.Name)
-					// packagePath := obj.Pkg().Path()
 					name := t.Name.Name
 					id := obj.String()
 
@@ -68,6 +70,12 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 						ID:       id,
 						Node:     decl,
 					}
+
+					// point human-friendly names to the declaration
+					if runtimePath == packagePath {
+						runtimeDecls[name] = index[id]
+					}
+
 				case *ast.GenDecl:
 					for _, spec := range t.Specs {
 						switch y := spec.(type) {
@@ -127,8 +135,15 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 	remaining := []*types.Declaration{}
 	mains := []*types.Declaration{}
 	for _, info := range program.InitialPackages() {
+		pkgPath := info.Pkg.Path()
 		main := info.Pkg.Scope().Lookup("main")
+
 		if main == nil {
+			// ignore the runtime
+			// TODO: more robust
+			if path.Base(pkgPath) == "runtime" {
+				continue
+			}
 			return nil, fmt.Errorf("no main() found in: %s", info.Pkg.Path())
 		}
 
@@ -189,9 +204,41 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 				if imports[declaration.From] == nil {
 					imports[declaration.From] = map[string]string{}
 				}
-				imports[declaration.From]["Channel"] = `"channel.js"`
-				declaration.Async = true
+				imports[declaration.From]["runtime"] = runtimePath
 
+				// if child is nil, it's a local variable or field
+				child := runtimeDecls["Channel"]
+				if child == nil {
+					return true
+				}
+
+				// add the dependency
+				declaration.Dependencies = append(
+					declaration.Dependencies,
+					child,
+				)
+
+				// append to the crawl
+				if !visited[child.ID] {
+					remaining = append(remaining, child)
+				}
+
+				// ast, e := jsast.Parse(string(bindata.MustAsset("bindata/channel.js")))
+				// if e != nil {
+				// 	log.Infof("e %s", e)
+				// 	err = e
+				// 	return false
+				// }
+
+				// _ = ast
+				// log.Infof("got ast!")
+				// log.Infof("")
+				// declaration.Includes = append(declaration.Includes, &types.File{
+				// 	Name:   "channel.js",
+				// 	Source: string(bindata.MustAsset("bindata/channel.js")),
+				// })
+
+				declaration.Async = true
 			// dig into our identifiers to figure out where
 			// they were defined and add those dependencies
 			// to the crawler
@@ -380,4 +427,17 @@ func unique(input []*types.Package) []*types.Package {
 	}
 
 	return u
+}
+
+func getRuntimePath() (string, error) {
+	_, file, _, ok := runtime.Caller(0)
+	if !ok {
+		return "", errors.New("unable to get the filepath")
+	}
+	runtimePkg, err := filepath.Rel(path.Join(os.Getenv("GOPATH"), "src"), path.Join(path.Dir(path.Dir(path.Dir(file))), "runtime"))
+	if err != nil {
+		return "", err
+	}
+
+	return runtimePkg, nil
 }
