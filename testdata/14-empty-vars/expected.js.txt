@@ -12,5 +12,5 @@ return {
   main: main
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/14-empty-vars"].main();
+return pkg["github.com/matthewmueller/golly/testdata/14-empty-vars"].main();
 })()

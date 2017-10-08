@@ -35,5 +35,5 @@ return {
   Phone: Phone
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/08-struct-nested-array"].main();
+return pkg["github.com/matthewmueller/golly/testdata/08-struct-nested-array"].main();
 })()

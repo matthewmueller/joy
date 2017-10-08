@@ -10,5 +10,5 @@ return {
   main: main
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/10-arrays"].main();
+return pkg["github.com/matthewmueller/golly/testdata/10-arrays"].main();
 })()

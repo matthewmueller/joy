@@ -27,5 +27,5 @@ return {
   Node: Node
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/16-range"].main();
+return pkg["github.com/matthewmueller/golly/testdata/16-range"].main();
 })()

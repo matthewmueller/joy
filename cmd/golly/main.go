@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
@@ -10,15 +13,19 @@ import (
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
 	"github.com/matthewmueller/golly"
+	"github.com/matthewmueller/golly/api"
 )
 
 var (
 	cli = kingpin.New("golly", "Go to Javascript compiler")
 
-	build    = cli.Command("build", "build the packages")
-	packages = build.Arg("packages", "packages to build").Required().Strings()
+	buildCmd      = cli.Command("build", "build the packages")
+	buildPackages = buildCmd.Arg("packages", "packages to build").Required().Strings()
 
-	serve = cli.Command("serve", "development server")
+	serveCmd = cli.Command("serve", "development server")
+
+	runCmd  = cli.Command("run", "run a package")
+	runFile = runCmd.Arg("file", "file to run").Required().String()
 
 	// TODO: just have this be argv[1]
 	// pkg   = cli.Flag("pkg", "package path").Required().String()
@@ -26,8 +33,8 @@ var (
 )
 
 func main() {
+	ctx := withContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	log.SetHandler(text.New(os.Stderr))
-	// kingpin.MustParse(cli.Parse(os.Args[1:]))
 
 	command, err := cli.Parse(os.Args[1:])
 	if err != nil {
@@ -36,16 +43,24 @@ func main() {
 
 	switch command {
 	case "build":
-		builder()
+		build()
 	case "serve":
-		server()
+		serve()
+	case "run":
+		run(ctx, *runFile)
 	}
 }
 
-func builder() {
+func run(ctx context.Context, file string) {
+	if err := api.Run(ctx, *runFile); err != nil {
+		log.WithError(err).Fatal("error running file")
+	}
+}
+
+func build() {
 	log.Infof("compiling...")
 	start := time.Now()
-	files, e := golly.Compile(*packages...)
+	files, e := golly.Compile(*buildPackages...)
 	if e != nil {
 		log.WithError(e).Fatalf("error compiling go package")
 	}
@@ -59,6 +74,23 @@ func builder() {
 	}
 }
 
-func server() {
+func serve() {
 
+}
+
+func withContext(ctx context.Context, sig ...os.Signal) context.Context {
+	ctx, cancel := context.WithCancel(ctx)
+	go func() {
+		c := make(chan os.Signal)
+		signal.Notify(c, sig...)
+		defer signal.Stop(c)
+
+		select {
+		case <-ctx.Done():
+		case <-c:
+			cancel()
+		}
+	}()
+
+	return ctx
 }

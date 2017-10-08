@@ -16,5 +16,5 @@ return {
   main: main
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/02-variables"].main();
+return pkg["github.com/matthewmueller/golly/testdata/02-variables"].main();
 })()

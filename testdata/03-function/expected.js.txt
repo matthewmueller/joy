@@ -13,5 +13,5 @@ return {
   main: main
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/03-function"].main();
+return pkg["github.com/matthewmueller/golly/testdata/03-function"].main();
 })()

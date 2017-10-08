@@ -25,5 +25,5 @@ return {
   Document: Document
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/06-structs"].main();
+return pkg["github.com/matthewmueller/golly/testdata/06-structs"].main();
 })()

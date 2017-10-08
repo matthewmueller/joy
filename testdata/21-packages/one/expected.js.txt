@@ -29,5 +29,5 @@ return {
   main: main
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/21-packages/one"].main();
+return pkg["github.com/matthewmueller/golly/testdata/21-packages/one"].main();
 })()

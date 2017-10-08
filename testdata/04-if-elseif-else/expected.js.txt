@@ -19,5 +19,5 @@ return {
   main: main
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/04-if-elseif-else"].main();
+return pkg["github.com/matthewmueller/golly/testdata/04-if-elseif-else"].main();
 })()

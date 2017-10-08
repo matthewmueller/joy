@@ -11,5 +11,5 @@ return {
   main: main
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/20-anonymous-funcs"].main();
+return pkg["github.com/matthewmueller/golly/testdata/20-anonymous-funcs"].main();
 })()

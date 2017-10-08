@@ -3,6 +3,7 @@ package golang
 import (
 	"go/ast"
 	"go/parser"
+	"path"
 	"sort"
 
 	"github.com/matthewmueller/golly/golang/inspector"
@@ -41,8 +42,12 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) 
 	var conf loader.Config
 
 	// add all the packages as imports
-	for _, pkg := range packages {
-		conf.Import(pkg)
+	for _, pkgpath := range packages {
+		if path.Ext(pkgpath) == ".go" {
+			conf.CreateFromFilenames("", pkgpath)
+		} else {
+			conf.Import(pkgpath)
+		}
 	}
 
 	// add comments to the AST
@@ -158,7 +163,7 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) 
 		)
 
 		// create final call expression: `pkg[$main].main()`
-		callmain := jsast.CreateExpressionStatement(
+		callmain := jsast.CreateReturnStatement(
 			jsast.CreateCallExpression(
 				jsast.CreateMemberExpression(
 					jsast.CreateMemberExpression(

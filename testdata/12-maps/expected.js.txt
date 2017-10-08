@@ -22,5 +22,5 @@ return {
   main: main
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/12-maps"].main();
+return pkg["github.com/matthewmueller/golly/testdata/12-maps"].main();
 })()

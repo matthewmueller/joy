@@ -2,9 +2,7 @@ package binding
 
 import (
 	"go/ast"
-	"time"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/jsast"
 )
 
@@ -48,12 +46,12 @@ func Raw(n ast.Stmt) ([]interface{}, error) {
 	// _ = id
 
 	src := lit.Value[1 : len(lit.Value)-1]
-	start := time.Now()
+	// start := time.Now()
 	stmts, e := jsast.Parse(src)
 	if e != nil {
 		return nil, e
 	}
-	log.Infof("took %s", time.Since(start))
+	// log.Infof("took %s", time.Since(start))
 
 	var ret []interface{}
 	for _, stmt := range stmts {

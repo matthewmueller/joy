@@ -9,5 +9,5 @@ return {
   main: main
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/01-hello-world"].main();
+return pkg["github.com/matthewmueller/golly/testdata/01-hello-world"].main();
 })()

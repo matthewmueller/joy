@@ -32,5 +32,5 @@ return {
   main: main
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/22-basic-bindings"].main();
+return pkg["github.com/matthewmueller/golly/testdata/22-basic-bindings"].main();
 })()
