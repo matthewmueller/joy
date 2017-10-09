@@ -67,9 +67,9 @@ Golly gee, it's another Go to JS compiler.
 - [x] break
 - [x] append
 - [x] range
-- [ ] len
+- [x] len
 - [ ] continue
-- [ ] implement slices
+- [x] implement slices
 - [ ] implement other built-in functions (copy, make)
 - [ ] special types like `[]byte`, `time.Time`, `error`
 - [ ] implement spreads (users...)
