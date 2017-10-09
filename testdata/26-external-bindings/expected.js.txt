@@ -1,0 +1,204 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/26-external-bindings/unfetch.js"] = (function() {
+return typeof fetch == 'function'
+  ? fetch.bind()
+  : function fetch(url, options) {
+      options = options || {}
+      return new Promise(function(resolve, reject) {
+        var request = new XMLHttpRequest()
+
+        request.open(options.method || 'get', url)
+
+        for (var i in options.headers) {
+          request.setRequestHeader(i, options.headers[i])
+        }
+
+        request.withCredentials = options.credentials == 'include'
+
+        request.onload = function() {
+          resolve(response())
+        }
+
+        request.onerror = reject
+
+        request.send(options.body)
+
+        function response() {
+          var keys = [],
+            all = [],
+            headers = {},
+            header
+
+          request
+            .getAllResponseHeaders()
+            .replace(/^(.*?):\s*([\s\S]*?)$/gm, function(m, key, value) {
+              keys.push((key = key.toLowerCase()))
+              all.push([key, value])
+              header = headers[key]
+              headers[key] = header ? header + ',' + value : value
+            })
+
+          return {
+            ok: ((request.status / 200) | 0) == 1, // 200-299
+            status: request.status,
+            statusText: request.statusText,
+            url: request.responseURL,
+            clone: response,
+            text: function() {
+              return Promise.resolve(request.responseText)
+            },
+            json: function() {
+              return Promise.resolve(request.responseText).then(JSON.parse)
+            },
+            blob: function() {
+              return Promise.resolve(new Blob([request.response]))
+            },
+            headers: {
+              keys: function() {
+                return keys
+              },
+              entries: function() {
+                return all
+              },
+              get: function(n) {
+                return headers[n.toLowerCase()]
+              },
+              has: function(n) {
+                return n.toLowerCase() in headers
+              }
+            }
+          }
+        }
+      })
+    }
+;
+})();
+pkg["github.com/matthewmueller/golly/runtime"] = (function() {
+var js = pkg["github.com/matthewmueller/golly/js"];
+function Channel (capacity) {
+return new Chan({
+  capacity: capacity
+});
+};
+function Chan (o) {
+o = o || {};
+this.capacity = o.capacity || 0;
+this.values = o.values || [];
+this.sends = o.sends || [];
+this.recvs = o.recvs || [];
+this.closed = o.closed || false;
+};
+Chan.prototype.Recv = function() {
+var c = this;
+if (c.values.length > 0) {
+var value = c.values[0]
+
+c.values = c.values.slice(1)
+return Promise.resolve(value)
+};
+if (c.sends.length > 0) {
+var send = c.sends[0]
+
+c.sends = c.sends.slice(1)
+if (c.closed) {
+send.promise.reject(new Error('send on closed channel'))
+return Promise.resolve()
+}
+send.promise.resolve()
+return Promise.resolve(send.value)
+};
+if (c.closed) {
+return Promise.resolve()
+};
+var promise = Deferred();
+c.recvs = c.recvs.concat(promise);
+return promise;
+};
+function Deferred () {
+
+		if (!(this instanceof Deferred)) return new Deferred()
+		var self = this
+
+		var p = new Promise(function(resolve, reject) {
+			self.resolve = resolve
+			self.reject = reject
+		})
+	
+		self.then = p.then.bind(p)
+		self.catch = p.catch.bind(p)
+	;
+return self;
+};
+return {
+  Channel: Channel,
+  Chan: Chan,
+  Deferred: Deferred
+};
+})();
+pkg["github.com/matthewmueller/golly/js"] = (function() {
+function RawFile (filepath) {
+return null;
+};
+function Raw (src) {
+return null;
+};
+return {
+  RawFile: RawFile,
+  Raw: Raw
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/26-external-bindings"] = (function() {
+var js = pkg["github.com/matthewmueller/golly/js"], runtime = pkg["github.com/matthewmueller/golly/runtime"];
+async function main () {
+var $response = await Fetch("http://google.com", new FetchOptions({
+  Method: "POST"
+})), response = $response[0], err = $response[1];
+if (err != null) {
+console.log(err)
+return 
+};
+console.log(response);
+};
+async function Fetch (url, options) {
+var fetch = pkg["github.com/matthewmueller/golly/testdata/26-external-bindings/unfetch.js"];
+;
+var ch = new runtime.Channel();
+
+		fetch(url, options)
+			.then(function (res) {
+				ch.Send(new Response({
+					responseText: res.responseText,
+					ok: res.Ok
+				}))
+			})
+			.catch(function (err) {
+				console.log(err)
+			})
+	;
+var res = await ch.Recv();
+console.log(res.responseText);
+return [res, null];
+};
+function FetchOptions (o) {
+o = o || {};
+this.Method = o.Method || "";
+};
+function Response (o) {
+o = o || {};
+this.responseText = o.responseText || "";
+this.Ok = o.Ok || false;
+this.Status = o.Status || 0;
+this.StatusText = o.StatusText || "";
+this.URL = o.URL || "";
+};
+return {
+  main: main,
+  Fetch: Fetch,
+  FetchOptions: FetchOptions,
+  Response: Response
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/26-external-bindings"].main();
+})()
