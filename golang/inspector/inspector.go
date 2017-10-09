@@ -160,6 +160,12 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 	for len(remaining) > 0 {
 		declaration := remaining[0]
 		remaining = remaining[1:]
+		// TODO: this fixes the infinite loop,
+		// but the loop should be solved down
+		// inside the cases
+		if visited[declaration.ID] {
+			continue
+		}
 		visited[declaration.ID] = true
 
 		// get the package information
@@ -185,10 +191,6 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 					declaration.JSTag = tag
 				}
 
-			// case *ast.BlockStmt:
-
-			// 	n.List
-
 			// Get "js" comment tags from the top of types
 			case *ast.TypeSpec:
 				tag, e := getJSTag(n.Doc)
@@ -199,13 +201,9 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 					declaration.JSTag = tag
 				}
 
-			// if we encounter and Go statements or channels,
-			// we'll make the whole declaration asynchronous
-			// TODO: goroutines on their own don't cause a function
-			// to be async, it's the channels sending and receiving
-			// Note: we'll also need to add Channel when make(chan)
-			// is called.
-			case *ast.GoStmt:
+			// Include the Channel function when we find:
+			// make(chan ..., capacity)
+			case *ast.ChanType:
 				if imports[declaration.From] == nil {
 					imports[declaration.From] = map[string]string{}
 				}
@@ -217,9 +215,15 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 					return true
 				}
 
-				send := runtimeDecls["Send"]
-				if send == nil {
-					return true
+				// add the dependency
+				declaration.Dependencies = append(
+					declaration.Dependencies,
+					channel,
+				)
+
+				// append to the crawl
+				if !visited[channel.ID] {
+					remaining = append(remaining, channel)
 				}
 
 				recv := runtimeDecls["Recv"]
@@ -230,40 +234,80 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 				// add the dependency
 				declaration.Dependencies = append(
 					declaration.Dependencies,
-					channel,
-					send,
 					recv,
 				)
-
-				// append to the crawl
-				if !visited[channel.ID] {
-					remaining = append(remaining, channel)
-				}
-
-				if !visited[send.ID] {
-					remaining = append(remaining, send)
-				}
 
 				if !visited[recv.ID] {
 					remaining = append(remaining, recv)
 				}
 
-				// ast, e := jsast.Parse(string(bindata.MustAsset("bindata/channel.js")))
-				// if e != nil {
-				// 	log.Infof("e %s", e)
-				// 	err = e
-				// 	return false
-				// }
+				send := runtimeDecls["Send"]
+				if send == nil {
+					return true
+				}
 
-				// _ = ast
-				// log.Infof("got ast!")
-				// log.Infof("")
-				// declaration.Includes = append(declaration.Includes, &types.File{
-				// 	Name:   "channel.js",
-				// 	Source: string(bindata.MustAsset("bindata/channel.js")),
-				// })
+				// add the dependency
+				declaration.Dependencies = append(
+					declaration.Dependencies,
+					send,
+				)
+
+				if !visited[send.ID] {
+					remaining = append(remaining, send)
+				}
 
 				declaration.Async = true
+			// Send
+			case *ast.SendStmt:
+				// if imports[declaration.From] == nil {
+				// 	imports[declaration.From] = map[string]string{}
+				// }
+				// imports[declaration.From]["runtime"] = runtimePath
+
+				// send := runtimeDecls["Send"]
+				// if send == nil {
+				// 	return true
+				// }
+
+				// // add the dependency
+				// declaration.Dependencies = append(
+				// 	declaration.Dependencies,
+				// 	send,
+				// )
+
+				// if !visited[send.ID] {
+				// 	remaining = append(remaining, send)
+				// }
+
+				// declaration.Async = true
+
+			// Receive
+			case *ast.UnaryExpr:
+				// if n.Op != token.ARROW {
+				// 	return true
+				// }
+
+				// if imports[declaration.From] == nil {
+				// 	imports[declaration.From] = map[string]string{}
+				// }
+				// imports[declaration.From]["runtime"] = runtimePath
+
+				// recv := runtimeDecls["Recv"]
+				// if recv == nil {
+				// 	return true
+				// }
+
+				// // add the dependency
+				// declaration.Dependencies = append(
+				// 	declaration.Dependencies,
+				// 	recv,
+				// )
+
+				// if !visited[recv.ID] {
+				// 	remaining = append(remaining, recv)
+				// }
+
+				// declaration.Async = true
 			// dig into our identifiers to figure out where
 			// they were defined and add those dependencies
 			// to the crawler
@@ -394,6 +438,12 @@ func recurseDeclaration(
 	// loop over each of the dependencies
 	for _, decl := range d.Dependencies {
 		recurseDeclaration(decl, pkgmap, visited, order)
+
+		// async bubbles up, so if a child dependency is async,
+		// then the parent dependency also becomes async
+		if !d.Async && decl.Async {
+			d.Async = decl.Async
+		}
 	}
 
 	// arrange according to first seen

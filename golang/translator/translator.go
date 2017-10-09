@@ -1200,11 +1200,17 @@ func returnStmt(ctx *context, sp *scope.Scope, n *ast.ReturnStmt) (j jsast.IStat
 func callExpression(ctx *context, sp *scope.Scope, n *ast.CallExpr) (j jsast.IExpression, err error) {
 	// create an expression for built-in golang functions like append
 	// TODO: better name for what this does
+	// TODO: optimize better, somehow do all these checks
+	// at once without cluttering the code
 	if expr, e := checkBuiltin(ctx, sp, n); expr != nil || e != nil {
 		return expr, e
 	}
 
 	if expr, e := checkJSRaw(ctx, sp, n); expr != nil || e != nil {
+		return expr, e
+	}
+
+	if expr, e := maybeAwait(ctx, sp, n); expr != nil || e != nil {
 		return expr, e
 	}
 
@@ -1391,32 +1397,6 @@ func binaryExpression(ctx *context, sp *scope.Scope, b *ast.BinaryExpr) (j jsast
 }
 
 func identifier(ctx *context, sp *scope.Scope, n *ast.Ident) (j jsast.IExpression, err error) {
-	// check if we depend on any other
-	// declarations with this identifier
-	// obj := ctx.info.ObjectOf(n)
-	// if obj != nil && obj.Pkg() != nil {
-	// 	ctx.dependencies = append(ctx.dependencies, obj.String())
-	// }
-
-	// switch obj
-	// log.Infof("objcect type %s", obj.Type().String())
-
-	// switch t := obj.Type().String() {
-	// case *types.Package:
-	// 	log.Warnf("func decl!!!!!!!!")
-	// // case *ast.GenDecl:
-	// // 	log.Warnf("func decl!!!!!!!!")
-	// default:
-	// 	log.Warnf("neither %s", reflect.TypeOf(obj))
-	// }
-	// if obj == nil {
-	// 	log.Warnf("no object of")
-	// } else {
-	// 	log.Infof("identifier id: %s", obj.String())
-	// }
-	// fmt.Println(n.Obj)
-	// fmt.Printf("%+v\n", a)
-
 	// TODO: lookup table
 	switch n.Name {
 	case "nil":
@@ -1906,4 +1886,50 @@ func jsRaw(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpression, 
 
 	src := lit.Value[1 : len(lit.Value)-1]
 	return jsast.CreateRaw(src), nil
+}
+
+func maybeAwait(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
+	var isAsync bool
+	var id string
+
+	switch t := n.Fun.(type) {
+	case *ast.Ident:
+		id = t.Name
+	case *ast.SelectorExpr:
+		id = t.Sel.Name
+	case *ast.FuncLit:
+		return nil, nil
+	default:
+		return nil, unhandled("maybeAwait", n.Fun)
+	}
+
+	for _, dep := range ctx.declaration.Dependencies {
+		if id == dep.Name && dep.Async {
+			isAsync = true
+		}
+	}
+	if !isAsync {
+		return nil, nil
+	}
+
+	callee, e := expression(ctx, sp, n.Fun)
+	if e != nil {
+		return nil, e
+	}
+
+	var args []jsast.IExpression
+	for _, arg := range n.Args {
+		v, e := expression(ctx, sp, arg)
+		if e != nil {
+			return nil, e
+		}
+		args = append(args, v)
+	}
+
+	return jsast.CreateAwaitExpression(
+		jsast.CreateCallExpression(
+			callee,
+			args,
+		),
+	), nil
 }

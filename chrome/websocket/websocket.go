@@ -214,6 +214,7 @@ func (ws *WS) eventLoop(ctx context.Context) error {
 	for {
 		select {
 		case msg := <-ws.readCh:
+			// log.Infof("msg %s", msg)
 			var res response
 			if e := json.Unmarshal(msg, &res); e != nil {
 				return e

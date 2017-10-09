@@ -44,10 +44,22 @@ func New() *Compiler {
 func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) {
 	var conf loader.Config
 
+	cwd, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+
 	// add all the packages as imports
 	for _, pkgpath := range packages {
 		if path.Ext(pkgpath) == ".go" {
-			conf.CreateFromFilenames("", pkgpath)
+
+			// TODO: consolidate this logic
+			rel, e := filepath.Rel(path.Join(os.Getenv("GOPATH"), "src"), path.Join(cwd, path.Dir(pkgpath)))
+			if e != nil {
+				return nil, e
+			}
+
+			conf.CreateFromFilenames(rel, pkgpath)
 		} else {
 			conf.Import(pkgpath)
 		}

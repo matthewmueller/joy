@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/js"
 )
 
@@ -19,13 +18,7 @@ func Fetch(url string, options FetchOptions) (*Response, error) {
 	js.Raw(`
 		fetch(url, options)
 			.then(function (res) {
-				ch.Send(new Response({
-					responseText: res.responseText,
-					statusText: res.statusText,
-					status: res.status,
-					ok: res.ok,
-					url: url
-				}))
+				return ch.Send(res)
 			})
 			.catch(function (err) {
 				console.log(err)
@@ -33,42 +26,53 @@ func Fetch(url string, options FetchOptions) (*Response, error) {
 	`)
 
 	res := <-ch
-	log.Infof("here?")
 	return &res, nil
 }
 
-// Response struct
-type Response struct {
-	responseText string
-	Ok           bool
-	Status       int
-	StatusText   string
-	URL          string
-}
+// Response interface
+// js:"response,global"
+type Response struct{}
+
+// // Response struct
+// type Response struct {
+// 	responseText string
+// 	Ok           bool
+// 	Status       int
+// 	StatusText   string
+// 	URL          string
+// }
 
 // JSON fn
-func (r *Response) JSON(v interface{}) (json string, err error) {
-	println(r.responseText)
-	return r.responseText, nil
-	// return json.Unmarshal([]byte(r.responseText), v)
+func (res *Response) JSON(v interface{}) (string, error) {
+	ch := make(chan string, 1)
+	js.Raw(`
+		res.json()
+			.then(function (str) {
+				return ch.Send(str)
+			})
+			.catch(function (err) {
+				console.log(err)
+			})
+	`)
+
+	return <-ch, nil
 }
 
 func main() {
 	response, err := Fetch("https://api.github.com/users/matthewmueller/repos", FetchOptions{
-		Method: "POST",
+		Method: "GET",
 	})
 	if err != nil {
 		println(err)
 		return
 	}
-	log.Infof("here...")
+
 	str, err := response.JSON(nil)
 	if err != nil {
 		println(err)
 		return
 	}
-
-	log.Infof("result %s", str)
+	println(str)
 	// println(response.responseText)
 
 	// var raw []byte

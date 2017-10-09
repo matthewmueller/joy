@@ -7,14 +7,21 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/matthewmueller/golly/chrome"
 )
 
 type evaluate struct {
-	AwaitPromise    bool   `json:"await_promise,omitempty"`
-	Expression      string `json:"expression,omitempty"`
-	GeneratePreview bool   `json:"generatePreview,omitempty"`
+	AwaitPromise          bool   `json:"await_promise,omitempty"`
+	Expression            string `json:"expression,omitempty"`
+	GeneratePreview       bool   `json:"generatePreview,omitempty"`
+	IncludeCommandLineAPI bool   `json:"includeCommandLineAPI,omitempty"`
+}
+
+type evaluateResult struct {
+	Result           remoteObject    `json:"result,omitempty"`
+	ExceptionDetails json.RawMessage `json:"exceptionDetails,omitempty"`
 }
 
 type console struct {
@@ -23,11 +30,18 @@ type console struct {
 }
 
 type remoteObject struct {
+	ObjectID   string          `json:"objectId,omitempty"`
 	Type       string          `json:"type,omitempty"`
 	Subtype    string          `json:"subtype,omitempty"`
 	Value      json.RawMessage `json:"value,omitempty"`
 	Preview    *remoteObject   `json:"preview,omitempty"`
 	Properties []*remoteObject `json:"properties,omitempty"`
+}
+
+type awaitPromise struct {
+	PromiseObjectID int  `json:"promiseObjectId,omitempty"`
+	ReturnByValue   bool `json:"returnByValue,omitempty"`
+	GeneratePreview bool `json:"generatePreview,omitempty"`
 }
 
 // type evaluate struct {
@@ -58,14 +72,14 @@ func Run(ctx context.Context, filepath string) error {
 	go func() {
 		for {
 			line := <-stdout
-			fmt.Println(line)
+			fmt.Println(string(line))
 		}
 	}()
 
 	go func() {
 		for {
 			line := <-stderr
-			fmt.Println(line)
+			fmt.Println(string(line))
 		}
 	}()
 
@@ -108,14 +122,18 @@ func Run(ctx context.Context, filepath string) error {
 		}
 	}()
 
-	var res json.RawMessage
+	var obj json.RawMessage
 	if e := ws.Send(ctx, "Runtime.evaluate", &evaluate{
-		Expression:      files[0].Source,
-		GeneratePreview: true,
-		AwaitPromise:    true,
-	}, &res); e != nil {
+		Expression:            files[0].Source,
+		GeneratePreview:       true,
+		AwaitPromise:          true,
+		IncludeCommandLineAPI: true,
+	}, &obj); e != nil {
 		return e
 	}
+
+	// TODO: figure out how to get awaitPromise working correctly
+	time.Sleep(30 * time.Second)
 
 	return nil
 }
@@ -133,6 +151,12 @@ func formatValue(obj *remoteObject) string {
 				arr = append(arr, formatValue(prop))
 			}
 			return "[ " + strings.Join(arr, ", ") + " ]"
+		case "error":
+			var arr []string
+			for _, prop := range preview.Properties {
+				arr = append(arr, formatValue(prop))
+			}
+			return strings.Join(arr, "\n")
 		default:
 			bytes, _ := json.Marshal(preview)
 			return string(bytes)
