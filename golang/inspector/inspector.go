@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go/ast"
 	gotypes "go/types"
+	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
@@ -22,6 +23,7 @@ import (
 func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 	// map[packagePath]map[variableName]dependencyPath
 	imports := map[string]map[string]string{}
+	rawfileMap := map[string][]*types.File{}
 
 	// human-friendly pointers to the runtime declarations
 	runtimeDecls := map[string]*types.Declaration{}
@@ -199,7 +201,10 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 
 			// if we encounter and Go statements or channels,
 			// we'll make the whole declaration asynchronous
-			// TODO: channels
+			// TODO: goroutines on their own don't cause a function
+			// to be async, it's the channels sending and receiving
+			// Note: we'll also need to add Channel when make(chan)
+			// is called.
 			case *ast.GoStmt:
 				if imports[declaration.From] == nil {
 					imports[declaration.From] = map[string]string{}
@@ -207,20 +212,40 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 				imports[declaration.From]["runtime"] = runtimePath
 
 				// if child is nil, it's a local variable or field
-				child := runtimeDecls["Channel"]
-				if child == nil {
+				channel := runtimeDecls["Channel"]
+				if channel == nil {
+					return true
+				}
+
+				send := runtimeDecls["Send"]
+				if send == nil {
+					return true
+				}
+
+				recv := runtimeDecls["Recv"]
+				if recv == nil {
 					return true
 				}
 
 				// add the dependency
 				declaration.Dependencies = append(
 					declaration.Dependencies,
-					child,
+					channel,
+					send,
+					recv,
 				)
 
 				// append to the crawl
-				if !visited[child.ID] {
-					remaining = append(remaining, child)
+				if !visited[channel.ID] {
+					remaining = append(remaining, channel)
+				}
+
+				if !visited[send.ID] {
+					remaining = append(remaining, send)
+				}
+
+				if !visited[recv.ID] {
+					remaining = append(remaining, recv)
 				}
 
 				// ast, e := jsast.Parse(string(bindata.MustAsset("bindata/channel.js")))
@@ -267,9 +292,25 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 					}
 				}
 
-				// look for js.Raw(src) macros
-				// case *ast.CallExpr:
+			// look for js.RawFile(filename)
+			case *ast.CallExpr:
+				file, e := checkJSRawFile(n, declaration.From)
+				if e != nil {
+					err = e
+					return false
+				}
+				if file == nil {
+					return true
+				}
 
+				// tack on the rawfile's map
+				if rawfileMap[declaration.From] == nil {
+					rawfileMap[declaration.From] = []*types.File{}
+				}
+				rawfileMap[declaration.From] = append(
+					rawfileMap[declaration.From],
+					file,
+				)
 			}
 
 			return true
@@ -284,6 +325,7 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 	// main()'s
 	for _, main := range mains {
 		packages := groupByPackages(main)
+		rawfiles := []*types.File{}
 
 		// tack on the dependencies along with their alias names
 		for _, pkg := range packages {
@@ -291,11 +333,16 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 			for alias, path := range imports[pkg.Path] {
 				pkg.Dependencies[alias] = path
 			}
+
+			for _, file := range rawfileMap[pkg.Path] {
+				rawfiles = append(rawfiles, file)
+			}
 		}
 
 		scripts = append(scripts, &types.Script{
 			Name:     main.From,
 			Packages: packages,
+			RawFiles: rawfiles,
 		})
 	}
 
@@ -440,4 +487,49 @@ func getRuntimePath() (string, error) {
 	}
 
 	return runtimePkg, nil
+}
+
+func checkJSRawFile(cx *ast.CallExpr, from string) (*types.File, error) {
+	sel, ok := cx.Fun.(*ast.SelectorExpr)
+	if !ok {
+		return nil, nil
+	}
+
+	x, ok := sel.X.(*ast.Ident)
+	if !ok {
+		return nil, nil
+	}
+
+	if x.Name != "js" || sel.Sel.Name != "RawFile" {
+		return nil, nil
+	}
+
+	if len(cx.Args) == 0 {
+		return nil, nil
+	}
+
+	lit, ok := cx.Args[0].(*ast.BasicLit)
+	if !ok {
+		return nil, nil
+	}
+
+	filepath := lit.Value[1 : len(lit.Value)-1]
+	importPath := path.Join(from, filepath)
+	filepath = path.Join(os.Getenv("GOPATH"), "src", importPath)
+
+	// modify the value to be the fullpath
+	// TODO: this is super convenient, but
+	// it may not be clear that this function
+	// does make modifications to the AST
+	lit.Value = `"` + importPath + `"`
+
+	src, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.File{
+		Name:   importPath,
+		Source: string(src),
+	}, nil
 }

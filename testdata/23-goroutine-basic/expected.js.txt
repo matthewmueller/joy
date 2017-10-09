@@ -1,0 +1,116 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/js"] = (function() {
+function Raw (src) {
+return null;
+};
+return {
+  Raw: Raw
+};
+})();
+pkg["github.com/matthewmueller/golly/runtime"] = (function() {
+var js = pkg["github.com/matthewmueller/golly/js"];
+function Channel (capacity) {
+return new Chan({
+  capacity: capacity
+});
+};
+function Chan (o) {
+o = o || {};
+this.capacity = o.capacity || 0;
+this.values = o.values || [];
+this.sends = o.sends || [];
+this.recvs = o.recvs || [];
+this.closed = o.closed || false;
+};
+Chan.prototype.Send = function(value) {
+var c = this;
+if (c.closed) {
+return Promise.reject(new Error('send on a closed channel'))
+};
+if (c.recvs.length > 0) {
+var recv = c.recvs[0]
+
+c.recvs = c.recvs.slice(1)
+recv.resolve(value)
+return Promise.resolve()
+};
+if (c.values.length < c.capacity) {
+c.values = c.values.concat(value)
+return Promise.resolve()
+};
+var promise = Deferred();
+c.sends = c.sends.concat(new send({
+  value: value,
+  promise: promise
+}));
+return promise;
+};
+function Deferred () {
+
+		if (!(this instanceof Deferred)) return new Deferred()
+		var self = this
+
+		var p = new Promise(function(resolve, reject) {
+			self.resolve = resolve
+			self.reject = reject
+		})
+	
+		self.then = p.then.bind(p)
+		self.catch = p.catch.bind(p)
+	;
+return self;
+};
+function send (o) {
+o = o || {};
+this.value = o.value || null;
+this.promise = o.promise || null;
+};
+Chan.prototype.Recv = function() {
+var c = this;
+if (c.values.length > 0) {
+var value = c.values[0]
+
+c.values = c.values.slice(1)
+return Promise.resolve(value)
+};
+if (c.sends.length > 0) {
+var send = c.sends[0]
+
+c.sends = c.sends.slice(1)
+if (c.closed) {
+send.promise.reject(new Error('send on closed channel'))
+return Promise.resolve()
+}
+send.promise.resolve()
+return Promise.resolve(send.value)
+};
+if (c.closed) {
+return Promise.resolve()
+};
+var promise = Deferred();
+c.recvs = c.recvs.concat(promise);
+return promise;
+};
+return {
+  Channel: Channel,
+  Chan: Chan,
+  Deferred: Deferred
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/23-goroutine-basic"] = (function() {
+var runtime = pkg["github.com/matthewmueller/golly/runtime"];
+async function main () {
+var ch = new runtime.Channel();
+(async function(msg) {
+await ch.Send(msg);
+})("hi");
+console.log(await ch.Recv());
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/23-goroutine-basic"].main();
+})()

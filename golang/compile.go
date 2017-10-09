@@ -81,8 +81,33 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) 
 
 	// TODO: split into functions
 	for _, script := range scripts {
-
 		var allpkgs []interface{}
+
+		// append any raw file
+		for _, rawfile := range script.RawFiles {
+			// create: pkg["$dep"] = (function () { $yourPkg })()
+			wrap := jsast.CreateExpressionStatement(
+				jsast.CreateAssignmentExpression(
+					jsast.CreateMemberExpression(
+						jsast.CreateIdentifier("pkg"),
+						jsast.CreateString(rawfile.Name),
+						true,
+					),
+					jsast.AssignmentOperator("="),
+					jsast.CreateCallExpression(
+						jsast.CreateFunctionExpression(nil, []jsast.IPattern{},
+							jsast.CreateFunctionBody(
+								jsast.CreateRaw(rawfile.Source),
+							),
+						),
+						[]jsast.IExpression{},
+					),
+				),
+			)
+
+			allpkgs = append(allpkgs, wrap)
+		}
+
 		for _, pkg := range script.Packages {
 			var decls []interface{}
 			var exports []string

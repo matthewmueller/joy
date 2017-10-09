@@ -3,7 +3,7 @@
 var pkg = {};
 pkg["github.com/matthewmueller/golly/js"] = (function() {
 function Raw (src) {
-;
+return null;
 };
 return {
   Raw: Raw

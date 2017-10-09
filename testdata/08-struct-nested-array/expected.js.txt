@@ -21,7 +21,7 @@ function User (o) {
 o = o || {};
 this.FirstName = o.FirstName || "";
 this.LastName = o.LastName || "";
-this.Phones = o.Phones;
+this.Phones = o.Phones || [];
 };
 function Phone (o) {
 o = o || {};

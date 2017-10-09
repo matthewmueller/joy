@@ -10,6 +10,7 @@ import (
 type Script struct {
 	Name     string
 	Packages []*Package
+	RawFiles []*File
 }
 
 // Package struct
@@ -29,7 +30,6 @@ type Declaration struct {
 	ID       string
 	Node     ast.Decl
 	Name     string
-	
 
 	// Note that this represents *all*
 	// imports in the file, not just

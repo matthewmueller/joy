@@ -9,7 +9,6 @@ import (
 
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
-	"github.com/matthewmueller/golly/golang/binding"
 	"github.com/matthewmueller/golly/golang/scope"
 	"github.com/matthewmueller/golly/jsast"
 	"github.com/matthewmueller/golly/types"
@@ -81,14 +80,6 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 	// create the body
 	var body []interface{}
 	for _, stmt := range n.Body.List {
-		raw, e := binding.Bind(stmt)
-		if e != nil {
-			return nil, e
-		} else if raw != nil {
-			body = append(body, raw)
-			continue
-		}
-
 		jsStmt, e := funcStatement(ctx, sp, stmt)
 		if e != nil {
 			return nil, e
@@ -486,10 +477,14 @@ func goStmt(ctx *context, sp *scope.Scope, n *ast.GoStmt) (j jsast.IStatement, e
 			),
 		), nil
 
-	// case *ast.FuncDecl:
-	// 	log.Infof("go func decl!")
+	case *ast.Ident:
+		id, e := identifier(ctx, sp, t)
+		if e != nil {
+			return nil, e
+		}
+		return jsast.CreateExpressionStatement(id), nil
 	default:
-		return nil, unhandled("goStmt", n.Call)
+		return nil, unhandled("goStmt", n.Call.Fun)
 	}
 
 	// c, e := callExpression(ctx, sp, n.Call)
@@ -836,15 +831,7 @@ func ifStmt(ctx *context, sp *scope.Scope, n *ast.IfStmt) (j jsast.IStatement, e
 	var e error
 
 	// condition: if [(...)] { ... } else { ... }
-	var test jsast.IExpression
-	switch t := n.Cond.(type) {
-	case *ast.BinaryExpr:
-		test, e = binaryExpression(ctx, sp, t)
-	case *ast.Ident:
-		test, e = identifier(ctx, sp, t)
-	default:
-		return nil, unhandled("ifStmt<cond>", n.Cond)
-	}
+	test, e := expression(ctx, sp, n.Cond)
 	if e != nil {
 		return nil, e
 	}
@@ -856,24 +843,7 @@ func ifStmt(ctx *context, sp *scope.Scope, n *ast.IfStmt) (j jsast.IStatement, e
 	}
 
 	// else: if (...) { ... } else [{ ... }]
-	elseBlock := n.Else
-	var alt jsast.IStatement
-	switch t := elseBlock.(type) {
-	case *ast.BlockStmt:
-		alt, e = blockStmt(ctx, sp, t)
-	case *ast.ExprStmt:
-		alt, e = exprStatement(ctx, sp, t)
-	case *ast.IfStmt:
-		alt, e = ifStmt(ctx, sp, t)
-	case *ast.AssignStmt:
-		alt, e = assignStatement(ctx, sp, t)
-	case *ast.ReturnStmt:
-		alt, e = returnStmt(ctx, sp, t)
-	case nil:
-		// let alt be <nil>
-	default:
-		return nil, unhandled("ifStmt<else>", elseBlock)
-	}
+	alt, e := statement(ctx, sp, n.Else)
 	if e != nil {
 		return nil, e
 	}
@@ -956,6 +926,8 @@ func statement(ctx *context, sp *scope.Scope, n ast.Stmt) (j jsast.IStatement, e
 		return returnStmt(ctx, sp, t)
 	case *ast.SendStmt:
 		return sendStmt(ctx, sp, t)
+	case *ast.BlockStmt:
+		return blockStmt(ctx, sp, t)
 	default:
 		return nil, unhandled("statement", n)
 	}
@@ -1282,6 +1254,8 @@ func expression(ctx *context, sp *scope.Scope, expr ast.Expr) (j jsast.IExpressi
 		return arrayType(ctx, sp, t)
 	case *ast.ChanType:
 		return chanType(ctx, sp, t)
+	case *ast.SliceExpr:
+		return sliceExpr(ctx, sp, t)
 	// case *ast.KeyValueExpr:
 	// 	return keyValueExpr(ctx, sp, t)
 	case nil:
@@ -1289,6 +1263,50 @@ func expression(ctx *context, sp *scope.Scope, expr ast.Expr) (j jsast.IExpressi
 	default:
 		return nil, fmt.Errorf("expression(): unhandled type: %s", reflect.TypeOf(expr))
 	}
+}
+
+func sliceExpr(ctx *context, sp *scope.Scope, n *ast.SliceExpr) (jsast.IExpression, error) {
+	var high jsast.IExpression
+	var low jsast.IExpression
+
+	// create the low expression
+	if n.Low != nil {
+		l, e := expression(ctx, sp, n.Low)
+		if e != nil {
+			return nil, e
+		}
+		low = l
+	} else {
+		low = jsast.CreateInt(0)
+	}
+
+	// create the high side
+	if n.High != nil {
+		h, e := expression(ctx, sp, n.High)
+		if e != nil {
+			return nil, e
+		}
+		high = h
+	}
+
+	x, e := expression(ctx, sp, n.X)
+	if e != nil {
+		return nil, e
+	}
+
+	args := []jsast.IExpression{low}
+	if high != nil {
+		args = append(args, high)
+	}
+
+	return jsast.CreateCallExpression(
+		jsast.CreateMemberExpression(
+			x,
+			jsast.CreateIdentifier("slice"),
+			false,
+		),
+		args,
+	), nil
 }
 
 func expressionToString(expr ast.Expr) (string, error) {
@@ -1667,6 +1685,7 @@ func checkBuiltin(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpres
 	case "append":
 		return builtinAppend(ctx, sp, n.Args)
 	case "len":
+		return builtinLen(ctx, sp, n.Args)
 	case "copy":
 	case "make":
 		return expression(ctx, sp, n.Args[0])
@@ -1696,6 +1715,23 @@ func builtinAppend(ctx *context, sp *scope.Scope, ns []ast.Expr) (jsast.IExpress
 			false,
 		),
 		els[1:],
+	), nil
+}
+
+func builtinLen(ctx *context, sp *scope.Scope, ns []ast.Expr) (jsast.IExpression, error) {
+	var els []jsast.IExpression
+	for _, n := range ns {
+		x, e := expression(ctx, sp, n)
+		if e != nil {
+			return nil, e
+		}
+		els = append(els, x)
+	}
+
+	return jsast.CreateMemberExpression(
+		els[0],
+		jsast.CreateIdentifier("length"),
+		false,
 	), nil
 }
 
@@ -1770,13 +1806,7 @@ func unique(s []string) []string {
 
 // zeroed returns an expression defaulted to its zero value.
 func zeroed(expr ast.Expr, name string) (jsast.IExpression, error) {
-	// TODO: finish zero() and add unit tests
-	id, ok := expr.(*ast.Ident)
-	if !ok {
-		return jsast.CreateIdentifier(name), nil
-	}
-
-	x, e := defaultValue(id)
+	x, e := defaultValue(expr)
 	if e != nil {
 		return nil, e
 	}
@@ -1814,6 +1844,8 @@ func defaultValue(expr ast.Expr) (jsast.IExpression, error) {
 		}
 	case *ast.ArrayType:
 		return jsast.CreateArrayExpression(), nil
+	case *ast.InterfaceType:
+		return jsast.Null, nil
 	default:
 		return nil, unhandled("defaultValue", expr)
 	}
@@ -1830,10 +1862,21 @@ func checkJSRaw(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpress
 		return nil, nil
 	}
 
-	if x.Name != "js" || sel.Sel.Name != "Raw" {
+	if x.Name != "js" {
 		return nil, nil
 	}
 
+	switch sel.Sel.Name {
+	case "RawFile":
+		return jsRawFile(ctx, sp, cx)
+	case "Raw":
+		return jsRaw(ctx, sp, cx)
+	default:
+		return nil, nil
+	}
+}
+
+func jsRawFile(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpression, error) {
 	if len(cx.Args) == 0 {
 		return nil, nil
 	}
@@ -1842,10 +1885,24 @@ func checkJSRaw(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpress
 	if !ok {
 		return nil, nil
 	}
+	filepath := lit.Value[1 : len(lit.Value)-1]
 
-	// TODO: ensure this is point to the correct js.Raw
-	// id := info.ObjectOf(x)
-	// _ = id
+	return jsast.CreateMemberExpression(
+		jsast.CreateIdentifier("pkg"),
+		jsast.CreateString(filepath),
+		true,
+	), nil
+}
+
+func jsRaw(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpression, error) {
+	if len(cx.Args) == 0 {
+		return nil, nil
+	}
+
+	lit, ok := cx.Args[0].(*ast.BasicLit)
+	if !ok {
+		return nil, nil
+	}
 
 	src := lit.Value[1 : len(lit.Value)-1]
 	return jsast.CreateRaw(src), nil
