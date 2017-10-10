@@ -4,133 +4,33 @@ import (
 	"errors"
 	"fmt"
 	"go/ast"
-	gotypes "go/types"
 	"io/ioutil"
 	"os"
 	"path"
 	"path/filepath"
-	"reflect"
 	"runtime"
 	"strings"
 
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
+	"github.com/matthewmueller/golly/golang/indexer"
 	"github.com/matthewmueller/golly/types"
 	"golang.org/x/tools/go/loader"
 )
 
 // Inspect fn
-func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
+func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Script, err error) {
 	// map[packagePath]map[variableName]dependencyPath
 	imports := map[string]map[string]string{}
 	rawfileMap := map[string][]*types.File{}
 
 	// human-friendly pointers to the runtime declarations
-	runtimeDecls := map[string]*types.Declaration{}
+	// runtimeDecls := map[string]*types.Declaration{}
 
 	// get the runtime path
 	runtimePath, err := getRuntimePath()
 	if err != nil {
 		return nil, err
-	}
-
-	// build a map of all the declarations in all the packages
-	// this will be used as a lookup to map object declarations
-	// to actual AST nodes. object.String() is a unique identifier
-	// that points to a declaration in a go package (e.g. main())
-	//
-	// map[object.String()] => ast
-	//
-	// TODO: split into separate functions
-	// and perhaps a separate package
-	// (e.g. indexer)
-	index := map[string]*types.Declaration{}
-	for _, info := range program.AllPackages {
-		packagePath := info.Pkg.Path()
-		for _, file := range info.Files {
-			for _, decl := range file.Decls {
-				switch t := decl.(type) {
-				case *ast.FuncDecl:
-					obj := info.ObjectOf(t.Name)
-					name := t.Name.Name
-					id := obj.String()
-
-					// if it's a method don't export,
-					// if it's the main() function
-					// export either way
-					exported := obj.Exported()
-					if t.Recv != nil {
-						exported = false
-					} else if name == "main" {
-						exported = true
-					}
-
-					index[id] = &types.Declaration{
-						Exported: exported,
-						From:     packagePath,
-						Name:     name,
-						ID:       id,
-						Node:     decl,
-					}
-
-					// point human-friendly names to the declaration
-					if runtimePath == packagePath {
-						runtimeDecls[name] = index[id]
-					}
-
-				case *ast.GenDecl:
-					for _, spec := range t.Specs {
-						switch y := spec.(type) {
-						case *ast.ValueSpec:
-							for _, name := range y.Names {
-								obj := info.ObjectOf(name)
-								// packagePath := obj.Pkg().Path()
-								id := obj.String()
-								index[id] = &types.Declaration{
-									Exported: obj.Exported(),
-									From:     packagePath,
-									Name:     name.Name,
-									ID:       id,
-									Node:     decl,
-								}
-							}
-						case *ast.TypeSpec:
-							obj := info.ObjectOf(y.Name)
-							// packagePath := obj.Pkg().Path()
-							id := obj.String()
-							index[id] = &types.Declaration{
-								Exported: obj.Exported(),
-								From:     packagePath,
-								Name:     y.Name.Name,
-								ID:       id,
-								Node:     decl,
-							}
-						case *ast.ImportSpec:
-							if imports[packagePath] == nil {
-								imports[packagePath] = map[string]string{}
-							}
-
-							// trim the "" of package path's
-							depPath := strings.Trim(y.Path.Value, `"`)
-
-							// TODO: can y.Path be nil?
-							var name string
-							if y.Name != nil {
-								name = y.Name.Name
-							} else {
-								name = path.Base(depPath)
-							}
-
-							imports[packagePath][name] = depPath
-						default:
-							log.Fatalf("unknown type %s", reflect.TypeOf(y))
-						}
-					}
-				default:
-					log.Fatalf("unknown type %s", reflect.TypeOf(t))
-				}
-			}
-		}
 	}
 
 	// get the mains for our initial packages
@@ -149,7 +49,7 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 			return nil, fmt.Errorf("no main() found in: %s", info.Pkg.Path())
 		}
 
-		maindecl := index[main.String()]
+		maindecl := index.FindByObject(main)
 		remaining = append(remaining, maindecl)
 		mains = append(mains, maindecl)
 	}
@@ -210,7 +110,8 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 				imports[declaration.From]["runtime"] = runtimePath
 
 				// if child is nil, it's a local variable or field
-				channel := runtimeDecls["Channel"]
+				channel := index.Runtime("Channel")
+				log.Infof("channel %+v", channel)
 				if channel == nil {
 					return true
 				}
@@ -226,7 +127,7 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 					remaining = append(remaining, channel)
 				}
 
-				recv := runtimeDecls["Recv"]
+				recv := index.Runtime("Recv")
 				if recv == nil {
 					return true
 				}
@@ -241,7 +142,7 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 					remaining = append(remaining, recv)
 				}
 
-				send := runtimeDecls["Send"]
+				send := index.Runtime("Send")
 				if send == nil {
 					return true
 				}
@@ -314,26 +215,20 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 			case *ast.Ident:
 				// check if we depend on any other
 				// declarations with this identifier
-				obj := info.ObjectOf(n)
-				dep := getDependency(obj)
+				child := index.FindByIdent(info, n)
+				if child == nil {
+					return true
+				}
 
-				if dep != "" {
-					// if child is nil, it's a local variable or field
-					child := index[dep]
-					if child == nil {
-						return true
-					}
+				// add the dependency
+				declaration.Dependencies = append(
+					declaration.Dependencies,
+					child,
+				)
 
-					// add the dependency
-					declaration.Dependencies = append(
-						declaration.Dependencies,
-						child,
-					)
-
-					// append to the crawl
-					if !visited[child.ID] {
-						remaining = append(remaining, child)
-					}
+				// append to the crawl
+				if !visited[child.ID] {
+					remaining = append(remaining, child)
 				}
 
 			// look for js.RawFile(filename)
@@ -374,6 +269,11 @@ func Inspect(program *loader.Program) (scripts []*types.Script, err error) {
 		// tack on the dependencies along with their alias names
 		for _, pkg := range packages {
 			pkg.Dependencies = map[string]string{}
+			// add the indexed imports
+			for alias, path := range index.Imports(pkg.Path) {
+				pkg.Dependencies[alias] = path
+			}
+			// add any additional imports we add ourselves
 			for alias, path := range imports[pkg.Path] {
 				pkg.Dependencies[alias] = path
 			}
@@ -452,29 +352,6 @@ func recurseDeclaration(
 	}
 
 	return pkgs
-}
-
-func getDependency(obj gotypes.Object) string {
-	if obj == nil {
-		return ""
-	}
-	pkg := obj.Pkg()
-	if pkg == nil {
-		return ""
-	}
-
-	switch t := obj.(type) {
-	case *gotypes.Var:
-		return t.String()
-	case *gotypes.Func:
-		return t.String()
-	case *gotypes.Const:
-		return t.String()
-	case *gotypes.TypeName:
-		return t.String()
-	}
-
-	return ""
 }
 
 func getJSTag(n *ast.CommentGroup) (*structtag.Tag, error) {

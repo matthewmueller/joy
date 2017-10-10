@@ -4,8 +4,3 @@ package errors
 func New(text string) error {
 	return nil
 }
-
-// Error string
-func Error() string {
-	return ""
-}

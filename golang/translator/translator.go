@@ -7,8 +7,11 @@ import (
 	"reflect"
 	"strings"
 
+	"golang.org/x/tools/go/loader"
+
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
+	"github.com/matthewmueller/golly/golang/indexer"
 	"github.com/matthewmueller/golly/golang/scope"
 	"github.com/matthewmueller/golly/jsast"
 	"github.com/matthewmueller/golly/types"
@@ -17,6 +20,7 @@ import (
 
 // context struct
 type context struct {
+	info        *loader.PackageInfo
 	declaration *types.Declaration
 }
 
@@ -28,10 +32,11 @@ type Result struct {
 }
 
 // Translate the declaration
-func Translate(decl *types.Declaration) (node jsast.INode, err error) {
+func Translate(index *indexer.Index, info *loader.PackageInfo, decl *types.Declaration) (node jsast.INode, err error) {
 	sp := scope.New(decl.Node)
 
 	ctx := &context{
+		info:        info,
 		declaration: decl,
 	}
 
@@ -1262,6 +1267,8 @@ func expression(ctx *context, sp *scope.Scope, expr ast.Expr) (j jsast.IExpressi
 		return chanType(ctx, sp, t)
 	case *ast.SliceExpr:
 		return sliceExpr(ctx, sp, t)
+	case *ast.TypeAssertExpr:
+		return typeAssertExpr(ctx, sp, t)
 	// case *ast.KeyValueExpr:
 	// 	return keyValueExpr(ctx, sp, t)
 	case nil:
@@ -1269,6 +1276,10 @@ func expression(ctx *context, sp *scope.Scope, expr ast.Expr) (j jsast.IExpressi
 	default:
 		return nil, fmt.Errorf("expression(): unhandled type: %s", reflect.TypeOf(expr))
 	}
+}
+
+func typeAssertExpr(ctx *context, sp *scope.Scope, n *ast.TypeAssertExpr) (jsast.IExpression, error) {
+	return expression(ctx, sp, n.X)
 }
 
 func sliceExpr(ctx *context, sp *scope.Scope, n *ast.SliceExpr) (jsast.IExpression, error) {
@@ -1397,6 +1408,9 @@ func binaryExpression(ctx *context, sp *scope.Scope, b *ast.BinaryExpr) (j jsast
 }
 
 func identifier(ctx *context, sp *scope.Scope, n *ast.Ident) (j jsast.IExpression, err error) {
+	// obj := ctx.info.ObjectOf(n)
+	// log.Infof("obj %+v", obj)
+
 	// TODO: lookup table
 	switch n.Name {
 	case "nil":

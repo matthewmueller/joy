@@ -24,7 +24,7 @@ func Compile(paths ...string) (files []*types.File, e error) {
 	}
 
 	compiler := golang.New()
-	files, e = compiler.Compile(paths...)
+	files, _, e = compiler.Compile(paths...)
 	if e != nil {
 		return files, e
 	}

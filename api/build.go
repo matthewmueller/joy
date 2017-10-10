@@ -8,7 +8,7 @@ import (
 // Build fn
 func Build(pkgs ...string) (files []*types.File, err error) {
 	compiler := golang.New()
-	files, err = compiler.Compile(pkgs...)
+	files, _, err = compiler.Compile(pkgs...)
 	if err != nil {
 		return nil, err
 	}

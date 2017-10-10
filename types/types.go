@@ -27,6 +27,7 @@ type Package struct {
 type Declaration struct {
 	Exported bool
 	From     string
+	FromFile string
 	ID       string
 	Node     ast.Decl
 	Name     string

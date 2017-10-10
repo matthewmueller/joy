@@ -2,6 +2,7 @@ package golang
 
 import (
 	"go/ast"
+	"go/build"
 	"go/parser"
 	"os"
 	"path"
@@ -9,9 +10,11 @@ import (
 	"runtime"
 	"sort"
 
+	"github.com/matthewmueller/golly/golang/indexer"
 	"github.com/matthewmueller/golly/golang/inspector"
 	"github.com/matthewmueller/golly/golang/translator"
 	"github.com/matthewmueller/golly/jsast"
+	"github.com/matthewmueller/golly/stdlib"
 	"github.com/matthewmueller/golly/types"
 	"github.com/pkg/errors"
 	"golang.org/x/tools/go/loader"
@@ -41,25 +44,27 @@ func New() *Compiler {
 }
 
 // Compile a series of packages
-func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) {
+//
+// packages should be fullpaths to the files or packages
+func (c *Compiler) Compile(packages ...string) (files []*types.File, scripts []*types.Script, err error) {
 	var conf loader.Config
 
-	cwd, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
+	// TODO: will this work everytime?
+	gosrc := path.Join(os.Getenv("GOPATH"), "src")
 
 	// add all the packages as imports
 	for _, pkgpath := range packages {
-		if path.Ext(pkgpath) == ".go" {
-
-			// TODO: consolidate this logic
-			rel, e := filepath.Rel(path.Join(os.Getenv("GOPATH"), "src"), path.Join(cwd, path.Dir(pkgpath)))
+		if filepath.HasPrefix(pkgpath, gosrc) {
+			rel, e := filepath.Rel(gosrc, pkgpath)
 			if e != nil {
-				return nil, e
+				return nil, nil, e
 			}
+			pkgpath = rel
+		}
 
-			conf.CreateFromFilenames(rel, pkgpath)
+		// support both files and packages
+		if path.Ext(pkgpath) == ".go" {
+			conf.CreateFromFilenames(path.Dir(pkgpath), pkgpath)
 		} else {
 			conf.Import(pkgpath)
 		}
@@ -69,26 +74,48 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) 
 	// TODO: there's gotta be a better way to do this
 	_, file, _, ok := runtime.Caller(0)
 	if !ok {
-		return nil, errors.New("unable to get the filepath")
+		return nil, nil, errors.New("unable to get the filepath")
 	}
 	runtimePkg, err := filepath.Rel(path.Join(os.Getenv("GOPATH"), "src"), path.Join(path.Dir(path.Dir(file)), "runtime"))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	conf.Import(runtimePkg)
 
 	// add comments to the AST
 	conf.ParserMode = parser.ParseComments
 
+	// replace stdlib packages with our own
+	conf.FindPackage = func(ctxt *build.Context, importPath, fromDir string, mode build.ImportMode) (*build.Package, error) {
+		alias, e := stdlib.Supports(importPath)
+		if e != nil {
+			return nil, e
+		}
+
+		// not part of the stdlib
+		if alias == "" {
+			return ctxt.Import(importPath, fromDir, mode)
+		}
+
+		// use the alias
+		return ctxt.Import(alias, fromDir, mode)
+	}
+
 	// load all the packages
 	program, err := conf.Load()
 	if err != nil {
-		return files, errors.Wrap(err, "unable to load the go package")
+		return files, nil, errors.Wrap(err, "unable to load the go package")
 	}
 
-	scripts, err := inspector.Inspect(program)
+	// index the entire program
+	index, err := indexer.New(program)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
+	}
+
+	scripts, err = inspector.Inspect(program, index)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	// TODO: split into functions
@@ -146,9 +173,9 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) 
 
 			// create the declaration body
 			for _, decl := range pkg.Declarations {
-				ast, err := translator.Translate(decl)
+				ast, err := translator.Translate(index, program.Package(pkg.Path), decl)
 				if err != nil {
-					return nil, err
+					return nil, nil, err
 				}
 				decls = append(decls, ast)
 
@@ -247,7 +274,7 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, err error) 
 		})
 	}
 
-	return files, nil
+	return files, scripts, nil
 }
 
 // simple topological sort
