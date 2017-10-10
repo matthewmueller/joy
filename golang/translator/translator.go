@@ -1165,9 +1165,7 @@ func returnStmt(ctx *context, sp *scope.Scope, n *ast.ReturnStmt) (j jsast.IStat
 
 func callExpression(ctx *context, sp *scope.Scope, n *ast.CallExpr) (j jsast.IExpression, err error) {
 	// create an expression for built-in golang functions like append
-	// TODO: better name for what this does
-	// TODO: optimize better, somehow do all these checks
-	// at once without cluttering the code
+	// TODO: turn this into an ast.Walk()-like thing
 	if expr, e := maybeBuiltinExpr(ctx, sp, n); expr != nil || e != nil {
 		return expr, e
 	}
