@@ -356,6 +356,10 @@ func (n SequenceExpression) String() string {
 	return strings.Join(exprs, ", ")
 }
 
+func (n ThrowStatement) String() string {
+	return "throw " + stringify(n.Argument)
+}
+
 func (n AwaitExpression) String() string {
 	return "await " + stringify(n.Argument)
 }

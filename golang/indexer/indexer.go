@@ -49,6 +49,13 @@ func New(program *loader.Program) (*Index, error) {
 					name := t.Name.Name
 					id := obj.String()
 
+					var params []string
+					for _, param := range t.Type.Params.List {
+						for _, id := range param.Names {
+							params = append(params, id.Name)
+						}
+					}
+
 					// if it's a method don't export,
 					// if it's the main() function
 					// export either way
@@ -65,6 +72,7 @@ func New(program *loader.Program) (*Index, error) {
 						Name:     name,
 						ID:       id,
 						Node:     decl,
+						Params:   params,
 					}
 
 					// point human-friendly names to the declaration

@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	"path"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"golang.org/x/tools/go/loader"
@@ -775,9 +776,13 @@ func declStmt(ctx *context, sp *scope.Scope, n *ast.DeclStmt) (j jsast.IStatemen
 	}
 }
 
-func exprStatement(ctx *context, sp *scope.Scope, expr *ast.ExprStmt) (j jsast.IExpressionStatement, err error) {
+func exprStatement(ctx *context, sp *scope.Scope, expr *ast.ExprStmt) (j jsast.IStatement, err error) {
 	switch t := expr.X.(type) {
 	case *ast.CallExpr:
+		if expr, e := maybeBuiltinStmt(ctx, sp, t); expr != nil || e != nil {
+			return expr, e
+		}
+
 		x, e := callExpression(ctx, sp, t)
 		if e != nil {
 			return nil, e
@@ -1163,11 +1168,15 @@ func callExpression(ctx *context, sp *scope.Scope, n *ast.CallExpr) (j jsast.IEx
 	// TODO: better name for what this does
 	// TODO: optimize better, somehow do all these checks
 	// at once without cluttering the code
-	if expr, e := checkBuiltin(ctx, sp, n); expr != nil || e != nil {
+	if expr, e := maybeBuiltinExpr(ctx, sp, n); expr != nil || e != nil {
 		return expr, e
 	}
 
-	if expr, e := checkJSRaw(ctx, sp, n); expr != nil || e != nil {
+	if expr, e := maybeJSRaw(ctx, sp, n); expr != nil || e != nil {
+		return expr, e
+	}
+
+	if expr, e := maybeJSRewrite(ctx, sp, n); expr != nil || e != nil {
 		return expr, e
 	}
 
@@ -1369,14 +1378,14 @@ func identifier(ctx *context, sp *scope.Scope, n *ast.Ident) (j jsast.IExpressio
 	// or a predefined identifier like
 	// nil or error
 	if decl != nil {
-		// log.Infof("decl %s", decl.Name)
 		// use the alias if we have a JS tag
 		if decl.JSTag != nil {
 			name = decl.JSTag.Name
 		}
 	}
 
-	// TODO: lookup table
+	// log.Infof("name %s %+v", n.Name, ctx.info.ObjectOf(n).Type())
+
 	switch name {
 	case "nil":
 		return jsast.CreateNull(), nil
@@ -1468,18 +1477,6 @@ func jsNewFunction(ctx *context, sp *scope.Scope, n *ast.CompositeLit) (j jsast.
 		fnname = jsast.CreateIdentifier(t.Name)
 	// e.g. dom.Document{}
 	case *ast.SelectorExpr:
-		// this will convert `dom.Document{}` into
-		// var document = window.document
-		// where the js tag is `js:"document,global"`
-		// objectof := ctx.info.ObjectOf(t.Sel)
-		// if objectof != nil && ctx.aliases[objectof.String()] != nil && ctx.aliases[objectof.String()].HasOption("global") {
-		// 	return jsast.CreateMemberExpression(
-		// 		jsast.CreateIdentifier("window"),
-		// 		jsast.CreateIdentifier(ctx.aliases[objectof.String()].Name),
-		// 		false,
-		// 	), nil
-		// }
-
 		sel, e := selectorExpr(ctx, sp, t)
 		if e != nil {
 			return j, e
@@ -1628,7 +1625,7 @@ func getCommentTag(n *ast.CommentGroup) (*structtag.Tag, error) {
 	return nil, nil
 }
 
-func checkBuiltin(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
+func maybeBuiltinExpr(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
 	id, ok := n.Fun.(*ast.Ident)
 	if !ok {
 		return nil, nil
@@ -1639,12 +1636,26 @@ func checkBuiltin(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpres
 		return builtinAppend(ctx, sp, n.Args)
 	case "len":
 		return builtinLen(ctx, sp, n.Args)
-	case "println":
-		return builtinPrintln(ctx, sp, n.Args)
 	case "copy":
 		return expression(ctx, sp, n.Args[0])
 	case "make":
 		return expression(ctx, sp, n.Args[0])
+	}
+
+	return nil, nil
+}
+
+func maybeBuiltinStmt(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IStatement, error) {
+	id, ok := n.Fun.(*ast.Ident)
+	if !ok {
+		return nil, nil
+	}
+
+	switch id.Name {
+	case "println":
+		return builtinPrintln(ctx, sp, n.Args)
+	case "panic":
+		return builtinPanic(ctx, sp, n.Args)
 	}
 
 	return nil, nil
@@ -1691,7 +1702,7 @@ func builtinLen(ctx *context, sp *scope.Scope, ns []ast.Expr) (jsast.IExpression
 	), nil
 }
 
-func builtinPrintln(ctx *context, sp *scope.Scope, ns []ast.Expr) (jsast.IExpression, error) {
+func builtinPrintln(ctx *context, sp *scope.Scope, ns []ast.Expr) (jsast.IStatement, error) {
 	var args []jsast.IExpression
 	for _, n := range ns {
 		x, e := expression(ctx, sp, n)
@@ -1701,14 +1712,29 @@ func builtinPrintln(ctx *context, sp *scope.Scope, ns []ast.Expr) (jsast.IExpres
 		args = append(args, x)
 	}
 
-	return jsast.CreateCallExpression(
-		jsast.CreateMemberExpression(
-			jsast.CreateIdentifier("console"),
-			jsast.CreateIdentifier("log"),
-			false,
+	return jsast.CreateExpressionStatement(
+		jsast.CreateCallExpression(
+			jsast.CreateMemberExpression(
+				jsast.CreateIdentifier("console"),
+				jsast.CreateIdentifier("log"),
+				false,
+			),
+			args,
 		),
-		args,
 	), nil
+}
+
+func builtinPanic(ctx *context, sp *scope.Scope, ns []ast.Expr) (jsast.IStatement, error) {
+	if len(ns) != 1 {
+		return nil, errors.New("unhandled builtinPanic: only supports 1 argument")
+	}
+
+	x, e := expression(ctx, sp, ns[0])
+	if e != nil {
+		return nil, e
+	}
+
+	return jsast.CreateThrowStatement(x), nil
 }
 
 func isUnderscoreVariable(expr ast.Expr) bool {
@@ -1827,7 +1853,7 @@ func defaultValue(expr ast.Expr) (jsast.IExpression, error) {
 	}
 }
 
-func checkJSRaw(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpression, error) {
+func maybeJSRaw(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpression, error) {
 	sel, ok := cx.Fun.(*ast.SelectorExpr)
 	if !ok {
 		return nil, nil
@@ -1882,6 +1908,58 @@ func jsRaw(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpression, 
 
 	src := lit.Value[1 : len(lit.Value)-1]
 	return jsast.CreateRaw(src), nil
+}
+
+func maybeJSRewrite(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpression, error) {
+	sel, ok := cx.Fun.(*ast.SelectorExpr)
+	if !ok {
+		return nil, nil
+	}
+
+	// find the corresponding declaration (if there is one)
+	decl := ctx.index.FindByIdent(ctx.info, sel.Sel)
+	if decl == nil {
+		return nil, nil
+	}
+
+	// check if we have a rewrite (filled in during inspection)
+	rewrite := decl.Rewrite
+	if rewrite == nil {
+		return nil, nil
+	}
+
+	// map out the replacements
+	replacements := map[string]string{}
+	for i, arg := range cx.Args {
+		x, e := expression(ctx, sp, arg)
+		if e != nil {
+			return nil, e
+		}
+
+		xs, ok := x.(fmt.Stringer)
+		if !ok {
+			return nil, errors.New("maybeJSRewrite(): expression not a stringer")
+		}
+
+		if i >= len(decl.Params) {
+			return nil, errors.New("maybeJSRewrite(): doesn't support param spreads yet")
+		}
+
+		replacements[decl.Params[i]] = xs.String()
+	}
+
+	// make the substitutions
+	expr := rewrite.Expression
+	for i, variable := range rewrite.Variables {
+		replacement, isset := replacements[variable]
+		if !isset {
+			return nil, errors.New("js.Rewrite() variable doesn't match the function parameter")
+		}
+
+		expr = strings.Replace(expr, "$"+strconv.Itoa(i+1), replacement, -1)
+	}
+
+	return jsast.CreateRaw(expr), nil
 }
 
 func maybeAwait(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {

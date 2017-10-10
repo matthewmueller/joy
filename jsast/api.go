@@ -389,6 +389,14 @@ func CreateSequenceExpression(expressions ...IExpression) SequenceExpression {
 	}
 }
 
+// CreateThrowStatement fn
+func CreateThrowStatement(argument IExpression) ThrowStatement {
+	return ThrowStatement{
+		Type:     "ThrowStatement",
+		Argument: argument,
+	}
+}
+
 // CreateRaw fn
 func CreateRaw(source string) Raw {
 	return Raw{

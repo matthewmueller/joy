@@ -27,10 +27,14 @@ type Package struct {
 type Declaration struct {
 	Exported bool
 	From     string
-	FromFile string
 	ID       string
 	Node     ast.Decl
 	Name     string
+
+	// Just names for now because
+	// we only need the names right
+	// now for js.Rewrite
+	Params []string
 
 	// Note that this represents *all*
 	// imports in the file, not just
@@ -46,7 +50,14 @@ type Declaration struct {
 	// The following are available after inspection
 	JSTag        *structtag.Tag
 	Dependencies []*Declaration
+	Rewrite      *Rewrite
 	Async        bool
+}
+
+// Rewrite struct for js.Rewrite
+type Rewrite struct {
+	Expression string
+	Variables  []string
 }
 
 // File struct

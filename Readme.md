@@ -73,12 +73,13 @@ Golly gee, it's another Go to JS compiler.
 - [ ] implement other built-in functions (copy, make)
 - [ ] special types like `[]byte`, `time.Time`, `error`
 - [ ] implement spreads (users...)
-- [ ] handle `a.(type)`
+- [x] handle `a.(type)`
+- [ ] handle `v, ok := a.(type)`
 - [ ] implement switch statements
 - [ ] handle `switch t := a.(type)`
 - [ ] handle User{"a"}
 - [ ] iota
-- [ ] panics
+- [x] panics
 - [ ] custom types (type Blah = string)
 - [ ] global constants, iota, etc.
 - [ ] return value variables (e.g. func test() (arr []string, err error))

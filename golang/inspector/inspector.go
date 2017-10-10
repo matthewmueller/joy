@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"go/ast"
+	"go/token"
 	"io/ioutil"
 	"os"
 	"path"
@@ -235,25 +236,37 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 					remaining = append(remaining, child)
 				}
 
-			// look for js.RawFile(filename)
 			case *ast.CallExpr:
+				// look for js.RawFile(filename)
 				file, e := checkJSRawFile(n, declaration.From)
 				if e != nil {
 					err = e
 					return false
-				}
-				if file == nil {
+				} else if file != nil {
+					// tack on the rawfile's map
+					if rawfileMap[declaration.From] == nil {
+						rawfileMap[declaration.From] = []*types.File{}
+					}
+					rawfileMap[declaration.From] = append(
+						rawfileMap[declaration.From],
+						file,
+					)
 					return true
 				}
 
-				// tack on the rawfile's map
-				if rawfileMap[declaration.From] == nil {
-					rawfileMap[declaration.From] = []*types.File{}
+				// look for js.Rewrite(expression, variables...)
+				expr, vars, e := checkJSRewrite(n)
+				if e != nil {
+					err = e
+					return false
+				} else if expr != "" {
+					declaration.Rewrite = &types.Rewrite{
+						Expression: expr,
+						Variables:  vars,
+					}
+					declaration.Exported = false
+					return true
 				}
-				rawfileMap[declaration.From] = append(
-					rawfileMap[declaration.From],
-					file,
-				)
 			}
 
 			return true
@@ -327,6 +340,7 @@ func groupByPackages(d *types.Declaration) (pkgs []*types.Package, pkgmap map[st
 
 // recurse the declarations, building up an ordered
 // list of packages that contain these declarations
+// TODO: cleanup, this is really bad recursion
 func recurseDeclaration(
 	d *types.Declaration,
 	pkgmap map[string]*types.Package,
@@ -337,6 +351,12 @@ func recurseDeclaration(
 		return pkgs
 	}
 	visited[d.ID] = true
+
+	// don't include golly/js in the build.
+	// this package contains only compile-time stubs
+	if strings.HasSuffix(d.From, "golly/js") {
+		return pkgs
+	}
 
 	// if we haven't seen this package yet,
 	// then create it
@@ -484,4 +504,47 @@ func checkJSRawFile(cx *ast.CallExpr, from string) (*types.File, error) {
 		Name:   importPath,
 		Source: string(src),
 	}, nil
+}
+
+func checkJSRewrite(cx *ast.CallExpr) (string, []string, error) {
+	sel, ok := cx.Fun.(*ast.SelectorExpr)
+	if !ok {
+		return "", nil, nil
+	}
+
+	x, ok := sel.X.(*ast.Ident)
+	if !ok {
+		return "", nil, nil
+	}
+
+	if x.Name != "js" || sel.Sel.Name != "Rewrite" {
+		return "", nil, nil
+	}
+
+	if len(cx.Args) == 0 {
+		return "", nil, nil
+	}
+
+	lit, ok := cx.Args[0].(*ast.BasicLit)
+	if !ok {
+		return "", nil, nil
+	}
+
+	var args []string
+	for _, arg := range cx.Args[1:] {
+		switch t := arg.(type) {
+		case *ast.Ident:
+			args = append(args, t.Name)
+		default:
+			return "", nil, fmt.Errorf("unhandled checkJSRewrite(): %T", arg)
+		}
+	}
+
+	// trim off quotes if we've got a string
+	expr := lit.Value
+	if lit.Kind == token.STRING {
+		expr = expr[1 : len(expr)-1]
+	}
+
+	return expr, args, nil
 }
