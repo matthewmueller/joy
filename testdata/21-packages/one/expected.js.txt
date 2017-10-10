@@ -2,7 +2,6 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/21-packages/dep"] = (function() {
-var deepdep = pkg["github.com/matthewmueller/golly/testdata/21-packages/deepdep"];
 function Dep (dep) {
 return dep + " " + another();
 };

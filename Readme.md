@@ -82,6 +82,7 @@ Golly gee, it's another Go to JS compiler.
 - [ ] custom types (type Blah = string)
 - [ ] global constants, iota, etc.
 - [ ] return value variables (e.g. func test() (arr []string, err error))
+- [ ] init function
 
 ### Package-Level:
 
@@ -126,7 +127,7 @@ Golly gee, it's another Go to JS compiler.
 
 - Small single-file builds that run in all browsers
 - Compiles to ES3, the most popular JS dialect
-- Idiomatic Golang to Idiomatic Javascript
+- Idiomatic Go to Idiomatic Javascript
 - The "bucklescript" for Go
 - Fast builds
 

@@ -5,17 +5,19 @@ import (
 )
 
 // Fetch fn
-// js:"global,fetch"
+// js:"fetch,global"
 func Fetch(url string, options *map[string]string) *promise.Promise {
 	return &promise.Promise{}
 }
 
 // Response struct
+// js:"response,global"
 type Response struct {
 	responseText string
 }
 
 // JSON gets the json
+// js:"json"
 func (r *Response) JSON() string {
 	return r.responseText
 }

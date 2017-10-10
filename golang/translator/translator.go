@@ -20,6 +20,7 @@ import (
 
 // context struct
 type context struct {
+	index       *indexer.Index
 	info        *loader.PackageInfo
 	declaration *types.Declaration
 }
@@ -36,8 +37,15 @@ func Translate(index *indexer.Index, info *loader.PackageInfo, decl *types.Decla
 	sp := scope.New(decl.Node)
 
 	ctx := &context{
+		index:       index,
 		info:        info,
 		declaration: decl,
+	}
+
+	// if this declaration has the global option,
+	// don't include it in the build
+	if decl.JSTag != nil && decl.JSTag.HasOption("global") {
+		return jsast.CreateEmptyStatement(), nil
 	}
 
 	switch t := decl.Node.(type) {
@@ -53,11 +61,6 @@ func Translate(index *indexer.Index, info *loader.PackageInfo, decl *types.Decla
 	}
 
 	return node, nil
-	// return &Result{
-	// 	Node:         node,
-	// 	Dependencies: unique(ctx.dependencies),
-	// 	Exported:     ctx.exported,
-	// }, nil
 }
 
 func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement, error) {
@@ -117,6 +120,14 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 	}
 
 	recv := n.Recv.List[0]
+	recvDecl := ctx.index.FindByNode(ctx.info, recv.Type)
+	if recvDecl != nil {
+		// remove prototypes where the class is global
+		if recvDecl.JSTag != nil && recvDecl.JSTag.HasOption("global") {
+			return jsast.CreateEmptyStatement(), nil
+		}
+	}
+
 	x, e := expression(ctx, sp, recv.Type)
 	if e != nil {
 		return nil, e
@@ -256,20 +267,6 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 
 	for _, field := range st.Fields.List {
 		for _, name := range field.Names {
-			// objectof := ctx.info.ObjectOf(name)
-			// // TODO: this doesn't need to be parsed for each field name
-			// // though I'm not sure how you can have multiple field names
-			// // per struct tag
-			// if field.Tag != nil {
-			// 	tags, err := structtag.Parse(field.Tag.Value[1 : len(field.Tag.Value)-1])
-			// 	if err != nil {
-			// 		return j, err
-			// 	}
-			// 	if tag, err := tags.Get("js"); err == nil {
-			// 		ctx.aliases[objectof.String()] = tag
-			// 	}
-			// }
-
 			// get the default value
 			v, e := zeroed(field.Type, name.Name)
 			if e != nil {
@@ -382,33 +379,6 @@ func varSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement,
 	// return nil, nil
 }
 
-// func mainFunc(pkg *loader.PackageInfo,  f *ast.File) (j jsast.IStatement, err error) {
-// 	// e.g. func main()
-// 	if fn.Body == nil {
-// 		return jsast.CreateEmptyStatement(), nil
-// 	}
-
-// 	// TODO: []IStatement{} instead of interface{}
-// 	var body []interface{}
-// 	for _, stmt := range fn.Body.List {
-// 		jsStmt, e := funcStatement(ctx, sp, stmt)
-// 		if e != nil {
-// 			return j, e
-// 		}
-// 		body = append(body, jsStmt)
-// 	}
-
-// 	return jsast.CreateExpressionStatement(
-// 		jsast.CreateCallExpression(
-// 			jsast.CreateFunctionExpression(nil, []jsast.IPattern{},
-// 				jsast.CreateFunctionBody(body...),
-// 			),
-// 			[]jsast.IExpression{},
-// 		),
-// 	), nil
-// 	// return j, nil
-// }
-
 func funcStatement(ctx *context, sp *scope.Scope, n ast.Stmt) (j jsast.IStatement, err error) {
 	switch t := n.(type) {
 	case *ast.ExprStmt:
@@ -491,17 +461,6 @@ func goStmt(ctx *context, sp *scope.Scope, n *ast.GoStmt) (j jsast.IStatement, e
 	default:
 		return nil, unhandled("goStmt", n.Call.Fun)
 	}
-
-	// c, e := callExpression(ctx, sp, n.Call)
-	// if e != nil {
-	// 	return nil, e
-	// }
-
-	// ast.
-	// log.Infof("Scope %+v", f.Scope.Lookup(n))
-
-	// return jsast.CreateExpressionStatement(c), nil
-	// return nil, nil
 }
 
 func sendStmt(ctx *context, sp *scope.Scope, n *ast.SendStmt) (j jsast.IStatement, err error) {
@@ -632,9 +591,6 @@ func rangeStmt(ctx *context, sp *scope.Scope, n *ast.RangeStmt) (j jsast.IStatem
 	if e != nil {
 		return nil, e
 	}
-
-	// ast.
-	// ast.Print(nil, asn.Rhs[0])
 
 	switch kind.(type) {
 	case *ast.ArrayType:
@@ -1269,8 +1225,6 @@ func expression(ctx *context, sp *scope.Scope, expr ast.Expr) (j jsast.IExpressi
 		return sliceExpr(ctx, sp, t)
 	case *ast.TypeAssertExpr:
 		return typeAssertExpr(ctx, sp, t)
-	// case *ast.KeyValueExpr:
-	// 	return keyValueExpr(ctx, sp, t)
 	case nil:
 		return nil, nil
 	default:
@@ -1408,21 +1362,26 @@ func binaryExpression(ctx *context, sp *scope.Scope, b *ast.BinaryExpr) (j jsast
 }
 
 func identifier(ctx *context, sp *scope.Scope, n *ast.Ident) (j jsast.IExpression, err error) {
-	// obj := ctx.info.ObjectOf(n)
-	// log.Infof("obj %+v", obj)
+	decl := ctx.index.FindByIdent(ctx.info, n)
+	name := n.Name
+
+	// if decl is nil, it's a local variable
+	// or a predefined identifier like
+	// nil or error
+	if decl != nil {
+		// log.Infof("decl %s", decl.Name)
+		// use the alias if we have a JS tag
+		if decl.JSTag != nil {
+			name = decl.JSTag.Name
+		}
+	}
 
 	// TODO: lookup table
-	switch n.Name {
+	switch name {
 	case "nil":
 		return jsast.CreateNull(), nil
-	case "println":
-		return jsast.CreateMemberExpression(
-			jsast.CreateIdentifier("console"),
-			jsast.CreateIdentifier("log"),
-			false,
-		), nil
 	default:
-		return jsast.CreateIdentifier(n.Name), nil
+		return jsast.CreateIdentifier(name), nil
 	}
 }
 
@@ -1680,7 +1639,10 @@ func checkBuiltin(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpres
 		return builtinAppend(ctx, sp, n.Args)
 	case "len":
 		return builtinLen(ctx, sp, n.Args)
+	case "println":
+		return builtinPrintln(ctx, sp, n.Args)
 	case "copy":
+		return expression(ctx, sp, n.Args[0])
 	case "make":
 		return expression(ctx, sp, n.Args[0])
 	}
@@ -1726,6 +1688,26 @@ func builtinLen(ctx *context, sp *scope.Scope, ns []ast.Expr) (jsast.IExpression
 		els[0],
 		jsast.CreateIdentifier("length"),
 		false,
+	), nil
+}
+
+func builtinPrintln(ctx *context, sp *scope.Scope, ns []ast.Expr) (jsast.IExpression, error) {
+	var args []jsast.IExpression
+	for _, n := range ns {
+		x, e := expression(ctx, sp, n)
+		if e != nil {
+			return nil, e
+		}
+		args = append(args, x)
+	}
+
+	return jsast.CreateCallExpression(
+		jsast.CreateMemberExpression(
+			jsast.CreateIdentifier("console"),
+			jsast.CreateIdentifier("log"),
+			false,
+		),
+		args,
 	), nil
 }
 

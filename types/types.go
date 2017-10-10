@@ -17,10 +17,10 @@ type Script struct {
 type Package struct {
 	Path         string
 	Declarations []*Declaration
+	Exports      []*Declaration
 
-	// available after inspection
 	// maps[alias]: packagePath
-	Dependencies map[string]string
+	Dependencies map[string]*Package
 }
 
 // Declaration struct

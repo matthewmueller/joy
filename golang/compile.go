@@ -151,15 +151,27 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, scripts []*
 			var decls []interface{}
 			var exports []string
 
+			// skip over any packages that don't have any exports
+			if len(pkg.Exports) == 0 {
+				continue
+			}
+
 			// create imports linking of the pkgs between packages
 			// e.g. var runner = pkg["github.com/gorunner/runner"]
 			var imports []jsast.VariableDeclarator
-			for name, from := range pkg.Dependencies {
+			for name, dep := range pkg.Dependencies {
+				// don't include a dependencies that doesn't have
+				// any exports as that package will be eliminated
+				// from the build
+				if len(dep.Exports) == 0 {
+					continue
+				}
+
 				imports = append(imports, jsast.CreateVariableDeclarator(
 					jsast.CreateIdentifier(name),
 					jsast.CreateMemberExpression(
 						jsast.CreateIdentifier("pkg"),
-						jsast.CreateString(from),
+						jsast.CreateString(dep.Path),
 						true,
 					),
 				))
@@ -179,6 +191,8 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, scripts []*
 				}
 				decls = append(decls, ast)
 
+				// append if it's exported and not global
+				// TODO: should decl.Exported encompass the global option?
 				if decl.Exported {
 					exports = append(exports, decl.Name)
 				}
@@ -186,22 +200,17 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, scripts []*
 
 			// create a return statement for the exported fields
 			// e.g. return { $export: $export }
-			var exported interface{}
-			if len(exports) > 0 {
-				var props []jsast.Property
-				for _, export := range exports {
-					props = append(props, jsast.CreateProperty(
-						jsast.CreateIdentifier(export),
-						jsast.CreateIdentifier(export),
-						"init",
-					))
-				}
-				exported = jsast.CreateReturnStatement(
-					jsast.CreateObjectExpression(props),
-				)
-
-				decls = append(decls, exported)
+			var props []jsast.Property
+			for _, decl := range pkg.Exports {
+				props = append(props, jsast.CreateProperty(
+					jsast.CreateIdentifier(decl.Name),
+					jsast.CreateIdentifier(decl.Name),
+					"init",
+				))
 			}
+			decls = append(decls, jsast.CreateReturnStatement(
+				jsast.CreateObjectExpression(props),
+			))
 
 			// create: pkg["$dep"] = (function () { $yourPkg })()
 			wrap := jsast.CreateExpressionStatement(

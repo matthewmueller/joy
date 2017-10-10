@@ -90,8 +90,8 @@ func New(program *loader.Program) (*Index, error) {
 							}
 						case *ast.TypeSpec:
 							obj := info.ObjectOf(y.Name)
-							// packagePath := obj.Pkg().Path()
 							id := obj.String()
+
 							declarations[id] = &types.Declaration{
 								Exported: obj.Exported(),
 								From:     packagePath,
@@ -152,6 +152,18 @@ func (i *Index) FindByIdent(info *loader.PackageInfo, n *ast.Ident) *types.Decla
 	}
 
 	return i.FindByObject(obj)
+}
+
+// FindByNode finds a declaration from a node
+func (i *Index) FindByNode(info *loader.PackageInfo, n ast.Node) *types.Declaration {
+	switch t := n.(type) {
+	case *ast.Ident:
+		return i.FindByIdent(info, t)
+	case *ast.StarExpr:
+		return i.FindByNode(info, t.X)
+	default:
+		return nil
+	}
 }
 
 // Imports returns the imports along with their aliases

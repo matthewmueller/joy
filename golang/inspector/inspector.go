@@ -11,7 +11,6 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/apex/log"
 	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/golang/indexer"
 	"github.com/matthewmueller/golly/types"
@@ -89,16 +88,22 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 					return false
 				} else if tag != nil {
 					declaration.JSTag = tag
+					if tag.HasOption("global") {
+						declaration.Exported = false
+					}
 				}
 
 			// Get "js" comment tags from the top of types
-			case *ast.TypeSpec:
+			case *ast.GenDecl:
 				tag, e := getJSTag(n.Doc)
 				if e != nil {
 					err = e
 					return false
 				} else if tag != nil {
 					declaration.JSTag = tag
+					if tag.HasOption("global") {
+						declaration.Exported = false
+					}
 				}
 
 			// Include the Channel function when we find:
@@ -111,7 +116,6 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 
 				// if child is nil, it's a local variable or field
 				channel := index.Runtime("Channel")
-				log.Infof("channel %+v", channel)
 				if channel == nil {
 					return true
 				}
@@ -263,19 +267,32 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 	// order by package according to the initial
 	// main()'s
 	for _, main := range mains {
-		packages := groupByPackages(main)
+		packages, pkgmap := groupByPackages(main)
 		rawfiles := []*types.File{}
 
 		// tack on the dependencies along with their alias names
 		for _, pkg := range packages {
-			pkg.Dependencies = map[string]string{}
+			pkg.Dependencies = map[string]*types.Package{}
+
 			// add the indexed imports
 			for alias, path := range index.Imports(pkg.Path) {
-				pkg.Dependencies[alias] = path
+				// check if we're actually using this package in
+				// this main (it may be used in other mains)
+				if pkgmap[path] == nil {
+					continue
+				}
+
+				pkg.Dependencies[alias] = pkgmap[path]
 			}
 			// add any additional imports we add ourselves
 			for alias, path := range imports[pkg.Path] {
-				pkg.Dependencies[alias] = path
+				// check if we're actually using this package in
+				// this main (it may be used in other mains)
+				if pkgmap[path] == nil {
+					continue
+				}
+
+				pkg.Dependencies[alias] = pkgmap[path]
 			}
 
 			for _, file := range rawfileMap[pkg.Path] {
@@ -296,8 +313,8 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 // groupByPackages takes a dependency tree of declarations
 // and organizes them into a topologically order list of
 // packages
-func groupByPackages(d *types.Declaration) (pkgs []*types.Package) {
-	pkgmap := map[string]*types.Package{}
+func groupByPackages(d *types.Declaration) (pkgs []*types.Package, pkgmap map[string]*types.Package) {
+	pkgmap = map[string]*types.Package{}
 	visited := map[string]bool{}
 	order := &[]string{}
 
@@ -305,7 +322,7 @@ func groupByPackages(d *types.Declaration) (pkgs []*types.Package) {
 	pkgs = recurseDeclaration(d, pkgmap, visited, order)
 
 	// reverse the list for topological order
-	return reverse(pkgs)
+	return reverse(pkgs), pkgmap
 }
 
 // recurse the declarations, building up an ordered
@@ -334,6 +351,14 @@ func recurseDeclaration(
 		pkgmap[d.From].Declarations,
 		d,
 	)
+
+	if d.Exported {
+		// append the declaration
+		pkgmap[d.From].Exports = append(
+			pkgmap[d.From].Exports,
+			d,
+		)
+	}
 
 	// loop over each of the dependencies
 	for _, decl := range d.Dependencies {
