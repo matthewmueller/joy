@@ -75,6 +75,7 @@ func run(ctx context.Context) error {
 	return nil
 }
 
+// TODO: https://github.com/mitchellh/gox/blob/c9740af9c6574448fd48eb30a71f964014c7a837/go.go#L123
 func build(ctx context.Context) error {
 	var packages []string
 	for _, pkg := range *buildPackages {
