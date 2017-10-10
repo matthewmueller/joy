@@ -149,7 +149,6 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, scripts []*
 
 		for _, pkg := range script.Packages {
 			var decls []interface{}
-			var exports []string
 
 			// skip over any packages that don't have any exports
 			if len(pkg.Exports) == 0 {
@@ -190,12 +189,6 @@ func (c *Compiler) Compile(packages ...string) (files []*types.File, scripts []*
 					return nil, nil, err
 				}
 				decls = append(decls, ast)
-
-				// append if it's exported and not global
-				// TODO: should decl.Exported encompass the global option?
-				if decl.Exported {
-					exports = append(exports, decl.Name)
-				}
 			}
 
 			// create a return statement for the exported fields
