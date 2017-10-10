@@ -140,7 +140,7 @@ Golly gee, it's another Go to JS compiler.
 
 ## Tradeoffs
 
-**Go will run Golly code, but Golly may not run existing Go code**
+**Go will compile Golly code, but Golly will probably not compile existing Go code**
 
 Just because your code is running in Go does not mean it will run on Golly without modification. For everything that browserify & webpack brought to the community,they also brought with it mysteriously large builds.
 
