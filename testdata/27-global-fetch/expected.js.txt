@@ -1,0 +1,27 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/27-global-fetch"] = (function() {
+function main () {
+var p = fetch("https://api.github.com/users/matthewmueller/repos", null);
+p.then(function(v) {
+var res = v;
+return res.json();
+}).then(function(v) {
+var res = v;
+console.log(res);
+return null;
+}).catch(function(e) {
+console.log(e);
+return null;
+});
+};
+;
+;
+;
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/27-global-fetch"].main();
+})()

@@ -96,7 +96,7 @@ var stdlib = map[string]bool{
 	"encoding/csv":         false,
 	"encoding/gob":         false,
 	"encoding/hex":         false,
-	"encoding/json":        false,
+	"encoding/json":        true,
 	"encoding/pem":         false,
 	"encoding/xml":         false,
 	"errors":               true,

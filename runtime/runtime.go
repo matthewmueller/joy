@@ -20,17 +20,17 @@ type send struct {
 // TODO: cleanup
 func Deferred() interface{} {
 	js.Raw(`
-		if (!(this instanceof Deferred)) return new Deferred()
-		var self = this
+if (!(this instanceof Deferred)) return new Deferred()
+var self = this
 
-		var p = new Promise(function(resolve, reject) {
-			self.resolve = resolve
-			self.reject = reject
-		})
-	
-		self.then = p.then.bind(p)
-		self.catch = p.catch.bind(p)
-	`)
+var p = new Promise(function(resolve, reject) {
+	self.resolve = resolve
+	self.reject = reject
+})
+
+self.then = p.then.bind(p)
+self.catch = p.catch.bind(p)
+`)
 	return js.Raw(`self`)
 }
 

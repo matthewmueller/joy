@@ -107,6 +107,32 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 					}
 				}
 
+			case *ast.StructType:
+				for _, field := range n.Fields.List {
+					if field.Tag == nil {
+						continue
+					}
+
+					value := field.Tag.Value
+					if field.Tag.Kind == token.STRING {
+						value = value[1 : len(value)-1]
+					}
+
+					jstag, e := getJSTagFromString(value)
+					if e != nil {
+						err = e
+						return false
+					}
+
+					// attach the JS tag to the field names
+					if declaration.JSFieldTags == nil {
+						declaration.JSFieldTags = map[string]*structtag.Tag{}
+					}
+					for _, id := range field.Names {
+						declaration.JSFieldTags[id.Name] = jstag
+					}
+				}
+
 			// Include the Channel function when we find:
 			// make(chan ..., capacity)
 			case *ast.ChanType:
@@ -410,12 +436,7 @@ func getJSTag(n *ast.CommentGroup) (*structtag.Tag, error) {
 			continue
 		}
 
-		tags, err := structtag.Parse(comment.Text[2:])
-		if err != nil {
-			return nil, err
-		}
-
-		jstag, err := tags.Get("js")
+		jstag, err := getJSTagFromString(comment.Text[2:])
 		if err != nil {
 			return nil, err
 		}
@@ -424,6 +445,20 @@ func getJSTag(n *ast.CommentGroup) (*structtag.Tag, error) {
 	}
 
 	return nil, nil
+}
+
+func getJSTagFromString(tag string) (*structtag.Tag, error) {
+	tags, err := structtag.Parse(tag)
+	if err != nil {
+		return nil, err
+	}
+
+	jstag, err := tags.Get("js")
+	if err != nil {
+		return nil, err
+	}
+
+	return jstag, nil
 }
 
 func reverse(s []*types.Package) []*types.Package {

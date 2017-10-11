@@ -23,7 +23,7 @@ func (r *Response) JSON() string {
 }
 
 func main() {
-	p := Fetch("http://google.com", nil)
+	p := Fetch("https://api.github.com/users/matthewmueller/repos", nil)
 
 	p.Then(func(v interface{}) interface{} {
 		res := v.(Response)

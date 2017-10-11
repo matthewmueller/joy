@@ -33,22 +33,19 @@ type Declaration struct {
 
 	// Just names for now because
 	// we only need the names right
-	// now for js.Rewrite
+	// now for js.Rewrite. This is
+	// only non-nil for FuncDecl's
 	Params []string
 
-	// Note that this represents *all*
-	// imports in the file, not just
-	// the ones that the declaration
-	// uses. We use this information
-	// to fill in the package dependencies
-	// are *only* the imports the
-	// declarations use
-	// Imports map[string]string
+	// This is nonnil when there is a comment above
+	// the declaration
+	// e.g. // js:"..."
+	JSTag *structtag.Tag
 
-	// Includes []*File
+	// This is a map of the struct tags on a field
+	// e.g. Name string `js:"name"`
+	JSFieldTags map[string]*structtag.Tag
 
-	// The following are available after inspection
-	JSTag        *structtag.Tag
 	Dependencies []*Declaration
 	Rewrite      *Rewrite
 	Async        bool
