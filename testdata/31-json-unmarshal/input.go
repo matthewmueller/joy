@@ -10,8 +10,12 @@ type Person struct {
 
 func main() {
 	var p Person
-	if e := json.Unmarshal([]byte(`{"name":"matt","age":28}`), &p); e != nil {
+	if e := json.Unmarshal([]byte(`{"name":"ma\"tt","age":28}`), &p); e != nil {
 		panic(e)
 	}
+	follows(&p)
+}
+
+func follows(p *Person) {
 	println(p.Name)
 }

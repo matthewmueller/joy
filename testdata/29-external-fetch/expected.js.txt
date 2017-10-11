@@ -167,7 +167,7 @@ pkg["github.com/matthewmueller/golly/testdata/29-external-fetch"] = (function() 
 var runtime = pkg["github.com/matthewmueller/golly/runtime"];
 async function main () {
 var $response = await Fetch("https://api.github.com/users/matthewmueller/repos", new FetchOptions({
-  Method: "GET"
+  method: "GET"
 })), response = $response[0], err = $response[1];
 if (err != null) {
 console.log(err)
@@ -198,7 +198,7 @@ return [res, null];
 };
 function FetchOptions (o) {
 o = o || {};
-this.Method = o.Method || "";
+this.method = o.method || "";
 };
 ;
 ;

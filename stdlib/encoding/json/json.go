@@ -12,7 +12,14 @@ func Marshal(v interface{}) ([]byte, error) {
 }
 
 // Unmarshal a struct into JSON
+// TODO: create & use object.assign runtime
 func Unmarshal(data []byte, v interface{}) error {
-
+	js.Rewrite(`(function(data, v) {
+  try {
+    var o = JSON.parse(data)
+    for (var k in o) v[k] = o[k]
+    return null
+  } catch (e) { return e }
+})($1, $2)`, data, v)
 	return nil
 }

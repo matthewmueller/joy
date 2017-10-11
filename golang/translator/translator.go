@@ -11,6 +11,7 @@ import (
 	"golang.org/x/tools/go/loader"
 
 	"github.com/apex/log"
+	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/golang/indexer"
 	"github.com/matthewmueller/golly/golang/scope"
 	"github.com/matthewmueller/golly/jsast"
@@ -1211,11 +1212,6 @@ func callExpression(ctx *context, sp *scope.Scope, n *ast.CallExpr) (j jsast.IEx
 		return expr, e
 	}
 
-	callee, e := expression(ctx, sp, n.Fun)
-	if e != nil {
-		return j, e
-	}
-
 	var args []jsast.IExpression
 	for _, arg := range n.Args {
 		v, e := expression(ctx, sp, arg)
@@ -1223,6 +1219,19 @@ func callExpression(ctx *context, sp *scope.Scope, n *ast.CallExpr) (j jsast.IEx
 			return j, e
 		}
 		args = append(args, v)
+	}
+
+	// convert array conversions
+	// e.g. []byte(`test`) => `test`
+	if len(n.Args) == 1 {
+		if _, ok := n.Fun.(*ast.ArrayType); ok {
+			return args[0], nil
+		}
+	}
+
+	callee, e := expression(ctx, sp, n.Fun)
+	if e != nil {
+		return j, e
 	}
 
 	return jsast.CreateCallExpression(
@@ -1253,8 +1262,8 @@ func expression(ctx *context, sp *scope.Scope, expr ast.Expr) (j jsast.IExpressi
 		return unaryExpr(ctx, sp, t)
 	case *ast.FuncLit:
 		return funcLit(ctx, sp, t)
-	case *ast.ArrayType:
-		return arrayType(ctx, sp, t)
+	// case *ast.ArrayType:
+	// 	return arrayType(ctx, sp, t)
 	case *ast.ChanType:
 		return chanType(ctx, sp, t)
 	case *ast.SliceExpr:
@@ -1456,7 +1465,15 @@ func unaryExpr(ctx *context, sp *scope.Scope, n *ast.UnaryExpr) (j jsast.IExpres
 }
 
 func basiclit(ctx *context, sp *scope.Scope, lit *ast.BasicLit) (j jsast.IExpression, err error) {
-	return jsast.CreateLiteral(lit.Value), nil
+	value := lit.Value
+	l := len(value)
+
+	// replace ` with " and escape the inner quotes
+	if value[0] == '`' && value[len(value)-1] == '`' {
+		value = strconv.Quote(value[1 : l-1])
+	}
+
+	return jsast.CreateLiteral(value), nil
 }
 
 func compositeLiteral(ctx *context, sp *scope.Scope, n *ast.CompositeLit) (j jsast.IExpression, err error) {
@@ -1552,10 +1569,12 @@ func jsArrayExpression(ctx *context, sp *scope.Scope, n *ast.CompositeLit) (j js
 }
 
 func keyValueExpr(ctx *context, sp *scope.Scope, c *ast.CompositeLit, n *ast.KeyValueExpr) (j jsast.Property, err error) {
+	var fields map[string]*structtag.Tag
+
 	// get the original declaration of the struct
 	decl := ctx.index.FindByNode(ctx.info, c.Type)
-	if decl == nil {
-		return j, fmt.Errorf("keyValueExpr(): decl shouldn't be null")
+	if decl != nil && decl.JSFieldTags != nil {
+		fields = decl.JSFieldTags
 	}
 
 	// use aliases if there are some
@@ -1567,7 +1586,6 @@ func keyValueExpr(ctx *context, sp *scope.Scope, c *ast.CompositeLit, n *ast.Key
 	switch t := n.Key.(type) {
 	case *ast.Ident:
 		alias := t.Name
-		fields := decl.JSFieldTags
 		if fields != nil && fields[alias] != nil {
 			alias = fields[alias].Name
 		}
@@ -1591,37 +1609,34 @@ func keyValueExpr(ctx *context, sp *scope.Scope, c *ast.CompositeLit, n *ast.Key
 }
 
 func selectorExpr(ctx *context, sp *scope.Scope, n *ast.SelectorExpr) (j jsast.MemberExpression, err error) {
-	var x jsast.IExpression
+	var decl *types.Declaration
 	var s jsast.IExpression
 
 	// first check if we have an alias already
-	// typeof := ctx.info.TypeOf(n.X)
-	// if typeof != nil && ctx.aliases[typeof.String()] != nil {
-	// 	x = jsast.CreateIdentifier(ctx.aliases[typeof.String()].Name)
-	// }
-
-	// (user.phone).number
-	if x == nil {
-		ex, e := expression(ctx, sp, n.X)
-		if e != nil {
-			return j, e
-		}
-		x = ex
+	if id, ok := n.X.(*ast.Ident); ok {
+		typeof := ctx.info.TypeOf(id)
+		decl = ctx.index.FindByID(typeof.String())
 	}
 
-	// first check if we have an alias already
-	// objectof := ctx.info.ObjectOf(n.Sel)
-	// if objectof != nil && ctx.aliases[objectof.String()] != nil {
-	// 	s = jsast.CreateIdentifier(ctx.aliases[objectof.String()].Name)
-	// }
+	// (user.phone).number
+	x, e := expression(ctx, sp, n.X)
+	if e != nil {
+		return j, e
+	}
 
 	// user.phone.(number)
-	if s == nil {
-		se, e := identifier(ctx, sp, n.Sel)
+	name := n.Sel.Name
+	if decl != nil &&
+		decl.JSFieldTags != nil &&
+		decl.JSFieldTags[name] != nil {
+		name = decl.JSFieldTags[name].Name
+		s = jsast.CreateIdentifier(name)
+	} else {
+		i, e := identifier(ctx, sp, n.Sel)
 		if e != nil {
 			return j, e
 		}
-		s = se
+		s = i
 	}
 
 	member := jsast.CreateMemberExpression(x, s, false)
@@ -2005,7 +2020,6 @@ func maybeJSRewrite(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpr
 		if !isset {
 			return nil, errors.New("js.Rewrite() variable doesn't match the function parameter")
 		}
-
 		expr = strings.Replace(expr, "$"+strconv.Itoa(i+1), replacement, -1)
 	}
 
@@ -2054,6 +2068,8 @@ func maybeAwait(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpressi
 	case *ast.SelectorExpr:
 		id = t.Sel.Name
 	case *ast.FuncLit:
+		return nil, nil
+	case *ast.ArrayType:
 		return nil, nil
 	default:
 		return nil, unhandled("maybeAwait", n.Fun)

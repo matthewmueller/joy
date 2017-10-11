@@ -86,8 +86,8 @@ func New(program *loader.Program) (*Index, error) {
 						case *ast.ValueSpec:
 							for _, name := range y.Names {
 								obj := info.ObjectOf(name)
-								// packagePath := obj.Pkg().Path()
 								id := obj.String()
+
 								declarations[id] = &types.Declaration{
 									Exported: obj.Exported(),
 									From:     packagePath,
@@ -97,6 +97,7 @@ func New(program *loader.Program) (*Index, error) {
 								}
 							}
 						case *ast.TypeSpec:
+							typeof := info.TypeOf(y.Name)
 							obj := info.ObjectOf(y.Name)
 							id := obj.String()
 
@@ -107,6 +108,11 @@ func New(program *loader.Program) (*Index, error) {
 								ID:       id,
 								Node:     decl,
 							}
+							// alias to typeof
+							// TODO: should this be the id we use?
+							// it wouldn't work for valuespec, but
+							// maybe here
+							declarations[typeof.String()] = declarations[id]
 
 						case *ast.ImportSpec:
 							if imports[packagePath] == nil {
@@ -142,6 +148,13 @@ func New(program *loader.Program) (*Index, error) {
 	}, nil
 }
 
+// FindByID finds a declaration from type object
+func (i *Index) FindByID(id string) *types.Declaration {
+	// ignore pointers (to support: p Person and p *Person)
+	id = strings.TrimLeft(id, "*")
+	return i.declarations[id]
+}
+
 // FindByObject finds a declaration from type object
 func (i *Index) FindByObject(obj gotypes.Object) *types.Declaration {
 	id := getDependency(obj)
@@ -149,7 +162,7 @@ func (i *Index) FindByObject(obj gotypes.Object) *types.Declaration {
 		return nil
 	}
 
-	return i.declarations[id]
+	return i.FindByID(id)
 }
 
 // FindByIdent finds a declaration from an identifier

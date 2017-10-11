@@ -23,7 +23,7 @@ Golly gee, it's another Go to JS compiler.
 ## Helpful Resources
 
 - https://astexplorer.net/: I've been using this to figure out how to build the JS tree
-- http://goast.yuroyoro.net/: Simple Go AST viewer
+- http://goast.yuroyoro.net/ : Simple Go AST viewer
 - https://github.com/estree/estree/blob/master/es5.md: Link to the ES3 AST format, this is implemented in syntax.go
 - https://golang.org/ref/spec: You may need to refer to this to see what types are possible in Go's AST
 - To run all tests: `go test -v`
