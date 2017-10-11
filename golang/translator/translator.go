@@ -794,7 +794,16 @@ func exprStatement(ctx *context, sp *scope.Scope, expr *ast.ExprStmt) (j jsast.I
 }
 
 func ifStmt(ctx *context, sp *scope.Scope, n *ast.IfStmt) (j jsast.IStatement, err error) {
+	var multi []jsast.IStatement
 	var e error
+
+	if n.Init != nil {
+		init, e := statement(ctx, sp, n.Init)
+		if e != nil {
+			return nil, e
+		}
+		multi = append(multi, init)
+	}
 
 	// condition: if [(...)] { ... } else { ... }
 	test, e := expression(ctx, sp, n.Cond)
@@ -814,11 +823,16 @@ func ifStmt(ctx *context, sp *scope.Scope, n *ast.IfStmt) (j jsast.IStatement, e
 		return nil, e
 	}
 
-	return jsast.CreateIfStatement(
+	// create the if statement
+	ifstmt := jsast.CreateIfStatement(
 		test,
 		body,
 		alt,
-	), nil
+	)
+	multi = append(multi, ifstmt)
+
+	// join the statements into a single statement
+	return jsast.CreateMultiStatement(multi...), nil
 }
 
 func branchStmt(ctx *context, sp *scope.Scope, n *ast.BranchStmt) (j jsast.IStatement, err error) {

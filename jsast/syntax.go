@@ -1340,3 +1340,23 @@ func (n Raw) Expression() Expression {
 		Type: n.Type,
 	}
 }
+
+// MultiStatement struct
+type MultiStatement struct {
+	Type       string `json:"type,omitempty"`
+	Statements []IStatement
+}
+
+// Node fn
+func (n MultiStatement) Node() Node {
+	return Node{
+		Type: n.Type,
+	}
+}
+
+// Statement fn
+func (n MultiStatement) Statement() Statement {
+	return Statement{
+		Type: n.Type,
+	}
+}

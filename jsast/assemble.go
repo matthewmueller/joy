@@ -368,6 +368,14 @@ func (n Raw) String() string {
 	return n.Source
 }
 
+func (n MultiStatement) String() string {
+	var a []string
+	for _, stmt := range n.Statements {
+		a = append(a, stringify(stmt))
+	}
+	return strings.Join(a, ";\n")
+}
+
 // func (n DebuggerStatement) String() string {
 // 	return "DebuggerStatement", nil
 // }

@@ -1,0 +1,21 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/28-if-simple-stmt"] = (function() {
+function main () {
+var $x = test(), x = $x[0], err = $x[1];
+if (err != null) {
+console.log(err.message)
+} else {
+console.log(x)
+};
+};
+function test () {
+return ["", new Error("oh noz")];
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/28-if-simple-stmt"].main();
+})()

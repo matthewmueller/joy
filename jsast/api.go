@@ -404,3 +404,11 @@ func CreateRaw(source string) Raw {
 		Source: source,
 	}
 }
+
+// CreateMultiStatement fn
+func CreateMultiStatement(statements ...IStatement) IStatement {
+	return MultiStatement{
+		Type:       "MultiStatement",
+		Statements: statements,
+	}
+}
