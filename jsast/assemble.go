@@ -112,7 +112,7 @@ func (n CallExpression) String() string {
 	// differently if the callee is
 	// a function expression
 	switch n.Callee.(type) {
-	case Identifier, MemberExpression:
+	case Identifier, MemberExpression, AwaitExpression:
 		return c + "(" + strings.Join(a, ", ") + ")"
 	case FunctionExpression:
 		return "(" + c + ")(" + strings.Join(a, ", ") + ")"

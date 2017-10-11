@@ -469,7 +469,19 @@ func goStmt(ctx *context, sp *scope.Scope, n *ast.GoStmt) (j jsast.IStatement, e
 		if e != nil {
 			return nil, e
 		}
-		return jsast.CreateExpressionStatement(id), nil
+
+		decl := ctx.index.FindByIdent(ctx.info, t)
+		if decl == nil {
+			return nil, fmt.Errorf("goStmt(): nil declaration")
+		}
+
+		var x jsast.IExpression = jsast.CreateCallExpression(id, args)
+
+		if decl.Async {
+			x = jsast.CreateAwaitExpression(x)
+		}
+
+		return jsast.CreateExpressionStatement(x), nil
 	default:
 		return nil, unhandled("goStmt", n.Call.Fun)
 	}
@@ -1343,9 +1355,6 @@ func expressionToString(expr ast.Expr) (string, error) {
 }
 
 func funcLit(ctx *context, sp *scope.Scope, n *ast.FuncLit) (j jsast.IExpression, err error) {
-
-	// log.Infof("anonymous func %+v", ctx.info.(n.Type))
-
 	// build argument list
 	// var args
 	var params []jsast.IPattern
@@ -1370,7 +1379,21 @@ func funcLit(ctx *context, sp *scope.Scope, n *ast.FuncLit) (j jsast.IExpression
 		body = append(body, jsStmt)
 	}
 
-	return jsast.CreateFunctionExpression(nil, params, jsast.CreateFunctionBody(body...)), nil
+	if ctx.declaration.Async {
+		return jsast.CreateAwaitExpression(
+			jsast.CreateAsyncFunctionExpression(
+				nil,
+				params,
+				jsast.CreateFunctionBody(body...),
+			),
+		), nil
+	}
+
+	return jsast.CreateFunctionExpression(
+		nil,
+		params,
+		jsast.CreateFunctionBody(body...),
+	), nil
 }
 
 // binary expressions in Go can be either:
