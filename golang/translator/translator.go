@@ -1178,6 +1178,10 @@ func callExpression(ctx *context, sp *scope.Scope, n *ast.CallExpr) (j jsast.IEx
 		return expr, e
 	}
 
+	if expr, e := maybeError(ctx, sp, n); expr != nil || e != nil {
+		return expr, e
+	}
+
 	if expr, e := maybeAwait(ctx, sp, n); expr != nil || e != nil {
 		return expr, e
 	}
@@ -1908,8 +1912,8 @@ func jsRaw(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpression, 
 	return jsast.CreateRaw(src), nil
 }
 
-func maybeJSRewrite(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpression, error) {
-	sel, ok := cx.Fun.(*ast.SelectorExpr)
+func maybeJSRewrite(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
+	sel, ok := n.Fun.(*ast.SelectorExpr)
 	if !ok {
 		return nil, nil
 	}
@@ -1928,7 +1932,7 @@ func maybeJSRewrite(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExp
 
 	// map out the replacements
 	replacements := map[string]string{}
-	for i, arg := range cx.Args {
+	for i, arg := range n.Args {
 		x, e := expression(ctx, sp, arg)
 		if e != nil {
 			return nil, e
@@ -1958,6 +1962,38 @@ func maybeJSRewrite(ctx *context, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExp
 	}
 
 	return jsast.CreateRaw(expr), nil
+}
+
+func maybeError(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
+	sel, ok := n.Fun.(*ast.SelectorExpr)
+	if !ok {
+		return nil, nil
+	}
+
+	if sel.Sel.Name != "Error" {
+		return nil, nil
+	}
+
+	id, ok := sel.X.(*ast.Ident)
+	if !ok {
+		return nil, nil
+	}
+
+	obj := ctx.info.ObjectOf(id)
+	if obj == nil {
+		return nil, nil
+	}
+
+	// TODO: better way to check the error type?
+	if obj.Type().String() != "error" {
+		return nil, nil
+	}
+
+	return jsast.CreateMemberExpression(
+		jsast.CreateIdentifier(id.Name),
+		jsast.CreateIdentifier("message"),
+		false,
+	), nil
 }
 
 func maybeAwait(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
