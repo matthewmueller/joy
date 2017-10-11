@@ -12,7 +12,7 @@ import (
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
-	"github.com/matthewmueller/golly"
+	"github.com/matthewmueller/golly/api"
 )
 
 // little invisibles helper
@@ -72,7 +72,7 @@ func Test(t *testing.T) {
 			}
 
 			// compile the file
-			files, e := golly.Compile(pages...)
+			files, e := api.Build(pages...)
 			if e != nil {
 				t.Fatal(e)
 			}

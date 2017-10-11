@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
+	"os/exec"
 	"os/signal"
 	"path"
 	"strconv"
+	"strings"
 	"syscall"
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
@@ -38,7 +41,7 @@ var (
 )
 
 func main() {
-	ctx := withContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	ctx := signalContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	log.SetHandler(text.New(os.Stderr))
 
 	command, err := cli.Parse(os.Args[1:])
@@ -75,11 +78,14 @@ func run(ctx context.Context) error {
 	return nil
 }
 
-// TODO: https://github.com/mitchellh/gox/blob/c9740af9c6574448fd48eb30a71f964014c7a837/go.go#L123
 func build(ctx context.Context) error {
-	var packages []string
-	for _, pkg := range *buildPackages {
-		packages = append(packages, path.Join(*root, pkg))
+	packages, err := getMains(*buildPackages)
+	if err != nil {
+		return err
+	}
+
+	for i, pkg := range packages {
+		packages[i] = path.Join(os.Getenv("GOPATH"), "src", pkg)
 	}
 
 	// start := time.Now()
@@ -100,14 +106,18 @@ func build(ctx context.Context) error {
 }
 
 func serve(ctx context.Context) error {
+	packages, err := getMains(*servePackages)
+	if err != nil {
+		return err
+	}
+
+	for i, pkg := range packages {
+		packages[i] = path.Join(os.Getenv("GOPATH"), "src", pkg)
+	}
+
 	port, e := strconv.Atoi(*servePort)
 	if e != nil {
 		return errors.Wrap(e, "invalid port")
-	}
-
-	var packages []string
-	for _, pkg := range *servePackages {
-		packages = append(packages, path.Join(*root, pkg))
 	}
 
 	return api.Serve(&api.ServeParams{
@@ -116,7 +126,7 @@ func serve(ctx context.Context) error {
 	})
 }
 
-func withContext(ctx context.Context, sig ...os.Signal) context.Context {
+func signalContext(ctx context.Context, sig ...os.Signal) context.Context {
 	ctx, cancel := context.WithCancel(ctx)
 	go func() {
 		c := make(chan os.Signal)
@@ -131,4 +141,64 @@ func withContext(ctx context.Context, sig ...os.Signal) context.Context {
 	}()
 
 	return ctx
+}
+
+// GoMainDirs returns the file paths to the packages that are "main"
+// packages, from the list of packages given. The list of packages can
+// include relative paths, the special "..." Go keyword, etc.
+//
+// Sourced from:
+// https://github.com/mitchellh/gox/blob/c9740af9c6574448fd48eb30a71f964014c7a837/go.go#L123
+func getMains(packages []string) ([]string, error) {
+	goCmd, err := exec.LookPath("go")
+	if err != nil {
+		return nil, err
+	}
+
+	args := make([]string, 0, len(packages)+3)
+	args = append(args, "list", "-f", "{{.Name}}|{{.ImportPath}}")
+	args = append(args, packages...)
+
+	output, err := execGo(goCmd, nil, "", args...)
+	if err != nil {
+		return nil, err
+	}
+
+	results := make([]string, 0, len(output))
+	for _, line := range strings.Split(output, "\n") {
+		if line == "" {
+			continue
+		}
+
+		parts := strings.SplitN(line, "|", 2)
+		if len(parts) != 2 {
+			log.Warnf("Bad line reading packages: %s", line)
+			continue
+		}
+
+		if parts[0] == "main" {
+			results = append(results, parts[1])
+		}
+	}
+
+	return results, nil
+}
+
+func execGo(GoCmd string, env []string, dir string, args ...string) (string, error) {
+	var stderr, stdout bytes.Buffer
+	cmd := exec.Command(GoCmd, args...)
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	if env != nil {
+		cmd.Env = env
+	}
+	if dir != "" {
+		cmd.Dir = dir
+	}
+	if err := cmd.Run(); err != nil {
+		err = fmt.Errorf("%s\nStderr: %s", err, stderr.String())
+		return "", err
+	}
+
+	return stdout.String(), nil
 }
