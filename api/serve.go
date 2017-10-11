@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
@@ -16,8 +17,8 @@ import (
 	"github.com/radovskyb/watcher"
 )
 
-// ServeParams struct
-type ServeParams struct {
+// ServeSettings struct
+type ServeSettings struct {
 	Packages []string
 	Port     int
 }
@@ -34,14 +35,14 @@ const html = `<!doctype html>
 </html>`
 
 // Serve fn
-func Serve(params *ServeParams) error {
+func Serve(ctx context.Context, settings *ServeSettings) error {
 	log.SetHandler(text.New(os.Stderr))
 
 	gosrc := path.Join(os.Getenv("GOPATH"), "src")
 
 	// build
 	compiler := golang.New()
-	files, graph, err := compiler.Compile(params.Packages...)
+	files, graph, err := compiler.Compile(settings.Packages...)
 	if err != nil {
 		return err
 	}
@@ -85,7 +86,7 @@ func Serve(params *ServeParams) error {
 		for {
 			select {
 			case <-w.Event:
-				files, _, err := compiler.Compile(params.Packages...)
+				files, _, err := compiler.Compile(settings.Packages...)
 				if err != nil {
 					log.WithError(err).Errorf("error compiling golly")
 					continue

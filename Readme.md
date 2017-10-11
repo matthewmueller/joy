@@ -5,11 +5,10 @@ Golly gee, it's another Go to JS compiler.
 ### On Deck Tasks:
 
 - [x] [Matt] Fix up the test suite to test packages now that it's actually starting to compile working stuff
-- [ ] [Matt] Build fetch bindings (This seems like a sufficiently complicated binding that will help me understand how binding should work)
-- [ ] Finish up a goroutine & channel => async/await
-- [ ] Start implementing pieces of the standard library (e.g. json.Marshal => JSON.stringify) and have a way to import these over the Go implementations
-- [ ] Build basic DOM library (based on https://github.com/developit/undom). This is the minimum viable DOM needed for supporting virtual dom libraries like Preact. There's a bunch of bug fixes I need to make along the way to make this work.
-- [ ] Handle empty values in struct (https://github.com/matthewmueller/golly/issues/3)
+- [x] [Matt] Build fetch bindings (This seems like a sufficiently complicated binding that will help me understand how binding should work)
+- [x] Finish up a goroutine & channel => async/await
+- [x] Start implementing pieces of the standard library (e.g. json.Marshal => JSON.stringify) and have a way to import these over the Go implementations
+- [x] Handle empty values in struct (https://github.com/matthewmueller/golly/issues/3)
 - [x] Unused functions from libraries should be excluded from the output (this should be relatively the same technique that DOM renaming uses)
 - [ ] Build out the DOM implementation (starting with level 1 or if these can be scripted... amazeee)
 - [ ] Prettier javascript (not hugely important, but right now the JS we emit is fugly and hard to scan without running it)

@@ -72,9 +72,22 @@ func main() {
 }
 
 func run(ctx context.Context) error {
-	if err := api.Run(ctx, *runFile); err != nil {
-		return errors.Wrap(err, "error running file")
+	// cwd, err := os.Getwd()
+	// if err != nil {
+	// 	return err
+	// }
+
+	// filePath := path.Join(cwd, *runFile)
+
+	result, err := api.Run(ctx, &api.RunSettings{
+		ChromePath: os.Getenv("GOLLY_CHROME_PATH"),
+		FilePath:   *runFile,
+	})
+	if err != nil {
+		log.Fatal(err.Error())
 	}
+	fmt.Println(result)
+
 	return nil
 }
 
@@ -83,7 +96,6 @@ func build(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-
 	for i, pkg := range packages {
 		packages[i] = path.Join(os.Getenv("GOPATH"), "src", pkg)
 	}
@@ -120,7 +132,7 @@ func serve(ctx context.Context) error {
 		return errors.Wrap(e, "invalid port")
 	}
 
-	return api.Serve(&api.ServeParams{
+	return api.Serve(ctx, &api.ServeSettings{
 		Packages: packages,
 		Port:     port,
 	})
