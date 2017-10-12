@@ -126,10 +126,24 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 						jstag = tag
 					}
 
+					// no name
+					// e.g. struct { *dep.Settings }
+					if len(field.Names) == 0 {
+						id, e := getIdentifier(field.Type)
+						if e != nil {
+							err = e
+							return false
+						}
+						declaration.Fields = append(declaration.Fields, types.Field{
+							Name: id.Name,
+							Tag:  jstag,
+						})
+						continue
+					}
+
 					for _, id := range field.Names {
 						declaration.Fields = append(declaration.Fields, types.Field{
 							Name: id.Name,
-							Type: "", // TODO: fill in if we need it
 							Tag:  jstag,
 						})
 					}
@@ -584,4 +598,17 @@ func checkJSRewrite(cx *ast.CallExpr) (string, []string, error) {
 	}
 
 	return expr, args, nil
+}
+
+func getIdentifier(n ast.Expr) (*ast.Ident, error) {
+	switch t := n.(type) {
+	case *ast.Ident:
+		return t, nil
+	case *ast.StarExpr:
+		return getIdentifier(t.X)
+	case *ast.SelectorExpr:
+		return t.Sel, nil
+	default:
+		return nil, fmt.Errorf("unhandled getIdentifier: %T", n)
+	}
 }

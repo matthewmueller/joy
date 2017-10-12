@@ -12,10 +12,10 @@ type Phone struct {
 
 // User struct
 type User struct {
-	Name     string `js:"name"`
-	Age      int
-	Phone    *Phone `js:"phone"`
-	Settings *dep.Settings
+	Name  string `js:"name"`
+	Age   int
+	Phone *Phone `js:"phone"`
+	*dep.Settings
 }
 
 func main() {

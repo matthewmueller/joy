@@ -273,29 +273,42 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 	expr := jsast.CreateAssignmentExpression(o, jsast.AssignmentOperator("="), defaulted("o", jsast.CreateObjectExpression(nil)))
 	ivars = append(ivars, jsast.CreateExpressionStatement(expr))
 
+	// get the fields
 	for _, field := range st.Fields.List {
-		for _, name := range field.Names {
+		names := field.Names
+
+		// just the type e.g struct { *dep.Settings }
+		if len(field.Names) == 0 {
+			id, e := getIdentifier(field.Type)
+			if e != nil {
+				return nil, e
+			}
+			names = append(names, id)
+		}
+
+		// otherwise range over the names
+		for _, id := range names {
 			// get the name, using the alias if there is one
-			n := maybeAlias(decl, name.Name)
+			name := maybeAlias(decl, id.Name)
 
 			// get the default value
-			v, e := zeroed(ctx, sp, field.Type, n)
+			value, e := zeroed(ctx, sp, field.Type, name)
 			if e != nil {
 				return nil, e
 			}
 
-			// this.$name = o.$name
+			// this.$name = o.$name || <default>
 			ivars = append(ivars, jsast.CreateExpressionStatement(
 				jsast.CreateAssignmentExpression(
 					jsast.CreateMemberExpression(
 						jsast.CreateThisExpression(),
-						jsast.CreateIdentifier(n),
+						jsast.CreateIdentifier(name),
 						false,
 					),
 					jsast.AssignmentOperator("="),
 					jsast.CreateMemberExpression(
 						jsast.CreateIdentifier("o"),
-						v,
+						value,
 						false,
 					),
 				),
@@ -2136,4 +2149,18 @@ func maybeAlias(decl *types.Declaration, name string) (alias string) {
 	}
 
 	return name
+}
+
+// tries to get the rightmost identifier from an expression
+func getIdentifier(n ast.Expr) (*ast.Ident, error) {
+	switch t := n.(type) {
+	case *ast.Ident:
+		return t, nil
+	case *ast.StarExpr:
+		return getIdentifier(t.X)
+	case *ast.SelectorExpr:
+		return t.Sel, nil
+	default:
+		return nil, fmt.Errorf("unhandled getIdentifier: %T", n)
+	}
 }
