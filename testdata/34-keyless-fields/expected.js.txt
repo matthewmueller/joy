@@ -16,6 +16,9 @@ function main () {
 var settings = new dep.Settings({
   place: "USA"
 });
+var settings2 = new dep.Settings({
+  place: "EUROPE"
+});
 var phone = new Phone({
   Type: "Android",
   number: "8674205"
@@ -25,9 +28,10 @@ var u = new User({
   name: "matt",
   Age: age,
   phone: phone,
-  Settings: settings
+  Settings: settings,
+  Settings2: settings2
 });
-console.log(u.name, u.Age, u.phone.number, u.Settings.place);
+console.log(u.name, u.Age, u.phone.number, u.Settings.place, u.Settings2.place);
 };
 function Phone (o) {
 o = o || {};
@@ -40,6 +44,7 @@ this.name = o.name || "";
 this.Age = o.Age || 0;
 this.phone = o.phone || new Phone();
 this.Settings = o.Settings || new dep.Settings();
+this.Settings2 = o.Settings2 || new dep.Settings();
 };
 return {
   main: main,
