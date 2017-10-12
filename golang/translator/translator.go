@@ -279,7 +279,7 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 			n := maybeAlias(decl, name.Name)
 
 			// get the default value
-			v, e := zeroed(field.Type, n)
+			v, e := zeroed(ctx, sp, field.Type, n)
 			if e != nil {
 				return nil, e
 			}
@@ -366,7 +366,7 @@ func varSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement,
 					}
 					rh = r
 				} else {
-					r, e := defaultValue(t.Type)
+					r, e := defaultValue(ctx, sp, t.Type)
 					if e != nil {
 						return j, e
 					}
@@ -1565,8 +1565,18 @@ func jsArrayExpression(ctx *context, sp *scope.Scope, n *ast.CompositeLit) (j js
 // property formats initializing structs in all the various ways
 // e.g. User{"matt"},User{*name},User{name},User{Name:name}, etc.
 func property(ctx *context, sp *scope.Scope, c *ast.CompositeLit, idx int, n ast.Expr) (j jsast.Property, err error) {
-	// get the original declaration of the struct
-	decl := ctx.index.FindByNode(ctx.info, c.Type)
+	// TODO: update index's FindByNode to both
+	// look for TypeOf and pursue the rightmost
+	// object's declaration
+	var decl *types.Declaration
+	switch t := c.Type.(type) {
+	case *ast.Ident:
+		typeof := ctx.info.TypeOf(t)
+		decl = ctx.index.FindByID(typeof.String())
+	case *ast.SelectorExpr:
+		typeof := ctx.info.TypeOf(t.Sel)
+		decl = ctx.index.FindByID(typeof.String())
+	}
 	if decl == nil {
 		return j, fmt.Errorf("property: decl should exist")
 	} else if idx >= len(decl.Fields) {
@@ -1628,13 +1638,13 @@ func keyValueExpr(ctx *context, sp *scope.Scope, c *ast.CompositeLit, n *ast.Key
 }
 
 func selectorExpr(ctx *context, sp *scope.Scope, n *ast.SelectorExpr) (j jsast.MemberExpression, err error) {
-	var decl *types.Declaration
 	var s jsast.IExpression
 
 	// first check if we have an alias already
 	// TODO: update index's FindByNode to both
 	// look for TypeOf and pursue the rightmost
 	// object's declaration
+	var decl *types.Declaration
 	switch t := n.X.(type) {
 	case *ast.Ident:
 		typeof := ctx.info.TypeOf(t)
@@ -1868,8 +1878,8 @@ func unique(s []string) []string {
 }
 
 // zeroed returns an expression defaulted to its zero value.
-func zeroed(expr ast.Expr, name string) (jsast.IExpression, error) {
-	x, e := defaultValue(expr)
+func zeroed(ctx *context, sp *scope.Scope, expr ast.Expr, name string) (jsast.IExpression, error) {
+	x, e := defaultValue(ctx, sp, expr)
 	if e != nil {
 		return nil, e
 	}
@@ -1882,7 +1892,7 @@ func defaulted(name string, expr jsast.IExpression) jsast.IExpression {
 	return jsast.CreateBinaryExpression(jsast.CreateIdentifier(name), "||", expr)
 }
 
-func defaultValue(expr ast.Expr) (jsast.IExpression, error) {
+func defaultValue(ctx *context, sp *scope.Scope, expr ast.Expr) (jsast.IExpression, error) {
 	switch t := expr.(type) {
 	case *ast.Ident:
 		switch t.Name {
@@ -1898,19 +1908,25 @@ func defaultValue(expr ast.Expr) (jsast.IExpression, error) {
 		case "nil":
 			return jsast.Null, nil
 		default:
-			// TODO: what case(s) can id.Obj be nil?
-			if t.Obj != nil {
-				id := jsast.CreateIdentifier(t.Name)
-				return jsast.CreateNewExpression(id, nil), nil
-			}
-			return nil, unhandled("defaultValue<ident>", t.Name)
+			id := jsast.CreateIdentifier(t.Name)
+			return jsast.CreateNewExpression(id, nil), nil
 		}
 	case *ast.ArrayType:
 		return jsast.CreateArrayExpression(), nil
 	case *ast.InterfaceType:
 		return jsast.Null, nil
 	case *ast.StarExpr:
-		return defaultValue(t.X)
+		return defaultValue(ctx, sp, t.X)
+	case *ast.SelectorExpr:
+		x, e := expression(ctx, sp, t.X)
+		if e != nil {
+			return nil, e
+		}
+		id := jsast.CreateIdentifier(t.Sel.Name)
+		return jsast.CreateNewExpression(
+			jsast.CreateMemberExpression(x, id, false),
+			nil,
+		), nil
 	default:
 		return nil, unhandled("defaultValue", expr)
 	}

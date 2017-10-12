@@ -182,6 +182,8 @@ func (i *Index) FindByNode(info *loader.PackageInfo, n ast.Node) *types.Declarat
 		return i.FindByIdent(info, t)
 	case *ast.StarExpr:
 		return i.FindByNode(info, t.X)
+	case *ast.SelectorExpr:
+		return i.FindByNode(info, t.Sel)
 	default:
 		return nil
 	}
