@@ -454,7 +454,7 @@ func getJSTagFromString(tag string) (*structtag.Tag, error) {
 	}
 
 	jstag, err := tags.Get("js")
-	if err != nil {
+	if err != nil && err.Error() != "tag does not exist" {
 		return nil, err
 	}
 

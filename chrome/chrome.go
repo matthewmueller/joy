@@ -211,23 +211,24 @@ func (t *Target) Run(source string) (result string, err error) {
 
 	// hack but probably will work (until I compile with regenerator)
 	awaitPromise := false
-	if strings.Contains(source, "async function main()") {
+	if strings.Contains(source, "async function main ()") {
 		awaitPromise = true
 	}
 
 	// evaluate
 	generatePreview := true
-	if _, e := c.Runtime.Evaluate(ctx, &runtime.EvaluateArgs{
+	_, err = c.Runtime.Evaluate(ctx, &runtime.EvaluateArgs{
 		Expression:      source,
 		AwaitPromise:    &awaitPromise,
 		GeneratePreview: &generatePreview,
-	}); e != nil {
-		return "", e
+	})
+	if err != nil {
+		return "", err
 	}
 
 	// give it a bit of time for the console event to come back
 	// TODO: better way to do this?
-	time.Sleep(300 * time.Millisecond)
+	time.Sleep(100 * time.Millisecond)
 
 	return strings.Join(lines, "\n"), nil
 }

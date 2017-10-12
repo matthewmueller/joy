@@ -14,6 +14,7 @@ import (
 	"github.com/apex/log/handlers/text"
 	"github.com/matthewmueller/golly/api"
 	"github.com/matthewmueller/golly/chrome"
+	"github.com/pkg/errors"
 )
 
 // little invisibles helper
@@ -86,7 +87,7 @@ func Test(t *testing.T) {
 				Packages: pages,
 			})
 			if e != nil {
-				t.Fatal(e)
+				t.Fatal(errors.Wrap(e, "compile error"))
 			}
 
 			for _, file := range files {
