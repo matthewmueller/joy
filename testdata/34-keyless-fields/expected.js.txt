@@ -3,20 +3,32 @@
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/34-keyless-fields"] = (function() {
 function main () {
+var phone = new Phone({
+  Type: "Android",
+  number: "8674205"
+});
 var age = 28;
 var u = new User({
   name: "matt",
-  Age: age
+  Age: age,
+  phone: phone
 });
-console.log(u.name, u.Age);
+console.log(u.name, u.Age, u.phone.number);
+};
+function Phone (o) {
+o = o || {};
+this.Type = o.Type || "";
+this.number = o.number || "";
 };
 function User (o) {
 o = o || {};
 this.name = o.name || "";
 this.Age = o.Age || 0;
+this.phone = o.phone || new Phone();
 };
 return {
   main: main,
+  Phone: Phone,
   User: User
 };
 })();

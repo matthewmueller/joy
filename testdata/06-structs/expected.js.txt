@@ -9,12 +9,12 @@ console.log("got element " + el);
 };
 function New () {
 return new Document({
-  Version: 1
+  version: 1
 });
 };
 function Document (o) {
 o = o || {};
-this.Version = o.Version || 0;
+this.version = o.version || 0;
 };
 Document.prototype.GetElementByID = function(id) {
 return "#" + id;

@@ -15,7 +15,7 @@ func New() Document {
 
 // Document struct
 type Document struct {
-	Version int
+	Version int `js:"version"`
 }
 
 // GetElementByID lookup element by it's id

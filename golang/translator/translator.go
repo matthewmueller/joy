@@ -1507,84 +1507,40 @@ func compositeLiteral(ctx *context, sp *scope.Scope, n *ast.CompositeLit) (j jsa
 	}
 }
 
+// map[string]string => { ... }
 func jsObjectExpression(ctx *context, sp *scope.Scope, n *ast.CompositeLit) (j jsast.ObjectExpression, err error) {
 	var props []jsast.Property
 
 	for _, elt := range n.Elts {
-		var prop jsast.Property
-		var e error
-
 		switch t := elt.(type) {
 		case *ast.KeyValueExpr:
-			prop, e = keyValueExpr(ctx, sp, n, t)
+			prop, e := keyValueExpr(ctx, sp, n, t)
+			if e != nil {
+				return j, e
+			}
+			props = append(props, prop)
 		default:
 			return j, unhandled("jsObjectExpression", elt)
 		}
-		if e != nil {
-			return j, e
-		}
-		props = append(props, prop)
 	}
 
 	return jsast.CreateObjectExpression(props), nil
 }
 
 func jsNewFunction(ctx *context, sp *scope.Scope, n *ast.CompositeLit) (j jsast.IExpression, err error) {
-	var fnname jsast.IExpression
+	fn, e := expression(ctx, sp, n.Type)
+	if e != nil {
+		return nil, e
+	}
+
+	// decl := ctx.index.FindByNode(ctx.info, n.Type)
+	// if decl == nil {
+	// 	return nil, fmt.Errorf("jsNewFunction: decl shouldn't be nil")
+	// }
+
 	var props []jsast.Property
-
-	switch t := n.Type.(type) {
-	// e.g. Document{}
-	case *ast.Ident:
-		fnname = jsast.CreateIdentifier(t.Name)
-	// e.g. dom.Document{}
-	case *ast.SelectorExpr:
-		sel, e := selectorExpr(ctx, sp, t)
-		if e != nil {
-			return nil, e
-		}
-		fnname = sel
-	default:
-		return nil, unhandled("jsNewFunction<name>", n.Type)
-	}
-
-	decl := ctx.index.FindByNode(ctx.info, n.Type)
-	if decl == nil {
-		return nil, fmt.Errorf("jsNewFunction: decl shouldn't be nil")
-	}
-
 	for i, elt := range n.Elts {
-		var prop jsast.Property
-		var e error
-
-		switch t := elt.(type) {
-		case *ast.Ident:
-			if i >= len(decl.Fields) {
-				return nil, fmt.Errorf("jsNewFunction: i should be less than field length")
-			}
-			name := maybeAlias(decl, decl.Fields[i].Name)
-			key := jsast.CreateIdentifier(name)
-			val, e := identifier(ctx, sp, t)
-			if e != nil {
-				return nil, e
-			}
-			prop = jsast.CreateProperty(key, val, "init")
-		case *ast.BasicLit:
-			if i >= len(decl.Fields) {
-				return nil, fmt.Errorf("jsNewFunction: i should be less than field length")
-			}
-			name := maybeAlias(decl, decl.Fields[i].Name)
-			key := jsast.CreateIdentifier(name)
-			val, e := basiclit(ctx, sp, t)
-			if e != nil {
-				return nil, e
-			}
-			prop = jsast.CreateProperty(key, val, "init")
-		case *ast.KeyValueExpr:
-			prop, e = keyValueExpr(ctx, sp, n, t)
-		default:
-			return nil, unhandled("jsNewFunction<elts>", elt)
-		}
+		prop, e := property(ctx, sp, n, i, elt)
 		if e != nil {
 			return nil, e
 		}
@@ -1592,7 +1548,7 @@ func jsNewFunction(ctx *context, sp *scope.Scope, n *ast.CompositeLit) (j jsast.
 	}
 
 	return jsast.CreateNewExpression(
-		fnname,
+		fn,
 		[]jsast.IExpression{jsast.CreateObjectExpression(props)},
 	), nil
 }
@@ -1611,36 +1567,69 @@ func jsArrayExpression(ctx *context, sp *scope.Scope, n *ast.CompositeLit) (j js
 	return jsast.CreateArrayExpression(elements...), nil
 }
 
-func keyValueExpr(ctx *context, sp *scope.Scope, c *ast.CompositeLit, n *ast.KeyValueExpr) (j jsast.Property, err error) {
+// property formats initializing structs in all the various ways
+// e.g. User{"matt"},User{*name},User{name},User{Name:name}, etc.
+func property(ctx *context, sp *scope.Scope, c *ast.CompositeLit, idx int, n ast.Expr) (j jsast.Property, err error) {
 	// get the original declaration of the struct
 	decl := ctx.index.FindByNode(ctx.info, c.Type)
+	if decl == nil {
+		return j, fmt.Errorf("property: decl should exist")
+	} else if idx >= len(decl.Fields) {
+		return j, fmt.Errorf("property: idx should be less than decl.fields")
+	}
+	name := maybeAlias(decl, decl.Fields[idx].Name)
 
-	// use aliases if there are some
-	// TODO: handle:
-	//   struct {
-	//     *Whatever
-	//   }
-	var key jsast.IExpression
-	switch t := n.Key.(type) {
+	switch t := n.(type) {
 	case *ast.Ident:
-		name := maybeAlias(decl, t.Name)
-		key = jsast.CreateIdentifier(name)
-	default:
-		// get the key
-		x, e := expression(ctx, sp, n.Key)
+		key := jsast.CreateIdentifier(name)
+		val, e := identifier(ctx, sp, t)
 		if e != nil {
 			return j, e
 		}
-		key = x
+		return jsast.CreateProperty(key, val, "init"), nil
+
+	case *ast.BasicLit:
+		key := jsast.CreateIdentifier(name)
+		val, e := basiclit(ctx, sp, t)
+		if e != nil {
+			return j, e
+		}
+		return jsast.CreateProperty(key, val, "init"), nil
+	// recurse
+	case *ast.UnaryExpr:
+		return property(ctx, sp, c, idx, t.X)
+	case *ast.KeyValueExpr:
+		return keyValueExpr(ctx, sp, c, t)
+	default:
+		return j, unhandled("property", n)
 	}
+}
+
+func keyValueExpr(ctx *context, sp *scope.Scope, c *ast.CompositeLit, n *ast.KeyValueExpr) (j jsast.Property, err error) {
+	// optional decl if the key is an identifier
+	decl := ctx.index.FindByNode(ctx.info, c.Type)
 
 	// get the value
-	value, e := expression(ctx, sp, n.Value)
+	val, e := expression(ctx, sp, n.Value)
 	if e != nil {
 		return j, e
 	}
 
-	return jsast.CreateProperty(key, value, "init"), nil
+	// turn into a property
+	switch t := n.Key.(type) {
+	case *ast.Ident:
+		name := maybeAlias(decl, t.Name)
+		key := jsast.CreateIdentifier(name)
+		return jsast.CreateProperty(key, val, "init"), nil
+	case *ast.BasicLit:
+		key, e := basiclit(ctx, sp, t)
+		if e != nil {
+			return j, e
+		}
+		return jsast.CreateProperty(key, val, "init"), nil
+	default:
+		return j, unhandled("keyValueExpr<key>", n.Key)
+	}
 }
 
 func selectorExpr(ctx *context, sp *scope.Scope, n *ast.SelectorExpr) (j jsast.MemberExpression, err error) {
@@ -1648,8 +1637,15 @@ func selectorExpr(ctx *context, sp *scope.Scope, n *ast.SelectorExpr) (j jsast.M
 	var s jsast.IExpression
 
 	// first check if we have an alias already
-	if id, ok := n.X.(*ast.Ident); ok {
-		typeof := ctx.info.TypeOf(id)
+	// TODO: update index's FindByNode to both
+	// look for TypeOf and pursue the rightmost
+	// object's declaration
+	switch t := n.X.(type) {
+	case *ast.Ident:
+		typeof := ctx.info.TypeOf(t)
+		decl = ctx.index.FindByID(typeof.String())
+	case *ast.SelectorExpr:
+		typeof := ctx.info.TypeOf(t.Sel)
 		decl = ctx.index.FindByID(typeof.String())
 	}
 
@@ -1918,6 +1914,8 @@ func defaultValue(expr ast.Expr) (jsast.IExpression, error) {
 		return jsast.CreateArrayExpression(), nil
 	case *ast.InterfaceType:
 		return jsast.Null, nil
+	case *ast.StarExpr:
+		return defaultValue(t.X)
 	default:
 		return nil, unhandled("defaultValue", expr)
 	}
@@ -2128,3 +2126,23 @@ func maybeAlias(decl *types.Declaration, name string) (alias string) {
 
 	return name
 }
+
+// func getRightmostIdentifier(ctx *context, sp *scope.Scope, n ast.Expr) (*ast.Ident, error) {
+// 	switch t := n.Type.(type) {
+// 	// e.g. Document{}
+// 	case *ast.Ident:
+// 		return t, nil
+// 	// e.g. dom.Document{}
+// 	case *ast.SelectorExpr:
+// 		return
+// 		sel, e := selectorExpr(ctx, sp, t)
+// 		if e != nil {
+// 			return nil, e
+// 		}
+// 		decl = ctx.index.FindByIdent(ctx.info, t.Sel)
+// 		fnname = sel
+// 	case *ast.UnaryExpr:
+// 	default:
+// 		return nil, unhandled("jsNewFunction<name>", n.Type)
+// 	}
+// }
