@@ -1,10 +1,10 @@
 package golly_test
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
@@ -13,6 +13,7 @@ import (
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
 	"github.com/matthewmueller/golly/api"
+	"github.com/matthewmueller/golly/chrome"
 )
 
 // little invisibles helper
@@ -25,6 +26,7 @@ func invisibles(str string) string {
 }
 
 func Test(t *testing.T) {
+	ctx := context.Background()
 	log.SetHandler(text.New(os.Stderr))
 
 	dirs, err := ioutil.ReadDir("./testdata")
@@ -38,6 +40,14 @@ func Test(t *testing.T) {
 	}
 
 	gosrc := path.Join(os.Getenv("GOPATH"), "src")
+
+	ch, err := chrome.New(ctx, &chrome.Settings{
+		ExecutablePath: os.Getenv("GOLLY_CHROME_PATH"),
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer ch.Close()
 
 	for _, dir := range dirs {
 		if !dir.IsDir() {
@@ -72,7 +82,9 @@ func Test(t *testing.T) {
 			}
 
 			// compile the file
-			files, e := api.Build(pages...)
+			files, e := api.Build(ctx, &api.BuildSettings{
+				Packages: pages,
+			})
 			if e != nil {
 				t.Fatal(e)
 			}
@@ -101,21 +113,30 @@ func Test(t *testing.T) {
 					return
 				}
 
-				// run the code
-				cmd := exec.Command("./nodejs/node", jspath)
-				buf, e := cmd.CombinedOutput()
-				if e != nil {
-					t.Fatalf("javascript error: %s", buf)
+				// create a target
+				tar, err := ch.Target()
+				if err != nil {
+					t.Fatal(err)
 				}
 
-				result, e := ioutil.ReadFile(resultpath)
+				// run the code in a headless chrome target
+				actual, err := tar.Run(file.Source)
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				expected, e := ioutil.ReadFile(resultpath)
 				if e != nil {
 					t.Fatalf("no '%s' file found", resultpath)
 				}
 
 				// compare the result path
-				if string(buf) != string(result) {
-					t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(result), string(buf)))
+				if strings.TrimSpace(string(actual)) != strings.TrimSpace(string(expected)) {
+					t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(expected), string(actual)))
+				}
+
+				if e := tar.Close(); e != nil {
+					t.Fatal(e)
 				}
 			}
 		})

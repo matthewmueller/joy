@@ -16,9 +16,9 @@ type Phone struct {
 
 func main() {
 	user := User{FirstName: "Tobi"}
-	println("%j", user.FirstName)
-	println("%j", user.LastName)
-	println("%j", user.Age)
-	println("%j", user.Phone)
-	println("%j", user.Phone.Number)
+	println(user.FirstName)
+	println(user.LastName)
+	println(user.Age)
+	println(user.Phone.Type)
+	println(user.Phone.Number)
 }

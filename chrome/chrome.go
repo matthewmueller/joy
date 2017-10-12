@@ -122,13 +122,7 @@ func (c *Chrome) Target() (*Target, error) {
 	eg, ctx := errgroup.WithContext(c.ctx)
 
 	// connect to the headless chrome
-	dt, devt, err := dial(ctx, c.addr.String())
-	if err != nil {
-		return nil, err
-	}
-
-	// Initiate a new RPC connection to the Chrome Debugging Protocol target.
-	conn, err := rpcc.DialContext(ctx, dt.WebSocketDebuggerURL)
+	devt, tar, conn, err := dial(ctx, c.addr.String())
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +130,7 @@ func (c *Chrome) Target() (*Target, error) {
 	t := &Target{
 		chrome:   c,
 		devtools: devt,
-		target:   dt,
+		target:   tar,
 		ctx:      ctx,
 		eg:       eg,
 		conn:     conn,
@@ -147,7 +141,7 @@ func (c *Chrome) Target() (*Target, error) {
 	return t, nil
 }
 
-func dial(parent context.Context, addr string) (*devtool.Target, *devtool.DevTools, error) {
+func dial(parent context.Context, addr string) (*devtool.DevTools, *devtool.Target, *rpcc.Conn, error) {
 	ctx, cancel := context.WithTimeout(parent, 10*time.Second)
 	defer cancel()
 
@@ -155,23 +149,33 @@ func dial(parent context.Context, addr string) (*devtool.Target, *devtool.DevToo
 	devt := devtool.New(addr)
 
 	for {
-		dt, err := devt.Get(ctx, devtool.Page)
+		tar, conn, err := doDial(ctx, devt)
 		if err == nil {
-			return dt, devt, nil
-		}
-
-		dt, err = devt.Create(ctx)
-		if err == nil {
-			return dt, devt, nil
+			return devt, tar, conn, nil
 		}
 
 		sleep := b.NextBackOff()
 		if sleep == backoff.Stop {
-			return nil, nil, errors.New("target dial timed out")
+			return nil, nil, nil, errors.New("target dial timed out")
 		}
 
 		time.Sleep(sleep)
 	}
+}
+
+func doDial(ctx context.Context, devt *devtool.DevTools) (*devtool.Target, *rpcc.Conn, error) {
+	dt, err := devt.Create(ctx)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "devtool create error")
+	}
+
+	// Initiate a new RPC connection to the Chrome Debugging Protocol target.
+	conn, err := rpcc.DialContext(ctx, dt.WebSocketDebuggerURL)
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "rpcc error")
+	}
+
+	return dt, conn, nil
 }
 
 // Run the script
@@ -205,7 +209,7 @@ func (t *Target) Run(source string) (result string, err error) {
 		}
 	}()
 
-	// hack but probably will work
+	// hack but probably will work (until I compile with regenerator)
 	awaitPromise := false
 	if strings.Contains(source, "async function main()") {
 		awaitPromise = true

@@ -6,11 +6,11 @@ function main () {
 var user = new User({
   FirstName: "Tobi"
 });
-console.log("%j", user.FirstName);
-console.log("%j", user.LastName);
-console.log("%j", user.Age);
-console.log("%j", user.Phone);
-console.log("%j", user.Phone.Number);
+console.log(user.FirstName);
+console.log(user.LastName);
+console.log(user.Age);
+console.log(user.Phone.Type);
+console.log(user.Phone.Number);
 };
 function User (o) {
 o = o || {};
