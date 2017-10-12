@@ -1,0 +1,24 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/34-keyless-fields"] = (function() {
+function main () {
+var age = 28;
+var u = new User({
+  name: "matt",
+  Age: age
+});
+console.log(u.name, u.Age);
+};
+function User (o) {
+o = o || {};
+this.name = o.name || "";
+this.Age = o.Age || 0;
+};
+return {
+  main: main,
+  User: User
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/34-keyless-fields"].main();
+})()

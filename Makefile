@@ -1,3 +1,8 @@
-bindata:
-	@go-bindata -o bindata/bindata.go -pkg bindata -ignore bindata.go bindata/...
-.PHONY: bindata
+test:
+	@go test -cover ./...
+.PHONY: test
+
+# Install the commands.
+install:
+	@go install ./cmd/...
+.PHONY: install

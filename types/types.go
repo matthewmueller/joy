@@ -44,11 +44,18 @@ type Declaration struct {
 
 	// This is a map of the struct tags on a field
 	// e.g. Name string `js:"name"`
-	JSFieldTags map[string]*structtag.Tag
+	Fields []Field
 
 	Dependencies []*Declaration
 	Rewrite      *Rewrite
 	Async        bool
+}
+
+// Field contains struct field information
+type Field struct {
+	Name string
+	Type string
+	Tag  *structtag.Tag
 }
 
 // Rewrite struct for js.Rewrite

@@ -11,7 +11,6 @@ import (
 	"golang.org/x/tools/go/loader"
 
 	"github.com/apex/log"
-	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/golang/indexer"
 	"github.com/matthewmueller/golly/golang/scope"
 	"github.com/matthewmueller/golly/jsast"
@@ -273,15 +272,11 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 	o := jsast.CreateIdentifier("o")
 	expr := jsast.CreateAssignmentExpression(o, jsast.AssignmentOperator("="), defaulted("o", jsast.CreateObjectExpression(nil)))
 	ivars = append(ivars, jsast.CreateExpressionStatement(expr))
-	fieldTags := decl.JSFieldTags
 
 	for _, field := range st.Fields.List {
 		for _, name := range field.Names {
 			// get the name, using the alias if there is one
-			n := name.Name
-			if fieldTags != nil && fieldTags[n] != nil {
-				n = fieldTags[n].Name
-			}
+			n := maybeAlias(decl, name.Name)
 
 			// get the default value
 			v, e := zeroed(field.Type, n)
@@ -1553,15 +1548,40 @@ func jsNewFunction(ctx *context, sp *scope.Scope, n *ast.CompositeLit) (j jsast.
 		return nil, unhandled("jsNewFunction<name>", n.Type)
 	}
 
-	for _, elt := range n.Elts {
+	decl := ctx.index.FindByNode(ctx.info, n.Type)
+	if decl == nil {
+		return nil, fmt.Errorf("jsNewFunction: decl shouldn't be nil")
+	}
+
+	for i, elt := range n.Elts {
 		var prop jsast.Property
 		var e error
 
 		switch t := elt.(type) {
+		case *ast.Ident:
+			if i >= len(decl.Fields) {
+				return nil, fmt.Errorf("jsNewFunction: i should be less than field length")
+			}
+			name := maybeAlias(decl, decl.Fields[i].Name)
+			key := jsast.CreateIdentifier(name)
+			val, e := identifier(ctx, sp, t)
+			if e != nil {
+				return nil, e
+			}
+			prop = jsast.CreateProperty(key, val, "init")
+		case *ast.BasicLit:
+			if i >= len(decl.Fields) {
+				return nil, fmt.Errorf("jsNewFunction: i should be less than field length")
+			}
+			name := maybeAlias(decl, decl.Fields[i].Name)
+			key := jsast.CreateIdentifier(name)
+			val, e := basiclit(ctx, sp, t)
+			if e != nil {
+				return nil, e
+			}
+			prop = jsast.CreateProperty(key, val, "init")
 		case *ast.KeyValueExpr:
 			prop, e = keyValueExpr(ctx, sp, n, t)
-		// case *ast.BasicLit:
-		// TODO: handle User{"a"}, by looking up the fields in obj
 		default:
 			return nil, unhandled("jsNewFunction<elts>", elt)
 		}
@@ -1592,13 +1612,8 @@ func jsArrayExpression(ctx *context, sp *scope.Scope, n *ast.CompositeLit) (j js
 }
 
 func keyValueExpr(ctx *context, sp *scope.Scope, c *ast.CompositeLit, n *ast.KeyValueExpr) (j jsast.Property, err error) {
-	var fields map[string]*structtag.Tag
-
 	// get the original declaration of the struct
 	decl := ctx.index.FindByNode(ctx.info, c.Type)
-	if decl != nil && decl.JSFieldTags != nil {
-		fields = decl.JSFieldTags
-	}
 
 	// use aliases if there are some
 	// TODO: handle:
@@ -1608,11 +1623,8 @@ func keyValueExpr(ctx *context, sp *scope.Scope, c *ast.CompositeLit, n *ast.Key
 	var key jsast.IExpression
 	switch t := n.Key.(type) {
 	case *ast.Ident:
-		alias := t.Name
-		if fields != nil && fields[alias] != nil {
-			alias = fields[alias].Name
-		}
-		key = jsast.CreateIdentifier(alias)
+		name := maybeAlias(decl, t.Name)
+		key = jsast.CreateIdentifier(name)
 	default:
 		// get the key
 		x, e := expression(ctx, sp, n.Key)
@@ -1648,12 +1660,9 @@ func selectorExpr(ctx *context, sp *scope.Scope, n *ast.SelectorExpr) (j jsast.M
 	}
 
 	// user.phone.(number)
-	name := n.Sel.Name
-	if decl != nil &&
-		decl.JSFieldTags != nil &&
-		decl.JSFieldTags[name] != nil {
-		name = decl.JSFieldTags[name].Name
-		s = jsast.CreateIdentifier(name)
+	alias := maybeAlias(decl, n.Sel.Name)
+	if n.Sel.Name != alias {
+		s = jsast.CreateIdentifier(alias)
 	} else {
 		i, e := identifier(ctx, sp, n.Sel)
 		if e != nil {
@@ -1685,33 +1694,6 @@ func indexExpr(ctx *context, sp *scope.Scope, n *ast.IndexExpr) (j jsast.MemberE
 func unhandled(fn string, n interface{}) error {
 	return fmt.Errorf("%s in %s() is not implemented yet", reflect.TypeOf(n), fn)
 }
-
-// func getCommentTag(n *ast.CommentGroup) (*structtag.Tag, error) {
-// 	if n == nil {
-// 		return nil, nil
-// 	}
-
-// 	comments := n.List
-// 	for _, comment := range comments {
-// 		if !strings.Contains(comment.Text, "js:") {
-// 			continue
-// 		}
-
-// 		tags, err := structtag.Parse(comment.Text[2:])
-// 		if err != nil {
-// 			return nil, err
-// 		}
-
-// 		jstag, err := tags.Get("js")
-// 		if err != nil {
-// 			return nil, err
-// 		}
-
-// 		return jstag, nil
-// 	}
-
-// 	return nil, nil
-// }
 
 func maybeBuiltinExpr(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
 	id, ok := n.Fun.(*ast.Ident)
@@ -2127,4 +2109,22 @@ func maybeAwait(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpressi
 			args,
 		),
 	), nil
+}
+
+func maybeAlias(decl *types.Declaration, name string) (alias string) {
+	if decl == nil {
+		return name
+	}
+
+	for _, field := range decl.Fields {
+		if field.Name != name {
+			continue
+		}
+
+		if field.Tag != nil {
+			return field.Tag.Name
+		}
+	}
+
+	return name
 }

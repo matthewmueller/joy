@@ -290,6 +290,9 @@ func CreateBinaryExpression(l IExpression, op BinaryOperator, r IExpression) Bin
 
 // CreateProperty fn
 func CreateProperty(key interface{}, value IExpression, kind string) Property {
+	// TODO: check key types here
+	// key: Literal | Identifier;
+
 	return Property{
 		Type:  "Property",
 		Key:   key,

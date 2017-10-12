@@ -109,27 +109,29 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 
 			case *ast.StructType:
 				for _, field := range n.Fields.List {
-					if field.Tag == nil {
-						continue
+					var jstag *structtag.Tag
+
+					// parse the JS tag, if we have one
+					if field.Tag != nil {
+						value := field.Tag.Value
+						if field.Tag.Kind == token.STRING {
+							value = value[1 : len(value)-1]
+						}
+
+						tag, e := getJSTagFromString(value)
+						if e != nil {
+							err = e
+							return false
+						}
+						jstag = tag
 					}
 
-					value := field.Tag.Value
-					if field.Tag.Kind == token.STRING {
-						value = value[1 : len(value)-1]
-					}
-
-					jstag, e := getJSTagFromString(value)
-					if e != nil {
-						err = e
-						return false
-					}
-
-					// attach the JS tag to the field names
-					if declaration.JSFieldTags == nil {
-						declaration.JSFieldTags = map[string]*structtag.Tag{}
-					}
 					for _, id := range field.Names {
-						declaration.JSFieldTags[id.Name] = jstag
+						declaration.Fields = append(declaration.Fields, types.Field{
+							Name: id.Name,
+							Type: "", // TODO: fill in if we need it
+							Tag:  jstag,
+						})
 					}
 				}
 
