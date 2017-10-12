@@ -44,6 +44,8 @@ func Test(t *testing.T) {
 
 	ch, err := chrome.New(ctx, &chrome.Settings{
 		ExecutablePath: os.Getenv("GOLLY_CHROME_PATH"),
+		Stderr:         ioutil.Discard,
+		Stdout:         ioutil.Discard,
 	})
 	if err != nil {
 		t.Fatal(err)
