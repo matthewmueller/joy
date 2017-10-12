@@ -1,6 +1,11 @@
+TEST:="./"
+
 test:
-	@go test -cover ./...
-.PHONY: test
+	@echo "==> Running go tests..."
+	@go list $(TEST) \
+		| grep -v "/vendor/" \
+		| xargs -n1 go test -timeout=5m -parallel=10 $(TESTARGS)
+.PHONY: tests
 
 # Install the commands.
 install:
