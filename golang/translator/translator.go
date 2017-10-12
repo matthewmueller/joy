@@ -1533,11 +1533,6 @@ func jsNewFunction(ctx *context, sp *scope.Scope, n *ast.CompositeLit) (j jsast.
 		return nil, e
 	}
 
-	// decl := ctx.index.FindByNode(ctx.info, n.Type)
-	// if decl == nil {
-	// 	return nil, fmt.Errorf("jsNewFunction: decl shouldn't be nil")
-	// }
-
 	var props []jsast.Property
 	for i, elt := range n.Elts {
 		prop, e := property(ctx, sp, n, i, elt)
@@ -2126,23 +2121,3 @@ func maybeAlias(decl *types.Declaration, name string) (alias string) {
 
 	return name
 }
-
-// func getRightmostIdentifier(ctx *context, sp *scope.Scope, n ast.Expr) (*ast.Ident, error) {
-// 	switch t := n.Type.(type) {
-// 	// e.g. Document{}
-// 	case *ast.Ident:
-// 		return t, nil
-// 	// e.g. dom.Document{}
-// 	case *ast.SelectorExpr:
-// 		return
-// 		sel, e := selectorExpr(ctx, sp, t)
-// 		if e != nil {
-// 			return nil, e
-// 		}
-// 		decl = ctx.index.FindByIdent(ctx.info, t.Sel)
-// 		fnname = sel
-// 	case *ast.UnaryExpr:
-// 	default:
-// 		return nil, unhandled("jsNewFunction<name>", n.Type)
-// 	}
-// }
