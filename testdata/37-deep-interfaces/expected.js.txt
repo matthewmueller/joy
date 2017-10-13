@@ -1,0 +1,38 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/37-deep-interfaces"] = (function() {
+function main () {
+var c = newIndex("mars");
+console.log(c.String());
+};
+function newIndex (location) {
+return newComponent(new index({
+  location: location
+}));
+};
+;
+function newComponent (c) {
+return new vnode({
+  c: c
+});
+};
+;
+function vnode (o) {
+o = o || {};
+this.c = o.c || new Component();
+};
+function index (o) {
+o = o || {};
+this.location = o.location || "";
+};
+vnode.prototype.String = function() {
+var v = this;
+return "earth";
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/37-deep-interfaces"].main();
+})()

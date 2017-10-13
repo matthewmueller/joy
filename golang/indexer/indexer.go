@@ -274,10 +274,14 @@ func (i *Index) ImplementedBy(id string, method string) (decls []*types.Declarat
 // Methods gets all the functions with receivers of a struct
 func (i *Index) Methods(id string) (decls []*types.Declaration) {
 	methods := i.methods[id]
-	if methods == nil {
-		return decls
+	if methods != nil {
+		return methods
 	}
-	return methods
+	methods = i.methods["*"+id]
+	if methods != nil {
+		return methods
+	}
+	return decls
 }
 
 func getDependency(obj gotypes.Object) string {
