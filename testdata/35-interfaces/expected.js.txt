@@ -1,0 +1,29 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/35-interfaces"] = (function() {
+function main () {
+var c = New("awesomeness");
+console.log(c.String());
+};
+function New (name) {
+return new component({
+  component: name
+});
+};
+;
+function component (o) {
+o = o || {};
+this.component = o.component || "";
+};
+component.prototype.String = function() {
+var c = this;
+return c.component;
+};
+return {
+  main: main,
+  New: New
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/35-interfaces"].main();
+})()

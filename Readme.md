@@ -17,27 +17,27 @@ Golly gee, it's another Go to JS compiler.
 
 ## Design
 
-- Small single-file builds that run in all browsers
-- Compiles to ES3, the most popular JS dialect
-- Idiomatic Go to Idiomatic Javascript
-- The "bucklescript" for Go
+- Dead-code elimination across all your dependencies
+- Simple interface between untyped JS and typed Go
+- Compiles to ES3, the most universal JS dialect
+- Idiomatic Go to readable Javascript
 - Fast builds
 
 ## Wait, why?
 
 - Javascript has become increasingly difficult to package up and distribute
-- Despite all the hard work that's gone into Javascript tooling, build systems and traspilers remain slow
-- Even when there's widespread WebAssembly adoption, Javascript will be supported for years to come.
-- Go has a minimal, locked language spec and clear future priorities around better tools. Golly aims to contribute to this growing ecosystem.
+- Despite all the hard work that's gone into Javascript tooling, build systems and transpilers remain slow
+- Even when there's widespread WebAssembly adoption, Javascript will be supported for years to come
+- Go is a minimal language with a simple type system and clear future priorities around better tools
 - Go's type system and tooling make Go programs easy to understand & maintain
 
 ## Tradeoffs
 
 **Go will compile Golly code, but Golly will probably not compile existing Go code**
 
-Just because your code is running in Go does not mean it will run on Golly without modification. For everything that browserify & webpack brought to the community,they also brought with it mysteriously large builds.
+Just because your code is running in Go does not mean it will run on Golly without modification. For everything that browserify & webpack brought to the community, they also brought with it mysteriously large builds.
 
-Golly aims to generate clean, minimal & performant ES3 code that works in every browser. It will not jump hoops to make your Go code work inside the browser. 
+Golly aims to generate clean, minimal & performant ES3 code that works in every browser. It will not jump hoops to make your Go code work inside the browser.
 
 If you need browser compatibility with existing Go code, GopherJS is much better suited for that task.
 

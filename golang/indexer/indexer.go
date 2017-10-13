@@ -22,6 +22,18 @@ type Index struct {
 	declarations map[string]*types.Declaration
 	runtime      map[string]*types.Declaration
 	imports      map[string]map[string]string
+	interfaces   map[string]*gotypes.Interface
+	receivers    map[string][]*receiver
+}
+
+// var pointers *gotypes.Pointer
+// var named *gotypes.Named
+// var structs gotypes.Type
+// var ifaces *gotypes.Interface
+
+type receiver struct {
+	Type        gotypes.Type
+	Declaration *types.Declaration
 }
 
 // New maps all the declarations in all the packages
@@ -30,8 +42,10 @@ type Index struct {
 // that points to a declaration in a go package (e.g. main())
 func New(program *loader.Program) (*Index, error) {
 	declarations := map[string]*types.Declaration{}
+	interfaces := map[string]*gotypes.Interface{}
 	runtime := map[string]*types.Declaration{}
 	imports := map[string]map[string]string{}
+	receivers := map[string][]*receiver{}
 
 	runtimePath, err := getRuntimePath()
 	if err != nil {
@@ -75,6 +89,23 @@ func New(program *loader.Program) (*Index, error) {
 						Params:   params,
 					}
 
+					// declaration may satisfy an interface
+					// so we hold onto it for possible
+					// inclusion later
+					if t.Recv != nil {
+						recv := t.Recv.List[0]
+						if receivers[name] == nil {
+							receivers[name] = []*receiver{}
+						}
+						receivers[name] = append(
+							receivers[name],
+							&receiver{
+								Type:        info.TypeOf(recv.Type),
+								Declaration: declarations[id],
+							},
+						)
+					}
+
 					// point human-friendly names to the declaration
 					if runtimePath == packagePath {
 						runtime[name] = declarations[id]
@@ -108,12 +139,26 @@ func New(program *loader.Program) (*Index, error) {
 								ID:       id,
 								Node:     decl,
 							}
+
 							// alias to typeof
 							// TODO: should this be the id we use?
 							// it wouldn't work for valuespec, but
 							// maybe here
 							declarations[typeof.String()] = declarations[id]
 
+							// store interface declarations for faster access
+							if iface, ok := y.Type.(*ast.InterfaceType); ok {
+								// never export an interface
+								declarations[id].Exported = false
+
+								ifacetype, ok := info.TypeOf(iface).(*gotypes.Interface)
+								if !ok {
+									return nil, fmt.Errorf("expected interface type to be gotypes.Interface")
+								}
+								// TODO: once again, not sure we need both here
+								interfaces[id] = ifacetype
+								interfaces[typeof.String()] = ifacetype
+							}
 						case *ast.ImportSpec:
 							if imports[packagePath] == nil {
 								imports[packagePath] = map[string]string{}
@@ -145,6 +190,8 @@ func New(program *loader.Program) (*Index, error) {
 		declarations: declarations,
 		imports:      imports,
 		runtime:      runtime,
+		interfaces:   interfaces,
+		receivers:    receivers,
 	}, nil
 }
 
@@ -197,6 +244,22 @@ func (i *Index) Imports(packagePath string) map[string]string {
 // Runtime returns a golly runtime declaration using it's name
 func (i *Index) Runtime(name string) *types.Declaration {
 	return i.runtime[name]
+}
+
+// ImplementedBy returns a list of declarations that the interface implements
+func (i *Index) ImplementedBy(id string, method string) (decls []*types.Declaration) {
+	iface := i.interfaces[id]
+	if iface == nil {
+		return decls
+	}
+
+	for _, recv := range i.receivers[method] {
+		if gotypes.Implements(recv.Type, iface) {
+			decls = append(decls, recv.Declaration)
+		}
+	}
+
+	return decls
 }
 
 func getDependency(obj gotypes.Object) string {

@@ -10,7 +10,6 @@ import (
 
 	"golang.org/x/tools/go/loader"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/indexer"
 	"github.com/matthewmueller/golly/golang/scope"
 	"github.com/matthewmueller/golly/jsast"
@@ -234,7 +233,6 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 	case *ast.StructType:
 		st = t
 	case *ast.InterfaceType:
-		log.Warnf("ignoring interface type. TODO: not sure if these would always be excluded from JS")
 		return jsast.CreateEmptyStatement(), nil
 	default:
 		return nil, unhandled("typeSpec<StructType>", s.Type)

@@ -23,7 +23,15 @@ type Package struct {
 	Dependencies map[string]*Package
 }
 
-// Declaration struct
+// Declaration is a fragment of code that
+// may show up in the built code. A declaration
+// could be a variable, constant, function,
+// method or struct (but not an interface)
+//
+// TODO: this should be broken up into
+// separate types and turned into an interface
+// Right now fields can be present or not present
+// based on type conditions.
 type Declaration struct {
 	Exported bool
 	From     string

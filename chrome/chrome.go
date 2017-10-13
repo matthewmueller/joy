@@ -217,13 +217,17 @@ func (t *Target) Run(source string) (result string, err error) {
 
 	// evaluate
 	generatePreview := true
-	_, err = c.Runtime.Evaluate(ctx, &runtime.EvaluateArgs{
+	res, err := c.Runtime.Evaluate(ctx, &runtime.EvaluateArgs{
 		Expression:      source,
 		AwaitPromise:    &awaitPromise,
 		GeneratePreview: &generatePreview,
 	})
 	if err != nil {
 		return "", err
+	}
+
+	if res.ExceptionDetails != nil {
+		return "", res.ExceptionDetails
 	}
 
 	// give it a bit of time for the console event to come back

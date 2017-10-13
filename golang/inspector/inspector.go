@@ -10,6 +10,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/fatih/structtag"
@@ -149,6 +150,10 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 					}
 				}
 
+			// // link each interface id with all method declarations
+			// // whose receiver's implement the interface
+			// case *ast.InterfaceType:
+
 			// Include the Channel function when we find:
 			// make(chan ..., capacity)
 			case *ast.ChanType:
@@ -256,6 +261,7 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 				// }
 
 				// declaration.Async = true
+
 			// dig into our identifiers to figure out where
 			// they were defined and add those dependencies
 			// to the crawler
@@ -308,6 +314,19 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 					}
 					declaration.Exported = false
 					return true
+				}
+
+				switch t := n.Fun.(type) {
+				case *ast.SelectorExpr:
+					typeof := info.TypeOf(t.X)
+					method := t.Sel.Name
+					decls := index.ImplementedBy(typeof.String(), method)
+
+					// add the dependencies
+					declaration.Dependencies = append(
+						declaration.Dependencies,
+						decls...,
+					)
 				}
 			}
 
@@ -594,7 +613,11 @@ func checkJSRewrite(cx *ast.CallExpr) (string, []string, error) {
 	// trim off quotes if we've got a string
 	expr := lit.Value
 	if lit.Kind == token.STRING {
-		expr = expr[1 : len(expr)-1]
+		x, e := strconv.Unquote(expr)
+		if e != nil {
+			return "", nil, e
+		}
+		expr = x
 	}
 
 	return expr, args, nil
