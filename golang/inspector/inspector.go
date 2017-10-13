@@ -22,6 +22,8 @@ import (
 // Inspect fn
 func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Script, err error) {
 	// map[packagePath]map[variableName]dependencyPath
+	compositeLits := []string{}
+	maybeDependants := map[string]*types.Declaration{}
 	imports := map[string]map[string]string{}
 	rawfileMap := map[string][]*types.File{}
 
@@ -284,6 +286,13 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 					remaining = append(remaining, child)
 				}
 
+			case *ast.CompositeLit:
+				// store composite literals since they will help
+				// us determine if we should make certain interface
+				// methods available in the source or not
+				kind := info.TypeOf(n.Type)
+				compositeLits = append(compositeLits, kind.String())
+
 			case *ast.CallExpr:
 				// look for js.RawFile(filename)
 				file, e := checkJSRawFile(n, declaration.From)
@@ -322,11 +331,11 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 					method := t.Sel.Name
 					decls := index.ImplementedBy(typeof.String(), method)
 
-					// add the dependencies
-					declaration.Dependencies = append(
-						declaration.Dependencies,
-						decls...,
-					)
+					// maybe dependants if it's receivers are
+					// initialized anywhere in the source code
+					for _, decl := range decls {
+						maybeDependants[decl.ID] = declaration
+					}
 				}
 			}
 
@@ -334,6 +343,22 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 		})
 		if err != nil {
 			return nil, err
+		}
+	}
+
+	// map over the composite literals,
+	// pull their methods out if they
+	// have any and check those methods
+	// against maybeDependants.
+	for _, id := range compositeLits {
+		methods := index.Methods(id)
+		for _, method := range methods {
+			if parent, isset := maybeDependants[method.ID]; isset {
+				parent.Dependencies = append(
+					parent.Dependencies,
+					method,
+				)
+			}
 		}
 	}
 

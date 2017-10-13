@@ -24,16 +24,12 @@ type Index struct {
 	imports      map[string]map[string]string
 	interfaces   map[string]*gotypes.Interface
 	receivers    map[string][]*receiver
+	methods      map[string][]*types.Declaration
 }
 
-// var pointers *gotypes.Pointer
-// var named *gotypes.Named
-// var structs gotypes.Type
-// var ifaces *gotypes.Interface
-
 type receiver struct {
-	Type        gotypes.Type
-	Declaration *types.Declaration
+	Type     gotypes.Type
+	Function *types.Declaration
 }
 
 // New maps all the declarations in all the packages
@@ -100,8 +96,8 @@ func New(program *loader.Program) (*Index, error) {
 						receivers[name] = append(
 							receivers[name],
 							&receiver{
-								Type:        info.TypeOf(recv.Type),
-								Declaration: declarations[id],
+								Type:     info.TypeOf(recv.Type),
+								Function: declarations[id],
 							},
 						)
 					}
@@ -185,6 +181,18 @@ func New(program *loader.Program) (*Index, error) {
 		}
 	}
 
+	// rejiggle receivers to make accessing methods by receiver ID easier
+	methods := map[string][]*types.Declaration{}
+	for _, list := range receivers {
+		for _, recv := range list {
+			typeof := recv.Type.String()
+			if methods[typeof] == nil {
+				methods[typeof] = []*types.Declaration{}
+			}
+			methods[typeof] = append(methods[typeof], recv.Function)
+		}
+	}
+
 	return &Index{
 		program:      program,
 		declarations: declarations,
@@ -192,6 +200,7 @@ func New(program *loader.Program) (*Index, error) {
 		runtime:      runtime,
 		interfaces:   interfaces,
 		receivers:    receivers,
+		methods:      methods,
 	}, nil
 }
 
@@ -255,11 +264,20 @@ func (i *Index) ImplementedBy(id string, method string) (decls []*types.Declarat
 
 	for _, recv := range i.receivers[method] {
 		if gotypes.Implements(recv.Type, iface) {
-			decls = append(decls, recv.Declaration)
+			decls = append(decls, recv.Function)
 		}
 	}
 
 	return decls
+}
+
+// Methods gets all the functions with receivers of a struct
+func (i *Index) Methods(id string) (decls []*types.Declaration) {
+	methods := i.methods[id]
+	if methods == nil {
+		return decls
+	}
+	return methods
 }
 
 func getDependency(obj gotypes.Object) string {
