@@ -1,0 +1,55 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/39-inner-interfaces"] = (function() {
+function main () {
+var s = new Thing({
+  Subthing: new Subthing({
+  first: new stringer({
+  value: "matt"
+}),
+  last: new stringer({
+  value: "mueller"
+})
+})
+});
+console.log(s.Subthing.Name());
+};
+function Thing (o) {
+o = o || {};
+this.Subthing = o.Subthing || new Subthing();
+};
+function Subthing (o) {
+o = o || {};
+this.first = o.first || new Stringer();
+this.last = o.last || new Stringer();
+};
+;
+function stringer (o) {
+o = o || {};
+this.value = o.value || "";
+};
+Subthing.prototype.Name = function() {
+var s = this;
+return s.firstName().String() + " " + s.lastName().String();
+};
+Subthing.prototype.firstName = function() {
+var s = this;
+return s.first;
+};
+Subthing.prototype.lastName = function() {
+var s = this;
+return s.last;
+};
+stringer.prototype.String = function() {
+var s = this;
+return s.value;
+};
+return {
+  main: main,
+  Thing: Thing,
+  Subthing: Subthing
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/39-inner-interfaces"].main();
+})()

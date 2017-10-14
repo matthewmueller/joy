@@ -1614,6 +1614,13 @@ func property(ctx *context, sp *scope.Scope, c *ast.CompositeLit, idx int, n ast
 	// recurse
 	case *ast.UnaryExpr:
 		return property(ctx, sp, c, idx, t.X)
+	case *ast.CompositeLit:
+		key := jsast.CreateIdentifier(name)
+		val, e := compositeLiteral(ctx, sp, t)
+		if e != nil {
+			return j, e
+		}
+		return jsast.CreateProperty(key, val, "init"), nil
 	case *ast.KeyValueExpr:
 		return keyValueExpr(ctx, sp, c, t)
 	default:

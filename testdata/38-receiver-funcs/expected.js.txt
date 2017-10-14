@@ -1,0 +1,31 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/38-receiver-funcs"] = (function() {
+function main () {
+var s = new Thing({
+  subthing: new subthing({
+  name: "matt"
+})
+});
+console.log(s.subthing.Name());
+};
+function Thing (o) {
+o = o || {};
+this.subthing = o.subthing || new subthing();
+};
+function subthing (o) {
+o = o || {};
+this.name = o.name || "";
+};
+subthing.prototype.Name = function() {
+var s = this;
+return s.name;
+};
+return {
+  main: main,
+  Thing: Thing
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/38-receiver-funcs"].main();
+})()
