@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 
-	"github.com/matthewmueller/golly/golang"
-	"github.com/matthewmueller/golly/types"
+	"github.com/matthewmueller/golly/compiler"
+	"github.com/matthewmueller/golly/compiler/file"
 )
 
 // BuildSettings struct
@@ -13,9 +13,11 @@ type BuildSettings struct {
 }
 
 // Build fn
-func Build(ctx context.Context, settings *BuildSettings) (files []*types.File, err error) {
-	compiler := golang.New()
-	files, _, err = compiler.Compile(settings.Packages...)
+func Build(ctx context.Context, settings *BuildSettings) (files []*file.File, err error) {
+	c := compiler.New(&compiler.Settings{
+		Packages: settings.Packages,
+	})
+	files, err = c.Compile()
 	if err != nil {
 		return nil, err
 	}

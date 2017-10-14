@@ -6,8 +6,9 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"runtime"
 
+	"github.com/apex/log"
+	"github.com/matthewmueller/golly/compiler/util"
 	"github.com/matthewmueller/golly/stdlib"
 	"github.com/pkg/errors"
 	"golang.org/x/tools/go/loader"
@@ -20,6 +21,7 @@ type Settings struct {
 
 // Load the packages (Phase I)
 func Load(settings *Settings) (program *loader.Program, err error) {
+	defer log.Trace("load").Stop(&err)
 	var conf loader.Config
 
 	// TODO: will this work everytime?
@@ -45,11 +47,7 @@ func Load(settings *Settings) (program *loader.Program, err error) {
 
 	// import the runtime by default
 	// TODO: there's gotta be a better way to do this
-	_, file, _, ok := runtime.Caller(0)
-	if !ok {
-		return nil, errors.New("unable to get the filepath")
-	}
-	runtimePkg, err := filepath.Rel(path.Join(os.Getenv("GOPATH"), "src"), path.Join(path.Dir(path.Dir(file)), "runtime"))
+	runtimePkg, err := util.RuntimePath()
 	if err != nil {
 		return nil, err
 	}

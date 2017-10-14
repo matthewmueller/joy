@@ -8,6 +8,8 @@ import (
 
 // Assemble the graph into files
 func Assemble(g *graph.Graph) (files []*file.File, err error) {
+	defer log.Trace("assemble").Stop(&err)
+
 	// get the roots of the graph, these will be our files
 	for _, node := range g.Roots() {
 		sorted := node.Sort()

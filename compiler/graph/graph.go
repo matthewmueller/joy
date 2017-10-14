@@ -1,6 +1,6 @@
 package graph
 
-import "github.com/matthewmueller/golly/compiler/decl"
+import "github.com/matthewmueller/golly/compiler/index"
 
 // Graph struct
 type Graph struct {
@@ -17,7 +17,7 @@ func New() *Graph {
 }
 
 // AddDependency fn
-func (g *Graph) AddDependency(parent decl.Declaration, child ...decl.Declaration) {
+func (g *Graph) AddDependency(parent index.Declaration, child ...index.Declaration) {
 }
 
 // Roots gets a list of root declarations (those without any dependants)
@@ -27,7 +27,7 @@ func (g *Graph) Roots() (nodes []Node) {
 
 // Node struct
 type Node struct {
-	declaration decl.Declaration
+	declaration index.Declaration
 }
 
 // ID fn
@@ -36,7 +36,7 @@ func (n *Node) ID() string {
 }
 
 // Declaration fn
-func (n *Node) Declaration() decl.Declaration {
+func (n *Node) Declaration() index.Declaration {
 	return n.declaration
 }
 

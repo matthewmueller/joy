@@ -92,9 +92,13 @@ func Test(t *testing.T) {
 				t.Fatal(errors.Wrap(e, "compile error"))
 			}
 
+			if len(files) == 0 {
+				t.Fatal("expected atleast 1 file to be built")
+			}
+
 			for _, file := range files {
-				jspath := path.Join(gosrc, file.Name, "expected.js.txt")
-				resultpath := path.Join(gosrc, file.Name, "expected.txt")
+				jspath := path.Join(gosrc, file.Name(), "expected.js.txt")
+				resultpath := path.Join(gosrc, file.Name(), "expected.txt")
 
 				// read the expected js source
 				js, err := ioutil.ReadFile(jspath)
@@ -103,11 +107,11 @@ func Test(t *testing.T) {
 				}
 
 				// compile the code
-				if file.Source != string(js) {
-					if err := ioutil.WriteFile(jspath, []byte(file.Source), 0755); err != nil {
+				if file.Source() != string(js) {
+					if err := ioutil.WriteFile(jspath, []byte(file.Source()), 0755); err != nil {
 						t.Fatal(err)
 					}
-					t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(js), file.Source))
+					t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(js), file.Source()))
 				}
 
 				// try reading the result path
@@ -123,7 +127,7 @@ func Test(t *testing.T) {
 				}
 
 				// run the code in a headless chrome target
-				actual, err := tar.Run(file.Source)
+				actual, err := tar.Run(file.Source())
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -133,6 +137,7 @@ func Test(t *testing.T) {
 					t.Fatalf("no '%s' file found", resultpath)
 				}
 
+				log.Infof("actual %s expected %s", actual, expected)
 				// compare the result path
 				if strings.TrimSpace(string(actual)) != strings.TrimSpace(string(expected)) {
 					t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(expected), string(actual)))

@@ -1,15 +1,17 @@
 package parser
 
 import (
-	"github.com/matthewmueller/golly/compiler/decl"
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/compiler/graph"
-	"github.com/matthewmueller/golly/compiler/indexer"
+	"github.com/matthewmueller/golly/compiler/index"
 	"github.com/pkg/errors"
 )
 
 // Parse the packages into a dependency graph (Phase III)
-func Parse(idx *indexer.Index) (g *graph.Graph, err error) {
-	queue := []decl.Declaration{}
+func Parse(idx *index.Index) (g *graph.Graph, err error) {
+	defer log.Trace("parse").Stop(&err)
+
+	queue := []index.Declaration{}
 	visited := map[string]bool{}
 	g = graph.New()
 
