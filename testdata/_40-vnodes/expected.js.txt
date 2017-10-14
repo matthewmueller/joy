@@ -1,0 +1,48 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/40-vnodes"] = (function() {
+function main () {
+var c = New(new Props({
+  Location: "mars"
+}));
+console.log(c.String());
+};
+function New (p) {
+return NewComponent(new Page({
+  props: p
+}));
+};
+function Props (o) {
+o = o || {};
+this.Location = o.Location || "";
+};
+;
+function NewComponent (com) {
+return new component({
+  component: com
+});
+};
+;
+function component (o) {
+o = o || {};
+this.component = o.component || new Component();
+};
+function Page (o) {
+o = o || {};
+this.props = o.props || new Props();
+};
+component.prototype.String = function() {
+var c = this;
+return c.Render().String();
+};
+return {
+  main: main,
+  New: New,
+  Props: Props,
+  NewComponent: NewComponent,
+  Page: Page
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/40-vnodes"].main();
+})()
