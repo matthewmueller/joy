@@ -1,51 +1,100 @@
 package graph
 
-import "github.com/matthewmueller/golly/compiler/index"
+import (
+	"github.com/matthewmueller/golly/compiler/types"
+)
 
 // Graph struct
 type Graph struct {
-	nodes map[string]*Node
-	edges map[string]string
+	declarations map[string]types.Declaration
+	edges        map[string][]string
 }
 
 // New function
 func New() *Graph {
 	return &Graph{
-		nodes: map[string]*Node{},
-		edges: map[string]string{},
+		declarations: map[string]types.Declaration{},
+		edges:        map[string][]string{},
 	}
 }
 
 // AddDependency fn
-func (g *Graph) AddDependency(parent index.Declaration, child ...index.Declaration) {
+func (g *Graph) AddDependency(parent types.Declaration, children ...types.Declaration) {
+	pid := parent.ID()
+
+	// add the parent if not already present
+	g.declarations[pid] = parent
+
+	for _, child := range children {
+		cid := child.ID()
+
+		g.declarations[cid] = child
+
+		if g.edges[pid] == nil {
+			g.edges[pid] = []string{}
+		}
+		g.edges[pid] = append(g.edges[pid], cid)
+	}
 }
 
 // Roots gets a list of root declarations (those without any dependants)
-func (g *Graph) Roots() (nodes []Node) {
-	return nodes
+func (g *Graph) Roots() (decls []types.Declaration) {
+	for id, decl := range g.declarations {
+		if _, isset := g.edges[id]; !isset {
+			decls = append(decls, decl)
+		}
+	}
+
+	return decls
 }
 
-// Node struct
-type Node struct {
-	declaration index.Declaration
+// Sort declarations topologically
+func (g *Graph) Sort(d types.Declaration) (decls []types.Declaration) {
+	var visitAll func(ids []string)
+	seen := map[string]bool{}
+	order := []string{}
+
+	visitAll = func(ids []string) {
+		for _, id := range ids {
+			if !seen[id] {
+				seen[id] = true
+				visitAll(g.edges[id])
+				order = append(order, id)
+			}
+		}
+	}
+
+	visitAll(g.edges[d.ID()])
+
+	for _, id := range order {
+		decls = append(decls, g.declarations[id])
+	}
+	decls = append(decls, d)
+
+	return decls
 }
 
-// ID fn
-func (n *Node) ID() string {
-	return n.declaration.ID()
-}
+// // Node struct
+// type Node struct {
+// 	declaration types.Declaration
+// }
 
-// Declaration fn
-func (n *Node) Declaration() index.Declaration {
-	return n.declaration
-}
+// // ID fn
+// func (n *Node) ID() string {
+// 	return n.declaration.ID()
+// }
 
-// Dependencies fn
-func (n *Node) Dependencies() (deps []Node) {
-	return deps
-}
+// // Declaration fn
+// func (n *Node) Declaration() types.Declaration {
+// 	return n.declaration
+// }
 
-// Sort topologically
-func (n *Node) Sort() (list []Node) {
-	return list
-}
+// // Dependencies fn
+// func (n *Node) Dependencies() (deps []Node) {
+// 	return deps
+// }
+
+// // Sort topologically
+// func (n *Node) Sort() (list []Node) {
+// 	return list
+// }

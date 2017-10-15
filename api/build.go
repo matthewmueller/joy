@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/matthewmueller/golly/compiler"
-	"github.com/matthewmueller/golly/compiler/file"
+	"github.com/matthewmueller/golly/compiler/types"
 )
 
 // BuildSettings struct
@@ -13,7 +13,7 @@ type BuildSettings struct {
 }
 
 // Build fn
-func Build(ctx context.Context, settings *BuildSettings) (files []*file.File, err error) {
+func Build(ctx context.Context, settings *BuildSettings) (files []types.File, err error) {
 	c := compiler.New(&compiler.Settings{
 		Packages: settings.Packages,
 	})

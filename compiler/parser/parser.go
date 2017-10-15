@@ -4,6 +4,7 @@ import (
 	"github.com/apex/log"
 	"github.com/matthewmueller/golly/compiler/graph"
 	"github.com/matthewmueller/golly/compiler/index"
+	"github.com/matthewmueller/golly/compiler/types"
 	"github.com/pkg/errors"
 )
 
@@ -11,7 +12,7 @@ import (
 func Parse(idx *index.Index) (g *graph.Graph, err error) {
 	defer log.Trace("parse").Stop(&err)
 
-	queue := []index.Declaration{}
+	queue := []types.Declaration{}
 	visited := map[string]bool{}
 	g = graph.New()
 

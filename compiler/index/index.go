@@ -1,40 +1,66 @@
 package index
 
 import (
-	"go/ast"
+	"fmt"
 
-	"github.com/matthewmueller/golly/jsast"
+	"github.com/matthewmueller/golly/compiler/types"
+	"github.com/matthewmueller/golly/compiler/util"
 	"golang.org/x/tools/go/loader"
 )
 
-// Declaration interface
-type Declaration interface {
-	ID() string
-	Translate() (jsast.IStatement, error)
-	Dependencies() ([]Declaration, error)
-}
-
 // Index struct
 type Index struct {
-	declarations []Declaration
+	decls   map[string]types.Declaration
+	program *loader.Program
 }
 
-// New function
-func New() *Index {
-	return &Index{}
+// New fn
+func New(program *loader.Program) *Index {
+	return &Index{
+		decls:   map[string]types.Declaration{},
+		program: program,
+	}
 }
 
-// Function creates a function declaration
-func (i *Index) Function(info *loader.PackageInfo, n *ast.FuncDecl) error {
-	return nil
+// Add fn
+func (i *Index) Add(d types.Declaration) {
+	i.decls[d.ID()] = d
 }
 
-// Method creates a method declaration
-func (i *Index) Method(info *loader.PackageInfo, n *ast.FuncDecl) error {
-	return nil
-}
+// AddImport fn
+// func (i *Index) AddImport(d types.Import) {
 
-// Mains gets the main entrypoints of the program
-func (i *Index) Mains() (decls []Declaration, err error) {
+// }
+
+// Mains finds all the main() functions inside our initial packages
+func (i *Index) Mains() (decls []types.Declaration, err error) {
+	runtimePath, err := util.RuntimePath()
+	if err != nil {
+		return decls, err
+	}
+
+	for _, info := range i.program.InitialPackages() {
+		packagePath := info.Pkg.Path()
+
+		// ignore the runtime
+		if runtimePath == packagePath {
+			continue
+		}
+
+		// find the main objects using the package scope
+		obj := info.Pkg.Scope().Lookup("main")
+		if obj == nil {
+			return decls, fmt.Errorf("main not found in %s", packagePath)
+		}
+
+		// find the declaration in the index
+		main := i.decls[obj.String()]
+		if main == nil {
+			return decls, fmt.Errorf("main declaration not found: %s", obj.String())
+		}
+
+		decls = append(decls, main)
+	}
+	
 	return decls, nil
 }

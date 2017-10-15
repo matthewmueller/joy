@@ -97,8 +97,8 @@ func Test(t *testing.T) {
 			}
 
 			for _, file := range files {
-				jspath := path.Join(gosrc, file.Name(), "expected.js.txt")
-				resultpath := path.Join(gosrc, file.Name(), "expected.txt")
+				jspath := path.Join(gosrc, file.Path(), "expected.js.txt")
+				resultpath := path.Join(gosrc, file.Path(), "expected.txt")
 
 				// read the expected js source
 				js, err := ioutil.ReadFile(jspath)
@@ -108,9 +108,9 @@ func Test(t *testing.T) {
 
 				// compile the code
 				if file.Source() != string(js) {
-					if err := ioutil.WriteFile(jspath, []byte(file.Source()), 0755); err != nil {
-						t.Fatal(err)
-					}
+					// if err := ioutil.WriteFile(jspath, []byte(file.Source()), 0755); err != nil {
+					// 	t.Fatal(err)
+					// }
 					t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(js), file.Source()))
 				}
 

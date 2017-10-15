@@ -1,4 +1,4 @@
-package indexer
+package crawler
 
 import (
 	"fmt"
@@ -9,19 +9,14 @@ import (
 	"golang.org/x/tools/go/loader"
 )
 
-// Index struct
-// type Index struct {
-// 	declarations []index.Declaration
-// }
-
 // state struct
 type state struct {
 	info  *loader.PackageInfo
 	index *index.Index
 }
 
-// New index
-func New(program *loader.Program) (idx *index.Index, err error) {
+// Crawl fn
+func Crawl(program *loader.Program) (idx *index.Index, err error) {
 	defer log.Trace("index").Stop(&err)
 
 	// get the runtime path
@@ -30,7 +25,7 @@ func New(program *loader.Program) (idx *index.Index, err error) {
 	// 	return nil, err
 	// }
 
-	idx = index.New()
+	idx = index.New(program)
 
 	// decls := []index.Declaration{}
 	for _, info := range program.AllPackages {
@@ -42,6 +37,7 @@ func New(program *loader.Program) (idx *index.Index, err error) {
 				}
 			}
 		}
+
 	}
 
 	return idx, nil
@@ -82,14 +78,49 @@ func spec(s *state, n ast.Spec) (err error) {
 }
 
 func valueSpec(s *state, n *ast.ValueSpec) (err error) {
+	v, e := index.NewVariable(s.info, n)
+	if e != nil {
+		return e
+	}
+	s.index.Add(v)
 	return nil
 }
 
 func typeSpec(s *state, n *ast.TypeSpec) (err error) {
+	switch n.Type.(type) {
+	case *ast.StructType:
+		return structType(s, n)
+	case *ast.InterfaceType:
+		return interfaceType(s, n)
+	}
 	return nil
 }
 
+// TODO: add to index
 func importSpec(s *state, n *ast.ImportSpec) (err error) {
+	// imp, err := NewImport(s.info, n)
+	// if err != nil {
+	// 	return err
+	// }
+	// s.index.AddImport(imp)
+	return nil
+}
+
+func structType(s *state, n *ast.TypeSpec) (err error) {
+	st, e := index.NewStruct(s.info, n)
+	if e != nil {
+		return e
+	}
+	s.index.Add(st)
+	return nil
+}
+
+func interfaceType(s *state, n *ast.TypeSpec) (err error) {
+	iface, e := index.NewInterface(s.info, n)
+	if e != nil {
+		return e
+	}
+	s.index.Add(iface)
 	return nil
 }
 
