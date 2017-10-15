@@ -32,7 +32,7 @@ type Package struct {
 // separate types and turned into an interface
 // Right now fields can be present or not present
 // based on type conditions.
-// 
+//
 // For now, try to keep this as data that only
 // the translator depends on and not stuff that
 // the inspector will use.
