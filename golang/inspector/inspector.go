@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
+	gotypes "go/types"
 	"io/ioutil"
 	"os"
 	"path"
@@ -13,6 +14,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/apex/log"
 	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/golang/indexer"
 	"github.com/matthewmueller/golly/types"
@@ -52,7 +54,11 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 			return nil, fmt.Errorf("no main() found in: %s", info.Pkg.Path())
 		}
 
-		maindecl := index.FindByObject(main)
+		maindecl, err := index.ObjectOf(main)
+		if err != nil {
+			return nil, err
+		}
+		log.Infof("maindecl %+v", maindecl)
 		remaining = append(remaining, maindecl)
 		mains = append(mains, maindecl)
 	}
@@ -267,11 +273,42 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 			// dig into our identifiers to figure out where
 			// they were defined and add those dependencies
 			// to the crawler
+
 			case *ast.Ident:
 				// check if we depend on any other
 				// declarations with this identifier
-				child := index.FindByIdent(info, n)
-				if child == nil {
+				if n.Name == "Render" {
+					typ := index.TypeOf(info, n)
+					log.Infof("%T", typ.Underlying())
+					obj := info.ObjectOf(n)
+					log.Infof("typ %s", typ)
+					log.Infof("obj %s", obj)
+					switch t := typ.(type) {
+					case *gotypes.Interface:
+						log.Infof("interface!")
+					case *gotypes.Signature:
+						// log.Infof("%T", t.Recv().Type().Underlying().String())
+						switch t := t.Recv().Type().Underlying().(type) {
+						case *gotypes.Interface:
+							log.Infof("interface %s", index.ImplementedBy(t.String(), "Render"))
+							// log.Infof("%T", t.Underlying())
+						}
+					default:
+						log.Infof("type %T", t)
+						// case *gotypes.Signature:
+						// 	log.Infof(t.)
+					}
+					// log.Infof("typeof %T", typ)
+					d, _ := index.DeclarationOf(info, n)
+					c, _ := index.DeclarationOf(info, n)
+					log.Infof("d %+v child %+v", d, c)
+				}
+
+				child, e := index.DeclarationOf(info, n)
+				if e != nil {
+					err = e
+					return true
+				} else if child == nil {
 					return true
 				}
 
@@ -336,6 +373,10 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 					for _, decl := range decls {
 						maybeDependants[decl.ID] = declaration
 					}
+					// case *ast.Ident:
+					// 	log.Infof("fn: %s", t.Name)
+					// default:
+					// 	log.Infof("fn: %T", n.Fun)
 				}
 			}
 

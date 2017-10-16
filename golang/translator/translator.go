@@ -3,6 +3,7 @@ package translator
 import (
 	"fmt"
 	"go/ast"
+	gotypes "go/types"
 	"path"
 	"reflect"
 	"strconv"
@@ -10,6 +11,7 @@ import (
 
 	"golang.org/x/tools/go/loader"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/indexer"
 	"github.com/matthewmueller/golly/golang/scope"
 	"github.com/matthewmueller/golly/jsast"
@@ -119,8 +121,10 @@ func funcDecl(ctx *context, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement,
 	}
 
 	recv := n.Recv.List[0]
-	recvDecl := ctx.index.FindByNode(ctx.info, recv.Type)
-	if recvDecl != nil {
+	recvDecl, err := ctx.index.DeclarationOf(ctx.info, recv.Type)
+	if err != nil {
+		return nil, err
+	} else if recvDecl != nil {
 		// remove prototypes where the class is global
 		if recvDecl.JSTag != nil && recvDecl.JSTag.HasOption("global") {
 			return jsast.CreateEmptyStatement(), nil
@@ -238,8 +242,10 @@ func typeSpec(ctx *context, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement
 		return nil, unhandled("typeSpec<StructType>", s.Type)
 	}
 
-	decl := ctx.index.FindByIdent(ctx.info, s.Name)
-	if decl == nil {
+	decl, err := ctx.index.DeclarationOf(ctx.info, s.Name)
+	if err != nil {
+		return nil, err
+	} else if decl == nil {
 		return nil, errors.New("typeSpec expected a declaration")
 	}
 
@@ -476,8 +482,10 @@ func goStmt(ctx *context, sp *scope.Scope, n *ast.GoStmt) (j jsast.IStatement, e
 			return nil, e
 		}
 
-		decl := ctx.index.FindByIdent(ctx.info, t)
-		if decl == nil {
+		decl, err := ctx.index.DeclarationOf(ctx.info, t)
+		if err != nil {
+			return nil, err
+		} else if decl == nil {
 			return nil, fmt.Errorf("goStmt(): nil declaration")
 		}
 
@@ -617,13 +625,9 @@ func rangeStmt(ctx *context, sp *scope.Scope, n *ast.RangeStmt) (j jsast.IStatem
 	// [ ] string          s  string type            index    i  int    see below  rune
 	// [ ] map             m  map[K]V                key      k  K      m[k]       V
 	// [ ] channel         c  chan E, <-chan E       element  e  E
-	kind, e := getObjectType(asn.Rhs[0])
-	if e != nil {
-		return nil, e
-	}
-
+	kind := ctx.index.TypeOf(ctx.info, asn.Rhs[0])
 	switch kind.(type) {
-	case *ast.ArrayType:
+	case *gotypes.Array, *gotypes.Slice:
 		return jsast.CreateForStatement(
 			init,
 			cond,
@@ -633,167 +637,6 @@ func rangeStmt(ctx *context, sp *scope.Scope, n *ast.RangeStmt) (j jsast.IStatem
 	default:
 		return nil, unhandled("rangeStmt<rhs.obj.type>", id.Obj)
 	}
-
-	// switch asn.Rhs[0].
-
-	// // parse lefthand side
-	// lhs := asn.Lhs
-	// llhs := len(asn.Lhs)
-
-	// if llhs == 0 {
-	// 	return nil, fmt.Errorf("rangeStmt: didn't expect len(lhs) == 0")
-	// }
-
-	// var inits []jsast.VariableDeclarator
-
-	// idx, ok := lhs[0].(*ast.Ident)
-	// if !ok {
-	// 	return nil, unhandled("rangeStmt<idx>", lhs[0])
-	// }
-	// inits = append(inits, jsast.CreateVariableDeclarator(
-	// 	jsast.CreateIdentifier(idx.Name),
-	// 	jsast.CreateInt(0),
-	// ))
-
-	// // handle the value if there is one
-	// var val *ast.Ident
-	// if llhs == 2 {
-	// 	val, ok = lhs[1].(*ast.Ident)
-	// 	if !ok {
-	// 		return nil, unhandled("rangeStmt<val>", lhs[1])
-	// 	}
-	// 	inits = append(inits, jsast.CreateVariableDeclarator(
-	// 		jsast.CreateIdentifier(val.Name),
-	// 		nil,
-	// 	))
-	// }
-
-	// ux, ok := asn.Rhs[0].(*ast.UnaryExpr)
-	// if !ok {
-	// 	return nil, unhandled("rangeStmt<rhs[0]>", asn.Rhs[0])
-	// }
-
-	// var rh jsast.IExpression
-	// switch t := ux.X.(type) {
-	// case *ast.Ident:
-	// 	rh = jsast.CreateMemberExpression(
-	// 		jsast.CreateIdentifier(t.Name),
-	// 		jsast.CreateIdentifier("length"),
-	// 		false,
-	// 	)
-	// default:
-	// 	return nil, unhandled("rangeStmt<rh>", ux.X)
-	// }
-
-	// for _, lhs := range asn.Lhs {
-	// 	switch t := lhs.(type) {
-	// 	case *ast.Ident:
-	// 		decls = append(decls, jsast.CreateVariableDeclarator(
-	// 			jsast.CreateIdentifier(t.Name),
-	// 			nil,
-	// 		))
-	// 	default:
-	// 		return nil, unhandled("rangeStmt<lhs>", lhs)
-	// 	}
-	// }
-	// init := jsast.CreateVariableDeclaration("var", decls...)
-	// _ = init
-
-	// stmt, expr, e := VariableHandler(id.Obj.Decl)
-	// if e != nil {
-	// 	return nil, e
-	// }
-
-	// log.Infof("stmt %s", stmt)
-	// log.Infof("expr %s", expr)
-
-	// variables
-	// pairs := variablePairs(asn)
-
-	// for _, asn := range asn.Lhs {
-	// 	switch {
-	// 		case *ast.Ident;
-
-	// 	}
-	// }
-
-	// ast.Print(nil, asn)
-	// log.Infof("asn %s", asn)
-	// _ = asn
-	// if
-	// lhs := asn.Lhs
-	// llhs := len(lhs)
-
-	// for _,  := range s {
-
-	// }
-	// if llhs == 2 {
-	// 	jsVariableDecl()
-	// } else if llhs == 1 {
-
-	// }
-	// if asn.
-	// asn.Lhs
-
-	// a, e := assignStatement(ctx, sp, asn)
-	// if e != nil {
-	// 	return j, e
-	// }
-	// log.Infof("%s", a)
-
-	// obj.
-
-	// switch t := n.Key.(type) {
-	// case *ast.Ident:
-	// 	t.
-	// }
-	// ast.Print(nil, n.Key)
-	// switch n.Key {
-	// 	case
-	// }
-
-	// init, e := expression(ctx, sp, n.Key)
-	// if e != nil {
-	// 	return nil, errors.Wrap(e, "forStmt")
-	// }
-	// log.Infof("init %s", init)
-	// cond, e := expression(ctx, sp, n.Cond)
-	// if e != nil {
-	// 	return nil, errors.Wrap(e, "forStmt")
-	// }
-
-	// post, e := statement(ctx, sp, n.Post)
-	// if e != nil {
-	// 	return nil, errors.Wrap(e, "forStmt")
-	// }
-
-	// body, e := blockStmt(ctx, sp, n.Body)
-	// if e != nil {
-	// 	return nil, errors.Wrap(e, "rangeStmt")
-	// }
-	// _ = body
-	// In Go the post condition is a statement,
-	// in JS it's an expression
-	//
-	// it can also be nil in the case of for { ... }
-	// var postexpr jsast.IExpression
-	// switch t := post.(type) {
-	// case jsast.ExpressionStatement:
-	// 	postexpr = t.Expression
-	// case nil:
-	// 	postexpr = nil
-	// default:
-	// 	return nil, unhandled("forStmt<post>", post)
-	// }
-
-	// return jsast.CreateEmptyStatement(), nil
-
-	// return jsast.CreateForStatement(
-	// 	init,
-	// 	cond,
-	// 	postexpr,
-	// 	body,
-	// ), nil
 }
 
 func declStmt(ctx *context, sp *scope.Scope, n *ast.DeclStmt) (j jsast.IStatement, err error) {
@@ -1436,26 +1279,29 @@ func binaryExpression(ctx *context, sp *scope.Scope, b *ast.BinaryExpr) (j jsast
 }
 
 func identifier(ctx *context, sp *scope.Scope, n *ast.Ident) (j jsast.IExpression, err error) {
-	decl := ctx.index.FindByIdent(ctx.info, n)
-	name := n.Name
+	// decl, err := ctx.index.DeclarationOf(ctx.info, n)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// name := n.Name
 
-	// if decl is nil, it's a local variable
-	// or a predefined identifier like
-	// nil or error
-	if decl != nil {
-		// use the alias if we have a JS tag
-		if decl.JSTag != nil {
-			name = decl.JSTag.Name
-		}
-	}
+	// // if decl is nil, it's a local variable
+	// // or a predefined identifier like
+	// // nil or error
+	// if decl != nil {
+	// 	// use the alias if we have a JS tag
+	// 	if decl.JSTag != nil {
+	// 		name = decl.JSTag.Name
+	// 	}
+	// }
 
 	// log.Infof("name %s %+v", n.Name, ctx.info.ObjectOf(n).Type())
 
-	switch name {
+	switch n.Name {
 	case "nil":
 		return jsast.CreateNull(), nil
 	default:
-		return jsast.CreateIdentifier(name), nil
+		return jsast.CreateIdentifier(n.Name), nil
 	}
 }
 
@@ -1579,15 +1425,18 @@ func property(ctx *context, sp *scope.Scope, c *ast.CompositeLit, idx int, n ast
 	// TODO: update index's FindByNode to both
 	// look for TypeOf and pursue the rightmost
 	// object's declaration
-	var decl *types.Declaration
-	switch t := c.Type.(type) {
-	case *ast.Ident:
-		typeof := ctx.info.TypeOf(t)
-		decl = ctx.index.FindByID(typeof.String())
-	case *ast.SelectorExpr:
-		typeof := ctx.info.TypeOf(t.Sel)
-		decl = ctx.index.FindByID(typeof.String())
+	// var decl *types.Declaration
+	decl, err := ctx.index.DeclarationOf(ctx.info, c.Type)
+	if err != nil {
+		return j, err
 	}
+	// switch t := c.Type.(type) {
+	// case *ast.Ident:
+	// 	// typeof := ctx.info.TypeOf(t)
+	// 	decl = ctx.index.DeclarationOf(ctx.info, t)
+	// case *ast.SelectorExpr:
+	// 	decl = ctx.index.DeclarationOf(ctx.info, t.Sel)
+	// }
 	if decl == nil {
 		return j, fmt.Errorf("property: decl should exist")
 	} else if idx >= len(decl.Fields) {
@@ -1630,7 +1479,10 @@ func property(ctx *context, sp *scope.Scope, c *ast.CompositeLit, idx int, n ast
 
 func keyValueExpr(ctx *context, sp *scope.Scope, c *ast.CompositeLit, n *ast.KeyValueExpr) (j jsast.Property, err error) {
 	// optional decl if the key is an identifier
-	decl := ctx.index.FindByNode(ctx.info, c.Type)
+	decl, err := ctx.index.DeclarationOf(ctx.info, c.Type)
+	if err != nil {
+		return j, err
+	}
 
 	// get the value
 	val, e := expression(ctx, sp, n.Value)
@@ -1662,15 +1514,19 @@ func selectorExpr(ctx *context, sp *scope.Scope, n *ast.SelectorExpr) (j jsast.M
 	// TODO: update index's FindByNode to both
 	// look for TypeOf and pursue the rightmost
 	// object's declaration
-	var decl *types.Declaration
-	switch t := n.X.(type) {
-	case *ast.Ident:
-		typeof := ctx.info.TypeOf(t)
-		decl = ctx.index.FindByID(typeof.String())
-	case *ast.SelectorExpr:
-		typeof := ctx.info.TypeOf(t.Sel)
-		decl = ctx.index.FindByID(typeof.String())
+	decl, err := ctx.index.DeclarationOf(ctx.info, n.X)
+	if err != nil {
+		return j, err
 	}
+	log.Infof("decl %+v", decl)
+	// switch t := n.X.(type) {
+	// case *ast.Ident:
+	// 	typeof := ctx.info.TypeOf(t)
+	// 	decl = ctx.index.FindByID(typeof.String())
+	// case *ast.SelectorExpr:
+	// 	typeof := ctx.info.TypeOf(t.Sel)
+	// 	decl = ctx.index.FindByID(typeof.String())
+	// }
 
 	// (user.phone).number
 	x, e := expression(ctx, sp, n.X)
@@ -1929,6 +1785,8 @@ func defaultValue(ctx *context, sp *scope.Scope, expr ast.Expr) (jsast.IExpressi
 			id := jsast.CreateIdentifier(t.Name)
 			return jsast.CreateNewExpression(id, nil), nil
 		}
+	case *ast.MapType:
+		return jsast.CreateObjectExpression(nil), nil
 	case *ast.ArrayType:
 		return jsast.CreateArrayExpression(), nil
 	case *ast.InterfaceType:
@@ -2014,8 +1872,10 @@ func maybeJSRewrite(ctx *context, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpr
 	}
 
 	// find the corresponding declaration (if there is one)
-	decl := ctx.index.FindByIdent(ctx.info, sel.Sel)
-	if decl == nil {
+	decl, err := ctx.index.DeclarationOf(ctx.info, sel.Sel)
+	if err != nil {
+		return nil, err
+	} else if decl == nil {
 		return nil, nil
 	}
 

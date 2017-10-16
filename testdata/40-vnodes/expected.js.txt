@@ -34,7 +34,7 @@ this.props = o.props || new Props();
 };
 component.prototype.String = function() {
 var c = this;
-return c.Render().String();
+return c.component.Render().String();
 };
 return {
   main: main,
