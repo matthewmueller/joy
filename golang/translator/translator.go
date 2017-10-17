@@ -3,8 +3,11 @@ package translator
 import (
 	"fmt"
 	"go/ast"
+	"go/types"
+	"path"
 	"reflect"
 	"strconv"
+	"strings"
 
 	"golang.org/x/tools/go/loader"
 
@@ -36,7 +39,8 @@ type Result struct {
 
 // Translator struct
 type Translator struct {
-	db *db.DB
+	db   *db.DB
+	info *loader.PackageInfo
 }
 
 // New fn
@@ -47,7 +51,9 @@ func New(db *db.DB) *Translator {
 }
 
 // Translate fn
-func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
+func (tr *Translator) Translate(info *loader.PackageInfo, d def.Definition) (jsast.INode, error) {
+	tr.info = info
+
 	sp := scope.New(d.Node())
 
 	// if this declaration has the global option,
@@ -154,8 +160,8 @@ func (tr *Translator) Struct(d struc.Struct, sp *scope.Scope) (jsast.INode, erro
 	if !ok {
 		return nil, errors.New("Interface: expected def.Struct's node to be an *ast.TypeSpec")
 	}
-	_ = n
-	return nil, nil
+
+	return tr.structTypeSpec(d, sp, n)
 }
 
 // Value fn
@@ -189,6 +195,12 @@ func (tr *Translator) statement(d def.Definition, sp *scope.Scope, n ast.Stmt) (
 		return tr.sendStmt(d, sp, t)
 	case *ast.BlockStmt:
 		return tr.blockStmt(d, sp, t)
+	case *ast.DeclStmt:
+		return tr.declStmt(d, sp, t)
+	case *ast.ForStmt:
+		return tr.forStmt(d, sp, t)
+	case *ast.RangeStmt:
+		return tr.rangeStmt(d, sp, t)
 	default:
 		return nil, unhandled("statement", n)
 	}
@@ -363,218 +375,284 @@ func (tr *Translator) statement(d def.Definition, sp *scope.Scope, n ast.Stmt) (
 // 	), nil
 // }
 
-// (tr *Translator) func genDecl(d def.Definition, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement, err error) {
-// 	switch n.Tok.String() {
-// 	case "import":
-// 		return tr.importSpec(d, sp,n)
-// 	case "type":
-// 		return tr.typeSpec(d, sp,n)
-// 	case "var":
-// 		return tr.varSpec(d, sp,n)
-// 	default:
-// 		return nil, fmt.Errorf("genDecl: unhandled token %s", n.Tok.String())
-// 	}
+func (tr *Translator) genDecl(d def.Definition, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement, err error) {
+	switch n.Tok.String() {
+	case "import":
+		return tr.importSpec(d, sp, n)
+	case "type":
+		return tr.typeSpec(d, sp, n)
+	case "var":
+		return tr.varSpec(d, sp, n)
+	default:
+		return nil, fmt.Errorf("genDecl: unhandled token %s", n.Tok.String())
+	}
 
-// 	// // specs := n.Specs
-// 	// for _, spec := range n.Specs {
-// 	// 	switch t := spec.(type) {
-// 	// 	// case *ast.ImportSpec:
-// 	// 	// 	return importSpec(pkg, f, t)
-// 	// 	case *ast.TypeSpec:
-// 	// 		// type defs will only have 1 spec
-// 	// 		return typeSpec(pkg, f, t)
-// 	// 	default:
-// 	// 		return nil, unhandled("genDecl", spec)
-// 	// 	}
-// 	// }
+	// // specs := n.Specs
+	// for _, spec := range n.Specs {
+	// 	switch t := spec.(type) {
+	// 	// case *ast.ImportSpec:
+	// 	// 	return importSpec(pkg, f, t)
+	// 	case *ast.TypeSpec:
+	// 		// type defs will only have 1 spec
+	// 		return typeSpec(pkg, f, t)
+	// 	default:
+	// 		return nil, unhandled("genDecl", spec)
+	// 	}
+	// }
 
-// 	// return jsast.CreateEmptyStatement(), nil
+	// return jsast.CreateEmptyStatement(), nil
+}
+
+// func importSpec(pkg *loader.PackageInfo,  f *ast.File, n *ast.ImportSpec) (j jsast.IStatement, err error) {
+// 	return nil, nil
 // }
 
-// // func importSpec(pkg *loader.PackageInfo,  f *ast.File, n *ast.ImportSpec) (j jsast.IStatement, err error) {
-// // 	return nil, nil
-// // }
+func (tr *Translator) typeSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement, err error) {
+	if len(n.Specs) != 1 {
+		return nil, fmt.Errorf("genDecl: expected type to only have 1 spec but it has %d", len(n.Specs))
+	}
 
-// (tr *Translator) func typeSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement, err error) {
-// 	if len(n.Specs) != 1 {
-// 		return nil, fmt.Errorf("genDecl: expected type to only have 1 spec but it has %d", len(n.Specs))
-// 	}
+	s, ok := n.Specs[0].(*ast.TypeSpec)
+	if !ok {
+		return nil, unhandled("typeSpec<TypeSpec>", n.Specs[0])
+	}
 
-// 	s, ok := n.Specs[0].(*ast.TypeSpec)
-// 	if !ok {
-// 		return nil, unhandled("typeSpec<TypeSpec>", n.Specs[0])
-// 	}
+	var st *ast.StructType
+	switch t := s.Type.(type) {
+	case *ast.StructType:
+		st = t
+	case *ast.InterfaceType:
+		return jsast.CreateEmptyStatement(), nil
+	default:
+		return nil, unhandled("typeSpec<StructType>", s.Type)
+	}
 
-// 	var st *ast.StructType
-// 	switch t := s.Type.(type) {
-// 	case *ast.StructType:
-// 		st = t
-// 	case *ast.InterfaceType:
-// 		return jsast.CreateEmptyStatement(), nil
-// 	default:
-// 		return nil, unhandled("typeSpec<StructType>", s.Type)
-// 	}
+	// decl, err := tr.db.DefinitionOf(ctx.info, s.Name)
+	// if err != nil {
+	// 	return nil, err
+	// } else if decl == nil {
+	// 	return nil, errors.New("typeSpec expected a declaration")
+	// }
 
-// 	decl, err := tr.db.DefinitionOf(ctx.info, s.Name)
-// 	if err != nil {
-// 		return nil, err
-// 	} else if decl == nil {
-// 		return nil, errors.New("typeSpec expected a declaration")
-// 	}
+	// // don't include in the build if it has the global option
+	// if decl.JSTag != nil && decl.JSTag.HasOption("global") {
+	// 	return jsast.CreateEmptyStatement(), nil
+	// }
 
-// 	// don't include in the build if it has the global option
-// 	if decl.JSTag != nil && decl.JSTag.HasOption("global") {
-// 		return jsast.CreateEmptyStatement(), nil
-// 	}
+	// tag, e := getCommentTag(n.Doc)
+	// if e != nil {
+	// 	return nil, e
+	// }
 
-// 	// tag, e := getCommentTag(n.Doc)
-// 	// if e != nil {
-// 	// 	return nil, e
-// 	// }
+	// fieldtags, e :=
 
-// 	// fieldtags, e :=
+	// store the tag for later renaming
+	// objectof := ctx.info.ObjectOf(s.Name)
+	// typeof := ctx.info.TypeOf(s.Name)
+	// if tag != nil && objectof != nil {
+	// 	ctx.aliases[objectof.String()] = tag
+	// 	ctx.aliases[typeof.String()] = tag
+	// 	// TODO: not sure if this is a good idea or not
+	// 	// but it's to handle pointer receivers in 1 spot
+	// 	ctx.aliases["*"+typeof.String()] = tag
+	// }
 
-// 	// store the tag for later renaming
-// 	// objectof := ctx.info.ObjectOf(s.Name)
-// 	// typeof := ctx.info.TypeOf(s.Name)
-// 	// if tag != nil && objectof != nil {
-// 	// 	ctx.aliases[objectof.String()] = tag
-// 	// 	ctx.aliases[typeof.String()] = tag
-// 	// 	// TODO: not sure if this is a good idea or not
-// 	// 	// but it's to handle pointer receivers in 1 spot
-// 	// 	ctx.aliases["*"+typeof.String()] = tag
-// 	// }
+	var ivars []interface{}
+	o := jsast.CreateIdentifier("o")
+	expr := jsast.CreateAssignmentExpression(o, jsast.AssignmentOperator("="), defaulted("o", jsast.CreateObjectExpression(nil)))
+	ivars = append(ivars, jsast.CreateExpressionStatement(expr))
 
-// 	var ivars []interface{}
-// 	o := jsast.CreateIdentifier("o")
-// 	expr := jsast.CreateAssignmentExpression(o, jsast.AssignmentOperator("="), defaulted("o", jsast.CreateObjectExpression(nil)))
-// 	ivars = append(ivars, jsast.CreateExpressionStatement(expr))
+	// get the fields
+	for _, field := range st.Fields.List {
+		names := field.Names
 
-// 	// get the fields
-// 	for _, field := range st.Fields.List {
-// 		names := field.Names
+		// just the type e.g struct { *dep.Settings }
+		if len(field.Names) == 0 {
+			id, e := getIdentifier(field.Type)
+			if e != nil {
+				return nil, e
+			}
+			names = append(names, id)
+		}
 
-// 		// just the type e.g struct { *dep.Settings }
-// 		if len(field.Names) == 0 {
-// 			id, e := getIdentifier(field.Type)
-// 			if e != nil {
-// 				return nil, e
-// 			}
-// 			names = append(names, id)
-// 		}
+		// otherwise range over the names
+		for _, id := range names {
+			// get the name, using the alias if there is one
+			// name := maybeAlias(decl, id.Name)
+			name := id.Name
 
-// 		// otherwise range over the names
-// 		for _, id := range names {
-// 			// get the name, using the alias if there is one
-// 			name := maybeAlias(decl, id.Name)
+			// get the default value
+			value, e := tr.zeroed(d, sp, field.Type, name)
+			if e != nil {
+				return nil, e
+			}
 
-// 			// get the default value
-// 			value, e := tr.zeroed(d, sp,field.Type, name)
-// 			if e != nil {
-// 				return nil, e
-// 			}
+			// this.$name = o.$name || <default>
+			ivars = append(ivars, jsast.CreateExpressionStatement(
+				jsast.CreateAssignmentExpression(
+					jsast.CreateMemberExpression(
+						jsast.CreateThisExpression(),
+						jsast.CreateIdentifier(name),
+						false,
+					),
+					jsast.AssignmentOperator("="),
+					jsast.CreateMemberExpression(
+						jsast.CreateIdentifier("o"),
+						value,
+						false,
+					),
+				),
+			))
+		}
+	}
 
-// 			// this.$name = o.$name || <default>
-// 			ivars = append(ivars, jsast.CreateExpressionStatement(
-// 				jsast.CreateAssignmentExpression(
-// 					jsast.CreateMemberExpression(
-// 						jsast.CreateThisExpression(),
-// 						jsast.CreateIdentifier(name),
-// 						false,
-// 					),
-// 					jsast.AssignmentOperator("="),
-// 					jsast.CreateMemberExpression(
-// 						jsast.CreateIdentifier("o"),
-// 						value,
-// 						false,
-// 					),
-// 				),
-// 			))
-// 		}
-// 	}
+	ident := jsast.CreateIdentifier(s.Name.Name)
+	return jsast.CreateFunction(
+		&ident,
+		// TODO: make API for this
+		[]jsast.IPattern{jsast.CreateIdentifier("o")},
+		jsast.CreateFunctionBody(ivars...),
+	), nil
+}
 
-// 	ident := jsast.CreateIdentifier(s.Name.Name)
-// 	return jsast.CreateFunction(
-// 		&ident,
-// 		// TODO: make API for this
-// 		[]jsast.IPattern{jsast.CreateIdentifier("o")},
-// 		jsast.CreateFunctionBody(ivars...),
-// 	), nil
-// }
+func (tr *Translator) structTypeSpec(d def.Definition, sp *scope.Scope, n *ast.TypeSpec) (j jsast.IStatement, err error) {
+	var ivars []interface{}
 
-// (tr *Translator) func importSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement, err error) {
-// 	var decls []jsast.VariableDeclarator
+	o := jsast.CreateIdentifier("o")
+	expr := jsast.CreateAssignmentExpression(o, jsast.AssignmentOperator("="), defaulted("o", jsast.CreateObjectExpression(nil)))
+	ivars = append(ivars, jsast.CreateExpressionStatement(expr))
 
-// 	for _, spec := range n.Specs {
-// 		switch t := spec.(type) {
-// 		case *ast.ImportSpec:
-// 			var lh jsast.Identifier
-// 			p := t.Path.Value
+	st, ok := n.Type.(*ast.StructType)
+	if !ok {
+		return nil, unhandled("structTypeSpec", n.Type)
+	}
 
-// 			// import dep "pkg/dep"
-// 			if t.Name != nil {
-// 				lh = jsast.CreateIdentifier(t.Name.Name)
-// 			} else if p != "" {
-// 				lh = jsast.CreateIdentifier(path.Base(strings.Trim(p, `"`)))
-// 			} else {
-// 				return nil, unhandled("importSpec<empty>", spec)
-// 			}
+	// get the fields
+	for _, field := range st.Fields.List {
+		names := field.Names
 
-// 			rh := jsast.CreateMemberExpression(
-// 				jsast.CreateIdentifier("pkg"),
-// 				jsast.CreateString(t.Path.Value),
-// 				true,
-// 			)
+		// just the type e.g struct { *dep.Settings }
+		if len(field.Names) == 0 {
+			id, e := getIdentifier(field.Type)
+			if e != nil {
+				return nil, e
+			}
+			names = append(names, id)
+		}
 
-// 			decl := jsast.CreateVariableDeclarator(lh, rh)
-// 			decls = append(decls, decl)
-// 		default:
-// 			return nil, unhandled("importSpec", spec)
-// 		}
-// 	}
+		// otherwise range over the names
+		for _, id := range names {
+			// get the name, using the alias if there is one
+			// name := maybeAlias(decl, id.Name)
+			name := id.Name
 
-// 	return jsast.CreateVariableDeclaration("var", decls...), nil
-// }
+			// get the default value
+			value, e := tr.zeroed(d, sp, field.Type, name)
+			if e != nil {
+				return nil, e
+			}
 
-// (tr *Translator) func varSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement, err error) {
-// 	var decls []jsast.VariableDeclarator
+			// this.$name = o.$name || <default>
+			ivars = append(ivars, jsast.CreateExpressionStatement(
+				jsast.CreateAssignmentExpression(
+					jsast.CreateMemberExpression(
+						jsast.CreateThisExpression(),
+						jsast.CreateIdentifier(name),
+						false,
+					),
+					jsast.AssignmentOperator("="),
+					jsast.CreateMemberExpression(
+						jsast.CreateIdentifier("o"),
+						value,
+						false,
+					),
+				),
+			))
+		}
+	}
 
-// 	for _, spec := range n.Specs {
-// 		switch t := spec.(type) {
-// 		case *ast.ValueSpec:
-// 			lval := len(t.Values)
+	ident := jsast.CreateIdentifier(n.Name.Name)
+	return jsast.CreateFunction(
+		&ident,
+		// TODO: make API for this
+		[]jsast.IPattern{jsast.CreateIdentifier("o")},
+		jsast.CreateFunctionBody(ivars...),
+	), nil
+}
 
-// 			// handle balanced destructuring
-// 			for i, ident := range t.Names {
-// 				lh := jsast.CreateIdentifier(ident.Name)
+func (tr *Translator) importSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement, err error) {
+	var decls []jsast.VariableDeclarator
 
-// 				var rh jsast.IExpression
-// 				if i < lval {
-// 					r, e := tr.expression(d, sp,t.Values[i])
-// 					if e != nil {
-// 						return j, e
-// 					}
-// 					rh = r
-// 				} else {
-// 					r, e := tr.defaultValue(d, sp,t.Type)
-// 					if e != nil {
-// 						return j, e
-// 					}
-// 					rh = r
-// 				}
+	for _, spec := range n.Specs {
+		switch t := spec.(type) {
+		case *ast.ImportSpec:
+			var lh jsast.Identifier
+			p := t.Path.Value
 
-// 				decl := jsast.CreateVariableDeclarator(lh, rh)
-// 				decls = append(decls, decl)
-// 			}
+			// import dep "pkg/dep"
+			if t.Name != nil {
+				lh = jsast.CreateIdentifier(t.Name.Name)
+			} else if p != "" {
+				lh = jsast.CreateIdentifier(path.Base(strings.Trim(p, `"`)))
+			} else {
+				return nil, unhandled("importSpec<empty>", spec)
+			}
 
-// 		default:
-// 			return nil, unhandled("varSpec", spec)
-// 		}
-// 	}
+			rh := jsast.CreateMemberExpression(
+				jsast.CreateIdentifier("pkg"),
+				jsast.CreateString(t.Path.Value),
+				true,
+			)
 
-// 	return jsast.CreateVariableDeclaration("var", decls...), nil
-// 	// return nil, nil
-// }
+			decl := jsast.CreateVariableDeclarator(lh, rh)
+			decls = append(decls, decl)
+		default:
+			return nil, unhandled("importSpec", spec)
+		}
+	}
+
+	return jsast.CreateVariableDeclaration("var", decls...), nil
+}
+
+func (tr *Translator) varSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement, err error) {
+	var decls []jsast.VariableDeclarator
+
+	for _, spec := range n.Specs {
+		switch t := spec.(type) {
+		case *ast.ValueSpec:
+			lval := len(t.Values)
+
+			// handle balanced destructuring
+			for i, ident := range t.Names {
+				lh := jsast.CreateIdentifier(ident.Name)
+
+				var rh jsast.IExpression
+				if i < lval {
+					r, e := tr.expression(d, sp, t.Values[i])
+					if e != nil {
+						return j, e
+					}
+					rh = r
+				} else {
+					r, e := tr.defaultValue(d, sp, t.Type)
+					if e != nil {
+						return j, e
+					}
+					rh = r
+				}
+
+				decl := jsast.CreateVariableDeclarator(lh, rh)
+				decls = append(decls, decl)
+			}
+
+		default:
+			return nil, unhandled("varSpec", spec)
+		}
+	}
+
+	return jsast.CreateVariableDeclaration("var", decls...), nil
+	// return nil, nil
+}
 
 // (tr *Translator) func funcStatement(d def.Definition, sp *scope.Scope, n ast.Stmt) (j jsast.IStatement, err error) {
 // 	switch t := n.(type) {
@@ -798,29 +876,31 @@ func (tr *Translator) rangeStmt(d def.Definition, sp *scope.Scope, n *ast.RangeS
 	// [ ] string          s  string type            index    i  int    see below  rune
 	// [ ] map             m  map[K]V                key      k  K      m[k]       V
 	// [ ] channel         c  chan E, <-chan E       element  e  E
-	// kind := tr.info.TypeOf(asn.Rhs[0])
-	// switch kind.(type) {
-	// case *types.Array, *types.Slice:
-	// 	return jsast.CreateForStatement(
-	// 		init,
-	// 		cond,
-	// 		postexpr,
-	// 		body,
-	// 	), nil
-	// default:
-	// }
-	_, _, _, _ = init, cond, postexpr, body
-	return nil, unhandled("rangeStmt<rhs.obj.type>", id.Obj)
+	kind, e := tr.db.TypeOf(tr.info, asn.Rhs[0])
+	if e != nil {
+		return nil, e
+	}
+	switch kind.(type) {
+	case *types.Array, *types.Slice:
+		return jsast.CreateForStatement(
+			init,
+			cond,
+			postexpr,
+			body,
+		), nil
+	default:
+		return nil, unhandled("rangeStmt<rhs.obj.type>", asn.Rhs[0])
+	}
 }
 
-// (tr *Translator) func declStmt(d def.Definition, sp *scope.Scope, n *ast.DeclStmt) (j jsast.IStatement, err error) {
-// 	switch t := n.Decl.(type) {
-// 	case *ast.GenDecl:
-// 		return tr.genDecl(d, sp,t)
-// 	default:
-// 		return nil, unhandled("declStmt", n)
-// 	}
-// }
+func (tr *Translator) declStmt(d def.Definition, sp *scope.Scope, n *ast.DeclStmt) (j jsast.IStatement, err error) {
+	switch t := n.Decl.(type) {
+	case *ast.GenDecl:
+		return tr.genDecl(d, sp, t)
+	default:
+		return nil, unhandled("declStmt", n)
+	}
+}
 
 func (tr *Translator) exprStatement(d def.Definition, sp *scope.Scope, expr *ast.ExprStmt) (j jsast.IStatement, err error) {
 	switch t := expr.X.(type) {
@@ -1671,10 +1751,10 @@ func (tr *Translator) keyValueExpr(d def.Definition, sp *scope.Scope, c *ast.Com
 
 	// turn into a property
 	switch t := n.Key.(type) {
-	// case *ast.Ident:
-	// 	name := maybeAlias(def, t.Name)
-	// 	key := jsast.CreateIdentifier(name)
-	// 	return jsast.CreateProperty(key, val, "init"), nil
+	case *ast.Ident:
+		// name := maybeAlias(def, t.Name)
+		key := jsast.CreateIdentifier(t.Name)
+		return jsast.CreateProperty(key, val, "init"), nil
 	case *ast.BasicLit:
 		key, e := tr.basiclit(d, sp, t)
 		if e != nil {

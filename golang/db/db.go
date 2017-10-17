@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"go/ast"
+	"go/types"
 	"path"
 	"strings"
 
@@ -153,6 +154,11 @@ func (db *DB) parseImport(info *loader.PackageInfo, n *ast.ImportSpec) {
 // DefinitionOf fn
 func (db *DB) DefinitionOf(info *loader.PackageInfo, n ast.Node) (d def.Definition, err error) {
 	return db.index.DefinitionOf(info, n)
+}
+
+// TypeOf fn
+func (db *DB) TypeOf(info *loader.PackageInfo, n ast.Node) (kind types.Type, err error) {
+	return db.index.TypeOf(info, n)
 }
 
 // Mains gets all the main functions

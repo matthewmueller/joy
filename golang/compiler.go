@@ -127,9 +127,11 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 
 			// create the definition body
 			for _, def := range module.defs {
-				ast, err := tr.Translate(def)
+				ast, err := tr.Translate(program.Package(def.Path()), def)
 				if err != nil {
 					return scripts, err
+				} else if ast == nil {
+					return scripts, errors.New("translate shouldn't return nil")
 				}
 				modbody = append(modbody, ast)
 			}

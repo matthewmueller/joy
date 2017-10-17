@@ -2,6 +2,17 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/07-struct-nested"] = (function() {
+function Phone (o) {
+o = o || {};
+this.Type = o.Type || "";
+this.Number = o.Number || "";
+this.Main = o.Main || false;
+};
+function User (o) {
+o = o || {};
+this.Name = o.Name || "";
+this.Phone = o.Phone || new Phone();
+};
 function main () {
 var user = new User({
   Name: "Matt",
@@ -13,21 +24,10 @@ var user = new User({
 console.log(user.Phone.Number);
 user.Phone.Type = "CELL";
 };
-function User (o) {
-o = o || {};
-this.Name = o.Name || "";
-this.Phone = o.Phone || new Phone();
-};
-function Phone (o) {
-o = o || {};
-this.Type = o.Type || "";
-this.Number = o.Number || "";
-this.Main = o.Main || false;
-};
 return {
-  main: main,
+  Phone: Phone,
   User: User,
-  Phone: Phone
+  main: main
 };
 })();
 return pkg["github.com/matthewmueller/golly/testdata/07-struct-nested"].main();

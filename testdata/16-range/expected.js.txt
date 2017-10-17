@@ -2,6 +2,10 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/16-range"] = (function() {
+function Node (o) {
+o = o || {};
+this.NodeName = o.NodeName || "";
+};
 function main () {
 var nodes = [];
 nodes = nodes.concat(new Node({
@@ -18,13 +22,9 @@ for (var i = 0; i < nodes.length; i++) {
 console.log(i)
 };
 };
-function Node (o) {
-o = o || {};
-this.NodeName = o.NodeName || "";
-};
 return {
-  main: main,
-  Node: Node
+  Node: Node,
+  main: main
 };
 })();
 return pkg["github.com/matthewmueller/golly/testdata/16-range"].main();

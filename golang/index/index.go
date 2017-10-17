@@ -6,7 +6,6 @@ import (
 	"go/types"
 	"strings"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/util"
 	"golang.org/x/tools/go/loader"
@@ -109,6 +108,16 @@ func (i *Index) DefinitionOf(info *loader.PackageInfo, n ast.Node) (def.Definiti
 	return i.Get(id), nil
 }
 
+// TypeOf fn
+func (i *Index) TypeOf(info *loader.PackageInfo, n ast.Node) (types.Type, error) {
+	id, e := util.GetIdentifier(n)
+	if e != nil {
+		return nil, e
+	}
+
+	return info.TypeOf(id), nil
+}
+
 func (i *Index) typeToDef(name string, kind types.Type) (arr []string, err error) {
 	switch t := kind.(type) {
 	case *types.Basic:
@@ -144,10 +153,15 @@ func (i *Index) typeToDef(name string, kind types.Type) (arr []string, err error
 		return append(arr, obj.Pkg().Path(), obj.Name()), nil
 	case *types.Pointer:
 		return i.typeToDef(name, t.Elem())
+	case *types.Map:
+		// TODO: is this always the case?
+		return arr, nil
 	default:
-		log.Infof("typeToDef: unhandled type %T", kind)
+		return arr, fmt.Errorf("typeToDef: unhandled type %T", kind)
 	}
 
 	// log.Infof("ident %+v", i/d)
 	return arr, nil
 }
+
+// func (db *DB) TypeOf(info *loader.PackageInfo, n ast.Node) ()
