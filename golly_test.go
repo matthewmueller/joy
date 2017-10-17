@@ -72,6 +72,7 @@ func Test(t *testing.T) {
 			if e != nil {
 				t.Fatal(e)
 			}
+
 			inputs = append(inputs, inps...)
 			inps, e = filepath.Glob(path.Join(testdir, "*", "input.go"))
 			if e != nil {
@@ -85,16 +86,19 @@ func Test(t *testing.T) {
 			}
 
 			// compile the file
-			files, e := api.Build(ctx, &api.BuildSettings{
+			scripts, e := api.Build(ctx, &api.BuildSettings{
 				Packages: pages,
 			})
 			if e != nil {
 				t.Fatal(errors.Wrap(e, "compile error"))
 			}
+			if len(scripts) == 0 {
+				t.Fatal("expected atleast 1 script to be built")
+			}
 
-			for _, file := range files {
-				jspath := path.Join(gosrc, file.Name, "expected.js.txt")
-				resultpath := path.Join(gosrc, file.Name, "expected.txt")
+			for _, script := range scripts {
+				jspath := path.Join(gosrc, script.Name(), "expected.js.txt")
+				resultpath := path.Join(gosrc, script.Name(), "expected.txt")
 
 				// read the expected js source
 				js, err := ioutil.ReadFile(jspath)
@@ -103,11 +107,11 @@ func Test(t *testing.T) {
 				}
 
 				// compile the code
-				if file.Source != string(js) {
+				if script.Source() != string(js) {
 					// if err := ioutil.WriteFile(jspath, []byte(file.Source), 0755); err != nil {
 					// 	t.Fatal(err)
 					// }
-					t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(js), file.Source))
+					t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(js), script.Source()))
 				}
 
 				// try reading the result path
@@ -123,7 +127,7 @@ func Test(t *testing.T) {
 				}
 
 				// run the code in a headless chrome target
-				actual, err := tar.Run(file.Source)
+				actual, err := tar.Run(script.Source())
 				if err != nil {
 					t.Fatal(err)
 				}

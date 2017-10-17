@@ -14,13 +14,8 @@ import (
 	"golang.org/x/tools/go/loader"
 )
 
-// Settings struct
-type Settings struct {
-	Packages []string
-}
-
 // Load the packages (Phase I)
-func Load(settings *Settings) (program *loader.Program, err error) {
+func Load(packages ...string) (program *loader.Program, err error) {
 	defer log.Trace("load").Stop(&err)
 	var conf loader.Config
 
@@ -28,7 +23,7 @@ func Load(settings *Settings) (program *loader.Program, err error) {
 	gosrc := path.Join(os.Getenv("GOPATH"), "src")
 
 	// add all the packages as imports
-	for _, pkgpath := range settings.Packages {
+	for _, pkgpath := range packages {
 		if filepath.HasPrefix(pkgpath, gosrc) {
 			rel, e := filepath.Rel(gosrc, pkgpath)
 			if e != nil {

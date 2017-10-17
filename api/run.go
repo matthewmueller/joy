@@ -43,5 +43,5 @@ func Run(ctx context.Context, settings *RunSettings) (result string, err error) 
 	}
 	defer tar.Close()
 
-	return tar.Run(files[0].Source)
+	return tar.Run(files[0].Source())
 }

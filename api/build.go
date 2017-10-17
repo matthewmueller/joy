@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/matthewmueller/golly/golang"
-	"github.com/matthewmueller/golly/types"
+	"github.com/matthewmueller/golly/golang/script"
 )
 
 // BuildSettings struct
@@ -13,12 +13,11 @@ type BuildSettings struct {
 }
 
 // Build fn
-func Build(ctx context.Context, settings *BuildSettings) (files []*types.File, err error) {
+func Build(ctx context.Context, settings *BuildSettings) (scripts []*script.Script, err error) {
 	compiler := golang.New()
-	files, _, err = compiler.Compile(settings.Packages...)
+	scripts, err = compiler.Compile(settings.Packages...)
 	if err != nil {
 		return nil, err
 	}
-
-	return files, nil
+	return scripts, nil
 }

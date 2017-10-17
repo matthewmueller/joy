@@ -12,7 +12,7 @@ import (
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
 	"github.com/matthewmueller/golly/golang/db"
-	"github.com/matthewmueller/golly/golang/def"
+	"github.com/matthewmueller/golly/golang/def/iface"
 	"github.com/matthewmueller/golly/golang/loader"
 )
 
@@ -65,9 +65,7 @@ func Test(t *testing.T) {
 			}
 			log.Infof("inputs %+v", inputs)
 
-			program, err := loader.Load(&loader.Settings{
-				Packages: pages,
-			})
+			program, err := loader.Load(pages...)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -102,7 +100,7 @@ func Test(t *testing.T) {
 							// 	}
 							// }
 
-							if i, ok := d.(def.Interface); ok {
+							if i, ok := d.(iface.Interface); ok {
 								imps := i.ImplementedBy("String")
 								for _, imp := range imps {
 									log.Infof("%s implemented by %s", i.ID(), imp.ID())
