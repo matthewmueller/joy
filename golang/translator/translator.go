@@ -14,10 +14,9 @@ import (
 	"github.com/matthewmueller/golly/golang/db"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/def/fn"
-	"github.com/matthewmueller/golly/golang/def/iface"
 	"github.com/matthewmueller/golly/golang/def/method"
 	"github.com/matthewmueller/golly/golang/def/struc"
-	"github.com/matthewmueller/golly/golang/def/value"
+	"github.com/matthewmueller/golly/golang/index"
 	"github.com/matthewmueller/golly/golang/scope"
 	"github.com/matthewmueller/golly/jsast"
 	"github.com/pkg/errors"
@@ -39,22 +38,18 @@ type Result struct {
 
 // Translator struct
 type Translator struct {
-	db   *db.DB
-	info *loader.PackageInfo
+	// program *loader.Program
+	index *index.Index
 }
 
 // New fn
-func New(db *db.DB) *Translator {
-	return &Translator{
-		db: db,
-	}
+func New(index *index.Index) *Translator {
+	return &Translator{index}
 }
 
 // Translate fn
-func (tr *Translator) Translate(info *loader.PackageInfo, d def.Definition) (jsast.INode, error) {
-	tr.info = info
-
-	sp := scope.New(d.Node())
+func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
+	// sp := scope.New(d.Node())
 
 	// if this declaration has the global option,
 	// don't include it in the build
@@ -62,28 +57,38 @@ func (tr *Translator) Translate(info *loader.PackageInfo, d def.Definition) (jsa
 		return jsast.CreateEmptyStatement(), nil
 	}
 
+	// NOTE: order matters here
+	// e.g. Method can also be a Function
 	switch t := d.(type) {
-	case fn.Function:
-		return tr.Function(t, sp)
 	case method.Method:
-		return tr.Method(t, sp)
-	case iface.Interface:
-		return tr.Interface(t, sp)
+		return tr.method(t)
+	case fn.Function:
+		return tr.function(t)
+	// case iface.Interface:
+	// 	return tr.Interface(t, sp)
 	case struc.Struct:
-		return tr.Struct(t, sp)
-	case value.Value:
-		return tr.Value(t, sp)
+		return tr.structure(t, t.Node())
+	// case value.Value:
+	// 	return tr.Value(t, sp)
 	default:
 		return nil, unhandled("Translate", d)
 	}
 }
 
+// // Function fn
+// func (tr *Translator) Function(d fn.Function, sp *scope.Scope) (jsast.INode, error) {
+// 	n, ok := d.Node().(*ast.FuncDecl)
+// 	if !ok {
+// 		return nil, errors.New("Function: expected def.Function's node to be an *ast.FuncDecl")
+// 	}
+
+// 	return tr.funcDecl(d, sp, n)
+// }
+
 // Function fn
-func (tr *Translator) Function(d fn.Function, sp *scope.Scope) (jsast.INode, error) {
-	n, ok := d.Node().(*ast.FuncDecl)
-	if !ok {
-		return nil, errors.New("Function: expected def.Function's node to be an *ast.FuncDecl")
-	}
+func (tr *Translator) function(d fn.Function) (jsast.INode, error) {
+	n := d.Node()
+	sp := scope.New(n)
 
 	// e.g. func hi()
 	if n.Body == nil {
@@ -133,47 +138,142 @@ func (tr *Translator) Function(d fn.Function, sp *scope.Scope) (jsast.INode, err
 }
 
 // Method fn
-func (tr *Translator) Method(d method.Method, sp *scope.Scope) (jsast.INode, error) {
-	n, ok := d.Node().(*ast.FuncDecl)
-	if !ok {
-		return nil, errors.New("Method: expected def.Method's node to be an *ast.FuncDecl")
-	}
-	_ = n
+func (tr *Translator) method(d method.Method) (jsast.INode, error) {
+	n := d.Node()
+	sp := scope.New(n)
 
-	return nil, nil
-}
-
-// Interface fn
-func (tr *Translator) Interface(d iface.Interface, sp *scope.Scope) (jsast.INode, error) {
-	n, ok := d.Node().(*ast.TypeSpec)
-	if !ok {
-		return nil, errors.New("Interface: expected def.Inferface's node to be an *ast.TypeSpec")
-	}
-	_ = n
-
-	return nil, nil
-}
-
-// Struct fn
-func (tr *Translator) Struct(d struc.Struct, sp *scope.Scope) (jsast.INode, error) {
-	n, ok := d.Node().(*ast.TypeSpec)
-	if !ok {
-		return nil, errors.New("Interface: expected def.Struct's node to be an *ast.TypeSpec")
+	// e.g. func hi()
+	if n.Body == nil {
+		return jsast.CreateEmptyStatement(), nil
 	}
 
-	return tr.structTypeSpec(d, sp, n)
-}
-
-// Value fn
-func (tr *Translator) Value(d value.Value, sp *scope.Scope) (jsast.INode, error) {
-	n, ok := d.Node().(*ast.ValueSpec)
-	if !ok {
-		return nil, errors.New("Value: expected def.Struct's node to be an *ast.ValueSpec")
+	// build argument list
+	// var args
+	var params []jsast.IPattern
+	if n.Type != nil && n.Type.Params != nil {
+		fields := n.Type.Params.List
+		for _, field := range fields {
+			// names because: (a, b string, c int) = [[a, b], c]
+			for _, name := range field.Names {
+				id := jsast.CreateIdentifier(name.Name)
+				params = append(params, id)
+			}
+		}
 	}
-	_ = n
 
-	return nil, nil
+	// create the body
+	var body []interface{}
+	for _, stmt := range n.Body.List {
+		jsStmt, e := tr.statement(d, sp, stmt)
+		if e != nil {
+			return nil, e
+		}
+		body = append(body, jsStmt)
+	}
+
+	fnname := jsast.CreateIdentifier(d.Name())
+
+	// if len(n.Recv.List) != 1 {
+	// 	return nil, fmt.Errorf("function<recv>: only expected 1 func receiver but got %d", len(n.Recv.List))
+	// }
+
+	// remove prototypes where the receiver is global
+	if d.Recv().Omitted() {
+		return jsast.CreateEmptyStatement(), nil
+	}
+
+	// x, e := tr.expression(d, sp, d.Recv())
+	// if e != nil {
+	// 	return nil, e
+	// }
+
+	// if len(recv.Names) > 1 {
+	// 	return nil, fmt.Errorf("function<recv>: only expected 1 func receiver name but got %d", len(recv.Names))
+	// }
+
+	// Links the function receiver to "this",
+	// Placing it on top of the function body
+	// e.g. var d = this
+	//
+	// TODO: be smarter here and rename the inner body variables to "this"
+
+	field := n.Recv.List[0]
+	if len(field.Names) == 1 {
+		body = append([]interface{}{jsast.CreateVariableDeclaration(
+			"var",
+			jsast.CreateVariableDeclarator(
+				jsast.CreateIdentifier(field.Names[0].Name),
+				jsast.CreateThisExpression(),
+			),
+		)}, body...)
+	}
+
+	var fn jsast.FunctionExpression
+	if d.IsAsync() {
+		fn = jsast.CreateAsyncFunctionExpression(
+			&fnname,
+			params,
+			jsast.CreateFunctionBody(body...),
+		)
+	} else {
+		fn = jsast.CreateFunctionExpression(
+			&fnname,
+			params,
+			jsast.CreateFunctionBody(body...),
+		)
+	}
+
+	// {recv}.prototype.{name} = function ({params}) {
+	//   {body}
+	// }
+	return jsast.CreateExpressionStatement(
+		jsast.CreateAssignmentExpression(
+			jsast.CreateMemberExpression(
+				jsast.CreateMemberExpression(
+					jsast.CreateIdentifier(d.Recv().Name()),
+					jsast.CreateIdentifier("prototype"),
+					false,
+				),
+				fnname,
+				false,
+			),
+			jsast.AssignmentOperator("="),
+			fn,
+		),
+	), nil
 }
+
+// // Interface fn
+// func (tr *Translator) Interface(d iface.Interface, sp *scope.Scope) (jsast.INode, error) {
+// 	n, ok := d.Node().(*ast.TypeSpec)
+// 	if !ok {
+// 		return nil, errors.New("Interface: expected def.Inferface's node to be an *ast.TypeSpec")
+// 	}
+// 	_ = n
+
+// 	return nil, nil
+// }
+
+// // Struct fn
+// func (tr *Translator) Struct(d struc.Struct, sp *scope.Scope) (jsast.INode, error) {
+// 	n, ok := d.Node().(*ast.TypeSpec)
+// 	if !ok {
+// 		return nil, errors.New("Interface: expected def.Struct's node to be an *ast.TypeSpec")
+// 	}
+
+// 	return tr.structTypeSpec(d, sp, n)
+// }
+
+// // Value fn
+// func (tr *Translator) Value(d value.Value, sp *scope.Scope) (jsast.INode, error) {
+// 	n, ok := d.Node().(*ast.ValueSpec)
+// 	if !ok {
+// 		return nil, errors.New("Value: expected def.Struct's node to be an *ast.ValueSpec")
+// 	}
+// 	_ = n
+
+// 	return nil, nil
+// }
 
 func (tr *Translator) statement(d def.Definition, sp *scope.Scope, n ast.Stmt) (j jsast.IStatement, err error) {
 	switch t := n.(type) {
@@ -205,46 +305,6 @@ func (tr *Translator) statement(d def.Definition, sp *scope.Scope, n ast.Stmt) (
 		return nil, unhandled("statement", n)
 	}
 }
-
-// Translate the definition
-// func Translate(index *db.DB, info *loader.PackageInfo, d def.Definition) (node jsast.INode, err error) {
-// 	sp := scope.New(d.Node())
-
-// 	ctx := &context{
-// 		index: index,
-// 		info:  info,
-// 		def:   d,
-// 	}
-
-// 	// if this declaration has the global option,
-// 	// don't include it in the build
-// 	if d.Omitted() {
-// 		return jsast.CreateEmptyStatement(), nil
-// 	}
-
-// 	switch d.(type) {
-// 	case def.Function:
-// 	case def.Method:
-// 	case def.Interface:
-// 	case def.Struct:
-// 	case def.Value:
-
-// 	}
-
-// 	switch t := d.Node().(type) {
-// 	case *ast.FuncDecl:
-// 		node, err = tr.funcDecl(d, sp,t)
-// 	case *ast.GenDecl:
-// 		node, err = tr.genDecl(d, sp,t)
-// 	default:
-// 		return nil, unhandled("Translate", d.Node())
-// 	}
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return node, nil
-// }
 
 // (tr *Translator) func funcDecl(d def.Definition, sp *scope.Scope, n *ast.FuncDecl) (jsast.IStatement, error) {
 // 	d, ok := ctx.def.(def.Function)
@@ -515,7 +575,8 @@ func (tr *Translator) typeSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl
 	), nil
 }
 
-func (tr *Translator) structTypeSpec(d def.Definition, sp *scope.Scope, n *ast.TypeSpec) (j jsast.IStatement, err error) {
+func (tr *Translator) structure(d def.Definition, n *ast.TypeSpec) (j jsast.IStatement, err error) {
+	sp := scope.New(n)
 	var ivars []interface{}
 
 	o := jsast.CreateIdentifier("o")
@@ -876,7 +937,8 @@ func (tr *Translator) rangeStmt(d def.Definition, sp *scope.Scope, n *ast.RangeS
 	// [ ] string          s  string type            index    i  int    see below  rune
 	// [ ] map             m  map[K]V                key      k  K      m[k]       V
 	// [ ] channel         c  chan E, <-chan E       element  e  E
-	kind, e := tr.db.TypeOf(tr.info, asn.Rhs[0])
+
+	kind, e := tr.index.TypeOf(d.Path(), asn.Rhs[0])
 	if e != nil {
 		return nil, e
 	}

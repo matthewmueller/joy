@@ -19,6 +19,7 @@ type Function interface {
 	def.Definition
 	IsAsync() bool
 	InRuntime() bool
+	Node() *ast.FuncDecl
 }
 
 type funcdef struct {
@@ -171,7 +172,7 @@ func (d *funcdef) Omitted() bool {
 	return false
 }
 
-func (d *funcdef) Node() ast.Node {
+func (d *funcdef) Node() *ast.FuncDecl {
 	return d.node
 }
 

@@ -1,7 +1,6 @@
 package def
 
 import (
-	"go/ast"
 	"go/types"
 )
 
@@ -10,9 +9,10 @@ type Definition interface {
 	ID() string
 	Path() string
 	Name() string
-	Dependencies() ([]Definition, error)
 	Exported() bool
 	Omitted() bool
-	Node() ast.Node
+	// Node() ast.Node
 	Type() types.Type
+	Dependencies() ([]Definition, error)
+	// Translate() (jsast.IStatement, error)
 }

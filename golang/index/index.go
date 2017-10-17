@@ -13,13 +13,15 @@ import (
 
 // Index type
 type Index struct {
+	program *loader.Program
 	defs    map[string]def.Definition
 	imports map[string]map[string]string
 }
 
 // New index
-func New() *Index {
+func New(program *loader.Program) *Index {
 	return &Index{
+		program: program,
 		defs:    map[string]def.Definition{},
 		imports: map[string]map[string]string{},
 	}
@@ -52,6 +54,19 @@ func (i *Index) Get(id string) def.Definition {
 // Link is like a symlink to a definition
 func (i *Index) Link(alias string, d def.Definition) {
 	i.defs[alias] = d
+}
+
+// Mains gets all the main functions
+func (i *Index) Mains() (defs []def.Definition) {
+	for _, info := range i.program.InitialPackages() {
+		p := info.Pkg.Path()
+		def := i.defs[p+" main"]
+		if def == nil {
+			continue
+		}
+		defs = append(defs, def)
+	}
+	return defs
 }
 
 // DefinitionOf fn
@@ -109,7 +124,9 @@ func (i *Index) DefinitionOf(info *loader.PackageInfo, n ast.Node) (def.Definiti
 }
 
 // TypeOf fn
-func (i *Index) TypeOf(info *loader.PackageInfo, n ast.Node) (types.Type, error) {
+func (i *Index) TypeOf(packagePath string, n ast.Node) (types.Type, error) {
+	info := i.program.Package(packagePath)
+
 	id, e := util.GetIdentifier(n)
 	if e != nil {
 		return nil, e

@@ -1,6 +1,8 @@
 package graph
 
 import (
+	"sort"
+
 	"github.com/matthewmueller/golly/golang/def"
 )
 
@@ -54,7 +56,13 @@ func (g *Graph) Sort(d def.Definition) (defs []def.Definition) {
 	order := []string{}
 
 	visitAll = func(ids map[string]bool) {
+		var sorted []string
 		for id := range ids {
+			sorted = append(sorted, id)
+		}
+		sort.Strings(sorted)
+
+		for _, id := range sorted {
 			if !seen[id] {
 				seen[id] = true
 				visitAll(g.edges[id])

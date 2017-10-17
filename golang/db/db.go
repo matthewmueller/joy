@@ -3,11 +3,10 @@ package db
 import (
 	"fmt"
 	"go/ast"
-	"go/types"
 	"path"
 	"strings"
 
-	"github.com/matthewmueller/golly/golang/def"
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def/fn"
 	"github.com/matthewmueller/golly/golang/def/iface"
 	"github.com/matthewmueller/golly/golang/def/method"
@@ -19,17 +18,15 @@ import (
 
 // DB struct
 type DB struct {
-	program *loader.Program
-	index   *index.Index
+	index *index.Index
 	// imports map[string]map[string]string
 	// index   map[string]def.Definition
 }
 
 // New fn
-func New(program *loader.Program) (*DB, error) {
+func New(program *loader.Program) (*index.Index, error) {
 	db := &DB{
-		program: program,
-		index:   index.New(),
+		index: index.New(program),
 		// imports: map[string]map[string]string{},
 		// index:   map[string]def.Definition{},
 	}
@@ -40,7 +37,11 @@ func New(program *loader.Program) (*DB, error) {
 		}
 	}
 
-	return db, nil
+	for id, def := range db.index.All() {
+		log.Debugf("index key: %s (%T)", id, def)
+	}
+
+	return db.index, nil
 }
 
 func (db *DB) pkg(info *loader.PackageInfo) (err error) {
@@ -65,6 +66,7 @@ func (db *DB) inspect(info *loader.PackageInfo, node ast.Node) (recurse bool, er
 			if e != nil {
 				return false, e
 			}
+
 			db.index.AddDefinition(m)
 			return false, nil
 		}
@@ -151,25 +153,26 @@ func (db *DB) parseImport(info *loader.PackageInfo, n *ast.ImportSpec) {
 	return
 }
 
-// DefinitionOf fn
-func (db *DB) DefinitionOf(info *loader.PackageInfo, n ast.Node) (d def.Definition, err error) {
-	return db.index.DefinitionOf(info, n)
-}
+// // DefinitionOf fn
+// func (db *DB) DefinitionOf(info *loader.PackageInfo, n ast.Node) (d def.Definition, err error) {
+// 	return db.index.DefinitionOf(info, n)
+// }
 
-// TypeOf fn
-func (db *DB) TypeOf(info *loader.PackageInfo, n ast.Node) (kind types.Type, err error) {
-	return db.index.TypeOf(info, n)
-}
+// // TypeOf fn
+// func (db *DB) TypeOf(info *loader.PackageInfo, n ast.Node) (kind types.Type, err error) {
+// 	return db.index.TypeOf(info, n)
+// }
 
-// Mains gets all the main functions
-func (db *DB) Mains() (defs []def.Definition) {
-	for _, info := range db.program.InitialPackages() {
-		p := info.Pkg.Path()
-		def := db.index.Get(p + " main")
-		if def == nil {
-			continue
-		}
-		defs = append(defs, def)
-	}
-	return defs
-}
+// // Mains gets all the main functions
+// func (db *DB) Mains() (defs []def.Definition) {
+// 	return db.index.Mains()
+// 	// for _, info := range db.program.InitialPackages() {
+// 	// 	p := info.Pkg.Path()
+// 	// 	def := db.index.Get(p + " main")
+// 	// 	if def == nil {
+// 	// 		continue
+// 	// 	}
+// 	// 	defs = append(defs, def)
+// 	// }
+// 	// return defs
+// }

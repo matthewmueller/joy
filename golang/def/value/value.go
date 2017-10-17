@@ -14,6 +14,7 @@ import (
 // Value interface
 type Value interface {
 	def.Definition
+	Node() *ast.ValueSpec
 }
 
 var _ Value = (*valuedef)(nil)
@@ -81,7 +82,7 @@ func (d *valuedef) Omitted() bool {
 	return false
 }
 
-func (d *valuedef) Node() ast.Node {
+func (d *valuedef) Node() *ast.ValueSpec {
 	return d.node
 }
 

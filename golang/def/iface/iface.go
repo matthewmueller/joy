@@ -17,6 +17,7 @@ import (
 type Interface interface {
 	def.Definition
 	ImplementedBy(method string) []method.Method
+	Node() *ast.TypeSpec
 }
 
 var _ Interface = (*ifacedef)(nil)
@@ -87,7 +88,7 @@ func (d *ifacedef) Omitted() bool {
 	return false
 }
 
-func (d *ifacedef) Node() ast.Node {
+func (d *ifacedef) Node() *ast.TypeSpec {
 	return d.node
 }
 

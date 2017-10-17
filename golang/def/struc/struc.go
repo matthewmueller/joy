@@ -14,6 +14,7 @@ import (
 // Struct interface
 type Struct interface {
 	def.Definition
+	Node() *ast.TypeSpec
 	Fields() []string
 }
 
@@ -72,7 +73,7 @@ func (d *structdef) Omitted() bool {
 	return false
 }
 
-func (d *structdef) Node() ast.Node {
+func (d *structdef) Node() *ast.TypeSpec {
 	return d.node
 }
 

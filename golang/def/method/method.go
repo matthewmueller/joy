@@ -133,7 +133,7 @@ func (d *methoddef) Exported() bool {
 func (d *methoddef) Omitted() bool {
 	return false
 }
-func (d *methoddef) Node() ast.Node {
+func (d *methoddef) Node() *ast.FuncDecl {
 	return d.node
 }
 
