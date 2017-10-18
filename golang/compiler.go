@@ -1,6 +1,7 @@
 package golang
 
 import (
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/script"
 	"github.com/matthewmueller/golly/golang/translator"
@@ -66,6 +67,10 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 
 	// queue the initial packages
 	queue = append(queue, mains...)
+	// mark mains as visited immediately
+	for _, main := range mains {
+		visited[main.ID()] = true
+	}
 
 	// build our dependencies graph
 	for len(queue) > 0 {
@@ -87,7 +92,7 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 		for _, dep := range deps {
 			if !visited[dep.ID()] {
 				queue = append(queue, dep)
-				visited[dep.ID()] = true
+				visited[def.ID()] = true
 			}
 		}
 	}
@@ -97,7 +102,18 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 	// assemble into scripts
 	var files []*file
 	for _, main := range mains {
-		modules := group(g.Sort(main))
+		log.Debugf("main: %s", main.Path())
+
+		sorted, e := g.Sort(main)
+		if e != nil {
+			return scripts, e
+		}
+
+		for _, d := range sorted {
+			log.Debugf("id=%s", d.ID())
+		}
+
+		modules := group(sorted)
 		files = append(files, &file{
 			path:    main.Path(),
 			modules: modules,
@@ -116,6 +132,13 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 			),
 		))
 
+		// build a module map to lookup
+		// imported modules quickly
+		moduleMap := map[string]*module{}
+		for _, module := range file.modules {
+			moduleMap[module.path] = module
+		}
+
 		for _, module := range file.modules {
 			var modbody []interface{}
 
@@ -123,7 +146,32 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 				continue
 			}
 
-			// TODO: imports
+			// create imports linking of the pkgs between packages
+			// e.g. var runner = pkg["github.com/gorunner/runner"]
+			var imports []jsast.VariableDeclarator
+			for alias, path := range module.imports {
+				// don't include a dependencies that doesn't have
+				// any exports as that package will be eliminated
+				// from the build
+				if len(moduleMap[path].exports) == 0 {
+					continue
+				}
+
+				imports = append(imports, jsast.CreateVariableDeclarator(
+					jsast.CreateIdentifier(alias),
+					jsast.CreateMemberExpression(
+						jsast.CreateIdentifier("pkg"),
+						jsast.CreateString(path),
+						true,
+					),
+				))
+			}
+			if len(imports) > 0 {
+				modbody = append(modbody, jsast.CreateVariableDeclaration(
+					"var",
+					imports...,
+				))
+			}
 
 			// create the definition body
 			for _, def := range module.defs {
@@ -230,6 +278,15 @@ func group(defs []def.Definition) []*module {
 				moduleMap[from].exports,
 				def.Name(),
 			)
+		}
+
+		moduleMap[from].imports = map[string]string{}
+		for alias, path := range def.Imports() {
+			// only include modules whos path is in our
+			// topologically sorted map
+			if moduleMap[path] != nil {
+				moduleMap[from].imports[alias] = path
+			}
 		}
 	}
 

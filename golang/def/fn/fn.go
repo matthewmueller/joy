@@ -5,6 +5,7 @@ import (
 	"go/types"
 	"strings"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/index"
 
@@ -18,21 +19,23 @@ import (
 type Function interface {
 	def.Definition
 	IsAsync() bool
-	InRuntime() bool
 	Node() *ast.FuncDecl
 }
 
 type funcdef struct {
-	info     *loader.PackageInfo
-	index    *index.Index
-	id       string
-	path     string
-	name     string
-	kind     types.Type
-	node     *ast.FuncDecl
-	exported bool
-	params   []string
-	tag      *structtag.Tag
+	info      *loader.PackageInfo
+	index     *index.Index
+	id        string
+	path      string
+	name      string
+	kind      types.Type
+	node      *ast.FuncDecl
+	exported  bool
+	params    []string
+	tag       *structtag.Tag
+	runtime   bool
+	processed bool
+	deps      []def.Definition
 }
 
 var _ Function = (*funcdef)(nil)
@@ -70,6 +73,15 @@ func NewFunction(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) 
 		exported = false
 	} else if name == "main" {
 		exported = true
+	}
+
+	fromRuntime := false
+	runtimePath, e := util.RuntimePath()
+	if e != nil {
+		return nil, e
+	}
+	if packagePath == runtimePath {
+		fromRuntime = true
 	}
 
 	// declarations[id] = &fndef{
@@ -110,6 +122,7 @@ func NewFunction(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) 
 		node:     n,
 		params:   params,
 		kind:     info.TypeOf(n.Name),
+		runtime:  fromRuntime,
 	}, nil
 }
 
@@ -125,7 +138,7 @@ func (d *funcdef) Path() string {
 	return d.path
 }
 
-func (d *funcdef) Dependencies() (defs []def.Definition, err error) {
+func (d *funcdef) process() (err error) {
 	seen := map[string]bool{}
 
 	ast.Inspect(d.node, func(n ast.Node) bool {
@@ -139,29 +152,51 @@ func (d *funcdef) Dependencies() (defs []def.Definition, err error) {
 			d.tag = tag
 
 		case *ast.SelectorExpr:
-			def, e := d.index.DefinitionOf(d.info, t)
+			def, e := d.index.DefinitionOf(d.Path(), t)
 			if e != nil {
 				err = e
 				return false
 			} else if def != nil && !seen[def.ID()] {
-				defs = append(defs, def)
+				d.deps = append(d.deps, def)
 				seen[def.ID()] = true
 			}
 
 		case *ast.Ident:
-			def, e := d.index.DefinitionOf(d.info, t)
+			def, e := d.index.DefinitionOf(d.Path(), t)
 			if e != nil {
 				err = e
 				return false
 			} else if def != nil && !seen[def.ID()] {
-				defs = append(defs, def)
+				d.deps = append(d.deps, def)
 				seen[def.ID()] = true
 			}
+
+		case *ast.ChanType:
+			log.Infof("chan type %+v", t)
+			ch, e := d.index.Runtime("Channel")
+			if e != nil {
+				err = e
+				return false
+			}
+			log.Infof("channel %+v", ch)
 		}
+
 		return true
 	})
 
-	return defs, nil
+	d.processed = true
+	return err
+}
+
+func (d *funcdef) Dependencies() (defs []def.Definition, err error) {
+	if d.processed {
+		return d.deps, nil
+	}
+	e := d.process()
+	if e != nil {
+		return defs, e
+	}
+	return d.deps, nil
 }
 
 func (d *funcdef) Exported() bool {
@@ -186,4 +221,12 @@ func (d *funcdef) IsAsync() bool {
 
 func (d *funcdef) InRuntime() bool {
 	return false
+}
+
+func (d *funcdef) Imports() map[string]string {
+	return d.index.GetImports(d.path)
+}
+
+func (d *funcdef) FromRuntime() bool {
+	return d.runtime
 }

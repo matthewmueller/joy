@@ -11,11 +11,13 @@ import (
 
 	"golang.org/x/tools/go/loader"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/db"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/def/fn"
 	"github.com/matthewmueller/golly/golang/def/method"
 	"github.com/matthewmueller/golly/golang/def/struc"
+	"github.com/matthewmueller/golly/golang/def/value"
 	"github.com/matthewmueller/golly/golang/index"
 	"github.com/matthewmueller/golly/golang/scope"
 	"github.com/matthewmueller/golly/jsast"
@@ -61,15 +63,15 @@ func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
 	// e.g. Method can also be a Function
 	switch t := d.(type) {
 	case method.Method:
-		return tr.method(t)
+		return tr.methods(t)
 	case fn.Function:
-		return tr.function(t)
+		return tr.functions(t)
 	// case iface.Interface:
 	// 	return tr.Interface(t, sp)
 	case struc.Struct:
-		return tr.structure(t, t.Node())
-	// case value.Value:
-	// 	return tr.Value(t, sp)
+		return tr.structs(t)
+	case value.Value:
+		return tr.values(t)
 	default:
 		return nil, unhandled("Translate", d)
 	}
@@ -86,7 +88,7 @@ func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
 // }
 
 // Function fn
-func (tr *Translator) function(d fn.Function) (jsast.INode, error) {
+func (tr *Translator) functions(d fn.Function) (jsast.INode, error) {
 	n := d.Node()
 	sp := scope.New(n)
 
@@ -138,7 +140,7 @@ func (tr *Translator) function(d fn.Function) (jsast.INode, error) {
 }
 
 // Method fn
-func (tr *Translator) method(d method.Method) (jsast.INode, error) {
+func (tr *Translator) methods(d method.Method) (jsast.INode, error) {
 	n := d.Node()
 	sp := scope.New(n)
 
@@ -264,16 +266,37 @@ func (tr *Translator) method(d method.Method) (jsast.INode, error) {
 // 	return tr.structTypeSpec(d, sp, n)
 // }
 
-// // Value fn
-// func (tr *Translator) Value(d value.Value, sp *scope.Scope) (jsast.INode, error) {
-// 	n, ok := d.Node().(*ast.ValueSpec)
-// 	if !ok {
-// 		return nil, errors.New("Value: expected def.Struct's node to be an *ast.ValueSpec")
-// 	}
-// 	_ = n
+// Value fn
+func (tr *Translator) values(d value.Value) (jsast.INode, error) {
+	n := d.Node()
+	sp := scope.New(n)
 
-// 	return nil, nil
-// }
+	// handle balanced destructuring
+	var vars []jsast.VariableDeclarator
+	for i, ident := range n.Names {
+		lh := jsast.CreateIdentifier(ident.Name)
+
+		var rh jsast.IExpression
+		if i < len(n.Values) {
+			r, e := tr.expression(d, sp, n.Values[i])
+			if e != nil {
+				return nil, e
+			}
+			rh = r
+		} else {
+			r, e := tr.defaultValue(d, sp, n.Type)
+			if e != nil {
+				return nil, e
+			}
+			rh = r
+		}
+
+		v := jsast.CreateVariableDeclarator(lh, rh)
+		vars = append(vars, v)
+	}
+
+	return jsast.CreateVariableDeclaration("var", vars...), nil
+}
 
 func (tr *Translator) statement(d def.Definition, sp *scope.Scope, n ast.Stmt) (j jsast.IStatement, err error) {
 	switch t := n.(type) {
@@ -301,6 +324,8 @@ func (tr *Translator) statement(d def.Definition, sp *scope.Scope, n ast.Stmt) (
 		return tr.forStmt(d, sp, t)
 	case *ast.RangeStmt:
 		return tr.rangeStmt(d, sp, t)
+	case *ast.GoStmt:
+		return tr.goStmt(d, sp, t)
 	default:
 		return nil, unhandled("statement", n)
 	}
@@ -575,7 +600,8 @@ func (tr *Translator) typeSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl
 	), nil
 }
 
-func (tr *Translator) structure(d def.Definition, n *ast.TypeSpec) (j jsast.IStatement, err error) {
+func (tr *Translator) structs(d struc.Struct) (j jsast.IStatement, err error) {
+	n := d.Node()
 	sp := scope.New(n)
 	var ivars []interface{}
 
@@ -583,56 +609,35 @@ func (tr *Translator) structure(d def.Definition, n *ast.TypeSpec) (j jsast.ISta
 	expr := jsast.CreateAssignmentExpression(o, jsast.AssignmentOperator("="), defaulted("o", jsast.CreateObjectExpression(nil)))
 	ivars = append(ivars, jsast.CreateExpressionStatement(expr))
 
-	st, ok := n.Type.(*ast.StructType)
-	if !ok {
-		return nil, unhandled("structTypeSpec", n.Type)
-	}
-
 	// get the fields
-	for _, field := range st.Fields.List {
-		names := field.Names
+	for _, field := range d.Fields() {
+		name := field.Name()
 
-		// just the type e.g struct { *dep.Settings }
-		if len(field.Names) == 0 {
-			id, e := getIdentifier(field.Type)
-			if e != nil {
-				return nil, e
-			}
-			names = append(names, id)
+		// get the default value
+		value, e := tr.zeroed(d, sp, field.Type(), name)
+		if e != nil {
+			return nil, e
 		}
 
-		// otherwise range over the names
-		for _, id := range names {
-			// get the name, using the alias if there is one
-			// name := maybeAlias(decl, id.Name)
-			name := id.Name
-
-			// get the default value
-			value, e := tr.zeroed(d, sp, field.Type, name)
-			if e != nil {
-				return nil, e
-			}
-
-			// this.$name = o.$name || <default>
-			ivars = append(ivars, jsast.CreateExpressionStatement(
-				jsast.CreateAssignmentExpression(
-					jsast.CreateMemberExpression(
-						jsast.CreateThisExpression(),
-						jsast.CreateIdentifier(name),
-						false,
-					),
-					jsast.AssignmentOperator("="),
-					jsast.CreateMemberExpression(
-						jsast.CreateIdentifier("o"),
-						value,
-						false,
-					),
+		// this.$name = o.$name || <default>
+		ivars = append(ivars, jsast.CreateExpressionStatement(
+			jsast.CreateAssignmentExpression(
+				jsast.CreateMemberExpression(
+					jsast.CreateThisExpression(),
+					jsast.CreateIdentifier(name),
+					false,
 				),
-			))
-		}
+				jsast.AssignmentOperator("="),
+				jsast.CreateMemberExpression(
+					jsast.CreateIdentifier("o"),
+					value,
+					false,
+				),
+			),
+		))
 	}
 
-	ident := jsast.CreateIdentifier(n.Name.Name)
+	ident := jsast.CreateIdentifier(d.Name())
 	return jsast.CreateFunction(
 		&ident,
 		// TODO: make API for this
@@ -740,78 +745,96 @@ func (tr *Translator) varSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl)
 // 	}
 // }
 
-// (tr *Translator) func goStmt(d def.Definition, sp *scope.Scope, n *ast.GoStmt) (j jsast.IStatement, err error) {
-// 	// isAsync := ctx.declaration.Async
+func (tr *Translator) goStmt(d def.Definition, sp *scope.Scope, n *ast.GoStmt) (j jsast.IStatement, err error) {
+	x, e := tr.callExpr(d, sp, n.Call)
+	if e != nil {
+		return nil, e
+	}
 
-// 	var args []jsast.IExpression
-// 	for _, arg := range n.Call.Args {
-// 		x, e := tr.expression(d, sp,arg)
-// 		if e != nil {
-// 			return nil, e
-// 		}
-// 		args = append(args, x)
-// 	}
+	return jsast.CreateExpressionStatement(
+		jsast.CreateAwaitExpression(x),
+	), nil
 
-// 	switch t := n.Call.Fun.(type) {
-// 	case *ast.FuncLit:
-// 		// build argument list
-// 		// var args
-// 		var params []jsast.IPattern
-// 		if t.Type != nil && t.Type.Params != nil {
-// 			fields := t.Type.Params.List
-// 			for _, field := range fields {
-// 				// names because: (a, b string, c int) = [[a, b], c]
-// 				for _, name := range field.Names {
-// 					id := jsast.CreateIdentifier(name.Name)
-// 					params = append(params, id)
-// 				}
-// 			}
-// 		}
+	// isAsync := ctx.declaration.Async
 
-// 		var body []interface{}
-// 		for _, stmt := range t.Body.List {
-// 			s, e := tr.statement(d, sp,stmt)
-// 			if e != nil {
-// 				return nil, e
-// 			}
-// 			body = append(body, s)
-// 		}
+	// return tr.callExpression()
 
-// 		return jsast.CreateExpressionStatement(
-// 			jsast.CreateCallExpression(
-// 				jsast.CreateAsyncFunctionExpression(
-// 					nil,
-// 					params,
-// 					jsast.CreateFunctionBody(body...),
-// 				),
-// 				args,
-// 			),
-// 		), nil
+	// var args []jsast.IExpression
+	// for _, arg := range n.Call.Args {
+	// 	x, e := tr.expression(d, sp, arg)
+	// 	if e != nil {
+	// 		return nil, e
+	// 	}
+	// 	args = append(args, x)
+	// }
 
-// 	case *ast.Ident:
-// 		id, e := tr.identifier(d, sp,t)
-// 		if e != nil {
-// 			return nil, e
-// 		}
+	// n.
 
-// 		decl, err := tr.db.DefinitionOf(ctx.info, t)
-// 		if err != nil {
-// 			return nil, err
-// 		} else if decl == nil {
-// 			return nil, fmt.Errorf("goStmt(): nil declaration")
-// 		}
+	// switch t := n.Call.Fun.(type) {
+	// case *ast.FuncLit:
+	// 	x, e := tr.funcLit(d, sp, t)
+	// 	if e != nil {
+	// 		return nil, e
+	// 	}
+	// 	return jsast.CreateExpressionStatement(x), nil
+	// 	// build argument list
+	// 	// var args
+	// 	// var params []jsast.IPattern
+	// 	// if t.Type != nil && t.Type.Params != nil {
+	// 	// 	fields := t.Type.Params.List
+	// 	// 	for _, field := range fields {
+	// 	// 		// names because: (a, b string, c int) = [[a, b], c]
+	// 	// 		for _, name := range field.Names {
+	// 	// 			id := jsast.CreateIdentifier(name.Name)
+	// 	// 			params = append(params, id)
+	// 	// 		}
+	// 	// 	}
+	// 	// }
 
-// 		var x jsast.IExpression = jsast.CreateCallExpression(id, args)
+	// 	// var body []interface{}
+	// 	// for _, stmt := range t.Body.List {
+	// 	// 	s, e := tr.statement(d, sp, stmt)
+	// 	// 	if e != nil {
+	// 	// 		return nil, e
+	// 	// 	}
+	// 	// 	body = append(body, s)
+	// 	// }
 
-// 		if decl.Async {
-// 			x = jsast.CreateAwaitExpression(x)
-// 		}
+	// 	// return jsast.CreateExpressionStatement(
+	// 	// 	jsast.CreateCallExpression(
+	// 	// 		jsast.CreateAsyncFunctionExpression(
+	// 	// 			nil,
+	// 	// 			params,
+	// 	// 			jsast.CreateFunctionBody(body...),
+	// 	// 		),
+	// 	// 		args,
+	// 	// 	),
+	// 	// ), nil
 
-// 		return jsast.CreateExpressionStatement(x), nil
-// 	default:
-// 		return nil, unhandled("goStmt", n.Call.Fun)
-// 	}
-// }
+	// case *ast.Ident:
+	// 	id, e := tr.identifier(d, sp, t)
+	// 	if e != nil {
+	// 		return nil, e
+	// 	}
+
+	// 	def, err := tr.index.DefinitionOf(d.Path(), t)
+	// 	if err != nil {
+	// 		return nil, err
+	// 	} else if decl == nil {
+	// 		return nil, fmt.Errorf("goStmt(): nil declaration")
+	// 	}
+
+	// 	var x jsast.IExpression = jsast.CreateCallExpression(id, args)
+
+	// 	if decl.Async {
+	// 		x = jsast.CreateAwaitExpression(x)
+	// 	}
+
+	// 	return jsast.CreateExpressionStatement(x), nil
+	// default:
+	// 	return nil, unhandled("goStmt", n.Call.Fun)
+	// }
+}
 
 func (tr *Translator) sendStmt(d def.Definition, sp *scope.Scope, n *ast.SendStmt) (j jsast.IStatement, err error) {
 	ch, e := tr.expression(d, sp, n.Chan)
@@ -971,7 +994,7 @@ func (tr *Translator) exprStatement(d def.Definition, sp *scope.Scope, expr *ast
 			return expr, e
 		}
 
-		x, e := tr.callExpression(d, sp, t)
+		x, e := tr.callExpr(d, sp, t)
 		if e != nil {
 			return nil, e
 		}
@@ -1366,7 +1389,7 @@ func (tr *Translator) returnStmt(d def.Definition, sp *scope.Scope, n *ast.Retur
 	return jsast.CreateReturnStatement(args[0]), nil
 }
 
-func (tr *Translator) callExpression(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (j jsast.IExpression, err error) {
+func (tr *Translator) callExpr(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (j jsast.IExpression, err error) {
 	// create an expression for built-in golang functions like append
 	// TODO: turn this into an ast.Walk()-like thing
 	if expr, e := tr.maybeBuiltinExpr(d, sp, n); expr != nil || e != nil {
@@ -1424,7 +1447,7 @@ func (tr *Translator) expression(d def.Definition, sp *scope.Scope, expr ast.Exp
 	case *ast.BasicLit:
 		return tr.basiclit(d, sp, t)
 	case *ast.CallExpr:
-		return tr.callExpression(d, sp, t)
+		return tr.callExpr(d, sp, t)
 	case *ast.BinaryExpr:
 		return tr.binaryExpression(d, sp, t)
 	case *ast.CompositeLit:
@@ -1743,79 +1766,83 @@ func (tr *Translator) jsArrayExpression(d def.Definition, sp *scope.Scope, n *as
 // property formats initializing structs in all the various ways
 // e.g. User{"matt"},User{*name},User{name},User{Name:name}, etc.
 func (tr *Translator) property(d def.Definition, sp *scope.Scope, c *ast.CompositeLit, idx int, n ast.Expr) (j jsast.Property, err error) {
-	// TODO: update index's FindByNode to both
-	// look for TypeOf and pursue the rightmost
-	// object's declaration
-	// var decl *types.Declaration
-	// def, err := tr.db.DefinitionOf(tr.info, c.Type)
-	// if err != nil {
-	// 	return j, err
-	// }
-	// switch t := c.Type.(type) {
-	// case *ast.Ident:
-	// 	// typeof := ctx.info.TypeOf(t)
-	// 	def = tr.db.DefinitionOf(ctx.info, t)
-	// case *ast.SelectorExpr:
-	// 	def = tr.db.DefinitionOf(ctx.info, t.Sel)
-	// }
-	// if def == nil {
-	// 	return j, fmt.Errorf("property: def should exist")
-	// } else if idx >= len(def.Fields) {
-	// 	return j, fmt.Errorf("property: idx should be less than def.fields")
-	// }
-	// name := tr.maybeAlias(def, def.Fields[idx].Name)
-
+	// fast-track: User{Name:name}, User{&name}
 	switch t := n.(type) {
-	// case *ast.Ident:
-	// 	key := jsast.CreateIdentifier(name)
-	// 	val, e := tr.identifier(d, sp, t)
-	// 	if e != nil {
-	// 		return j, e
-	// 	}
-	// 	return jsast.CreateProperty(key, val, "init"), nil
-
-	// case *ast.BasicLit:
-	// 	key := jsast.CreateIdentifier(name)
-	// 	val, e := tr.basiclit(d, sp, t)
-	// 	if e != nil {
-	// 		return j, e
-	// 	}
-	// 	return jsast.CreateProperty(key, val, "init"), nil
-	// // recurse
-	// case *ast.UnaryExpr:
-	// 	return tr.property(d, sp, c, idx, t.X)
-	// case *ast.CompositeLit:
-	// 	key := jsast.CreateIdentifier(name)
-	// 	val, e := tr.compositeLiteral(d, sp, t)
-	// 	if e != nil {
-	// 		return j, e
-	// 	}
-	// 	return jsast.CreateProperty(key, val, "init"), nil
+	case *ast.UnaryExpr:
+		return tr.property(d, sp, c, idx, t.X)
 	case *ast.KeyValueExpr:
 		return tr.keyValueExpr(d, sp, c, t)
+	}
+
+	def, e := tr.index.DefinitionOf(d.Path(), c.Type)
+	if e != nil {
+		return j, e
+	}
+	st, ok := def.(struc.Struct)
+	if !ok {
+		return j, fmt.Errorf("property: expected a struct, but got a %T", def)
+	}
+
+	var fields []string
+	for _, field := range st.Fields() {
+		fields = append(fields, field.Name())
+	}
+	if idx >= len(fields) {
+		return j, fmt.Errorf("property: expected idx=%d to be less than len(fields)=%d", idx, len(fields))
+	}
+
+	// User{"matt"},User{name},User{Settings{...}}
+	key := jsast.CreateIdentifier(fields[idx])
+	switch t := n.(type) {
+	case *ast.Ident:
+		val, e := tr.identifier(d, sp, t)
+		if e != nil {
+			return j, e
+		}
+		return jsast.CreateProperty(key, val, "init"), nil
+	case *ast.BasicLit:
+		val, e := tr.basiclit(d, sp, t)
+		if e != nil {
+			return j, e
+		}
+		return jsast.CreateProperty(key, val, "init"), nil
+	// recurse
+	case *ast.CompositeLit:
+		val, e := tr.compositeLiteral(d, sp, t)
+		if e != nil {
+			return j, e
+		}
+		return jsast.CreateProperty(key, val, "init"), nil
 	default:
 		return j, unhandled("property", n)
 	}
 }
 
 func (tr *Translator) keyValueExpr(d def.Definition, sp *scope.Scope, c *ast.CompositeLit, n *ast.KeyValueExpr) (j jsast.Property, err error) {
-	// optional decl if the key is an identifier
-	// def, err := tr.db.DefinitionOf(tr.info, c.Type)
-	// if err != nil {
-	// 	return j, err
-	// }
-
 	// get the value
 	val, e := tr.expression(d, sp, n.Value)
 	if e != nil {
 		return j, e
 	}
 
+	// get the definition of the composite type
+	def, err := tr.index.DefinitionOf(d.Path(), c.Type)
+	if err != nil {
+		return j, err
+	}
+	st, ok := def.(struc.Struct)
+	if !ok {
+		return j, fmt.Errorf("keyValueExpr: expected struct, but got %T", def)
+	}
+
 	// turn into a property
 	switch t := n.Key.(type) {
 	case *ast.Ident:
-		// name := maybeAlias(def, t.Name)
-		key := jsast.CreateIdentifier(t.Name)
+		field := st.Field(t.Name)
+		if field == nil {
+			return j, fmt.Errorf("keyValueExpr: didn't expect field to be nil")
+		}
+		key := jsast.CreateIdentifier(field.Name())
 		return jsast.CreateProperty(key, val, "init"), nil
 	case *ast.BasicLit:
 		key, e := tr.basiclit(d, sp, t)
@@ -1829,50 +1856,43 @@ func (tr *Translator) keyValueExpr(d def.Definition, sp *scope.Scope, c *ast.Com
 }
 
 func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.SelectorExpr) (j jsast.MemberExpression, err error) {
-	// var s jsast.IExpression
-
-	// first check if we have an alias already
-	// TODO: update index's FindByNode to both
-	// look for TypeOf and pursue the rightmost
-	// object's defaration
-	// def, err := tr.db.DefinitionOf(tr.info, n.X)
-	// if err != nil {
-	// 	return j, err
-	// }
-	// log.Infof("decl %+v", def)
-	// switch t := n.X.(type) {
-	// case *ast.Ident:
-	// 	typeof := ctx.info.TypeOf(t)
-	// 	decl = tr.db.DefinitionOf(typeof.String())
-	// case *ast.SelectorExpr:
-	// 	typeof := ctx.info.TypeOf(t.Sel)
-	// 	decl = tr.db.DefinitionOf(typeof.String())
-	// }
-
 	// (user.phone).number
 	x, e := tr.expression(d, sp, n.X)
 	if e != nil {
 		return j, e
 	}
 
-	// user.phone.(number)
-	// alias := maybeAlias(def, n.Sel.Name)
-	// if n.Sel.Name != alias {
-	// 	s = jsast.CreateIdentifier(alias)
-	// } else {
-	// 	i, e := tr.identifier(d, sp, n.Sel)
-	// 	if e != nil {
-	// 		return j, e
-	// 	}
-	// 	s = i
-	// }
-	s, e := tr.identifier(d, sp, n.Sel)
+	// get the definition of the selector
+	def, e := tr.index.DefinitionOf(d.Path(), n)
 	if e != nil {
 		return j, e
 	}
 
-	member := jsast.CreateMemberExpression(x, s, false)
-	return member, nil
+	log.Debugf("%s.%s -> %s", x, n.Sel.Name, def.Name())
+
+	// alias based on the selector's definition
+	name := n.Sel.Name
+	switch t := def.(type) {
+	case struc.Struct:
+		// TODO: maybe change this later, struct fields
+		// point directly to a field interface, rather
+		// than original struct
+		// log.Infof("%s.%s, original=%s", x, name, t.OriginalName())
+		if name == t.OriginalName() {
+			name = t.Name()
+		} else {
+			f := t.Field(name)
+			if f != nil {
+				name = f.Name()
+			}
+		}
+	}
+
+	return jsast.CreateMemberExpression(
+		x,
+		jsast.CreateIdentifier(name),
+		false,
+	), nil
 }
 
 func (tr *Translator) indexExpr(d def.Definition, sp *scope.Scope, n *ast.IndexExpr) (j jsast.MemberExpression, err error) {
@@ -2288,6 +2308,7 @@ func (tr *Translator) maybeAwait(d def.Definition, sp *scope.Scope, n *ast.CallE
 		return nil, unhandled("maybeAwait", n.Fun)
 	}
 
+	log.Infof("await deps on def=%s", d.ID())
 	deps, e := d.Dependencies()
 	if e != nil {
 		return nil, e

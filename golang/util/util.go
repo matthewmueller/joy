@@ -10,6 +10,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/apex/log"
 	"github.com/fatih/structtag"
 )
 
@@ -97,6 +98,9 @@ func GetIdentifier(n ast.Node) (*ast.Ident, error) {
 		return GetIdentifier(t.X)
 	case *ast.CallExpr:
 		return GetIdentifier(t.Fun)
+	case *ast.KeyValueExpr:
+		log.Infof("%+v", t)
+		return nil, fmt.Errorf("GetIdentifier: unhandled %T", n)
 	default:
 		return nil, fmt.Errorf("GetIdentifier: unhandled %T", n)
 	}

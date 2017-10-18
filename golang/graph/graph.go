@@ -4,38 +4,46 @@ import (
 	"sort"
 
 	"github.com/matthewmueller/golly/golang/def"
+	"github.com/stevenle/topsort"
 )
 
 // Graph struct
 type Graph struct {
-	nodes map[string]def.Definition
-	edges map[string]map[string]bool
+	nodes       map[string]def.Definition
+	edges       map[string]map[string]bool
+	modules     map[string]bool
+	moduleEdges map[string]map[string]bool
+	pathgraph   *topsort.Graph
+	defgraphs   map[string]*topsort.Graph
 }
 
 // New function
 func New() *Graph {
 	return &Graph{
 		nodes: map[string]def.Definition{},
-		edges: map[string]map[string]bool{},
+		// edges:       map[string]map[string]bool{},
+		// modules:     map[string]bool{},
+		// moduleEdges: map[string]map[string]bool{},
+		pathgraph: topsort.NewGraph(),
+		// defgraphs:   map[string]*topsort.Graph{},
 	}
 }
 
 // AddDependency fn
 func (g *Graph) AddDependency(parent def.Definition, children ...def.Definition) {
-	pid := parent.ID()
+	parentPath := parent.Path()
+	g.pathgraph.AddNode(parentPath)
+	g.nodes[parent.ID()] = parent
 
-	// add the parent if not already present
-	g.nodes[pid] = parent
-
+	// build the module dep graph
 	for _, child := range children {
-		cid := child.ID()
-
-		g.nodes[cid] = child
-
-		if g.edges[pid] == nil {
-			g.edges[pid] = map[string]bool{}
+		childPath := child.Path()
+		if parentPath == childPath {
+			continue
 		}
-		g.edges[pid][cid] = true
+		g.pathgraph.AddNode(childPath)
+		g.pathgraph.AddEdge(parentPath, childPath)
+		g.nodes[child.ID()] = child
 	}
 }
 
@@ -49,33 +57,39 @@ func (g *Graph) Roots() (decls []def.Definition) {
 	return decls
 }
 
-// Sort declarations topologically
-func (g *Graph) Sort(d def.Definition) (defs []def.Definition) {
-	var visitAll func(ids map[string]bool)
-	seen := map[string]bool{}
-	order := []string{}
-
-	visitAll = func(ids map[string]bool) {
-		var sorted []string
-		for id := range ids {
-			sorted = append(sorted, id)
-		}
-		sort.Strings(sorted)
-
-		for _, id := range sorted {
-			if !seen[id] {
-				seen[id] = true
-				visitAll(g.edges[id])
-				order = append(order, id)
-			}
-		}
+// Sort declarations topologically based on their package path
+func (g *Graph) Sort(d def.Definition) (defs []def.Definition, err error) {
+	// topologically sort the module paths
+	order, e := g.pathgraph.TopSort(d.Path())
+	if e != nil {
+		return defs, e
 	}
 
-	visitAll(g.edges[d.ID()])
+	// sort the definitions within the packages
+	// TODO: right now this will sort alphabetically
+	// but it's probably better to sort based on order
+	// in the original source file
+	nodes := []string{}
+	for _, n := range g.nodes {
+		nodes = append(nodes, n.ID())
+	}
+	sort.Strings(nodes)
 
-	for _, id := range order {
-		defs = append(defs, g.nodes[id])
+	// group definitions into modules
+	defmap := map[string][]def.Definition{}
+	for _, n := range nodes {
+		node := g.nodes[n]
+		path := node.Path()
+		if defmap[path] == nil {
+			defmap[path] = []def.Definition{}
+		}
+		defmap[path] = append(defmap[path], node)
 	}
 
-	return defs
+	// order the modules
+	for _, path := range order {
+		defs = append(defs, defmap[path]...)
+	}
+
+	return defs, nil
 }

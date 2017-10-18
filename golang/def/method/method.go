@@ -152,3 +152,10 @@ func (d *methoddef) Recv() def.Definition {
 func (d *methoddef) InRuntime() bool {
 	return false
 }
+
+func (d *methoddef) Imports() map[string]string {
+	return d.index.GetImports(d.path)
+}
+func (d *methoddef) FromRuntime() bool {
+	return false
+}

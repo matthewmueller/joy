@@ -2,17 +2,17 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/08-struct-nested-array"] = (function() {
-function User (o) {
-o = o || {};
-this.FirstName = o.FirstName || "";
-this.LastName = o.LastName || "";
-this.Phones = o.Phones || [];
-};
 function Phone (o) {
 o = o || {};
 this.Type = o.Type || "";
 this.Number = o.Number || "";
 this.Main = o.Main || false;
+};
+function User (o) {
+o = o || {};
+this.FirstName = o.FirstName || "";
+this.LastName = o.LastName || "";
+this.Phones = o.Phones || [];
 };
 function main () {
 var user = new User({
@@ -30,8 +30,8 @@ var user = new User({
 console.log(user.FirstName + ": " + user.Phones[0].Number);
 };
 return {
-  User: User,
   Phone: Phone,
+  User: User,
   main: main
 };
 })();

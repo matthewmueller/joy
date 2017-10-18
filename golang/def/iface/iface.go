@@ -115,3 +115,11 @@ func (d *ifacedef) ImplementedBy(meth string) (defs []method.Method) {
 
 	return defs
 }
+
+func (d *ifacedef) Imports() map[string]string {
+	return d.index.GetImports(d.path)
+}
+
+func (d *ifacedef) FromRuntime() bool {
+	return false
+}

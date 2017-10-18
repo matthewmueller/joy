@@ -11,8 +11,8 @@ type Definition interface {
 	Name() string
 	Exported() bool
 	Omitted() bool
-	// Node() ast.Node
 	Type() types.Type
 	Dependencies() ([]Definition, error)
-	// Translate() (jsast.IStatement, error)
+	Imports() map[string]string
+	FromRuntime() bool
 }

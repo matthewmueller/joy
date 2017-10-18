@@ -7,7 +7,6 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/util"
 	"github.com/matthewmueller/golly/stdlib"
 	"github.com/pkg/errors"
@@ -16,7 +15,7 @@ import (
 
 // Load the packages (Phase I)
 func Load(packages ...string) (program *loader.Program, err error) {
-	defer log.Trace("load").Stop(&err)
+	// defer log.Trace("load").Stop(&err)
 	var conf loader.Config
 
 	// TODO: will this work everytime?

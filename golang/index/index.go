@@ -1,6 +1,7 @@
 package index
 
 import (
+	"errors"
 	"fmt"
 	"go/ast"
 	"go/types"
@@ -40,6 +41,15 @@ func (i *Index) AddImport(parentPath string, alias, depPath string) {
 	i.imports[parentPath][alias] = depPath
 }
 
+// GetImports fn
+func (i *Index) GetImports(parentPath string) map[string]string {
+	deps := i.imports[parentPath]
+	if deps == nil {
+		return map[string]string{}
+	}
+	return deps
+}
+
 // All gets all definitions from the index
 // TODO: remove
 func (i *Index) All() map[string]def.Definition {
@@ -69,26 +79,50 @@ func (i *Index) Mains() (defs []def.Definition) {
 	return defs
 }
 
+// Runtime gets a definition from the runtime
+func (i *Index) Runtime(name string) (def.Definition, error) {
+	for _, def := range i.defs {
+		if def.FromRuntime() && def.Name() == name {
+			return def, nil
+		}
+	}
+	return nil, fmt.Errorf("Runtime: could not find %s in the runtime", name)
+}
+
 // DefinitionOf fn
 // Will return nil when ident is:
 // - package name
 // - basic type
 // - local variable that points to a basic type
 // - function parameters & results
-func (i *Index) DefinitionOf(info *loader.PackageInfo, n ast.Node) (def.Definition, error) {
+func (i *Index) DefinitionOf(packagePath string, n ast.Node) (def.Definition, error) {
+	// first try the rightmost identifier of the
+	// selection expression, then try the selector
+	// identifier itself:
+	// 1. *user*.phone or user.*settings*.phone
+	// 2. user.settings.*phone*
 	if s, ok := n.(*ast.SelectorExpr); ok {
-		d, e := i.DefinitionOf(info, s.Sel)
+		id, e := util.GetIdentifier(s.X)
+		if e != nil {
+			return nil, e
+		}
+		d, e := i.DefinitionOf(packagePath, id)
 		if e != nil {
 			return nil, e
 		} else if d != nil {
 			return d, nil
 		}
-		return i.DefinitionOf(info, s.X)
+		return i.DefinitionOf(packagePath, s.Sel)
 	}
 
 	ident, e := util.GetIdentifier(n)
 	if e != nil {
 		return nil, e
+	}
+
+	info := i.program.Package(packagePath)
+	if info == nil {
+		return nil, errors.New("DefinitionOf: no package found")
 	}
 
 	// built-in or package name
@@ -173,6 +207,8 @@ func (i *Index) typeToDef(name string, kind types.Type) (arr []string, err error
 	case *types.Map:
 		// TODO: is this always the case?
 		return arr, nil
+	case *types.Chan:
+		return i.typeToDef(name, t.Elem())
 	default:
 		return arr, fmt.Errorf("typeToDef: unhandled type %T", kind)
 	}

@@ -4,15 +4,15 @@ var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/06-structs"] = (function() {
 function Document (o) {
 o = o || {};
-this.Version = o.Version || 0;
+this.version = o.version || 0;
+};
+Document.prototype.GetElementByID = function(id) {
+return "#" + id;
 };
 function New () {
 return new Document({
-  Version: 1
+  version: 1
 });
-};
-function GetElementByID (id) {
-return "#" + id;
 };
 function main () {
 var doc = New();

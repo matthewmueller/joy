@@ -89,3 +89,11 @@ func (d *valuedef) Node() *ast.ValueSpec {
 func (d *valuedef) Type() types.Type {
 	return d.kind
 }
+
+func (d *valuedef) Imports() map[string]string {
+	return d.index.GetImports(d.path)
+}
+
+func (d *valuedef) FromRuntime() bool {
+	return false
+}
