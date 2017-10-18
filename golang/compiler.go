@@ -117,7 +117,11 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 		// 	log.Infof("id=%s", d.ID())
 		// }
 
-		modules := group(sorted)
+		modules, e := group(sorted)
+		if e != nil {
+			return scripts, e
+		}
+
 		files = append(files, &file{
 			path:    main.Path(),
 			modules: modules,
@@ -146,9 +150,9 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 		for _, module := range file.modules {
 			var modbody []interface{}
 
-			if len(module.exports) == 0 {
-				continue
-			}
+			// if len(module.exports) == 0 {
+			// 	continue
+			// }
 
 			// create imports linking of the pkgs between packages
 			// e.g. var runner = pkg["github.com/gorunner/runner"]
@@ -185,6 +189,7 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 				} else if ast == nil {
 					return scripts, errors.New("translate shouldn't return nil")
 				}
+				log.Infof("def id=%s ast=%s", def.ID(), ast)
 				modbody = append(modbody, ast)
 			}
 
@@ -261,7 +266,7 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 }
 
 // group declarations into modules
-func group(defs []def.Definition) []*module {
+func group(defs []def.Definition) (modules []*module, err error) {
 	moduleMap := map[string]*module{}
 	order := []string{}
 	for _, def := range defs {
@@ -294,9 +299,8 @@ func group(defs []def.Definition) []*module {
 		}
 	}
 
-	var modules []*module
 	for _, from := range order {
 		modules = append(modules, moduleMap[from])
 	}
-	return modules
+	return modules, nil
 }

@@ -14,7 +14,26 @@ import (
 	"github.com/fatih/structtag"
 )
 
+var gollyPath string
+var goSourcePath string
 var runtimePkg string
+var jsSourcePkg string
+
+// GollyPath absolute path
+func GollyPath() (string, error) {
+	if gollyPath != "" {
+		return gollyPath, nil
+	}
+
+	_, file, _, ok := runtime.Caller(0)
+	if !ok {
+		return "", errors.New("unable to get the golly source root")
+	}
+	root := path.Dir(path.Dir(path.Dir(file)))
+
+	gollyPath = root
+	return root, nil
+}
 
 // RuntimePath gets the path of our runtime
 func RuntimePath() (string, error) {
@@ -22,18 +41,16 @@ func RuntimePath() (string, error) {
 		return runtimePkg, nil
 	}
 
-	_, file, _, ok := runtime.Caller(0)
-	if !ok {
-		return "", errors.New("unable to get the filepath")
+	root, e := GollyPath()
+	if e != nil {
+		return "", e
 	}
-
-	root := path.Dir(path.Dir(path.Dir(file)))
-	gopath := os.Getenv("GOPATH")
-	if gopath == "" {
-		return "", errors.New("GOPATH must be set in your path")
-	}
-	gosrc := path.Join(gopath, "src")
 	runtimePath := path.Join(root, "runtime")
+
+	gosrc, e := GoSourcePath()
+	if e != nil {
+		return "", e
+	}
 
 	// runtime package
 	rt, e := filepath.Rel(gosrc, runtimePath)
@@ -148,4 +165,46 @@ func ExprToString(n ast.Node) (string, error) {
 	default:
 		return "", fmt.Errorf("ExprToString: unhandled %T", n)
 	}
+}
+
+// GoSourcePath gets the fullpath to Go's source files
+func GoSourcePath() (string, error) {
+	if goSourcePath != "" {
+		return goSourcePath, nil
+	}
+
+	p := os.Getenv("GOPATH")
+	if p == "" {
+		return "", errors.New("GOPATH not set")
+	}
+
+	goSourcePath = path.Join(p, "src")
+	return goSourcePath, nil
+}
+
+// JSSourcePath gets the fullpath to Go's source files
+func JSSourcePath() (string, error) {
+	if jsSourcePkg != "" {
+		return jsSourcePkg, nil
+	}
+
+	root, e := GollyPath()
+	if e != nil {
+		return "", e
+	}
+	runtimePath := path.Join(root, "js")
+
+	gosrc, e := GoSourcePath()
+	if e != nil {
+		return "", e
+	}
+
+	// runtime package
+	rel, e := filepath.Rel(gosrc, runtimePath)
+	if e != nil {
+		return "", e
+	}
+	jsSourcePkg = rel
+
+	return jsSourcePkg, nil
 }

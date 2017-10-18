@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/types"
+	"io/ioutil"
 	"path"
 	"reflect"
 	"strconv"
@@ -61,6 +62,8 @@ func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
 		return jsast.CreateEmptyStatement(), nil
 	}
 
+	// TODO: exclude anything from the js path
+
 	// NOTE: order matters here
 	// e.g. Method can also be a Function
 	switch t := d.(type) {
@@ -75,7 +78,7 @@ func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
 	case value.Value:
 		return tr.values(t)
 	case jsfile.JSFile:
-		return nil, unhandled("Translate: TODO", d)
+		return tr.jsfile(t)
 	default:
 		return nil, unhandled("Translate", d)
 	}
@@ -310,6 +313,16 @@ func (tr *Translator) values(d value.Value) (jsast.INode, error) {
 	}
 
 	return jsast.CreateVariableDeclaration("var", vars...), nil
+}
+
+// jsfile fn
+func (tr *Translator) jsfile(d jsfile.JSFile) (jsast.INode, error) {
+	buf, e := ioutil.ReadFile(d.ID())
+	if e != nil {
+		return nil, e
+	}
+
+	return jsast.CreateRaw(string(buf)), nil
 }
 
 func (tr *Translator) statement(d def.Definition, sp *scope.Scope, n ast.Stmt) (j jsast.IStatement, err error) {
@@ -2196,11 +2209,17 @@ func (tr *Translator) jsRawFile(d def.Definition, sp *scope.Scope, cx *ast.CallE
 	if !ok {
 		return nil, nil
 	}
-	filepath := lit.Value[1 : len(lit.Value)-1]
+
+	filepath, e := strconv.Unquote(lit.Value)
+	if e != nil {
+		return nil, e
+	}
+
+	pkgpath := path.Join(d.Path(), filepath)
 
 	return jsast.CreateMemberExpression(
 		jsast.CreateIdentifier("pkg"),
-		jsast.CreateString(filepath),
+		jsast.CreateString(pkgpath),
 		true,
 	), nil
 }

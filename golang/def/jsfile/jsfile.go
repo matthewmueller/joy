@@ -5,6 +5,7 @@ import (
 	"path"
 
 	"github.com/matthewmueller/golly/golang/def"
+	"github.com/matthewmueller/golly/golang/util"
 )
 
 // JSFile interface
@@ -21,14 +22,21 @@ type jsfiledef struct {
 var _ JSFile = (*jsfiledef)(nil)
 
 // NewFile fn
-func NewFile(packagePath, filepath string) (def.Definition, error) {
+func NewFile(packagePath, relative string) (def.Definition, error) {
+	src, e := util.GoSourcePath()
+	if e != nil {
+		return nil, e
+	}
+
+	pkgpath := path.Join(packagePath, relative)
+	fullpath := path.Join(src, packagePath, relative)
 
 	return &jsfiledef{
 		// index:    index,
 		// info:     info,
-		id:   filepath,
-		path: packagePath,
-		name: path.Base(filepath),
+		id:   fullpath,
+		path: pkgpath,
+		name: path.Base(fullpath),
 		// exported: exported,
 		// node:     n,
 		// params:   params,

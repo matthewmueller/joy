@@ -13,6 +13,7 @@ import (
 	"github.com/matthewmueller/golly/golang/def/struc"
 	"github.com/matthewmueller/golly/golang/def/value"
 	"github.com/matthewmueller/golly/golang/index"
+	"github.com/matthewmueller/golly/golang/util"
 	"golang.org/x/tools/go/loader"
 )
 
@@ -27,11 +28,19 @@ type DB struct {
 func New(program *loader.Program) (*index.Index, error) {
 	db := &DB{
 		index: index.New(program),
-		// imports: map[string]map[string]string{},
-		// index:   map[string]def.Definition{},
+	}
+
+	jsPath, e := util.JSSourcePath()
+	if e != nil {
+		return nil, e
 	}
 
 	for _, info := range program.AllPackages {
+		// ignore the golly/js package path
+		if info.Pkg.Path() == jsPath {
+			continue
+		}
+
 		if e := db.pkg(info); e != nil {
 			return nil, e
 		}

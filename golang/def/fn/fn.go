@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def/jsfile"
 
 	"github.com/matthewmueller/golly/golang/def"
@@ -156,7 +155,6 @@ func (d *funcdef) process() (err error) {
 				if !seen[def.ID()] {
 					d.index.AddDefinition(def)
 					d.deps = append(d.deps, def)
-					log.Infof("d.deps %s", def.ID())
 					seen[def.ID()] = true
 				}
 			}
