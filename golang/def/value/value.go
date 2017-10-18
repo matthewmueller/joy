@@ -20,13 +20,15 @@ type Value interface {
 var _ Value = (*valuedef)(nil)
 
 type valuedef struct {
-	exported bool
-	path     string
-	name     string
-	id       string
-	index    *index.Index
-	node     *ast.ValueSpec
-	kind     types.Type
+	exported  bool
+	path      string
+	name      string
+	id        string
+	index     *index.Index
+	node      *ast.ValueSpec
+	kind      types.Type
+	processed bool
+	deps      []def.Definition
 }
 
 // NewValue fn
@@ -54,8 +56,22 @@ func NewValue(index *index.Index, info *loader.PackageInfo, n *ast.ValueSpec) (d
 		id:       id,
 		index:    index,
 		node:     n,
-		// kind:     VALUE,
 	}, nil
+}
+
+func (d *valuedef) process() (err error) {
+	seen := map[string]bool{}
+	_ = seen
+
+	ast.Inspect(d.node, func(n ast.Node) bool {
+		switch t := n.(type) {
+		}
+
+		return true
+	})
+
+	d.processed = true
+	return err
 }
 
 func (d *valuedef) ID() string {

@@ -35,15 +35,17 @@ var _ Struct = (*structdef)(nil)
 var _ Field = (*field)(nil)
 
 type structdef struct {
-	exported bool
-	path     string
-	name     string
-	id       string
-	index    *index.Index
-	node     *ast.TypeSpec
-	kind     types.Type
-	tag      *structtag.Tag
-	fields   []*field
+	exported  bool
+	path      string
+	name      string
+	id        string
+	index     *index.Index
+	node      *ast.TypeSpec
+	kind      types.Type
+	tag       *structtag.Tag
+	fields    []*field
+	deps      []def.Definition
+	processed bool
 }
 
 // field of a struct
@@ -131,6 +133,23 @@ func NewStruct(index *index.Index, info *loader.PackageInfo, n *ast.TypeSpec) (d
 		tag:      tag,
 		fields:   fields,
 	}, nil
+}
+
+func (d *structdef) process() (err error) {
+	seen := map[string]bool{}
+	_ = seen
+
+	ast.Inspect(d.node, func(n ast.Node) bool {
+		switch t := n.(type) {
+		// case *ast.SelectorExpr:
+
+		}
+
+		return true
+	})
+
+	d.processed = true
+	return err
 }
 
 func (d *structdef) ID() string {

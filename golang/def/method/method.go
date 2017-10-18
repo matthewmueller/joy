@@ -5,6 +5,7 @@ import (
 	"go/types"
 	"strings"
 
+	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/def/fn"
 	"github.com/matthewmueller/golly/golang/index"
@@ -21,15 +22,21 @@ type Method interface {
 var _ Method = (*methoddef)(nil)
 
 type methoddef struct {
-	index    *index.Index
-	id       string
-	path     string
-	name     string
-	kind     types.Type
-	node     *ast.FuncDecl
-	exported bool
-	params   []string
-	recv     string
+	index     *index.Index
+	id        string
+	path      string
+	name      string
+	kind      types.Type
+	node      *ast.FuncDecl
+	exported  bool
+	params    []string
+	recv      string
+	async     bool
+	processed bool
+	deps      []def.Definition
+	tag       *structtag.Tag
+	runtime   bool
+	imports   map[string]string
 }
 
 // NewMethod fn
@@ -69,6 +76,16 @@ func NewMethod(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (d
 		exported = true
 	}
 
+	// check if this declaration is from the runtime
+	fromRuntime := false
+	runtimePath, e := util.RuntimePath()
+	if e != nil {
+		return nil, e
+	}
+	if packagePath == runtimePath {
+		fromRuntime = true
+	}
+
 	// declarations[id] = &fndef{
 	// 	Exported: exported,
 	// 	From:     packagePath,
@@ -95,6 +112,11 @@ func NewMethod(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (d
 	// 	)
 	// }
 
+	tag, e := util.JSTag(n.Doc)
+	if e != nil {
+		return nil, e
+	}
+
 	// point human-friendly names to the declaration
 
 	return &methoddef{
@@ -107,7 +129,63 @@ func NewMethod(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (d
 		params:   params,
 		kind:     info.TypeOf(n.Name),
 		recv:     recv,
+		tag:      tag,
+		runtime:  fromRuntime,
 	}, nil
+}
+
+func (d *methoddef) process() (err error) {
+	seen := map[string]bool{}
+	_ = seen
+
+	ast.Inspect(d.node, func(n ast.Node) bool {
+		switch t := n.(type) {
+		case *ast.FuncDecl:
+			tag, e := util.JSTag(t.Doc)
+			if e != nil {
+				err = e
+				return false
+			}
+			d.tag = tag
+
+		case *ast.SelectorExpr:
+			def, e := d.index.DefinitionOf(d.Path(), t)
+			if e != nil {
+				err = e
+				return false
+			} else if def != nil && !seen[def.ID()] {
+				d.deps = append(d.deps, def)
+				seen[def.ID()] = true
+			}
+
+		case *ast.Ident:
+			def, e := d.index.DefinitionOf(d.Path(), t)
+			if e != nil {
+				err = e
+				return false
+			} else if def != nil && !seen[def.ID()] {
+				d.deps = append(d.deps, def)
+				seen[def.ID()] = true
+			}
+
+		case *ast.ChanType:
+			deps, e := d.index.Runtime("Channel", "Send", "Recv")
+			if e != nil {
+				err = e
+				return false
+			}
+			d.deps = append(d.deps, deps...)
+			for _, dep := range deps {
+				d.imports["runtime"] = dep.Path()
+				seen[dep.ID()] = true
+			}
+		}
+
+		return true
+	})
+
+	d.processed = true
+	return err
 }
 
 func (d *methoddef) ID() string {
@@ -141,21 +219,33 @@ func (d *methoddef) Type() types.Type {
 	return d.kind
 }
 
-func (d *methoddef) IsAsync() bool {
-	return false
+func (d *methoddef) IsAsync() (bool, error) {
+	if d.processed {
+		return d.async, nil
+	}
+	e := d.process()
+	if e != nil {
+		return false, e
+	}
+	return d.async, nil
 }
 
 func (d *methoddef) Recv() def.Definition {
 	return d.index.Get(d.recv)
 }
 
-func (d *methoddef) InRuntime() bool {
-	return false
+func (d *methoddef) Imports() map[string]string {
+	// combine def imports with file imports
+	imports := map[string]string{}
+	for alias, path := range d.imports {
+		imports[alias] = path
+	}
+	for alias, path := range d.index.GetImports(d.path) {
+		imports[alias] = path
+	}
+	return imports
 }
 
-func (d *methoddef) Imports() map[string]string {
-	return d.index.GetImports(d.path)
-}
 func (d *methoddef) FromRuntime() bool {
-	return false
+	return d.runtime
 }

@@ -23,14 +23,17 @@ type Interface interface {
 var _ Interface = (*ifacedef)(nil)
 
 type ifacedef struct {
-	exported bool
-	path     string
-	name     string
-	id       string
-	index    *index.Index
-	methods  []string
-	node     *ast.TypeSpec
-	kind     *types.Interface
+	exported  bool
+	path      string
+	name      string
+	id        string
+	index     *index.Index
+	methods   []string
+	node      *ast.TypeSpec
+	kind      *types.Interface
+	processed bool
+	deps      []def.Definition
+	imports   map[string]string
 }
 
 // NewInterface fn
@@ -63,6 +66,21 @@ func NewInterface(index *index.Index, info *loader.PackageInfo, n *ast.TypeSpec)
 		methods:  methods,
 		kind:     kind,
 	}, nil
+}
+
+func (d *ifacedef) process() (err error) {
+	seen := map[string]bool{}
+	_ = seen
+
+	ast.Inspect(d.node, func(n ast.Node) bool {
+		switch t := n.(type) {
+		}
+
+		return true
+	})
+
+	d.processed = true
+	return err
 }
 
 func (d *ifacedef) ID() string {
@@ -117,7 +135,15 @@ func (d *ifacedef) ImplementedBy(meth string) (defs []method.Method) {
 }
 
 func (d *ifacedef) Imports() map[string]string {
-	return d.index.GetImports(d.path)
+	// combine def imports with file imports
+	imports := map[string]string{}
+	for alias, path := range d.imports {
+		imports[alias] = path
+	}
+	for alias, path := range d.index.GetImports(d.path) {
+		imports[alias] = path
+	}
+	return imports
 }
 
 func (d *ifacedef) FromRuntime() bool {

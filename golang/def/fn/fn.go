@@ -5,7 +5,6 @@ import (
 	"go/types"
 	"strings"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/index"
 
@@ -18,7 +17,7 @@ import (
 // Function interface
 type Function interface {
 	def.Definition
-	IsAsync() bool
+	IsAsync() (bool, error)
 	Node() *ast.FuncDecl
 }
 
@@ -36,6 +35,8 @@ type funcdef struct {
 	runtime   bool
 	processed bool
 	deps      []def.Definition
+	async     bool
+	imports   map[string]string
 }
 
 var _ Function = (*funcdef)(nil)
@@ -110,7 +111,10 @@ func NewFunction(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) 
 	// 	)
 	// }
 
-	// point human-friendly names to the declaration
+	tag, e := util.JSTag(n.Doc)
+	if e != nil {
+		return nil, e
+	}
 
 	return &funcdef{
 		index:    index,
@@ -123,19 +127,9 @@ func NewFunction(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) 
 		params:   params,
 		kind:     info.TypeOf(n.Name),
 		runtime:  fromRuntime,
+		tag:      tag,
+		imports:  map[string]string{},
 	}, nil
-}
-
-func (d *funcdef) ID() string {
-	return d.id
-}
-
-func (d *funcdef) Name() string {
-	return d.name
-}
-
-func (d *funcdef) Path() string {
-	return d.path
 }
 
 func (d *funcdef) process() (err error) {
@@ -172,13 +166,16 @@ func (d *funcdef) process() (err error) {
 			}
 
 		case *ast.ChanType:
-			log.Infof("chan type %+v", t)
-			ch, e := d.index.Runtime("Channel")
+			deps, e := d.index.Runtime("Deferred", "Channel", "Send", "Recv")
 			if e != nil {
 				err = e
 				return false
 			}
-			log.Infof("channel %+v", ch)
+			d.deps = append(d.deps, deps...)
+			for _, dep := range deps {
+				d.imports["runtime"] = dep.Path()
+				seen[dep.ID()] = true
+			}
 		}
 
 		return true
@@ -186,6 +183,21 @@ func (d *funcdef) process() (err error) {
 
 	d.processed = true
 	return err
+}
+
+func (d *funcdef) ID() string {
+	return d.id
+}
+
+func (d *funcdef) Name() string {
+	if d.tag != nil {
+		return d.tag.Name
+	}
+	return d.name
+}
+
+func (d *funcdef) Path() string {
+	return d.path
 }
 
 func (d *funcdef) Dependencies() (defs []def.Definition, err error) {
@@ -204,7 +216,10 @@ func (d *funcdef) Exported() bool {
 }
 
 func (d *funcdef) Omitted() bool {
-	return false
+	if d.tag == nil {
+		return false
+	}
+	return d.tag.HasOption("omit")
 }
 
 func (d *funcdef) Node() *ast.FuncDecl {
@@ -215,16 +230,27 @@ func (d *funcdef) Type() types.Type {
 	return d.kind
 }
 
-func (d *funcdef) IsAsync() bool {
-	return false
-}
-
-func (d *funcdef) InRuntime() bool {
-	return false
+func (d *funcdef) IsAsync() (bool, error) {
+	if d.processed {
+		return d.async, nil
+	}
+	e := d.process()
+	if e != nil {
+		return false, e
+	}
+	return d.async, nil
 }
 
 func (d *funcdef) Imports() map[string]string {
-	return d.index.GetImports(d.path)
+	// combine def imports with file imports
+	imports := map[string]string{}
+	for alias, path := range d.imports {
+		imports[alias] = path
+	}
+	for alias, path := range d.index.GetImports(d.path) {
+		imports[alias] = path
+	}
+	return imports
 }
 
 func (d *funcdef) FromRuntime() bool {

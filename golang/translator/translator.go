@@ -124,7 +124,12 @@ func (tr *Translator) functions(d fn.Function) (jsast.INode, error) {
 	fnname := jsast.CreateIdentifier(n.Name.Name)
 
 	// async function
-	if d.IsAsync() {
+	isAsync, e := d.IsAsync()
+	if e != nil {
+		return nil, e
+	}
+
+	if isAsync {
 		return jsast.CreateAsyncFunction(
 			&fnname,
 			params,
@@ -210,8 +215,13 @@ func (tr *Translator) methods(d method.Method) (jsast.INode, error) {
 		)}, body...)
 	}
 
+	isAsync, e := d.IsAsync()
+	if e != nil {
+		return nil, e
+	}
+
 	var fn jsast.FunctionExpression
-	if d.IsAsync() {
+	if isAsync {
 		fn = jsast.CreateAsyncFunctionExpression(
 			&fnname,
 			params,
@@ -1572,7 +1582,12 @@ func (tr *Translator) funcLit(d def.Definition, sp *scope.Scope, n *ast.FuncLit)
 		return nil, fmt.Errorf("funcLit: expected inside a function declaration")
 	}
 
-	if fn.IsAsync() {
+	isAsync, e := fn.IsAsync()
+	if e != nil {
+		return nil, e
+	}
+
+	if isAsync {
 		return jsast.CreateAwaitExpression(
 			jsast.CreateAsyncFunctionExpression(
 				nil,
@@ -2308,7 +2323,6 @@ func (tr *Translator) maybeAwait(d def.Definition, sp *scope.Scope, n *ast.CallE
 		return nil, unhandled("maybeAwait", n.Fun)
 	}
 
-	log.Infof("await deps on def=%s", d.ID())
 	deps, e := d.Dependencies()
 	if e != nil {
 		return nil, e
@@ -2320,7 +2334,16 @@ func (tr *Translator) maybeAwait(d def.Definition, sp *scope.Scope, n *ast.CallE
 			continue
 		}
 
-		if id == fn.Name() && fn.IsAsync() {
+		if id != fn.Name() {
+			continue
+		}
+
+		isAsync, e := fn.IsAsync()
+		if e != nil {
+			return nil, e
+		}
+
+		if isAsync {
 			isAsync = true
 		}
 	}

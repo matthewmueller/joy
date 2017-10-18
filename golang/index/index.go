@@ -80,13 +80,20 @@ func (i *Index) Mains() (defs []def.Definition) {
 }
 
 // Runtime gets a definition from the runtime
-func (i *Index) Runtime(name string) (def.Definition, error) {
+func (i *Index) Runtime(names ...string) (defs []def.Definition, err error) {
 	for _, def := range i.defs {
-		if def.FromRuntime() && def.Name() == name {
-			return def, nil
+		if !def.FromRuntime() {
+			continue
+		}
+
+		for _, name := range names {
+			if def.Name() == name {
+				defs = append(defs, def)
+			}
 		}
 	}
-	return nil, fmt.Errorf("Runtime: could not find %s in the runtime", name)
+
+	return defs, nil
 }
 
 // DefinitionOf fn
