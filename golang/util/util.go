@@ -105,3 +105,47 @@ func GetIdentifier(n ast.Node) (*ast.Ident, error) {
 		return nil, fmt.Errorf("GetIdentifier: unhandled %T", n)
 	}
 }
+
+// ExprToString fn
+func ExprToString(n ast.Node) (string, error) {
+	switch t := n.(type) {
+	case *ast.Ident:
+		return t.Name, nil
+	case *ast.StarExpr:
+		return ExprToString(t.X)
+	case *ast.UnaryExpr:
+		return ExprToString(t.X)
+	case *ast.SelectorExpr:
+		s, e := ExprToString(t.X)
+		if e != nil {
+			return "", e
+		}
+		return s + "." + t.Sel.Name, nil
+	case *ast.IndexExpr:
+		s, e := ExprToString(t.X)
+		if e != nil {
+			return "", e
+		}
+		i, e := ExprToString(t.Index)
+		if e != nil {
+			return "", e
+		}
+		return s + "[" + i + "]", nil
+	case *ast.CallExpr:
+		c, e := ExprToString(t.Fun)
+		if e != nil {
+			return "", e
+		}
+		var args []string
+		for _, arg := range t.Args {
+			a, e := ExprToString(arg)
+			if e != nil {
+				return "", e
+			}
+			args = append(args, a)
+		}
+		return c + "(" + strings.Join(args, ", ") + ")", nil
+	default:
+		return "", fmt.Errorf("ExprToString: unhandled %T", n)
+	}
+}

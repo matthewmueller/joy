@@ -1,9 +1,14 @@
 package fn
 
 import (
+	"fmt"
 	"go/ast"
 	"go/types"
+	"strconv"
 	"strings"
+
+	"github.com/apex/log"
+	"github.com/matthewmueller/golly/golang/def/jsfile"
 
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/index"
@@ -47,16 +52,6 @@ func NewFunction(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) 
 	packagePath := obj.Pkg().Path()
 	name := n.Name.Name
 	idParts := []string{packagePath, name}
-
-	// if it has a receiver, include that in the ID
-	// if n.Recv != nil && len(n.Recv.List) > 0 {
-	// 	id, e := util.GetIdentifier(n.Recv.List[0].Type)
-	// 	if e != nil {
-	// 		return nil, e
-	// 	}
-	// 	idParts = append(idParts, id.Name)
-	// }
-
 	id := strings.Join(idParts, " ")
 
 	var params []string
@@ -84,32 +79,6 @@ func NewFunction(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) 
 	if packagePath == runtimePath {
 		fromRuntime = true
 	}
-
-	// declarations[id] = &fndef{
-	// 	Exported: exported,
-	// 	From:     packagePath,
-	// 	Name:     name,
-	// 	ID:       id,
-	// 	Node:     decl,
-	// 	Params:   params,
-	// }
-
-	// declaration may satisfy an interface
-	// so we hold onto it for possible
-	// inclusion later
-	// if t.Recv != nil {
-	// 	recv := t.Recv.List[0]
-	// 	if receivers[name] == nil {
-	// 		receivers[name] = []*receiver{}
-	// 	}
-	// 	receivers[name] = append(
-	// 		receivers[name],
-	// 		&receiver{
-	// 			Type:     info.TypeOf(recv.Type),
-	// 			Function: declarations[id],
-	// 		},
-	// 	)
-	// }
 
 	tag, e := util.JSTag(n.Doc)
 	if e != nil {
@@ -158,6 +127,37 @@ func (d *funcdef) process() (err error) {
 				if e := d.maybeAsync(def); e != nil {
 					err = e
 					return false
+				}
+			}
+
+		case *ast.CallExpr:
+			fn, e := util.ExprToString(t.Fun)
+			if e != nil {
+				err = e
+				return false
+			}
+			if fn == "js.RawFile" && len(t.Args) > 0 {
+				lit, ok := t.Args[0].(*ast.BasicLit)
+				if !ok {
+					err = fmt.Errorf("fn process: expected rawfile to have basiclit argument, but got %T", t.Args[0])
+					return false
+				}
+				path, e := strconv.Unquote(lit.Value)
+				if e != nil {
+					err = e
+					return false
+				}
+				def, e := jsfile.NewFile(d.path, path)
+				if e != nil {
+					err = e
+					return false
+				}
+
+				if !seen[def.ID()] {
+					d.index.AddDefinition(def)
+					d.deps = append(d.deps, def)
+					log.Infof("d.deps %s", def.ID())
+					seen[def.ID()] = true
 				}
 			}
 

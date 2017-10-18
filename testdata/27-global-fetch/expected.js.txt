@@ -1,12 +1,34 @@
 ;
 (function() {
 var pkg = {};
-pkg["github.com/matthewmueller/golly/runtime"] = (function() {
-function Channel (capacity) {
-return new Chan({
-  capacity: capacity
-});
+pkg["github.com/matthewmueller/golly/testdata/27-global-fetch/promise"] = (function() {
+Promise.prototype.Catch = function() {
+var p = this;
+return p;
 };
+function Promise (o) {
+o = o || {};
+this.value = o.value || null;
+this.err = o.err || null;
+};
+Promise.prototype.Then = function() {
+var p = this;
+return p;
+};
+return {
+  Promise: Promise
+};
+})();
+pkg["github.com/matthewmueller/golly/js"] = (function() {
+function Raw (src) {
+return null;
+};
+return {
+  Raw: Raw
+};
+})();
+pkg["github.com/matthewmueller/golly/runtime"] = (function() {
+var js = pkg["github.com/matthewmueller/golly/js"];
 function Chan (o) {
 o = o || {};
 this.capacity = o.capacity || 0;
@@ -14,6 +36,26 @@ this.values = o.values || [];
 this.sends = o.sends || [];
 this.recvs = o.recvs || [];
 this.closed = o.closed || false;
+};
+function Channel (capacity) {
+return new Chan({
+  capacity: capacity
+});
+};
+function Deferred () {
+
+if (!(this instanceof Deferred)) return new Deferred()
+var self = this
+
+var p = new Promise(function(resolve, reject) {
+	self.resolve = resolve
+	self.reject = reject
+})
+
+self.then = p.then.bind(p)
+self.catch = p.catch.bind(p)
+;
+return self;
 };
 Chan.prototype.Recv = function() {
 var c = this;
@@ -40,21 +82,6 @@ return Promise.resolve()
 var promise = Deferred();
 c.recvs = c.recvs.concat(promise);
 return promise;
-};
-function Deferred () {
-
-if (!(this instanceof Deferred)) return new Deferred()
-var self = this
-
-var p = new Promise(function(resolve, reject) {
-	self.resolve = resolve
-	self.reject = reject
-})
-
-self.then = p.then.bind(p)
-self.catch = p.catch.bind(p)
-;
-return self;
 };
 Chan.prototype.Send = function(value) {
 var c = this;
@@ -85,34 +112,50 @@ this.value = o.value || null;
 this.promise = o.promise || null;
 };
 return {
-  Channel: Channel,
   Chan: Chan,
+  Channel: Channel,
   Deferred: Deferred
 };
 })();
 pkg["github.com/matthewmueller/golly/testdata/27-global-fetch"] = (function() {
-var runtime = pkg["github.com/matthewmueller/golly/runtime"];
+var runtime = pkg["github.com/matthewmueller/golly/runtime"], promise = pkg["github.com/matthewmueller/golly/testdata/27-global-fetch/promise"];
+function Fetch (url, options) {
+return new promise.Promise({});
+};
+function Github (o) {
+o = o || {};
+this.login = o.login || "";
+this.name = o.name || "";
+this.bio = o.bio || "";
+};
+Response.prototype.JSON = function() {
+var r = this;
+return r.responseText;
+};
+function Response (o) {
+o = o || {};
+this.responseText = o.responseText || "";
+};
 async function main () {
-var p = fetch("https://api.github.com/users/matthewmueller", null);
+var p = Fetch("https://api.github.com/users/matthewmueller", null);
 var ch = new runtime.Channel();
-p.then(await async function(v) {
+p.Then(await async function(v) {
 var res = v;
-return res.json();
-}).then(await async function(v) {
+return res.JSON();
+}).Then(await async function(v) {
 await ch.Send(v);
 return null;
-}).catch(await async function(e) {
+}).Catch(await async function(e) {
 console.log(e);
 return null;
 });
 var gh = await ch.Recv();
 console.log(gh.login, "-", gh.name);
 };
-;
-;
-;
-;
 return {
+  fetch: fetch,
+  Github: Github,
+  Response: Response,
   main: main
 };
 })();

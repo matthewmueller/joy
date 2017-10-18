@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/matthewmueller/golly/golang/def/jsfile"
+
 	"golang.org/x/tools/go/loader"
 
 	"github.com/apex/log"
@@ -72,6 +74,8 @@ func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
 		return tr.structs(t)
 	case value.Value:
 		return tr.values(t)
+	case jsfile.JSFile:
+		return nil, unhandled("Translate: TODO", d)
 	default:
 		return nil, unhandled("Translate", d)
 	}
