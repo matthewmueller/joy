@@ -153,6 +153,12 @@ func (d *funcdef) process() (err error) {
 			} else if def != nil && !seen[def.ID()] {
 				d.deps = append(d.deps, def)
 				seen[def.ID()] = true
+
+				// check if it points to something async
+				if e := d.maybeAsync(def); e != nil {
+					err = e
+					return false
+				}
 			}
 
 		case *ast.Ident:
@@ -163,6 +169,12 @@ func (d *funcdef) process() (err error) {
 			} else if def != nil && !seen[def.ID()] {
 				d.deps = append(d.deps, def)
 				seen[def.ID()] = true
+
+				// check if it points to something async
+				if e := d.maybeAsync(def); e != nil {
+					err = e
+					return false
+				}
 			}
 
 		case *ast.ChanType:
@@ -176,6 +188,9 @@ func (d *funcdef) process() (err error) {
 				d.imports["runtime"] = dep.Path()
 				seen[dep.ID()] = true
 			}
+
+			// TODO: more specific later
+			d.async = true
 		}
 
 		return true
@@ -255,4 +270,23 @@ func (d *funcdef) Imports() map[string]string {
 
 func (d *funcdef) FromRuntime() bool {
 	return d.runtime
+}
+
+func (d *funcdef) maybeAsync(def def.Definition) error {
+	if d.async || d.ID() == def.ID() {
+		return nil
+	}
+
+	fn, ok := def.(Function)
+	if !ok {
+		return nil
+	}
+
+	async, e := fn.IsAsync()
+	if e != nil {
+		return e
+	}
+	d.async = async
+
+	return nil
 }

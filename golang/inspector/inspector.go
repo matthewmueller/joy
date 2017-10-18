@@ -58,7 +58,6 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 		if err != nil {
 			return nil, err
 		}
-		log.Infof("maindecl %+v", maindecl)
 		remaining = append(remaining, maindecl)
 		mains = append(mains, maindecl)
 	}

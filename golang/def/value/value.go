@@ -1,6 +1,7 @@
 package value
 
 import (
+	"errors"
 	"go/ast"
 	"go/types"
 	"strings"
@@ -87,7 +88,7 @@ func (d *valuedef) Path() string {
 }
 
 func (d *valuedef) Dependencies() ([]def.Definition, error) {
-	return nil, nil
+	return nil, errors.New("valuedef.Dependencies() not implemented yet")
 }
 
 func (d *valuedef) Exported() bool {

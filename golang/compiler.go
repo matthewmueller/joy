@@ -84,6 +84,10 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 			return scripts, errors.Wrap(err, "error getting dependencies")
 		}
 
+		for _, dep := range deps {
+			log.Debugf("%s -> %s", def.ID(), dep.ID())
+		}
+
 		// add the dependencies to the graph
 		g.AddDependency(def, deps...)
 
@@ -102,16 +106,16 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 	// assemble into scripts
 	var files []*file
 	for _, main := range mains {
-		log.Debugf("main: %s", main.Path())
+		// log.Infof("main: %s", main.Path())
 
 		sorted, e := g.Sort(main)
 		if e != nil {
 			return scripts, e
 		}
 
-		for _, d := range sorted {
-			log.Debugf("id=%s", d.ID())
-		}
+		// for _, d := range sorted {
+		// 	log.Infof("id=%s", d.ID())
+		// }
 
 		modules := group(sorted)
 		files = append(files, &file{

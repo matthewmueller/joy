@@ -141,8 +141,25 @@ func (d *structdef) process() (err error) {
 
 	ast.Inspect(d.node, func(n ast.Node) bool {
 		switch t := n.(type) {
-		// case *ast.SelectorExpr:
+		case *ast.SelectorExpr:
+			def, e := d.index.DefinitionOf(d.Path(), t)
+			if e != nil {
+				err = e
+				return false
+			} else if def != nil && !seen[def.ID()] {
+				d.deps = append(d.deps, def)
+				seen[def.ID()] = true
+			}
 
+		case *ast.Ident:
+			def, e := d.index.DefinitionOf(d.Path(), t)
+			if e != nil {
+				err = e
+				return false
+			} else if def != nil && !seen[def.ID()] {
+				d.deps = append(d.deps, def)
+				seen[def.ID()] = true
+			}
 		}
 
 		return true
@@ -150,6 +167,17 @@ func (d *structdef) process() (err error) {
 
 	d.processed = true
 	return err
+}
+
+func (d *structdef) Dependencies() (defs []def.Definition, err error) {
+	if d.processed {
+		return d.deps, nil
+	}
+	err = d.process()
+	if err != nil {
+		return defs, err
+	}
+	return d.deps, nil
 }
 
 func (d *structdef) ID() string {
@@ -169,10 +197,6 @@ func (d *structdef) OriginalName() string {
 
 func (d *structdef) Path() string {
 	return d.path
-}
-
-func (d *structdef) Dependencies() ([]def.Definition, error) {
-	return nil, nil
 }
 
 func (d *structdef) Exported() bool {

@@ -756,94 +756,88 @@ func (tr *Translator) varSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl)
 // }
 
 func (tr *Translator) goStmt(d def.Definition, sp *scope.Scope, n *ast.GoStmt) (j jsast.IStatement, err error) {
-	x, e := tr.callExpr(d, sp, n.Call)
+	// build argument list
+	// var args
+	var args []jsast.IExpression
+	for _, arg := range n.Call.Args {
+		x, e := tr.expression(d, sp, arg)
+		if e != nil {
+			return nil, e
+		}
+		args = append(args, x)
+	}
+
+	// function literal go function (...) { ... }(...)
+	if fn, ok := n.Call.Fun.(*ast.FuncLit); ok {
+		var params []jsast.IPattern
+		if fn.Type != nil && fn.Type.Params != nil {
+			fields := fn.Type.Params.List
+			for _, field := range fields {
+				// names because: (a, b string, c int) = [[a, b], c]
+				for _, name := range field.Names {
+					id := jsast.CreateIdentifier(name.Name)
+					params = append(params, id)
+				}
+			}
+		}
+
+		var body []interface{}
+		for _, stmt := range fn.Body.List {
+			s, e := tr.statement(d, sp, stmt)
+			if e != nil {
+				return nil, e
+			}
+			body = append(body, s)
+		}
+
+		return jsast.CreateExpressionStatement(
+			jsast.CreateCallExpression(
+				jsast.CreateAsyncFunctionExpression(
+					nil,
+					params,
+					jsast.CreateFunctionBody(body...),
+				),
+				args,
+			),
+		), nil
+	}
+
+	// id, e := util.GetIdentifier(n.Call.Fun)
+	// if e != nil {
+	// 	return nil, e
+	// }
+
+	def, e := tr.index.DefinitionOf(d.Path(), n.Call.Fun)
+	if e != nil {
+		return nil, e
+	}
+	fn, ok := def.(fn.Function)
+	if !ok {
+		return nil, fmt.Errorf("goStmt: expected function but received %T", def)
+	}
+
+	isAsync, e := fn.IsAsync()
 	if e != nil {
 		return nil, e
 	}
 
+	if isAsync {
+		return jsast.CreateExpressionStatement(
+			jsast.CreateAwaitExpression(
+				jsast.CreateCallExpression(
+					jsast.CreateIdentifier(def.Name()),
+					args,
+				),
+			),
+		), nil
+	}
+
 	return jsast.CreateExpressionStatement(
-		jsast.CreateAwaitExpression(x),
+		jsast.CreateCallExpression(
+			jsast.CreateIdentifier(def.Name()),
+			args,
+		),
 	), nil
-
-	// isAsync := ctx.declaration.Async
-
-	// return tr.callExpression()
-
-	// var args []jsast.IExpression
-	// for _, arg := range n.Call.Args {
-	// 	x, e := tr.expression(d, sp, arg)
-	// 	if e != nil {
-	// 		return nil, e
-	// 	}
-	// 	args = append(args, x)
-	// }
-
-	// n.
-
-	// switch t := n.Call.Fun.(type) {
-	// case *ast.FuncLit:
-	// 	x, e := tr.funcLit(d, sp, t)
-	// 	if e != nil {
-	// 		return nil, e
-	// 	}
-	// 	return jsast.CreateExpressionStatement(x), nil
-	// 	// build argument list
-	// 	// var args
-	// 	// var params []jsast.IPattern
-	// 	// if t.Type != nil && t.Type.Params != nil {
-	// 	// 	fields := t.Type.Params.List
-	// 	// 	for _, field := range fields {
-	// 	// 		// names because: (a, b string, c int) = [[a, b], c]
-	// 	// 		for _, name := range field.Names {
-	// 	// 			id := jsast.CreateIdentifier(name.Name)
-	// 	// 			params = append(params, id)
-	// 	// 		}
-	// 	// 	}
-	// 	// }
-
-	// 	// var body []interface{}
-	// 	// for _, stmt := range t.Body.List {
-	// 	// 	s, e := tr.statement(d, sp, stmt)
-	// 	// 	if e != nil {
-	// 	// 		return nil, e
-	// 	// 	}
-	// 	// 	body = append(body, s)
-	// 	// }
-
-	// 	// return jsast.CreateExpressionStatement(
-	// 	// 	jsast.CreateCallExpression(
-	// 	// 		jsast.CreateAsyncFunctionExpression(
-	// 	// 			nil,
-	// 	// 			params,
-	// 	// 			jsast.CreateFunctionBody(body...),
-	// 	// 		),
-	// 	// 		args,
-	// 	// 	),
-	// 	// ), nil
-
-	// case *ast.Ident:
-	// 	id, e := tr.identifier(d, sp, t)
-	// 	if e != nil {
-	// 		return nil, e
-	// 	}
-
-	// 	def, err := tr.index.DefinitionOf(d.Path(), t)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	} else if decl == nil {
-	// 		return nil, fmt.Errorf("goStmt(): nil declaration")
-	// 	}
-
-	// 	var x jsast.IExpression = jsast.CreateCallExpression(id, args)
-
-	// 	if decl.Async {
-	// 		x = jsast.CreateAwaitExpression(x)
-	// 	}
-
-	// 	return jsast.CreateExpressionStatement(x), nil
-	// default:
-	// 	return nil, unhandled("goStmt", n.Call.Fun)
-	// }
 }
 
 func (tr *Translator) sendStmt(d def.Definition, sp *scope.Scope, n *ast.SendStmt) (j jsast.IStatement, err error) {
@@ -2307,46 +2301,30 @@ func (tr *Translator) maybeError(d def.Definition, sp *scope.Scope, n *ast.CallE
 }
 
 func (tr *Translator) maybeAwait(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
-	var isAsync bool
-	var id string
 
-	switch t := n.Fun.(type) {
-	case *ast.Ident:
-		id = t.Name
-	case *ast.SelectorExpr:
-		id = t.Sel.Name
+	// ignore these
+	switch n.Fun.(type) {
 	case *ast.FuncLit:
 		return nil, nil
 	case *ast.ArrayType:
 		return nil, nil
-	default:
-		return nil, unhandled("maybeAwait", n.Fun)
 	}
 
-	deps, e := d.Dependencies()
+	def, e := tr.index.DefinitionOf(d.Path(), n.Fun)
 	if e != nil {
 		return nil, e
 	}
 
-	for _, dep := range deps {
-		fn, ok := dep.(fn.Function)
-		if !ok {
-			continue
-		}
-
-		if id != fn.Name() {
-			continue
-		}
-
-		isAsync, e := fn.IsAsync()
-		if e != nil {
-			return nil, e
-		}
-
-		if isAsync {
-			isAsync = true
-		}
+	fn, ok := def.(fn.Function)
+	if !ok {
+		return nil, nil
 	}
+
+	isAsync, e := fn.IsAsync()
+	if e != nil {
+		return nil, e
+	}
+
 	if !isAsync {
 		return nil, nil
 	}

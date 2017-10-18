@@ -136,7 +136,6 @@ func NewMethod(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (d
 
 func (d *methoddef) process() (err error) {
 	seen := map[string]bool{}
-	_ = seen
 
 	ast.Inspect(d.node, func(n ast.Node) bool {
 		switch t := n.(type) {
@@ -169,7 +168,7 @@ func (d *methoddef) process() (err error) {
 			}
 
 		case *ast.ChanType:
-			deps, e := d.index.Runtime("Channel", "Send", "Recv")
+			deps, e := d.index.Runtime("Channel", "send", "Send", "Recv")
 			if e != nil {
 				err = e
 				return false
@@ -188,6 +187,28 @@ func (d *methoddef) process() (err error) {
 	return err
 }
 
+func (d *methoddef) Dependencies() (defs []def.Definition, err error) {
+	if d.processed {
+		return d.deps, nil
+	}
+	err = d.process()
+	if err != nil {
+		return defs, err
+	}
+	return d.deps, nil
+}
+
+func (d *methoddef) IsAsync() (bool, error) {
+	if d.processed {
+		return d.async, nil
+	}
+	e := d.process()
+	if e != nil {
+		return false, e
+	}
+	return d.async, nil
+}
+
 func (d *methoddef) ID() string {
 	return d.id
 }
@@ -198,10 +219,6 @@ func (d *methoddef) Name() string {
 
 func (d *methoddef) Path() string {
 	return d.path
-}
-
-func (d *methoddef) Dependencies() ([]def.Definition, error) {
-	return nil, nil
 }
 
 func (d *methoddef) Exported() bool {
@@ -217,17 +234,6 @@ func (d *methoddef) Node() *ast.FuncDecl {
 
 func (d *methoddef) Type() types.Type {
 	return d.kind
-}
-
-func (d *methoddef) IsAsync() (bool, error) {
-	if d.processed {
-		return d.async, nil
-	}
-	e := d.process()
-	if e != nil {
-		return false, e
-	}
-	return d.async, nil
 }
 
 func (d *methoddef) Recv() def.Definition {

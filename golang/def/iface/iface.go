@@ -1,6 +1,7 @@
 package iface
 
 import (
+	"errors"
 	"fmt"
 	"go/ast"
 	"go/types"
@@ -83,6 +84,10 @@ func (d *ifacedef) process() (err error) {
 	return err
 }
 
+func (d *ifacedef) Dependencies() ([]def.Definition, error) {
+	return nil, errors.New("iface.Dependencies() not implemented yet")
+}
+
 func (d *ifacedef) ID() string {
 	return d.id
 }
@@ -93,10 +98,6 @@ func (d *ifacedef) Name() string {
 
 func (d *ifacedef) Path() string {
 	return d.path
-}
-
-func (d *ifacedef) Dependencies() ([]def.Definition, error) {
-	return nil, nil
 }
 
 func (d *ifacedef) Exported() bool {
