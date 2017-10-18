@@ -1,0 +1,24 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/js"] = (function() {
+function Raw (src) {
+return null;
+};
+return {
+  Raw: Raw
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/13-simple-raw"] = (function() {
+var js = pkg["github.com/matthewmueller/golly/js"];
+function main () {
+var x = 15;
+x += 5;
+console.log(x);
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/13-simple-raw"].main();
+})()
