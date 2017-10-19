@@ -127,7 +127,7 @@ func NewStruct(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n 
 	return &structdef{
 		exported: obj.Exported(),
 		path:     packagePath,
-		name:     n.Name.Name,
+		name:     name,
 		id:       id,
 		index:    index,
 		node:     n,
