@@ -1,16 +1,7 @@
 ;
 (function() {
 var pkg = {};
-pkg["github.com/matthewmueller/golly/js"] = (function() {
-function Rewrite (expr, variables) {
-;
-};
-return {
-  Rewrite: Rewrite
-};
-})();
 pkg["github.com/matthewmueller/golly/stdlib/errors"] = (function() {
-var js = pkg["github.com/matthewmueller/golly/js"];
 function New (text) {
 js.Rewrite("new Error($1)", text);
 return null;
