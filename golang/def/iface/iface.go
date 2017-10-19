@@ -38,7 +38,7 @@ type ifacedef struct {
 }
 
 // NewInterface fn
-func NewInterface(index *index.Index, info *loader.PackageInfo, n *ast.TypeSpec) (def.Definition, error) {
+func NewInterface(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n *ast.TypeSpec) (def.Definition, error) {
 	obj := info.ObjectOf(n.Name)
 	packagePath := obj.Pkg().Path()
 	idParts := []string{packagePath, n.Name.Name}
@@ -66,6 +66,7 @@ func NewInterface(index *index.Index, info *loader.PackageInfo, n *ast.TypeSpec)
 		node:     n,
 		methods:  methods,
 		kind:     kind,
+		imports:  map[string]string{},
 	}, nil
 }
 
@@ -109,6 +110,10 @@ func (d *ifacedef) Omitted() bool {
 
 func (d *ifacedef) Node() *ast.TypeSpec {
 	return d.node
+}
+
+func (d *ifacedef) Kind() string {
+	return "INTERFACE"
 }
 
 func (d *ifacedef) Type() types.Type {

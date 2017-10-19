@@ -5,13 +5,13 @@ import (
 )
 
 // Fetch fn
-// js:"fetch,global"
+// js:"fetch,omit"
 func Fetch(url string, options *map[string]string) *promise.Promise {
 	return &promise.Promise{}
 }
 
 // Response struct
-// js:"response,global"
+// js:"response,omit"
 type Response struct {
 	responseText string
 }
@@ -23,7 +23,7 @@ func (r *Response) JSON() string {
 }
 
 // Github struct
-// js:"github,global"
+// js:"github,omit"
 type Github struct {
 	Login string `json:"login,omitempty" js:"login"`
 	Name  string `json:"name,omitempty" js:"name"`

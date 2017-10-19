@@ -33,7 +33,7 @@ type valuedef struct {
 }
 
 // NewValue fn
-func NewValue(index *index.Index, info *loader.PackageInfo, n *ast.ValueSpec) (def.Definition, error) {
+func NewValue(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n *ast.ValueSpec) (def.Definition, error) {
 	packagePath := info.Pkg.Path()
 	names := []string{}
 	exported := false
@@ -81,6 +81,10 @@ func (d *valuedef) ID() string {
 
 func (d *valuedef) Name() string {
 	return d.name
+}
+
+func (d *valuedef) Kind() string {
+	return "VALUE"
 }
 
 func (d *valuedef) Path() string {

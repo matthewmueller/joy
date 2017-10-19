@@ -23,6 +23,7 @@ type Struct interface {
 	Fields() []Field
 	Field(name string) Field
 	OriginalName() string
+	Methods() []def.Definition
 }
 
 // Field interface
@@ -67,14 +68,15 @@ func (f *field) Type() ast.Expr {
 }
 
 // NewStruct fn
-func NewStruct(index *index.Index, info *loader.PackageInfo, n *ast.TypeSpec) (def.Definition, error) {
+func NewStruct(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n *ast.TypeSpec) (def.Definition, error) {
 	// typeof := info.TypeOf(n.Name)
 	obj := info.ObjectOf(n.Name)
 	packagePath := obj.Pkg().Path()
-	idParts := []string{packagePath, n.Name.Name}
+	name := n.Name.Name
+	idParts := []string{packagePath, name}
 	id := strings.Join(idParts, " ")
 
-	tag, e := util.JSTag(n.Doc)
+	tag, e := util.JSTag(gn.Doc)
 	if e != nil {
 		return nil, e
 	}
@@ -191,6 +193,10 @@ func (d *structdef) Name() string {
 	return d.name
 }
 
+func (d *structdef) Kind() string {
+	return "STRUCT"
+}
+
 func (d *structdef) OriginalName() string {
 	return d.name
 }
@@ -204,6 +210,9 @@ func (d *structdef) Exported() bool {
 }
 
 func (d *structdef) Omitted() bool {
+	if d.tag != nil {
+		return d.tag.HasOption("omit")
+	}
 	return false
 }
 
@@ -239,4 +248,9 @@ func (d *structdef) Imports() map[string]string {
 
 func (d *structdef) FromRuntime() bool {
 	return false
+}
+
+// Methods functions
+func (d *structdef) Methods() (defs []def.Definition) {
+	return defs
 }

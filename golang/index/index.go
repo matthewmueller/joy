@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/types"
+	"sort"
 	"strings"
 
 	"github.com/matthewmueller/golly/golang/def"
@@ -67,20 +68,28 @@ func (i *Index) Link(alias string, d def.Definition) {
 }
 
 // Mains gets all the main functions
-func (i *Index) Mains() (defs []def.Definition) {
+func (i *Index) Mains() (mains []def.Definition) {
+	var defids []string
 	for _, info := range i.program.InitialPackages() {
 		p := info.Pkg.Path()
 		def := i.defs[p+" main"]
 		if def == nil {
 			continue
 		}
-		defs = append(defs, def)
+		defids = append(defids, def.ID())
 	}
-	return defs
+
+	sort.Strings(defids)
+	for _, id := range defids {
+		mains = append(mains, i.defs[id])
+	}
+
+	return mains
 }
 
 // Runtime gets a definition from the runtime
-func (i *Index) Runtime(names ...string) (defs []def.Definition, err error) {
+func (i *Index) Runtime(names ...string) (runtimes []def.Definition, err error) {
+	var defs []string
 	for _, def := range i.defs {
 		if !def.FromRuntime() {
 			continue
@@ -88,12 +97,19 @@ func (i *Index) Runtime(names ...string) (defs []def.Definition, err error) {
 
 		for _, name := range names {
 			if def.Name() == name {
-				defs = append(defs, def)
+				defs = append(defs, def.ID())
 			}
 		}
 	}
 
-	return defs, nil
+	// sort so we have consistent builds
+	sort.Strings(defs)
+
+	for _, def := range defs {
+		runtimes = append(runtimes, i.defs[def])
+	}
+
+	return runtimes, nil
 }
 
 // DefinitionOf fn
@@ -103,37 +119,64 @@ func (i *Index) Runtime(names ...string) (defs []def.Definition, err error) {
 // - local variable that points to a basic type
 // - function parameters & results
 func (i *Index) DefinitionOf(packagePath string, n ast.Node) (def.Definition, error) {
-	// first try the rightmost identifier of the
-	// selection expression, then try the selector
-	// identifier itself:
-	// 1. *user*.phone or user.*settings*.phone
-	// 2. user.settings.*phone*
-	if s, ok := n.(*ast.SelectorExpr); ok {
-		id, e := util.GetIdentifier(s.X)
+	switch t := n.(type) {
+	case *ast.SelectorExpr:
+		return i.selectorDefinition(packagePath, t)
+	case *ast.Ident:
+		return i.identDefinition(packagePath, t)
+	default:
+		id, e := util.GetIdentifier(t)
 		if e != nil {
 			return nil, e
 		}
-		d, e := i.DefinitionOf(packagePath, id)
-		if e != nil {
-			return nil, e
-		} else if d != nil {
-			return d, nil
-		}
-		return i.DefinitionOf(packagePath, s.Sel)
+		return i.identDefinition(packagePath, id)
 	}
+}
 
-	ident, e := util.GetIdentifier(n)
+// Finds the definition based on the selector expression
+// This is a bit subtle, but we basically do the following:
+// 1. Check the rightmost identifier for a definition
+//    if we find one and it's not a struct, then return
+// 2. If the rightmost identifier is nil or a struct,
+//    we find the rightmost parent of the selector
+//    expression. If we find that definition, we return
+//    it immediately
+// 3. If we don't, we return the original rightmost identifier
+//    which is either a struct or nil at this point
+func (i *Index) selectorDefinition(packagePath string, n *ast.SelectorExpr) (def.Definition, error) {
+	sel, e := i.identDefinition(packagePath, n.Sel)
 	if e != nil {
 		return nil, e
 	}
 
+	// prioritize selector definitions for non-structs
+	if sel != nil && sel.Kind() != "STRUCT" {
+		return sel, nil
+	}
+
+	id, e := util.GetIdentifier(n.X)
+	if e != nil {
+		return nil, e
+	}
+
+	d, e := i.identDefinition(packagePath, id)
+	if e != nil {
+		return nil, e
+	} else if d != nil {
+		return d, nil
+	}
+
+	return sel, nil
+}
+
+func (i *Index) identDefinition(packagePath string, n *ast.Ident) (def.Definition, error) {
 	info := i.program.Package(packagePath)
 	if info == nil {
 		return nil, errors.New("DefinitionOf: no package found")
 	}
 
 	// built-in or package name
-	obj := info.ObjectOf(ident)
+	obj := info.ObjectOf(n)
 	if obj == nil {
 		return nil, nil
 	}

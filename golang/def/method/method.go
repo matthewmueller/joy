@@ -131,6 +131,7 @@ func NewMethod(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (d
 		recv:     recv,
 		tag:      tag,
 		runtime:  fromRuntime,
+		imports:  map[string]string{},
 	}, nil
 }
 
@@ -214,6 +215,9 @@ func (d *methoddef) ID() string {
 }
 
 func (d *methoddef) Name() string {
+	if d.tag != nil {
+		return d.tag.Name
+	}
 	return d.name
 }
 
@@ -226,6 +230,15 @@ func (d *methoddef) Exported() bool {
 }
 
 func (d *methoddef) Omitted() bool {
+	if d.tag != nil && d.tag.HasOption("omit") {
+		return true
+	}
+
+	// also omit if the receiver has been omitted
+	if d.Recv().Omitted() {
+		return true
+	}
+
 	return false
 }
 func (d *methoddef) Node() *ast.FuncDecl {
@@ -234,6 +247,10 @@ func (d *methoddef) Node() *ast.FuncDecl {
 
 func (d *methoddef) Type() types.Type {
 	return d.kind
+}
+
+func (d *methoddef) Kind() string {
+	return "METHOD"
 }
 
 func (d *methoddef) Recv() def.Definition {

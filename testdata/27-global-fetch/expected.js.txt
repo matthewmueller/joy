@@ -1,34 +1,7 @@
 ;
 (function() {
 var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/27-global-fetch/promise"] = (function() {
-Promise.prototype.Catch = function() {
-var p = this;
-return p;
-};
-function Promise (o) {
-o = o || {};
-this.value = o.value || null;
-this.err = o.err || null;
-};
-Promise.prototype.Then = function() {
-var p = this;
-return p;
-};
-return {
-  Promise: Promise
-};
-})();
-pkg["github.com/matthewmueller/golly/js"] = (function() {
-function Raw (src) {
-return null;
-};
-return {
-  Raw: Raw
-};
-})();
 pkg["github.com/matthewmueller/golly/runtime"] = (function() {
-var js = pkg["github.com/matthewmueller/golly/js"];
 function Chan (o) {
 o = o || {};
 this.capacity = o.capacity || 0;
@@ -118,34 +91,17 @@ return {
 };
 })();
 pkg["github.com/matthewmueller/golly/testdata/27-global-fetch"] = (function() {
-var runtime = pkg["github.com/matthewmueller/golly/runtime"], promise = pkg["github.com/matthewmueller/golly/testdata/27-global-fetch/promise"];
-function Fetch (url, options) {
-return new promise.Promise({});
-};
-function Github (o) {
-o = o || {};
-this.login = o.login || "";
-this.name = o.name || "";
-this.bio = o.bio || "";
-};
-Response.prototype.JSON = function() {
-var r = this;
-return r.responseText;
-};
-function Response (o) {
-o = o || {};
-this.responseText = o.responseText || "";
-};
+var runtime = pkg["github.com/matthewmueller/golly/runtime"];
 async function main () {
-var p = Fetch("https://api.github.com/users/matthewmueller", null);
+var p = fetch("https://api.github.com/users/matthewmueller", null);
 var ch = new runtime.Channel();
-p.Then(await async function(v) {
+p.then(await async function(v) {
 var res = v;
-return res.JSON();
-}).Then(await async function(v) {
+return res.json();
+}).then(await async function(v) {
 await ch.Send(v);
 return null;
-}).Catch(await async function(e) {
+}).catch(await async function(e) {
 console.log(e);
 return null;
 });
@@ -153,9 +109,6 @@ var gh = await ch.Recv();
 console.log(gh.login, "-", gh.name);
 };
 return {
-  fetch: fetch,
-  Github: Github,
-  Response: Response,
   main: main
 };
 })();

@@ -12,6 +12,7 @@ type Definition interface {
 	Exported() bool
 	Omitted() bool
 	Type() types.Type
+	Kind() string
 	Dependencies() ([]Definition, error)
 	Imports() map[string]string
 	FromRuntime() bool

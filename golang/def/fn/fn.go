@@ -229,10 +229,10 @@ func (d *funcdef) Exported() bool {
 }
 
 func (d *funcdef) Omitted() bool {
-	if d.tag == nil {
-		return false
+	if d.tag != nil {
+		return d.tag.HasOption("omit")
 	}
-	return d.tag.HasOption("omit")
+	return false
 }
 
 func (d *funcdef) Node() *ast.FuncDecl {
@@ -241,6 +241,10 @@ func (d *funcdef) Node() *ast.FuncDecl {
 
 func (d *funcdef) Type() types.Type {
 	return d.kind
+}
+
+func (d *funcdef) Kind() string {
+	return "FUNCTION"
 }
 
 func (d *funcdef) IsAsync() (bool, error) {

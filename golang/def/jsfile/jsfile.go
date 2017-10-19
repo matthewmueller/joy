@@ -75,6 +75,10 @@ func (d *jsfiledef) Omitted() bool {
 	return false
 }
 
+func (d *jsfiledef) Kind() string {
+	return "JSFILE"
+}
+
 func (d *jsfiledef) FromRuntime() bool {
 	return false
 }

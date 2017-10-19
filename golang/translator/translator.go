@@ -10,11 +10,13 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/apex/log"
+	"github.com/matthewmueller/golly/golang/def/iface"
+
 	"github.com/matthewmueller/golly/golang/def/jsfile"
 
 	"golang.org/x/tools/go/loader"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/db"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/def/fn"
@@ -192,9 +194,9 @@ func (tr *Translator) methods(d method.Method) (jsast.INode, error) {
 	// }
 
 	// remove prototypes where the receiver is global
-	if d.Recv().Omitted() {
-		return jsast.CreateEmptyStatement(), nil
-	}
+	// if d.Recv().Omitted() {
+	// 	return jsast.CreateEmptyStatement(), nil
+	// }
 
 	// x, e := tr.expression(d, sp, d.Recv())
 	// if e != nil {
@@ -1649,29 +1651,27 @@ func (tr *Translator) binaryExpression(d def.Definition, sp *scope.Scope, b *ast
 }
 
 func (tr *Translator) identifier(d def.Definition, sp *scope.Scope, n *ast.Ident) (j jsast.IExpression, err error) {
-	// decl, err := tr.db.DefinitionOf(ctx.info, n)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// name := n.Name
+	def, e := tr.index.DefinitionOf(d.Path(), n)
+	if e != nil {
+		return nil, e
+	}
 
-	// // if decl is nil, it's a local variable
-	// // or a predefined identifier like
-	// // nil or error
-	// if decl != nil {
-	// 	// use the alias if we have a JS tag
-	// 	if decl.JSTag != nil {
-	// 		name = decl.JSTag.Name
-	// 	}
-	// }
+	name := n.Name
 
-	// log.Infof("name %s %+v", n.Name, ctx.info.ObjectOf(n).Type())
+	// we only look at non-structs because aliases
+	// should get picked up by the selector expressions.
+	// Note that this is only for local variables
+	// TODO: not sure if this is a robust enough check
+	if def != nil && def.Kind() != "STRUCT" {
+		log.Debugf("identifier: %s -> %s (%s)", name, def.Name(), def.Kind())
+		name = def.Name()
+	}
 
 	switch n.Name {
 	case "nil":
 		return jsast.CreateNull(), nil
 	default:
-		return jsast.CreateIdentifier(n.Name), nil
+		return jsast.CreateIdentifier(name), nil
 	}
 }
 
@@ -1888,22 +1888,23 @@ func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.Sel
 		return j, e
 	}
 
+	// get the rightmost name
+	name := n.Sel.Name
+
 	// get the definition of the selector
 	def, e := tr.index.DefinitionOf(d.Path(), n)
 	if e != nil {
 		return j, e
 	}
 
-	log.Debugf("%s.%s -> %s", x, n.Sel.Name, def.Name())
+	// log.Infof("selector: %s: %s -> %s", x, name, def.Name())
 
-	// alias based on the selector's definition
-	name := n.Sel.Name
+	// maybe alias based on the selector's definition
 	switch t := def.(type) {
 	case struc.Struct:
-		// TODO: maybe change this later, struct fields
-		// point directly to a field interface, rather
-		// than original struct
-		// log.Infof("%s.%s, original=%s", x, name, t.OriginalName())
+		// TODO: maybe change this: right now fields point
+		// to the structs themselves, but they should probably
+		// point to a struct field interface instead
 		if name == t.OriginalName() {
 			name = t.Name()
 		} else {
@@ -1912,6 +1913,8 @@ func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.Sel
 				name = f.Name()
 			}
 		}
+	case fn.Function, method.Method, iface.Interface:
+		name = t.Name()
 	}
 
 	return jsast.CreateMemberExpression(

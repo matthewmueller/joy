@@ -163,7 +163,7 @@ func ExprToString(n ast.Node) (string, error) {
 		}
 		return c + "(" + strings.Join(args, ", ") + ")", nil
 	default:
-		return "", fmt.Errorf("ExprToString: unhandled %T", n)
+		return "", nil
 	}
 }
 

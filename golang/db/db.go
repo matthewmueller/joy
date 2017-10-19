@@ -87,44 +87,65 @@ func (db *DB) inspect(info *loader.PackageInfo, node ast.Node) (recurse bool, er
 
 		db.index.AddDefinition(d)
 		return false, nil
-	case *ast.ValueSpec:
-		d, e := value.NewValue(db.index, info, t)
-		if e != nil {
-			return false, e
-		}
-		db.index.AddDefinition(d)
+	// case *ast.ValueSpec:
+	// 	d, e := value.NewValue(db.index, info, gn, t)
+	// 	if e != nil {
+	// 		return false, e
+	// 	}
+	// 	db.index.AddDefinition(d)
 
-		// for _, name := range t.Names {
-		// 	if name.Name == "_" {
-		// 		continue
-		// 	}
-		// }
-		return false, nil
-	case *ast.TypeSpec:
-		e := db.parseType(info, t)
-		if e != nil {
-			return false, e
+	// for _, name := range t.Names {
+	// 	if name.Name == "_" {
+	// 		continue
+	// 	}
+	// }
+	// return false, nil
+	// case *ast.TypeSpec:
+	// 	e := db.parseType(info, t)
+	// 	if e != nil {
+	// 		return false, e
+	// 	}
+	// 	return false, nil
+	// case *ast.ImportSpec:
+	// 	db.importSpec(info, t)
+	// 	return false, nil
+	case *ast.GenDecl:
+		for _, spec := range t.Specs {
+			e := db.spec(info, t, spec)
+			if e != nil {
+				return false, e
+			}
 		}
-		return false, nil
-	case *ast.ImportSpec:
-		db.parseImport(info, t)
 		return false, nil
 	default:
 		return true, nil
 	}
 }
 
-func (db *DB) parseType(info *loader.PackageInfo, n *ast.TypeSpec) error {
+func (db *DB) spec(info *loader.PackageInfo, n *ast.GenDecl, spec ast.Spec) error {
+	switch t := spec.(type) {
+	case *ast.ValueSpec:
+		return db.valueSpec(info, n, t)
+	case *ast.ImportSpec:
+		return db.importSpec(info, n, t)
+	case *ast.TypeSpec:
+		return db.typeSpec(info, n, t)
+	default:
+		return fmt.Errorf("unhandled spec: %T", spec)
+	}
+}
+
+func (db *DB) typeSpec(info *loader.PackageInfo, gn *ast.GenDecl, n *ast.TypeSpec) error {
 	switch t := n.Type.(type) {
 	case *ast.StructType:
-		st, e := struc.NewStruct(db.index, info, n)
+		st, e := struc.NewStruct(db.index, info, gn, n)
 		if e != nil {
 			return e
 		}
 		db.index.AddDefinition(st)
 		return nil
 	case *ast.InterfaceType:
-		iface, e := iface.NewInterface(db.index, info, n)
+		iface, e := iface.NewInterface(db.index, info, gn, n)
 		if e != nil {
 			return e
 		}
@@ -143,7 +164,7 @@ func (db *DB) parseType(info *loader.PackageInfo, n *ast.TypeSpec) error {
 	}
 }
 
-func (db *DB) parseImport(info *loader.PackageInfo, n *ast.ImportSpec) {
+func (db *DB) importSpec(info *loader.PackageInfo, gn *ast.GenDecl, n *ast.ImportSpec) error {
 	// trim the "" of package path's
 	deppath := strings.Trim(n.Path.Value, `"`)
 
@@ -153,13 +174,22 @@ func (db *DB) parseImport(info *loader.PackageInfo, n *ast.ImportSpec) {
 	// alias
 	if n.Name != nil {
 		db.index.AddImport(packagePath, n.Name.Name, deppath)
-		return
+		return nil
 	}
 
 	// use base name
 	name := path.Base(deppath)
 	db.index.AddImport(packagePath, name, deppath)
-	return
+	return nil
+}
+
+func (db *DB) valueSpec(info *loader.PackageInfo, gn *ast.GenDecl, n *ast.ValueSpec) error {
+	d, e := value.NewValue(db.index, info, gn, n)
+	if e != nil {
+		return e
+	}
+	db.index.AddDefinition(d)
+	return nil
 }
 
 // // DefinitionOf fn

@@ -1,68 +1,87 @@
 package graph
 
 import (
+	"errors"
+	"path"
 	"sort"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def"
-	"github.com/stevenle/topsort"
+	toposort "github.com/philopon/go-toposort"
 )
 
 // Graph struct
 type Graph struct {
-	nodes       map[string]def.Definition
-	edges       map[string]map[string]bool
-	modules     map[string]bool
-	moduleEdges map[string]map[string]bool
-	pathgraph   *topsort.Graph
-	defgraphs   map[string]*topsort.Graph
+	defs  map[string]def.Definition
+	nodes map[string]string
+	edges map[string][]string
 }
 
 // New function
 func New() *Graph {
 	return &Graph{
-		nodes: map[string]def.Definition{},
-		// edges:       map[string]map[string]bool{},
-		// modules:     map[string]bool{},
-		// moduleEdges: map[string]map[string]bool{},
-		pathgraph: topsort.NewGraph(),
-		// defgraphs:   map[string]*topsort.Graph{},
+		defs:  map[string]def.Definition{},
+		nodes: map[string]string{},
+		edges: map[string][]string{},
 	}
 }
 
 // AddDependency fn
 func (g *Graph) AddDependency(parent def.Definition, children ...def.Definition) {
 	parentPath := parent.Path()
-	g.pathgraph.AddNode(parentPath)
-	g.nodes[parent.ID()] = parent
+	parentID := parent.ID()
+
+	// add the parent
+	g.nodes[parentPath] = parentID
+	g.defs[parentID] = parent
 
 	// build the module dep graph
 	for _, child := range children {
 		childPath := child.Path()
+		childID := child.ID()
+
 		if parentPath == childPath {
 			continue
 		}
-		g.pathgraph.AddNode(childPath)
-		g.pathgraph.AddEdge(parentPath, childPath)
-		g.nodes[child.ID()] = child
-	}
-}
 
-// Roots gets a list of root declarations (those without any dependants)
-func (g *Graph) Roots() (decls []def.Definition) {
-	for id, decl := range g.nodes {
-		if _, isset := g.edges[id]; !isset {
-			decls = append(decls, decl)
+		g.nodes[childPath] = childID
+		g.defs[childID] = child
+
+		if g.edges[parentPath] == nil {
+			g.edges[parentPath] = []string{}
+		} else if !contains(g.edges[parentPath], childPath) {
+			g.edges[parentPath] = append(g.edges[parentPath], childPath)
 		}
 	}
-	return decls
 }
 
 // Sort declarations topologically based on their package path
+// TODO: this is very inefficient
 func (g *Graph) Sort(d def.Definition) (defs []def.Definition, err error) {
-	// topologically sort the module paths
-	order, e := g.pathgraph.TopSort(d.Path())
-	if e != nil {
-		return defs, e
+	topo := toposort.NewGraph(len(g.nodes))
+	for path := range g.nodes {
+		if ok := topo.AddNode(path); !ok {
+			return defs, errors.New("Sort: unable to add node")
+		}
+	}
+
+	for parentPath, edge := range g.edges {
+		sort.Strings(edge)
+		for _, childPath := range edge {
+			log.Debugf("%s -> %s", path.Base(parentPath), path.Base(childPath))
+			if ok := topo.AddEdge(parentPath, childPath); !ok {
+				return defs, errors.New("Sort: unable to add edge")
+			}
+		}
+	}
+
+	order, ok := topo.Toposort()
+	if !ok {
+		return defs, errors.New("Sort: cyclical dependency")
+	}
+	order = reverse(order)
+	for _, o := range order {
+		log.Debugf("order: %s", o)
 	}
 
 	// sort the definitions within the packages
@@ -70,7 +89,7 @@ func (g *Graph) Sort(d def.Definition) (defs []def.Definition, err error) {
 	// but it's probably better to sort based on order
 	// in the original source file
 	nodes := []string{}
-	for _, n := range g.nodes {
+	for _, n := range g.defs {
 		nodes = append(nodes, n.ID())
 	}
 	sort.Strings(nodes)
@@ -78,7 +97,7 @@ func (g *Graph) Sort(d def.Definition) (defs []def.Definition, err error) {
 	// group definitions into modules
 	defmap := map[string][]def.Definition{}
 	for _, n := range nodes {
-		node := g.nodes[n]
+		node := g.defs[n]
 		path := node.Path()
 		if defmap[path] == nil {
 			defmap[path] = []def.Definition{}
@@ -92,4 +111,20 @@ func (g *Graph) Sort(d def.Definition) (defs []def.Definition, err error) {
 	}
 
 	return defs, nil
+}
+
+func reverse(s []string) []string {
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
+	}
+	return s
+}
+
+func contains(haystack []string, needle string) bool {
+	for _, item := range haystack {
+		if item == needle {
+			return true
+		}
+	}
+	return false
 }

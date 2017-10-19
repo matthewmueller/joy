@@ -1,6 +1,8 @@
 package golang
 
 import (
+	"sort"
+
 	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/script"
@@ -84,10 +86,6 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 			return scripts, errors.Wrap(err, "error getting dependencies")
 		}
 
-		for _, dep := range deps {
-			log.Debugf("%s -> %s", def.ID(), dep.ID())
-		}
-
 		// add the dependencies to the graph
 		g.AddDependency(def, deps...)
 
@@ -113,9 +111,9 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 			return scripts, e
 		}
 
-		// for _, d := range sorted {
-		// 	log.Infof("id=%s", d.ID())
-		// }
+		for _, d := range sorted {
+			log.Debugf("id=%s", d.ID())
+		}
 
 		modules, e := group(sorted)
 		if e != nil {
@@ -150,13 +148,14 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 		for _, module := range file.modules {
 			var modbody []interface{}
 
-			// if len(module.exports) == 0 {
-			// 	continue
-			// }
+			if len(module.exports) == 0 {
+				continue
+			}
 
 			// create imports linking of the pkgs between packages
 			// e.g. var runner = pkg["github.com/gorunner/runner"]
-			var imports []jsast.VariableDeclarator
+			imports := map[string]jsast.VariableDeclarator{}
+			order := []string{}
 			for alias, path := range module.imports {
 				// don't include a dependencies that doesn't have
 				// any exports as that package will be eliminated
@@ -165,33 +164,46 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 					continue
 				}
 
-				imports = append(imports, jsast.CreateVariableDeclarator(
+				imports[path] = jsast.CreateVariableDeclarator(
 					jsast.CreateIdentifier(alias),
 					jsast.CreateMemberExpression(
 						jsast.CreateIdentifier("pkg"),
 						jsast.CreateString(path),
 						true,
 					),
-				))
+				)
+				order = append(order, path)
 			}
-			if len(imports) > 0 {
+
+			// sort so we're deterministic
+			sort.Strings(order)
+
+			for _, path := range order {
 				modbody = append(modbody, jsast.CreateVariableDeclaration(
 					"var",
-					imports...,
+					imports[path],
 				))
 			}
 
 			// create the definition body
+			var defbody []interface{}
 			for _, def := range module.defs {
+				if def.Omitted() {
+					continue
+				}
+
 				ast, err := tr.Translate(def)
 				if err != nil {
 					return scripts, err
 				} else if ast == nil {
 					return scripts, errors.New("translate shouldn't return nil")
 				}
-				log.Infof("def id=%s ast=%s", def.ID(), ast)
-				modbody = append(modbody, ast)
+				defbody = append(defbody, ast)
 			}
+			if len(defbody) == 0 {
+				continue
+			}
+			modbody = append(modbody, defbody...)
 
 			// create a return statement for the exported fields
 			// e.g. return { $export: $export }
@@ -282,7 +294,7 @@ func group(defs []def.Definition) (modules []*module, err error) {
 			def,
 		)
 
-		if def.Exported() {
+		if def.Exported() && !def.Omitted() {
 			moduleMap[from].exports = append(
 				moduleMap[from].exports,
 				def.Name(),
