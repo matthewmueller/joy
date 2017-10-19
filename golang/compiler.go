@@ -112,7 +112,7 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 		}
 
 		for _, d := range sorted {
-			log.Infof("id=%s", d.ID())
+			log.Debugf("id=%s", d.ID())
 		}
 
 		modules, e := group(sorted)
@@ -294,7 +294,7 @@ func group(defs []def.Definition) (modules []*module, err error) {
 			def,
 		)
 
-		log.Infof("%s: exported=%t omitted=%t", def.ID(), def.Exported(), def.Omitted())
+		log.Debugf("%s: exported=%t omitted=%t", def.ID(), def.Exported(), def.Omitted())
 		if def.Exported() && !def.Omitted() {
 			moduleMap[from].exports = append(
 				moduleMap[from].exports,

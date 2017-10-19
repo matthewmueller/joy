@@ -1,28 +1,29 @@
 package graph
 
 import (
-	"errors"
-	"path"
 	"sort"
 
 	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def"
-	toposort "github.com/philopon/go-toposort"
+	"github.com/stevenle/topsort"
 )
 
 // Graph struct
 type Graph struct {
 	defs  map[string]def.Definition
 	nodes map[string]string
-	edges map[string][]string
+	edges map[string]map[string]bool
 }
 
 // New function
 func New() *Graph {
 	return &Graph{
-		defs:  map[string]def.Definition{},
+		// id => definition
+		defs: map[string]def.Definition{},
+		// path => id
 		nodes: map[string]string{},
-		edges: map[string][]string{},
+		// parent path => map[child path]bool
+		edges: map[string]map[string]bool{},
 	}
 }
 
@@ -48,83 +49,82 @@ func (g *Graph) AddDependency(parent def.Definition, children ...def.Definition)
 		g.defs[childID] = child
 
 		if g.edges[parentPath] == nil {
-			g.edges[parentPath] = []string{}
-		} else if !contains(g.edges[parentPath], childPath) {
-			g.edges[parentPath] = append(g.edges[parentPath], childPath)
+			g.edges[parentPath] = map[string]bool{}
 		}
+		g.edges[parentPath][childPath] = true
 	}
 }
 
 // Sort declarations topologically based on their package path
-// TODO: this is very inefficient
+// TODO: this could be a lot better
 func (g *Graph) Sort(d def.Definition) (defs []def.Definition, err error) {
-	topo := toposort.NewGraph(len(g.nodes))
-	for path := range g.nodes {
-		if ok := topo.AddNode(path); !ok {
-			return defs, errors.New("Sort: unable to add node")
-		}
+	graph := topsort.NewGraph()
+
+	// add the nodes in a sorted order
+	nodes := sortNodeKeys(g.nodes)
+	for _, node := range nodes {
+		graph.AddNode(node)
 	}
 
 	for parentPath, edge := range g.edges {
-		sort.Strings(edge)
-		for _, childPath := range edge {
-			log.Debugf("%s -> %s", path.Base(parentPath), path.Base(childPath))
-			if ok := topo.AddEdge(parentPath, childPath); !ok {
-				return defs, errors.New("Sort: unable to add edge")
-			}
+		children := sortEdgeKeys(edge)
+		for _, childPath := range children {
+			graph.AddEdge(parentPath, childPath)
 		}
 	}
 
-	order, ok := topo.Toposort()
-	if !ok {
-		return defs, errors.New("Sort: cyclical dependency")
+	order, e := graph.TopSort(d.Path())
+	if e != nil {
+		return defs, e
 	}
-	order = reverse(order)
+
+	log.Debugf("main %s", d.ID())
 	for _, o := range order {
 		log.Debugf("order: %s", o)
 	}
 
-	// sort the definitions within the packages
-	// TODO: right now this will sort alphabetically
-	// but it's probably better to sort based on order
-	// in the original source file
-	nodes := []string{}
-	for _, n := range g.defs {
-		nodes = append(nodes, n.ID())
-	}
-	sort.Strings(nodes)
-
 	// group definitions into modules
-	defmap := map[string][]def.Definition{}
-	for _, n := range nodes {
-		node := g.defs[n]
+	buckets := map[string][]def.Definition{}
+	ids := sortDefKeys(g.defs)
+	for _, id := range ids {
+		node := g.defs[id]
 		path := node.Path()
-		if defmap[path] == nil {
-			defmap[path] = []def.Definition{}
+		if buckets[path] == nil {
+			buckets[path] = []def.Definition{}
 		}
-		defmap[path] = append(defmap[path], node)
+		buckets[path] = append(buckets[path], node)
 	}
 
 	// order the modules
 	for _, path := range order {
-		defs = append(defs, defmap[path]...)
+		for _, def := range buckets[path] {
+			defs = append(defs, def)
+		}
 	}
 
 	return defs, nil
 }
 
-func reverse(s []string) []string {
-	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
-		s[i], s[j] = s[j], s[i]
+func sortNodeKeys(m map[string]string) (sorted []string) {
+	for k := range m {
+		sorted = append(sorted, k)
 	}
-	return s
+	sort.Strings(sorted)
+	return sorted
 }
 
-func contains(haystack []string, needle string) bool {
-	for _, item := range haystack {
-		if item == needle {
-			return true
-		}
+func sortEdgeKeys(m map[string]bool) (sorted []string) {
+	for k := range m {
+		sorted = append(sorted, k)
 	}
-	return false
+	sort.Strings(sorted)
+	return sorted
+}
+
+func sortDefKeys(m map[string]def.Definition) (sorted []string) {
+	for k := range m {
+		sorted = append(sorted, k)
+	}
+	sort.Strings(sorted)
+	return sorted
 }
