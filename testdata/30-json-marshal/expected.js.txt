@@ -2,6 +2,11 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/30-json-marshal"] = (function() {
+function Person (o) {
+o = o || {};
+this.name = o.name || "";
+this.age = o.age || 0;
+};
 function main () {
 var $bytes = (function(v) {
   try { return [ JSON.stringify(v), null ]  }
@@ -15,14 +20,9 @@ throw err
 };
 console.log(bytes);
 };
-function Person (o) {
-o = o || {};
-this.name = o.name || "";
-this.age = o.age || 0;
-};
 return {
-  main: main,
-  Person: Person
+  Person: Person,
+  main: main
 };
 })();
 return pkg["github.com/matthewmueller/golly/testdata/30-json-marshal"].main();

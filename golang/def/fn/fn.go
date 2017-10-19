@@ -23,6 +23,13 @@ type Function interface {
 	def.Definition
 	IsAsync() (bool, error)
 	Node() *ast.FuncDecl
+	Rewrite() (*Rewrite, error)
+}
+
+// Rewrite struct
+type Rewrite struct {
+	Expression string
+	Variables  []string
 }
 
 type funcdef struct {
@@ -34,13 +41,14 @@ type funcdef struct {
 	kind      types.Type
 	node      *ast.FuncDecl
 	exported  bool
-	params    []string
 	tag       *structtag.Tag
 	runtime   bool
 	processed bool
 	deps      []def.Definition
+	rewrite   *Rewrite
 	async     bool
 	imports   map[string]string
+	omit      bool
 }
 
 var _ Function = (*funcdef)(nil)
@@ -92,7 +100,6 @@ func NewFunction(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) 
 		path:     packagePath,
 		name:     name,
 		node:     n,
-		params:   params,
 		kind:     info.TypeOf(n.Name),
 		runtime:  fromRuntime,
 		tag:      tag,
@@ -113,6 +120,22 @@ func (d *funcdef) process() (err error) {
 			}
 			d.tag = tag
 
+		case *ast.Ident:
+			def, e := d.index.DefinitionOf(d.Path(), t)
+			if e != nil {
+				err = e
+				return false
+			} else if def != nil && !seen[def.ID()] {
+				d.deps = append(d.deps, def)
+				seen[def.ID()] = true
+
+				// check if it points to something async
+				if e := d.maybeAsync(def); e != nil {
+					err = e
+					return false
+				}
+			}
+
 		case *ast.SelectorExpr:
 			def, e := d.index.DefinitionOf(d.Path(), t)
 			if e != nil {
@@ -130,12 +153,12 @@ func (d *funcdef) process() (err error) {
 			}
 
 		case *ast.CallExpr:
-			fn, e := util.ExprToString(t.Fun)
+			cx, e := util.ExprToString(t.Fun)
 			if e != nil {
 				err = e
 				return false
 			}
-			if fn == "js.RawFile" && len(t.Args) > 0 {
+			if cx == "js.RawFile" && len(t.Args) > 0 {
 				lit, ok := t.Args[0].(*ast.BasicLit)
 				if !ok {
 					err = fmt.Errorf("fn process: expected rawfile to have basiclit argument, but got %T", t.Args[0])
@@ -157,22 +180,42 @@ func (d *funcdef) process() (err error) {
 					d.deps = append(d.deps, def)
 					seen[def.ID()] = true
 				}
-			}
+			} else if cx == "js.Rewrite" && len(t.Args) > 0 {
+				var expr string
+				var vars []string
+				for i, arg := range t.Args {
+					// handle expression first
+					if i == 0 {
+						lit, ok := t.Args[0].(*ast.BasicLit)
+						if !ok {
+							err = fmt.Errorf("fn process: expected rawfile to have basiclit argument, but got %T", t.Args[0])
+							return false
+						}
+						exp, e := strconv.Unquote(lit.Value)
+						if e != nil {
+							err = e
+							return false
+						}
+						expr = exp
+						continue
+					}
 
-		case *ast.Ident:
-			def, e := d.index.DefinitionOf(d.Path(), t)
-			if e != nil {
-				err = e
-				return false
-			} else if def != nil && !seen[def.ID()] {
-				d.deps = append(d.deps, def)
-				seen[def.ID()] = true
-
-				// check if it points to something async
-				if e := d.maybeAsync(def); e != nil {
-					err = e
-					return false
+					// tack on args in i=1 ++
+					a, e := util.ExprToString(arg)
+					if e != nil {
+						err = e
+						return false
+					}
+					vars = append(vars, a)
 				}
+
+				d.rewrite = &Rewrite{
+					Expression: expr,
+					Variables:  vars,
+				}
+
+				// omit func decl in any rewritten expression
+				d.omit = true
 			}
 
 		case *ast.ChanType:
@@ -232,7 +275,7 @@ func (d *funcdef) Omitted() bool {
 	if d.tag != nil {
 		return d.tag.HasOption("omit")
 	}
-	return false
+	return d.omit
 }
 
 func (d *funcdef) Node() *ast.FuncDecl {
@@ -256,6 +299,17 @@ func (d *funcdef) IsAsync() (bool, error) {
 		return false, e
 	}
 	return d.async, nil
+}
+
+func (d *funcdef) Rewrite() (*Rewrite, error) {
+	if d.processed {
+		return d.rewrite, nil
+	}
+	e := d.process()
+	if e != nil {
+		return nil, e
+	}
+	return d.rewrite, nil
 }
 
 func (d *funcdef) Imports() map[string]string {

@@ -1,6 +1,7 @@
 package golly_test
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io/ioutil"
@@ -9,6 +10,9 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/sanity-io/litter"
+	"github.com/sergi/go-diff/diffmatchpatch"
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
@@ -108,10 +112,10 @@ func Test(t *testing.T) {
 
 				// compile the code
 				if script.Source() != string(js) {
-					// if err := ioutil.WriteFile(jspath, []byte(script.Source()), 0755); err != nil {
-					// 	t.Fatal(err)
-					// }
-					t.Fatal(fmt.Sprintf("\n## Expected ##\n\n%s\n\n## Actual ##\n\n%s", string(js), script.Source()))
+					if err := ioutil.WriteFile(jspath, []byte(script.Source()), 0755); err != nil {
+						t.Fatal(err)
+					}
+					t.Fatal(formatted(string(js), script.Source()))
 				}
 
 				// try reading the result path
@@ -148,4 +152,33 @@ func Test(t *testing.T) {
 			}
 		})
 	}
+}
+
+func formatted(expected, actual interface{}) string {
+	e := litter.Sdump(expected)
+	a := litter.Sdump(actual)
+
+	dmp := diffmatchpatch.New()
+	diffs := dmp.DiffMain(e, a, false)
+
+	var buf bytes.Buffer
+	for _, diff := range diffs {
+		switch diff.Type {
+		case diffmatchpatch.DiffInsert:
+			buf.WriteString("\x1b[102m\x1b[30m")
+			buf.WriteString(diff.Text)
+			buf.WriteString("\x1b[0m")
+		case diffmatchpatch.DiffDelete:
+			buf.WriteString("\x1b[101m\x1b[30m")
+			buf.WriteString(diff.Text)
+			buf.WriteString("\x1b[0m")
+		case diffmatchpatch.DiffEqual:
+			buf.WriteString(diff.Text)
+		}
+	}
+
+	result := buf.String()
+	result = strings.Replace(result, "\\n", "\n", -1)
+	result = strings.Replace(result, "\\t", "\t", -1)
+	return result
 }

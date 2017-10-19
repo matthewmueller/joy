@@ -1423,9 +1423,9 @@ func (tr *Translator) callExpr(d def.Definition, sp *scope.Scope, n *ast.CallExp
 		return expr, e
 	}
 
-	// if expr, e := tr.maybeJSRewrite(d, sp, n); expr != nil || e != nil {
-	// 	return expr, e
-	// }
+	if expr, e := tr.maybeJSRewrite(d, sp, n); expr != nil || e != nil {
+		return expr, e
+	}
 
 	if expr, e := tr.maybeError(d, sp, n); expr != nil || e != nil {
 		return expr, e
@@ -1851,6 +1851,16 @@ func (tr *Translator) keyValueExpr(d def.Definition, sp *scope.Scope, c *ast.Com
 		return j, e
 	}
 
+	// fasttrack basic keys: User{"a"}, { "a": ... }
+	switch t := n.Key.(type) {
+	case *ast.BasicLit:
+		key, e := tr.basiclit(d, sp, t)
+		if e != nil {
+			return j, e
+		}
+		return jsast.CreateProperty(key, val, "init"), nil
+	}
+
 	// get the definition of the composite type
 	def, err := tr.index.DefinitionOf(d.Path(), c.Type)
 	if err != nil {
@@ -1869,12 +1879,6 @@ func (tr *Translator) keyValueExpr(d def.Definition, sp *scope.Scope, c *ast.Com
 			return j, fmt.Errorf("keyValueExpr: didn't expect field to be nil")
 		}
 		key := jsast.CreateIdentifier(field.Name())
-		return jsast.CreateProperty(key, val, "init"), nil
-	case *ast.BasicLit:
-		key, e := tr.basiclit(d, sp, t)
-		if e != nil {
-			return j, e
-		}
 		return jsast.CreateProperty(key, val, "init"), nil
 	default:
 		return j, unhandled("keyValueExpr<key>", n.Key)
@@ -2241,58 +2245,71 @@ func (tr *Translator) jsRaw(d def.Definition, sp *scope.Scope, cx *ast.CallExpr)
 	return jsast.CreateRaw(src), nil
 }
 
-// func (tr *Translator) maybeJSRewrite(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
-// 	sel, ok := n.Fun.(*ast.SelectorExpr)
-// 	if !ok {
-// 		return nil, nil
-// 	}
+func (tr *Translator) maybeJSRewrite(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
+	sel, ok := n.Fun.(*ast.SelectorExpr)
+	if !ok {
+		return nil, nil
+	}
 
-// 	// find the corresponding declaration (if there is one)
-// 	def, err := tr.db.DefinitionOf(tr.info, sel.Sel)
-// 	if err != nil {
-// 		return nil, err
-// 	} else if def == nil {
-// 		return nil, nil
-// 	}
+	// find the corresponding declaration (if there is one)
+	def, err := tr.index.DefinitionOf(d.Path(), sel)
+	if err != nil {
+		return nil, err
+	} else if def == nil {
+		return nil, nil
+	}
 
-// 	// check if we have a rewrite (filled in during inspection)
-// 	// rewrite := def.Rewrite
-// 	// if rewrite == nil {
-// 	// 	return nil, nil
-// 	// }
+	fn, ok := def.(fn.Function)
+	if !ok {
+		return nil, nil
+	}
+	rewrite, e := fn.Rewrite()
+	if e != nil {
+		return nil, e
+	} else if rewrite == nil {
+		return nil, nil
+	}
 
-// 	// map out the replacements
-// 	replacements := map[string]string{}
-// 	for i, arg := range n.Args {
-// 		x, e := tr.expression(d, sp, arg)
-// 		if e != nil {
-// 			return nil, e
-// 		}
+	// get the params
+	var params []string
+	for _, param := range fn.Node().Type.Params.List {
+		for _, id := range param.Names {
+			params = append(params, id.Name)
+		}
+	}
 
-// 		xs, ok := x.(fmt.Stringer)
-// 		if !ok {
-// 			return nil, errors.New("maybeJSRewrite(): expression not a stringer")
-// 		}
+	// map out the replacements
+	replacements := map[string]string{}
+	for i, arg := range n.Args {
+		x, e := tr.expression(d, sp, arg)
+		if e != nil {
+			return nil, e
+		}
 
-// 		if i >= len(def.Params) {
-// 			return nil, errors.New("maybeJSRewrite(): doesn't support param spreads yet")
-// 		}
+		xs, ok := x.(fmt.Stringer)
+		if !ok {
+			return nil, errors.New("maybeJSRewrite(): expression not a stringer")
+		}
 
-// 		replacements[def.Params[i]] = xs.String()
-// 	}
+		if i >= len(params) {
+			return nil, errors.New("maybeJSRewrite(): doesn't support param spreads yet")
+		}
 
-// 	// make the substitutions
-// 	expr := rewrite.Expression
-// 	for i, variable := range rewrite.Variables {
-// 		replacement, isset := replacements[variable]
-// 		if !isset {
-// 			return nil, errors.New("js.Rewrite() variable doesn't match the function parameter")
-// 		}
-// 		expr = strings.Replace(expr, "$"+strconv.Itoa(i+1), replacement, -1)
-// 	}
+		replacements[params[i]] = xs.String()
+	}
 
-// 	return jsast.CreateRaw(expr), nil
-// }
+	// make the substitutions
+	expr := rewrite.Expression
+	for i, variable := range rewrite.Variables {
+		replacement, isset := replacements[variable]
+		if !isset {
+			return nil, errors.New("js.Rewrite() variable doesn't match the function parameter")
+		}
+		expr = strings.Replace(expr, "$"+strconv.Itoa(i+1), replacement, -1)
+	}
+
+	return jsast.CreateRaw(expr), nil
+}
 
 func (tr *Translator) maybeError(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
 	sel, ok := n.Fun.(*ast.SelectorExpr)

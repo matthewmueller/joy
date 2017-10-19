@@ -30,7 +30,7 @@ fetch(url, options)
 }
 
 // Response interface
-// js:"response,global"
+// js:"response,omit"
 type Response struct{}
 
 // // Response struct

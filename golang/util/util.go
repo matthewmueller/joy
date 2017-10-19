@@ -115,10 +115,9 @@ func GetIdentifier(n ast.Node) (*ast.Ident, error) {
 		return GetIdentifier(t.X)
 	case *ast.CallExpr:
 		return GetIdentifier(t.Fun)
-	case *ast.KeyValueExpr:
-		log.Infof("%+v", t)
-		return nil, fmt.Errorf("GetIdentifier: unhandled %T", n)
 	default:
+		_, file, line, _ := runtime.Caller(2)
+		log.Infof("file=%s line=%s", file, line)
 		return nil, fmt.Errorf("GetIdentifier: unhandled %T", n)
 	}
 }

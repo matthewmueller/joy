@@ -124,6 +124,9 @@ func (i *Index) DefinitionOf(packagePath string, n ast.Node) (def.Definition, er
 		return i.selectorDefinition(packagePath, t)
 	case *ast.Ident:
 		return i.identDefinition(packagePath, t)
+	case *ast.ArrayType, *ast.MapType, *ast.StructType,
+		*ast.ChanType, *ast.FuncType, *ast.InterfaceType:
+		return nil, nil
 	default:
 		id, e := util.GetIdentifier(t)
 		if e != nil {

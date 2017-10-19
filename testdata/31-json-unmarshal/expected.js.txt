@@ -2,6 +2,14 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/31-json-unmarshal"] = (function() {
+function Person (o) {
+o = o || {};
+this.name = o.name || "";
+this.age = o.age || 0;
+};
+function follows (p) {
+console.log(p.name);
+};
 function main () {
 var p = new Person();
 var e = (function(data, v) {
@@ -16,17 +24,9 @@ throw e
 };
 follows(p);
 };
-function Person (o) {
-o = o || {};
-this.name = o.name || "";
-this.age = o.age || 0;
-};
-function follows (p) {
-console.log(p.name);
-};
 return {
-  main: main,
-  Person: Person
+  Person: Person,
+  main: main
 };
 })();
 return pkg["github.com/matthewmueller/golly/testdata/31-json-unmarshal"].main();

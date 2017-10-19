@@ -148,18 +148,16 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 		for _, module := range file.modules {
 			var modbody []interface{}
 
-			if len(module.exports) == 0 {
-				continue
-			}
-
 			// create imports linking of the pkgs between packages
 			// e.g. var runner = pkg["github.com/gorunner/runner"]
 			imports := map[string]jsast.VariableDeclarator{}
 			order := []string{}
 			for alias, path := range module.imports {
-				// don't include a dependencies that doesn't have
-				// any exports as that package will be eliminated
-				// from the build
+				// don't implicitly include imports that don't
+				// have any exports. Note that jsfiles don't
+				// have any dependencies but they will still be
+				// included because of an explicit include:
+				// e.g. js.RawFile => pkg[]
 				if len(moduleMap[path].exports) == 0 {
 					continue
 				}
@@ -294,7 +292,7 @@ func group(defs []def.Definition) (modules []*module, err error) {
 			def,
 		)
 
-		log.Debugf("%s: exported=%t omitted=%t", def.ID(), def.Exported(), def.Omitted())
+		// log.Debugf("%s: exported=%t omitted=%t", def.ID(), def.Exported(), def.Omitted())
 		if def.Exported() && !def.Omitted() {
 			moduleMap[from].exports = append(
 				moduleMap[from].exports,

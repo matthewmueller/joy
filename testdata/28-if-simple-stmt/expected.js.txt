@@ -1,15 +1,6 @@
 ;
 (function() {
 var pkg = {};
-pkg["github.com/matthewmueller/golly/stdlib/errors"] = (function() {
-function New (text) {
-js.Rewrite("new Error($1)", text);
-return null;
-};
-return {
-  New: New
-};
-})();
 pkg["github.com/matthewmueller/golly/testdata/28-if-simple-stmt"] = (function() {
 function main () {
 var $x = test(), x = $x[0], err = $x[1];
@@ -20,7 +11,7 @@ console.log(x)
 };
 };
 function test () {
-return ["", errors.New("oh noz")];
+return ["", new Error("oh noz")];
 };
 return {
   main: main

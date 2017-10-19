@@ -1,13 +1,16 @@
 package method
 
 import (
+	"fmt"
 	"go/ast"
 	"go/types"
+	"strconv"
 	"strings"
 
 	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/def/fn"
+	"github.com/matthewmueller/golly/golang/def/jsfile"
 	"github.com/matthewmueller/golly/golang/index"
 	"github.com/matthewmueller/golly/golang/util"
 	"golang.org/x/tools/go/loader"
@@ -37,6 +40,8 @@ type methoddef struct {
 	tag       *structtag.Tag
 	runtime   bool
 	imports   map[string]string
+	rewrite   *fn.Rewrite
+	omit      bool
 }
 
 // NewMethod fn
@@ -148,16 +153,6 @@ func (d *methoddef) process() (err error) {
 			}
 			d.tag = tag
 
-		case *ast.SelectorExpr:
-			def, e := d.index.DefinitionOf(d.Path(), t)
-			if e != nil {
-				err = e
-				return false
-			} else if def != nil && !seen[def.ID()] {
-				d.deps = append(d.deps, def)
-				seen[def.ID()] = true
-			}
-
 		case *ast.Ident:
 			def, e := d.index.DefinitionOf(d.Path(), t)
 			if e != nil {
@@ -166,8 +161,95 @@ func (d *methoddef) process() (err error) {
 			} else if def != nil && !seen[def.ID()] {
 				d.deps = append(d.deps, def)
 				seen[def.ID()] = true
+
+				// check if it points to something async
+				if e := d.maybeAsync(def); e != nil {
+					err = e
+					return false
+				}
 			}
 
+		case *ast.SelectorExpr:
+			def, e := d.index.DefinitionOf(d.Path(), t)
+			if e != nil {
+				err = e
+				return false
+			} else if def != nil && !seen[def.ID()] {
+				d.deps = append(d.deps, def)
+				seen[def.ID()] = true
+
+				// check if it points to something async
+				if e := d.maybeAsync(def); e != nil {
+					err = e
+					return false
+				}
+			}
+
+		case *ast.CallExpr:
+			cx, e := util.ExprToString(t.Fun)
+			if e != nil {
+				err = e
+				return false
+			}
+			if cx == "js.RawFile" && len(t.Args) > 0 {
+				lit, ok := t.Args[0].(*ast.BasicLit)
+				if !ok {
+					err = fmt.Errorf("method process: expected rawfile to have basiclit argument, but got %T", t.Args[0])
+					return false
+				}
+				path, e := strconv.Unquote(lit.Value)
+				if e != nil {
+					err = e
+					return false
+				}
+				def, e := jsfile.NewFile(d.path, path)
+				if e != nil {
+					err = e
+					return false
+				}
+
+				if !seen[def.ID()] {
+					d.index.AddDefinition(def)
+					d.deps = append(d.deps, def)
+					seen[def.ID()] = true
+				}
+			} else if cx == "js.Rewrite" && len(t.Args) > 0 {
+				var expr string
+				var vars []string
+				for i, arg := range t.Args {
+					// handle expression first
+					if i == 0 {
+						lit, ok := t.Args[0].(*ast.BasicLit)
+						if !ok {
+							err = fmt.Errorf("fn process: expected rawfile to have basiclit argument, but got %T", t.Args[0])
+							return false
+						}
+						exp, e := strconv.Unquote(lit.Value)
+						if e != nil {
+							err = e
+							return false
+						}
+						expr = exp
+						continue
+					}
+
+					// tack on args in i=1 ++
+					a, e := util.ExprToString(arg)
+					if e != nil {
+						err = e
+						return false
+					}
+					vars = append(vars, a)
+				}
+
+				d.rewrite = &fn.Rewrite{
+					Expression: expr,
+					Variables:  vars,
+				}
+
+				// omit func decl in any rewritten expression
+				d.omit = true
+			}
 		case *ast.ChanType:
 			deps, e := d.index.Runtime("Channel", "send", "Send", "Recv")
 			if e != nil {
@@ -239,7 +321,7 @@ func (d *methoddef) Omitted() bool {
 		return true
 	}
 
-	return false
+	return d.omit
 }
 func (d *methoddef) Node() *ast.FuncDecl {
 	return d.node
@@ -271,4 +353,34 @@ func (d *methoddef) Imports() map[string]string {
 
 func (d *methoddef) FromRuntime() bool {
 	return d.runtime
+}
+
+func (d *methoddef) Rewrite() (*fn.Rewrite, error) {
+	if d.processed {
+		return d.rewrite, nil
+	}
+	e := d.process()
+	if e != nil {
+		return nil, e
+	}
+	return d.rewrite, nil
+}
+
+func (d *methoddef) maybeAsync(def def.Definition) error {
+	if d.async || d.ID() == def.ID() {
+		return nil
+	}
+
+	fn, ok := def.(fn.Function)
+	if !ok {
+		return nil
+	}
+
+	async, e := fn.IsAsync()
+	if e != nil {
+		return e
+	}
+	d.async = async
+
+	return nil
 }
