@@ -1855,7 +1855,7 @@ func (tr *Translator) keyValueExpr(d def.Definition, sp *scope.Scope, c *ast.Com
 	case *ast.Ident:
 		field := st.Field(t.Name)
 		if field == nil {
-			return j, fmt.Errorf("keyValueExpr: didn't expect field to be nil")
+			return j, fmt.Errorf("keyValueExpr: didn't expect field (%s) to be nil", t.Name)
 		}
 		key := jsast.CreateIdentifier(field.Name())
 		return jsast.CreateProperty(key, val, "init"), nil

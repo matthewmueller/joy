@@ -23,7 +23,7 @@ type state struct {
 	tag     *structtag.Tag
 	deps    []def.Definition
 	rewrite *rewrite
-	fields  []def.Field
+	fields  []*field
 	async   bool
 	omit    bool
 }
@@ -46,6 +46,8 @@ func process(idx *index.Index, d def.Definition, n ast.Node) (st *state, err err
 			err = funcDecl(ctx, t)
 		case *ast.GenDecl:
 			err = genDecl(ctx, t)
+		case *ast.StructType:
+			err = structType(ctx, t)
 		case *ast.CallExpr:
 			err = callExpr(ctx, t)
 		case *ast.SelectorExpr:

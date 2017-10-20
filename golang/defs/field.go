@@ -23,4 +23,3 @@ func (f *field) Name() string {
 func (f *field) Type() ast.Expr {
 	return f.kind
 }
-

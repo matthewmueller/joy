@@ -1,16 +1,13 @@
 package defs
 
 import (
-	"fmt"
 	"go/ast"
 	"go/types"
-	"strconv"
 	"strings"
 
+	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/golang/def"
-	"github.com/matthewmueller/golly/golang/def/jsfile"
 	"github.com/matthewmueller/golly/golang/index"
-	"github.com/matthewmueller/golly/golang/util"
 
 	"golang.org/x/tools/go/loader"
 )
@@ -35,6 +32,8 @@ type values struct {
 	deps      []def.Definition
 	imports   map[string]string
 	async     bool
+	omit      bool
+	tag       *structtag.Tag
 }
 
 // Value fn
@@ -67,94 +66,20 @@ func Value(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n *ast
 }
 
 func (d *values) process() (err error) {
-	seen := map[string]bool{}
+	state, e := process(d.index, d, d.node)
+	if e != nil {
+		return e
+	}
 
-	ast.Inspect(d.node, func(n ast.Node) bool {
-		switch t := n.(type) {
-
-		case *ast.SelectorExpr:
-			def, e := d.index.DefinitionOf(d.Path(), t)
-			if e != nil {
-				err = e
-				return false
-			} else if def != nil && !seen[def.ID()] {
-				d.deps = append(d.deps, def)
-				seen[def.ID()] = true
-
-				// check if it points to something async
-				// if e := d.maybeAsync(def); e != nil {
-				// 	err = e
-				// 	return false
-				// }
-			}
-
-		case *ast.CallExpr:
-			fn, e := util.ExprToString(t.Fun)
-			if e != nil {
-				err = e
-				return false
-			}
-			if fn == "js.RawFile" && len(t.Args) > 0 {
-				lit, ok := t.Args[0].(*ast.BasicLit)
-				if !ok {
-					err = fmt.Errorf("fn process: expected rawfile to have basiclit argument, but got %T", t.Args[0])
-					return false
-				}
-				path, e := strconv.Unquote(lit.Value)
-				if e != nil {
-					err = e
-					return false
-				}
-				def, e := jsfile.NewFile(d.path, path)
-				if e != nil {
-					err = e
-					return false
-				}
-
-				if !seen[def.ID()] {
-					d.index.AddDefinition(def)
-					d.deps = append(d.deps, def)
-					seen[def.ID()] = true
-				}
-			}
-
-		case *ast.Ident:
-			def, e := d.index.DefinitionOf(d.Path(), t)
-			if e != nil {
-				err = e
-				return false
-			} else if def != nil && !seen[def.ID()] {
-				d.deps = append(d.deps, def)
-				seen[def.ID()] = true
-
-				// check if it points to something async
-				// if e := d.maybeAsync(def); e != nil {
-				// 	err = e
-				// 	return false
-				// }
-			}
-
-		case *ast.ChanType:
-			deps, e := d.index.Runtime("Deferred", "Channel", "Send", "Recv")
-			if e != nil {
-				err = e
-				return false
-			}
-			d.deps = append(d.deps, deps...)
-			for _, dep := range deps {
-				d.imports["runtime"] = dep.Path()
-				seen[dep.ID()] = true
-			}
-
-			// TODO: more specific later
-			d.async = true
-		}
-
-		return true
-	})
-
+	// copy state into function
 	d.processed = true
-	return err
+	d.async = state.async
+	d.deps = state.deps
+	d.imports = state.imports
+	d.omit = state.omit
+	d.tag = state.tag
+
+	return nil
 }
 
 func (d *values) ID() string {
