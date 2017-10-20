@@ -12,6 +12,8 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/apex/log"
+	"github.com/matthewmueller/golly/golang/db"
 	"github.com/matthewmueller/golly/types"
 	"golang.org/x/tools/go/loader"
 )
@@ -43,6 +45,13 @@ func New(program *loader.Program) (*Index, error) {
 	imports := map[string]map[string]string{}
 	receivers := map[string][]*receiver{}
 
+	database, err := db.New(program)
+	if err != nil {
+		return nil, err
+	}
+	_ = database
+	log.Infof("got database")
+
 	runtimePath, err := getRuntimePath()
 	if err != nil {
 		return nil, err
@@ -55,14 +64,25 @@ func New(program *loader.Program) (*Index, error) {
 			for _, decl := range file.Decls {
 				switch t := decl.(type) {
 				case *ast.FuncDecl:
+					idParts := []string{packagePath}
 					obj := info.ObjectOf(t.Name)
 					name := t.Name.Name
-					id := obj.String()
+					idParts = append(idParts, name)
+
+					// if it has a receiver, include that in the ID
+					if t.Recv != nil && len(t.Recv.List) > 1 {
+						switch y := t.Recv.List[0].Type.(type) {
+						case *ast.Ident:
+							idParts = append(idParts, y.Name)
+						}
+					}
+
+					id := strings.Join(idParts, " ")
 
 					var params []string
 					for _, param := range t.Type.Params.List {
-						for _, id := range param.Names {
-							params = append(params, id.Name)
+						for _, ident := range param.Names {
+							params = append(params, ident.Name)
 						}
 					}
 
@@ -113,7 +133,8 @@ func New(program *loader.Program) (*Index, error) {
 						case *ast.ValueSpec:
 							for _, name := range y.Names {
 								obj := info.ObjectOf(name)
-								id := obj.String()
+								idParts := []string{packagePath, name.Name}
+								id := strings.Join(idParts, " ")
 
 								declarations[id] = &types.Declaration{
 									Exported: obj.Exported(),
@@ -126,7 +147,8 @@ func New(program *loader.Program) (*Index, error) {
 						case *ast.TypeSpec:
 							typeof := info.TypeOf(y.Name)
 							obj := info.ObjectOf(y.Name)
-							id := obj.String()
+							idParts := []string{packagePath, y.Name.Name}
+							id := strings.Join(idParts, " ")
 
 							declarations[id] = &types.Declaration{
 								Exported: obj.Exported(),
@@ -205,44 +227,173 @@ func New(program *loader.Program) (*Index, error) {
 }
 
 // FindByID finds a declaration from type object
-func (i *Index) FindByID(id string) *types.Declaration {
-	// ignore pointers (to support: p Person and p *Person)
-	id = strings.TrimLeft(id, "*")
-	return i.declarations[id]
-}
+// func (i *Index) FindByID(id string) *types.Declaration {
+// 	// ignore pointers (to support: p Person and p *Person)
+// 	id = strings.TrimLeft(id, "*")
+// 	return i.declarations[id]
+// }
 
 // FindByObject finds a declaration from type object
-func (i *Index) FindByObject(obj gotypes.Object) *types.Declaration {
-	id := getDependency(obj)
-	if id == "" {
-		return nil
-	}
+// func (i *Index) FindByObject(obj gotypes.Object) *types.Declaration {
+// 	id := getDependency(obj)
+// 	if id == "" {
+// 		return nil
+// 	}
 
-	return i.FindByID(id)
-}
+// 	return i.FindByID(id)
+// }
 
 // FindByIdent finds a declaration from an identifier
-func (i *Index) FindByIdent(info *loader.PackageInfo, n *ast.Ident) *types.Declaration {
-	obj := info.ObjectOf(n)
-	if obj == nil {
-		return nil
-	}
+// func (i *Index) FindByIdent(info *loader.PackageInfo, n *ast.Ident) *types.Declaration {
+// 	obj := info.ObjectOf(n)
+// 	if obj == nil {
+// 		return nil
+// 	}
 
-	return i.FindByObject(obj)
-}
+// 	return i.FindByObject(obj)
+// }
 
 // FindByNode finds a declaration from a node
-func (i *Index) FindByNode(info *loader.PackageInfo, n ast.Node) *types.Declaration {
+// func (i *Index) FindByNode(info *loader.PackageInfo, n ast.Node) *types.Declaration {
+// 	switch t := n.(type) {
+// 	case *ast.Ident:
+// 		return i.FindByIdent(info, t)
+// 	case *ast.StarExpr:
+// 		return i.FindByNode(info, t.X)
+// 	case *ast.SelectorExpr:
+// 		return i.FindByNode(info, t.Sel)
+// 	default:
+// 		return nil
+// 	}
+// }
+
+// TypeOf fn
+func (i *Index) TypeOf(info *loader.PackageInfo, n ast.Node) gotypes.Type {
 	switch t := n.(type) {
 	case *ast.Ident:
-		return i.FindByIdent(info, t)
+		return info.TypeOf(t)
 	case *ast.StarExpr:
-		return i.FindByNode(info, t.X)
+		return i.TypeOf(info, t.X)
 	case *ast.SelectorExpr:
-		return i.FindByNode(info, t.Sel)
+		return i.TypeOf(info, t.Sel)
+	case *ast.UnaryExpr:
+		return i.TypeOf(info, t.X)
 	default:
 		return nil
 	}
+}
+
+// DeclarationOf gets the original declaration of the node
+func (i *Index) DeclarationOf(info *loader.PackageInfo, n ast.Node) (*types.Declaration, error) {
+	switch t := n.(type) {
+	case *ast.Ident:
+		obj := info.ObjectOf(t)
+		if obj == nil {
+			return nil, errors.New("no object found")
+		}
+		return i.ObjectOf(obj)
+	case *ast.StarExpr:
+		return i.DeclarationOf(info, t.X)
+	case *ast.SelectorExpr:
+		return i.DeclarationOf(info, t.Sel)
+	default:
+		return nil, nil
+	}
+}
+
+// ObjectOf fn
+func (i *Index) ObjectOf(obj gotypes.Object) (*types.Declaration, error) {
+	// built-in go type (e.g. nil, string, etc.)
+	// TODO: more specific
+	pkg := obj.Pkg()
+	if pkg == nil {
+		return nil, nil
+	}
+
+	// packagePath := pkg.Path()
+	// name := obj.Name()
+
+	idParts := []string{}
+
+	switch t := obj.Type().(type) {
+	case *gotypes.Signature:
+		log.Infof("sig %s", t.String())
+		idParts = append(idParts, obj.Pkg().Path())
+		idParts = append(idParts, obj.Name())
+		if t.Recv() != nil {
+			idParts = append(idParts, t.Recv().Name())
+		}
+		id := strings.Join(idParts, " ")
+		return i.declarations[id], nil
+	case *gotypes.Named:
+		if t.Obj().Id() == "_.error" {
+			return nil, nil
+		}
+
+		idParts = append(
+			idParts,
+			obj.Pkg().Path(),
+			t.Obj().Id(),
+		)
+
+		id := strings.Join(idParts, " ")
+		decl := i.declarations[id]
+		if decl == nil {
+			return nil, fmt.Errorf("decl shouldn't be nil: %T %s", t, id)
+		}
+		return decl, nil
+
+	// if obj.Pkg() == nil {
+	// 	return nil, nil
+	// }
+
+	// log.Infof("pkg %+v", obj.Pkg())
+	// log.Infof("named %s: %s %s", obj.Name(), , t.Obj().Id())
+	// if t.Recv() != nil {
+	// 	idParts = append(idParts, t.Recv().Name())
+	// }
+	// idParts = append(idParts, name)
+	// id := strings.Join(idParts, " ")
+	// return i.declarations[id], nil
+	// return nil, fmt.Errorf("unhandled object type: %T", obj.Type())
+	case *gotypes.Chan:
+		return nil, nil
+		// log.Infof("chan %s", obj.Id())
+		// log.Infof("chan %+v", t.Elem())
+		// return nil, fmt.Errorf("unhandled object type: %T", obj.Type())
+	case *gotypes.Interface:
+		idParts = append(idParts, obj.Pkg().Path())
+		idParts = append(idParts, obj.Name())
+		id := strings.Join(idParts, " ")
+		_ = id
+		log.Infof("interface id %s", t)
+		return nil, nil
+		// return nil, fmt.Errorf("unhandled object type: %T", obj.Type())
+	case *gotypes.Pointer:
+		idParts = append(idParts, obj.Pkg().Path())
+		log.Infof("t.Elem(): %T", t.Elem())
+		idParts = append(idParts, obj.Name())
+		id := strings.Join(idParts, " ")
+		log.Infof("pointer id %s", id)
+		return nil, fmt.Errorf("unhandled object type: %T", obj.Type())
+	case *gotypes.Slice:
+		idParts = append(idParts, obj.Pkg().Path())
+		idParts = append(idParts, obj.Name())
+		id := strings.Join(idParts, " ")
+		decl := i.declarations[id]
+		if decl == nil {
+			return nil, fmt.Errorf("decl shouldn't be nil: %T %s", t, id)
+		}
+		return decl, nil
+	case *gotypes.Basic:
+		return nil, nil
+	default:
+		return nil, fmt.Errorf("unhandled object type: %T", obj.Type())
+	}
+	// name := obj.Name()
+
+	// id := strings.TrimLeft(obj.String(), "*")
+	// return nil, i.declarations[id]
 }
 
 // Imports returns the imports along with their aliases

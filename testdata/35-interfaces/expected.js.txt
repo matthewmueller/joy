@@ -2,27 +2,26 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/35-interfaces"] = (function() {
-function main () {
-var c = New("awesomeness");
-console.log(c.String());
-};
 function New (name) {
 return new component({
   component: name
 });
 };
-;
-function component (o) {
-o = o || {};
-this.component = o.component || "";
-};
 component.prototype.String = function() {
 var c = this;
 return c.component;
 };
+function component (o) {
+o = o || {};
+this.component = o.component || "";
+};
+function main () {
+var c = New("awesomeness");
+console.log(c.String());
+};
 return {
-  main: main,
-  New: New
+  New: New,
+  main: main
 };
 })();
 return pkg["github.com/matthewmueller/golly/testdata/35-interfaces"].main();

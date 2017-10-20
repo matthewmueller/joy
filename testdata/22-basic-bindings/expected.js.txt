@@ -2,14 +2,6 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/22-basic-bindings"] = (function() {
-function main () {
-var $arr = definition("5", 3), arr = $arr[0], err = $arr[1];
-if (err != null) {
-console.log(err)
-return 
-};
-console.log(arr);
-};
 function definition (a, b) {
 var arr = [];
 var err = null;
@@ -20,6 +12,14 @@ arr = arr.concat("5");
 		;
 arr = arr.concat("9");
 return [arr, err];
+};
+function main () {
+var $arr = definition("5", 3), arr = $arr[0], err = $arr[1];
+if (err != null) {
+console.log(err)
+return 
+};
+console.log(arr);
 };
 return {
   main: main

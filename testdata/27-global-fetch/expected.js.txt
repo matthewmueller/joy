@@ -2,11 +2,6 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/runtime"] = (function() {
-function Channel (capacity) {
-return new Chan({
-  capacity: capacity
-});
-};
 function Chan (o) {
 o = o || {};
 this.capacity = o.capacity || 0;
@@ -14,6 +9,26 @@ this.values = o.values || [];
 this.sends = o.sends || [];
 this.recvs = o.recvs || [];
 this.closed = o.closed || false;
+};
+function Channel (capacity) {
+return new Chan({
+  capacity: capacity
+});
+};
+function Deferred () {
+
+if (!(this instanceof Deferred)) return new Deferred()
+var self = this
+
+var p = new Promise(function(resolve, reject) {
+	self.resolve = resolve
+	self.reject = reject
+})
+
+self.then = p.then.bind(p)
+self.catch = p.catch.bind(p)
+;
+return self;
 };
 Chan.prototype.Recv = function() {
 var c = this;
@@ -40,21 +55,6 @@ return Promise.resolve()
 var promise = Deferred();
 c.recvs = c.recvs.concat(promise);
 return promise;
-};
-function Deferred () {
-
-if (!(this instanceof Deferred)) return new Deferred()
-var self = this
-
-var p = new Promise(function(resolve, reject) {
-	self.resolve = resolve
-	self.reject = reject
-})
-
-self.then = p.then.bind(p)
-self.catch = p.catch.bind(p)
-;
-return self;
 };
 Chan.prototype.Send = function(value) {
 var c = this;
@@ -85,8 +85,8 @@ this.value = o.value || null;
 this.promise = o.promise || null;
 };
 return {
-  Channel: Channel,
   Chan: Chan,
+  Channel: Channel,
   Deferred: Deferred
 };
 })();
@@ -108,10 +108,6 @@ return null;
 var gh = await ch.Recv();
 console.log(gh.login, "-", gh.name);
 };
-;
-;
-;
-;
 return {
   main: main
 };

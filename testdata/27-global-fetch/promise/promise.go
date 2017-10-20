@@ -1,7 +1,7 @@
 package promise
 
 // Promise struct
-// js:"promise,global"
+// js:"promise,omit"
 type Promise struct {
 	value interface{}
 	err   error
