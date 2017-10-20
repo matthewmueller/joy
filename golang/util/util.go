@@ -115,9 +115,13 @@ func GetIdentifier(n ast.Node) (*ast.Ident, error) {
 		return GetIdentifier(t.X)
 	case *ast.CallExpr:
 		return GetIdentifier(t.Fun)
+	case *ast.ArrayType, *ast.MapType, *ast.StructType,
+		*ast.ChanType, *ast.FuncType, *ast.InterfaceType,
+		*ast.FuncLit:
+		return nil, nil
 	default:
 		_, file, line, _ := runtime.Caller(2)
-		log.Infof("file=%s line=%s", file, line)
+		log.Warnf("file=%s line=%s", file, line)
 		return nil, fmt.Errorf("GetIdentifier: unhandled %T", n)
 	}
 }
@@ -125,6 +129,8 @@ func GetIdentifier(n ast.Node) (*ast.Ident, error) {
 // ExprToString fn
 func ExprToString(n ast.Node) (string, error) {
 	switch t := n.(type) {
+	case *ast.BasicLit:
+		return t.Value, nil
 	case *ast.Ident:
 		return t.Name, nil
 	case *ast.StarExpr:
@@ -161,8 +167,34 @@ func ExprToString(n ast.Node) (string, error) {
 			args = append(args, a)
 		}
 		return c + "(" + strings.Join(args, ", ") + ")", nil
+	case *ast.CompositeLit:
+		c, e := ExprToString(t.Type)
+		if e != nil {
+			return "", e
+		}
+		var args []string
+		for _, arg := range t.Elts {
+			a, e := ExprToString(arg)
+			if e != nil {
+				return "", e
+			}
+			args = append(args, a)
+		}
+		return c + "{" + strings.Join(args, ", ") + "}", nil
+	case *ast.ArrayType:
+		c, e := ExprToString(t.Elt)
+		if e != nil {
+			return "", e
+		}
+		return `[]` + c, nil
+	case *ast.FuncLit:
+		return "func(){}()", nil
 	default:
-		return "", nil
+		// log.Warnf("exprToString: unhandled %T", n)
+		// return "", nil
+		_, file, line, _ := runtime.Caller(2)
+		log.Warnf("file=%s line=%s", file, line)
+		return "", fmt.Errorf("exprToString: unhandled %T", n)
 	}
 }
 

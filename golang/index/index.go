@@ -124,13 +124,12 @@ func (i *Index) DefinitionOf(packagePath string, n ast.Node) (def.Definition, er
 		return i.selectorDefinition(packagePath, t)
 	case *ast.Ident:
 		return i.identDefinition(packagePath, t)
-	case *ast.ArrayType, *ast.MapType, *ast.StructType,
-		*ast.ChanType, *ast.FuncType, *ast.InterfaceType:
-		return nil, nil
 	default:
 		id, e := util.GetIdentifier(t)
 		if e != nil {
 			return nil, e
+		} else if id == nil {
+			return nil, nil
 		}
 		return i.identDefinition(packagePath, id)
 	}
@@ -152,7 +151,7 @@ func (i *Index) selectorDefinition(packagePath string, n *ast.SelectorExpr) (def
 		return nil, e
 	}
 
-	// prioritize selector definitions for non-structs
+	// prioritize selector definitions for functions
 	if sel != nil && sel.Kind() != "STRUCT" {
 		return sel, nil
 	}

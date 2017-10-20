@@ -10,19 +10,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/apex/log"
-	"github.com/matthewmueller/golly/golang/def/iface"
+	"github.com/matthewmueller/golly/golang/defs"
 
-	"github.com/matthewmueller/golly/golang/def/jsfile"
+	"github.com/apex/log"
 
 	"golang.org/x/tools/go/loader"
 
 	"github.com/matthewmueller/golly/golang/db"
 	"github.com/matthewmueller/golly/golang/def"
-	"github.com/matthewmueller/golly/golang/def/fn"
-	"github.com/matthewmueller/golly/golang/def/method"
-	"github.com/matthewmueller/golly/golang/def/struc"
-	"github.com/matthewmueller/golly/golang/def/value"
 	"github.com/matthewmueller/golly/golang/index"
 	"github.com/matthewmueller/golly/golang/scope"
 	"github.com/matthewmueller/golly/jsast"
@@ -69,17 +64,17 @@ func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
 	// NOTE: order matters here
 	// e.g. Method can also be a Function
 	switch t := d.(type) {
-	case method.Method:
+	case defs.Methoder:
 		return tr.methods(t)
-	case fn.Function:
+	case defs.Functioner:
 		return tr.functions(t)
-	// case iface.Interface:
-	// 	return tr.Interface(t, sp)
-	case struc.Struct:
+	case defs.Interfacer:
+		return tr.interfaces(t)
+	case defs.Structer:
 		return tr.structs(t)
-	case value.Value:
+	case defs.Valuer:
 		return tr.values(t)
-	case jsfile.JSFile:
+	case defs.Filer:
 		return tr.jsfile(t)
 	default:
 		return nil, unhandled("Translate", d)
@@ -87,7 +82,7 @@ func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
 }
 
 // // Function fn
-// func (tr *Translator) Function(d fn.Function, sp *scope.Scope) (jsast.INode, error) {
+// func (tr *Translator) Function(d defs.Functioner, sp *scope.Scope) (jsast.INode, error) {
 // 	n, ok := d.Node().(*ast.FuncDecl)
 // 	if !ok {
 // 		return nil, errors.New("Function: expected def.Function's node to be an *ast.FuncDecl")
@@ -97,7 +92,7 @@ func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
 // }
 
 // Function fn
-func (tr *Translator) functions(d fn.Function) (jsast.INode, error) {
+func (tr *Translator) functions(d defs.Functioner) (jsast.INode, error) {
 	n := d.Node()
 	sp := scope.New(n)
 
@@ -154,7 +149,7 @@ func (tr *Translator) functions(d fn.Function) (jsast.INode, error) {
 }
 
 // Method fn
-func (tr *Translator) methods(d method.Method) (jsast.INode, error) {
+func (tr *Translator) methods(d defs.Methoder) (jsast.INode, error) {
 	n := d.Node()
 	sp := scope.New(n)
 
@@ -264,29 +259,13 @@ func (tr *Translator) methods(d method.Method) (jsast.INode, error) {
 	), nil
 }
 
-// // Interface fn
-// func (tr *Translator) Interface(d iface.Interface, sp *scope.Scope) (jsast.INode, error) {
-// 	n, ok := d.Node().(*ast.TypeSpec)
-// 	if !ok {
-// 		return nil, errors.New("Interface: expected def.Inferface's node to be an *ast.TypeSpec")
-// 	}
-// 	_ = n
-
-// 	return nil, nil
-// }
-
-// // Struct fn
-// func (tr *Translator) Struct(d struc.Struct, sp *scope.Scope) (jsast.INode, error) {
-// 	n, ok := d.Node().(*ast.TypeSpec)
-// 	if !ok {
-// 		return nil, errors.New("Interface: expected def.Struct's node to be an *ast.TypeSpec")
-// 	}
-
-// 	return tr.structTypeSpec(d, sp, n)
-// }
+// Interface fn
+func (tr *Translator) interfaces(d defs.Interfacer) (jsast.INode, error) {
+	return jsast.CreateEmptyStatement(), nil
+}
 
 // Value fn
-func (tr *Translator) values(d value.Value) (jsast.INode, error) {
+func (tr *Translator) values(d defs.Valuer) (jsast.INode, error) {
 	n := d.Node()
 	sp := scope.New(n)
 
@@ -318,7 +297,7 @@ func (tr *Translator) values(d value.Value) (jsast.INode, error) {
 }
 
 // jsfile fn
-func (tr *Translator) jsfile(d jsfile.JSFile) (jsast.INode, error) {
+func (tr *Translator) jsfile(d defs.Filer) (jsast.INode, error) {
 	buf, e := ioutil.ReadFile(d.ID())
 	if e != nil {
 		return nil, e
@@ -629,7 +608,7 @@ func (tr *Translator) typeSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl
 	), nil
 }
 
-func (tr *Translator) structs(d struc.Struct) (j jsast.IStatement, err error) {
+func (tr *Translator) structs(d defs.Structer) (j jsast.IStatement, err error) {
 	n := d.Node()
 	sp := scope.New(n)
 	var ivars []interface{}
@@ -830,7 +809,7 @@ func (tr *Translator) goStmt(d def.Definition, sp *scope.Scope, n *ast.GoStmt) (
 	if e != nil {
 		return nil, e
 	}
-	fn, ok := def.(fn.Function)
+	fn, ok := def.(defs.Functioner)
 	if !ok {
 		return nil, fmt.Errorf("goStmt: expected function but received %T", def)
 	}
@@ -1590,7 +1569,7 @@ func (tr *Translator) funcLit(d def.Definition, sp *scope.Scope, n *ast.FuncLit)
 		body = append(body, jsStmt)
 	}
 
-	fn, ok := d.(fn.Function)
+	fn, ok := d.(defs.Functioner)
 	if !ok {
 		return nil, fmt.Errorf("funcLit: expected inside a function declaration")
 	}
@@ -1662,8 +1641,8 @@ func (tr *Translator) identifier(d def.Definition, sp *scope.Scope, n *ast.Ident
 	// should get picked up by the selector expressions.
 	// Note that this is only for local variables
 	// TODO: not sure if this is a robust enough check
-	if def != nil && def.Kind() != "STRUCT" {
-		log.Debugf("identifier: %s -> %s (%s)", name, def.Name(), def.Kind())
+	if def != nil && def.Kind() == "FUNCTION" {
+		log.Infof("identifier: %s -> %s (%s)", name, def.Name(), def.Kind())
 		name = def.Name()
 	}
 
@@ -1804,7 +1783,7 @@ func (tr *Translator) property(d def.Definition, sp *scope.Scope, c *ast.Composi
 	if e != nil {
 		return j, e
 	}
-	st, ok := def.(struc.Struct)
+	st, ok := def.(defs.Structer)
 	if !ok {
 		return j, fmt.Errorf("property: expected a struct, but got a %T", def)
 	}
@@ -1866,7 +1845,7 @@ func (tr *Translator) keyValueExpr(d def.Definition, sp *scope.Scope, c *ast.Com
 	if err != nil {
 		return j, err
 	}
-	st, ok := def.(struc.Struct)
+	st, ok := def.(defs.Structer)
 	if !ok {
 		return j, fmt.Errorf("keyValueExpr: expected struct, but got %T", def)
 	}
@@ -1905,7 +1884,7 @@ func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.Sel
 
 	// maybe alias based on the selector's definition
 	switch t := def.(type) {
-	case struc.Struct:
+	case defs.Structer:
 		// TODO: maybe change this: right now fields point
 		// to the structs themselves, but they should probably
 		// point to a struct field interface instead
@@ -1917,7 +1896,7 @@ func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.Sel
 				name = f.Name()
 			}
 		}
-	case fn.Function, method.Method, iface.Interface:
+	case defs.Functioner, defs.Methoder:
 		name = t.Name()
 	}
 
@@ -2259,53 +2238,30 @@ func (tr *Translator) maybeJSRewrite(d def.Definition, sp *scope.Scope, n *ast.C
 		return nil, nil
 	}
 
-	fn, ok := def.(fn.Function)
+	fn, ok := def.(defs.Functioner)
 	if !ok {
 		return nil, nil
 	}
-	rewrite, e := fn.Rewrite()
-	if e != nil {
-		return nil, e
-	} else if rewrite == nil {
-		return nil, nil
-	}
 
-	// get the params
-	var params []string
-	for _, param := range fn.Node().Type.Params.List {
-		for _, id := range param.Names {
-			params = append(params, id.Name)
-		}
-	}
-
-	// map out the replacements
-	replacements := map[string]string{}
-	for i, arg := range n.Args {
+	// arguments
+	var args []string
+	for _, arg := range n.Args {
 		x, e := tr.expression(d, sp, arg)
 		if e != nil {
 			return nil, e
 		}
-
-		xs, ok := x.(fmt.Stringer)
+		s, ok := x.(fmt.Stringer)
 		if !ok {
-			return nil, errors.New("maybeJSRewrite(): expression not a stringer")
+			return nil, fmt.Errorf("maybeJSRewrite: expression not a fmt.Stringer")
 		}
-
-		if i >= len(params) {
-			return nil, errors.New("maybeJSRewrite(): doesn't support param spreads yet")
-		}
-
-		replacements[params[i]] = xs.String()
+		args = append(args, s.String())
 	}
 
-	// make the substitutions
-	expr := rewrite.Expression
-	for i, variable := range rewrite.Variables {
-		replacement, isset := replacements[variable]
-		if !isset {
-			return nil, errors.New("js.Rewrite() variable doesn't match the function parameter")
-		}
-		expr = strings.Replace(expr, "$"+strconv.Itoa(i+1), replacement, -1)
+	expr, e := fn.Rewrite(args)
+	if e != nil {
+		return nil, e
+	} else if expr == "" {
+		return nil, e
 	}
 
 	return jsast.CreateRaw(expr), nil
@@ -2358,7 +2314,7 @@ func (tr *Translator) maybeAwait(d def.Definition, sp *scope.Scope, n *ast.CallE
 		return nil, e
 	}
 
-	fn, ok := def.(fn.Function)
+	fn, ok := def.(defs.Functioner)
 	if !ok {
 		return nil, nil
 	}

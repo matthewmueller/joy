@@ -1,6 +1,7 @@
 package def
 
 import (
+	"go/ast"
 	"go/types"
 )
 
@@ -16,4 +17,15 @@ type Definition interface {
 	Dependencies() ([]Definition, error)
 	Imports() map[string]string
 	FromRuntime() bool
+}
+
+// Field interface
+type Field interface {
+	Name() string
+	Type() ast.Expr
+}
+
+// Rewrite interface
+type Rewrite interface {
+	Rewrite(arguments *ast.FieldList) (string, error)
 }

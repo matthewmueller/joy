@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/apex/log"
 	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/def/fn"
@@ -250,6 +251,14 @@ func (d *methoddef) process() (err error) {
 				// omit func decl in any rewritten expression
 				d.omit = true
 			}
+
+			def, e := d.index.DefinitionOf(d.path, t)
+			if e != nil {
+				err = e
+				return false
+			}
+			log.Infof("def %T", def)
+
 		case *ast.ChanType:
 			deps, e := d.index.Runtime("Channel", "send", "Send", "Recv")
 			if e != nil {

@@ -1,4 +1,4 @@
-package iface
+package defs
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	"go/types"
 	"strings"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/def/method"
 	"github.com/matthewmueller/golly/golang/index"
@@ -14,17 +13,17 @@ import (
 	"golang.org/x/tools/go/loader"
 )
 
-// Interface method
-type Interface interface {
+// Interfacer method
+type Interfacer interface {
 	def.Definition
 	ImplementedBy(method string) []method.Method
 	DependenciesOf(method string) ([]def.Definition, error)
 	Node() *ast.TypeSpec
 }
 
-var _ Interface = (*ifacedef)(nil)
+var _ Interfacer = (*interfaces)(nil)
 
-type ifacedef struct {
+type interfaces struct {
 	exported   bool
 	path       string
 	name       string
@@ -38,8 +37,8 @@ type ifacedef struct {
 	imports    map[string]string
 }
 
-// NewInterface fn
-func NewInterface(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n *ast.TypeSpec) (def.Definition, error) {
+// Interface fn
+func Interface(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n *ast.TypeSpec) (def.Definition, error) {
 	obj := info.ObjectOf(n.Name)
 	packagePath := obj.Pkg().Path()
 	idParts := []string{packagePath, n.Name.Name}
@@ -58,7 +57,7 @@ func NewInterface(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl,
 		return nil, fmt.Errorf("NewInterface: expected n.Type to be an interface")
 	}
 
-	return &ifacedef{
+	return &interfaces{
 		exported: obj.Exported(),
 		path:     packagePath,
 		name:     n.Name.Name,
@@ -71,76 +70,60 @@ func NewInterface(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl,
 	}, nil
 }
 
-func (d *ifacedef) process() (err error) {
-	// seen := map[string]bool{}
-	// path := d.Path()
-
-	// handle implements
-	intf, ok := d.node.Type.(*ast.InterfaceType)
-	if !ok {
-		return fmt.Errorf("process: expected an interface, but received %T", d.node.Type)
+func (d *interfaces) process() (err error) {
+	state, e := process(d.index, d, d.node)
+	if e != nil {
+		return e
 	}
 
-	for _, field := range intf.Methods.List {
-		for _, name := range field.Names {
-			log.Infof("got field name=%s type=%T", name.Name, field.Type)
-		}
-	}
-	// ast.Inspect(d.node, func(n ast.Node) bool {
-	// 	switch t := n.(type) {
-
-	// 	case *ast.InterfaceType:
-	// 		t.Methods
-	// 	}
-
-	// 	return true
-	// })
-
+	// copy state into function
 	d.processed = true
-	return err
+	d.imports = state.imports
+
+	return nil
 }
 
 // interfaces don't include dependencies on their own
-func (d *ifacedef) Dependencies() (defs []def.Definition, err error) {
+func (d *interfaces) Dependencies() (defs []def.Definition, err error) {
 	if !d.processed {
 		d.process()
 	}
 	return defs, nil
 }
 
-func (d *ifacedef) ID() string {
+func (d *interfaces) ID() string {
 	return d.id
 }
 
-func (d *ifacedef) Name() string {
+func (d *interfaces) Name() string {
 	return d.name
 }
 
-func (d *ifacedef) Path() string {
+func (d *interfaces) Path() string {
 	return d.path
 }
 
-func (d *ifacedef) Exported() bool {
+func (d *interfaces) Exported() bool {
 	return d.exported
 }
-func (d *ifacedef) Omitted() bool {
+func (d *interfaces) Omitted() bool {
 	return false
 }
 
-func (d *ifacedef) Node() *ast.TypeSpec {
+func (d *interfaces) Node() *ast.TypeSpec {
 	return d.node
 }
 
-func (d *ifacedef) Kind() string {
+func (d *interfaces) Kind() string {
 	return "INTERFACE"
 }
 
-func (d *ifacedef) Type() types.Type {
+func (d *interfaces) Type() types.Type {
 	return d.kind
 }
 
 // TODO: optimize
-func (d *ifacedef) ImplementedBy(m string) (defs []method.Method) {
+func (d *interfaces) ImplementedBy(m string) (defs []method.Method) {
 	for _, n := range d.index.All() {
 		method, ok := n.(method.Method)
 		if !ok {
@@ -159,11 +142,11 @@ func (d *ifacedef) ImplementedBy(m string) (defs []method.Method) {
 	return defs
 }
 
-func (d *ifacedef) DependenciesOf(m string) (defs []def.Definition, err error) {
+func (d *interfaces) DependenciesOf(m string) (defs []def.Definition, err error) {
 	return defs, nil
 }
 
-func (d *ifacedef) Imports() map[string]string {
+func (d *interfaces) Imports() map[string]string {
 	// combine def imports with file imports
 	imports := map[string]string{}
 	for alias, path := range d.imports {
@@ -175,6 +158,6 @@ func (d *ifacedef) Imports() map[string]string {
 	return imports
 }
 
-func (d *ifacedef) FromRuntime() bool {
+func (d *interfaces) FromRuntime() bool {
 	return false
 }

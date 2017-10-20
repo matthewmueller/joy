@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/matthewmueller/golly/golang/def/jsfile"
-
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def"
+	"github.com/matthewmueller/golly/golang/def/jsfile"
 	"github.com/matthewmueller/golly/golang/index"
 
 	"github.com/fatih/structtag"
@@ -216,6 +216,20 @@ func (d *funcdef) process() (err error) {
 
 				// omit func decl in any rewritten expression
 				d.omit = true
+			}
+
+			def, e := d.index.DefinitionOf(d.path, t)
+			if e != nil {
+				err = e
+				return false
+			} else if def == nil {
+				return true
+			}
+
+			switch def.Kind() {
+			case "INTERFACE":
+				log.Infof("cx=%s def=%s", cx, def.ID())
+
 			}
 
 		case *ast.ChanType:

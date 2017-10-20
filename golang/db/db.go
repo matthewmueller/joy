@@ -7,11 +7,7 @@ import (
 	"strings"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/golly/golang/def/fn"
-	"github.com/matthewmueller/golly/golang/def/iface"
-	"github.com/matthewmueller/golly/golang/def/method"
-	"github.com/matthewmueller/golly/golang/def/struc"
-	"github.com/matthewmueller/golly/golang/def/value"
+	"github.com/matthewmueller/golly/golang/defs"
 	"github.com/matthewmueller/golly/golang/index"
 	"github.com/matthewmueller/golly/golang/util"
 	"golang.org/x/tools/go/loader"
@@ -71,7 +67,7 @@ func (db *DB) inspect(info *loader.PackageInfo, node ast.Node) (recurse bool, er
 	switch t := node.(type) {
 	case *ast.FuncDecl:
 		if t.Recv != nil {
-			m, e := method.NewMethod(db.index, info, t)
+			m, e := defs.Method(db.index, info, t)
 			if e != nil {
 				return false, e
 			}
@@ -80,7 +76,7 @@ func (db *DB) inspect(info *loader.PackageInfo, node ast.Node) (recurse bool, er
 			return false, nil
 		}
 
-		d, e := fn.NewFunction(db.index, info, t)
+		d, e := defs.Function(db.index, info, t)
 		if e != nil {
 			return false, e
 		}
@@ -138,14 +134,14 @@ func (db *DB) spec(info *loader.PackageInfo, n *ast.GenDecl, spec ast.Spec) erro
 func (db *DB) typeSpec(info *loader.PackageInfo, gn *ast.GenDecl, n *ast.TypeSpec) error {
 	switch t := n.Type.(type) {
 	case *ast.StructType:
-		st, e := struc.NewStruct(db.index, info, gn, n)
+		st, e := defs.Struct(db.index, info, gn, n)
 		if e != nil {
 			return e
 		}
 		db.index.AddDefinition(st)
 		return nil
 	case *ast.InterfaceType:
-		iface, e := iface.NewInterface(db.index, info, gn, n)
+		iface, e := defs.Interface(db.index, info, gn, n)
 		if e != nil {
 			return e
 		}
@@ -184,7 +180,7 @@ func (db *DB) importSpec(info *loader.PackageInfo, gn *ast.GenDecl, n *ast.Impor
 }
 
 func (db *DB) valueSpec(info *loader.PackageInfo, gn *ast.GenDecl, n *ast.ValueSpec) error {
-	d, e := value.NewValue(db.index, info, gn, n)
+	d, e := defs.Value(db.index, info, gn, n)
 	if e != nil {
 		return e
 	}
