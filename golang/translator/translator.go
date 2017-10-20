@@ -12,8 +12,6 @@ import (
 
 	"github.com/matthewmueller/golly/golang/defs"
 
-	"github.com/apex/log"
-
 	"golang.org/x/tools/go/loader"
 
 	"github.com/matthewmueller/golly/golang/db"
@@ -1637,13 +1635,19 @@ func (tr *Translator) identifier(d def.Definition, sp *scope.Scope, n *ast.Ident
 
 	name := n.Name
 
-	// we only look at non-structs because aliases
-	// should get picked up by the selector expressions.
-	// Note that this is only for local variables
-	// TODO: not sure if this is a robust enough check
-	if def != nil && def.Kind() == "FUNCTION" {
-		log.Infof("identifier: %s -> %s (%s)", name, def.Name(), def.Kind())
-		name = def.Name()
+	// NOTE: the only reason this is here is
+	// for declarations that are in scope.
+	// This is not for local variables, because
+	// we don't want to rename local variables.
+	//
+	// Therefore this should apply only to functions
+	// and values because the rest of the defs will
+	// be picked up by selectorExpr (e.g. m.Hello())
+	if def != nil {
+		switch def.Kind() {
+		case "FUNCTION", "VALUE":
+			name = def.Name()
+		}
 	}
 
 	switch n.Name {

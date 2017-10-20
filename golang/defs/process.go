@@ -48,6 +48,8 @@ func process(idx *index.Index, d def.Definition, n ast.Node) (st *state, err err
 			err = genDecl(ctx, t)
 		case *ast.StructType:
 			err = structType(ctx, t)
+		case *ast.InterfaceType:
+			err = interfaceType(ctx, t)
 		case *ast.CallExpr:
 			err = callExpr(ctx, t)
 		case *ast.SelectorExpr:
@@ -127,6 +129,14 @@ func structType(ctx *context, n *ast.StructType) error {
 	return nil
 }
 
+func interfaceType(ctx *context, n *ast.InterfaceType) error {
+	// for _, m := range n.Methods.List {
+
+	// }
+	// log.Infof("got an interface type %T", n)
+	return nil
+}
+
 func callExpr(ctx *context, n *ast.CallExpr) error {
 	cx, e := util.ExprToString(n.Fun)
 	if e != nil {
@@ -148,7 +158,16 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 
 	switch t := def.(type) {
 	case Interfacer:
-		log.Infof("interface! cx=%s def=%s", cx, t.ID())
+		m, ok := n.Fun.(*ast.SelectorExpr)
+		if !ok {
+			return fmt.Errorf("process/callExpr: expected *ast.SelectorExpr but got %T", n.Fun)
+		}
+
+		methods := t.ImplementedBy(m.Sel.Name)
+		for _, m := range methods {
+			log.Infof("%s -> %s", ctx.d.ID(), m.ID())
+			ctx.state.deps = append(ctx.state.deps, m)
+		}
 	}
 
 	return nil
@@ -161,7 +180,10 @@ func chanType(ctx *context, n *ast.ChanType) error {
 	}
 
 	if len(deps) > 0 {
-		ctx.state.deps = append(ctx.state.deps, deps...)
+		for _, def := range deps {
+			log.Infof("%s -> %s", ctx.d.ID(), def.ID())
+			ctx.state.deps = append(ctx.state.deps, def)
+		}
 		ctx.state.imports["runtime"] = deps[0].Path()
 	}
 
@@ -178,7 +200,16 @@ func selectorExpr(ctx *context, n *ast.SelectorExpr) error {
 
 	// add dependencies
 	if def != nil {
-		ctx.state.deps = append(ctx.state.deps, def)
+		ignore := false
+
+		// methods shouldn't automatically add their receivers
+		method, ok := ctx.d.(Methoder)
+		ignore = ok && method.Recv().ID() == def.ID()
+
+		if !ignore {
+			log.Infof("%s -> %s", ctx.d.ID(), def.ID())
+			ctx.state.deps = append(ctx.state.deps, def)
+		}
 	}
 
 	// handle async
@@ -201,7 +232,16 @@ func ident(ctx *context, n *ast.Ident) error {
 
 	// add dependencies
 	if def != nil {
-		ctx.state.deps = append(ctx.state.deps, def)
+		ignore := false
+
+		// methods shouldn't automatically add their receivers
+		method, ok := ctx.d.(Methoder)
+		ignore = ok && method.Recv().ID() == def.ID()
+
+		if !ignore {
+			log.Infof("%s -> %s", ctx.d.ID(), def.ID())
+			ctx.state.deps = append(ctx.state.deps, def)
+		}
 	}
 
 	// handle async
@@ -237,6 +277,7 @@ func jsFile(ctx *context, n *ast.CallExpr) error {
 	}
 
 	ctx.idx.AddDefinition(def)
+	log.Infof("%s -> %s", ctx.d.ID(), def.ID())
 	ctx.state.deps = append(ctx.state.deps, def)
 	return nil
 }

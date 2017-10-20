@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/matthewmueller/golly/golang/def"
-	"github.com/matthewmueller/golly/golang/def/method"
 	"github.com/matthewmueller/golly/golang/index"
 
 	"golang.org/x/tools/go/loader"
@@ -16,7 +15,7 @@ import (
 // Interfacer method
 type Interfacer interface {
 	def.Definition
-	ImplementedBy(method string) []method.Method
+	ImplementedBy(method string) []Methoder
 	DependenciesOf(method string) ([]def.Definition, error)
 	Node() *ast.TypeSpec
 }
@@ -104,10 +103,10 @@ func (d *interfaces) Path() string {
 }
 
 func (d *interfaces) Exported() bool {
-	return d.exported
+	return false
 }
 func (d *interfaces) Omitted() bool {
-	return false
+	return true
 }
 
 func (d *interfaces) Node() *ast.TypeSpec {
@@ -123,9 +122,9 @@ func (d *interfaces) Type() types.Type {
 }
 
 // TODO: optimize
-func (d *interfaces) ImplementedBy(m string) (defs []method.Method) {
+func (d *interfaces) ImplementedBy(m string) (defs []Methoder) {
 	for _, n := range d.index.All() {
-		method, ok := n.(method.Method)
+		method, ok := n.(Methoder)
 		if !ok {
 			continue
 		}

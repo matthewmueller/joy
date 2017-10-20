@@ -5,6 +5,7 @@ import (
 
 	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def"
+	"github.com/matthewmueller/golly/golang/defs"
 	"github.com/matthewmueller/golly/golang/script"
 	"github.com/matthewmueller/golly/golang/translator"
 	"github.com/matthewmueller/golly/jsast"
@@ -112,10 +113,16 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 		}
 
 		for _, d := range sorted {
-			log.Debugf("id=%s", d.ID())
+			log.Infof("sorted=%s", d.ID())
 		}
 
-		modules, e := group(sorted)
+		pruned, e := prune(sorted)
+
+		for _, d := range pruned {
+			log.Infof("pruned=%s", d.ID())
+		}
+
+		modules, e := group(pruned)
 		if e != nil {
 			return scripts, e
 		}
@@ -273,6 +280,27 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 	}
 
 	return scripts, nil
+}
+
+// Prunes the definitions. Right now this means:
+// - remove any method that doesn't have a receiver present
+func prune(inp []def.Definition) (out []def.Definition, err error) {
+	defmap := map[string]def.Definition{}
+	for _, def := range inp {
+		defmap[def.ID()] = def
+	}
+
+	for _, def := range inp {
+		// ignore any method that doesn't have a receiver present
+		if m, ok := def.(defs.Methoder); ok {
+			if defmap[m.Recv().ID()] == nil {
+				continue
+			}
+		}
+		out = append(out, def)
+	}
+
+	return out, nil
 }
 
 // group declarations into modules

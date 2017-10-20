@@ -7,7 +7,6 @@ import (
 
 	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/golang/def"
-	"github.com/matthewmueller/golly/golang/def/fn"
 	"github.com/matthewmueller/golly/golang/index"
 	"github.com/matthewmueller/golly/golang/util"
 	"golang.org/x/tools/go/loader"
@@ -19,7 +18,6 @@ type Methoder interface {
 	Recv() def.Definition
 }
 
-var _ Functioner = (*methods)(nil)
 var _ Methoder = (*methods)(nil)
 
 type methods struct {
@@ -62,13 +60,6 @@ func Method(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (def.
 
 	id := strings.Join(idParts, " ")
 
-	var params []string
-	for _, param := range n.Type.Params.List {
-		for _, ident := range param.Names {
-			params = append(params, ident.Name)
-		}
-	}
-
 	// if it's a method don't export,
 	// if it's the main() function
 	// export either way
@@ -89,39 +80,6 @@ func Method(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (def.
 		fromRuntime = true
 	}
 
-	// declarations[id] = &fndef{
-	// 	Exported: exported,
-	// 	From:     packagePath,
-	// 	Name:     name,
-	// 	ID:       id,
-	// 	Node:     decl,
-	// 	Params:   params,
-	// }
-
-	// declaration may satisfy an interface
-	// so we hold onto it for possible
-	// inclusion later
-	// if t.Recv != nil {
-	// 	recv := t.Recv.List[0]
-	// 	if receivers[name] == nil {
-	// 		receivers[name] = []*receiver{}
-	// 	}
-	// 	receivers[name] = append(
-	// 		receivers[name],
-	// 		&receiver{
-	// 			Type:     info.TypeOf(recv.Type),
-	// 			Function: declarations[id],
-	// 		},
-	// 	)
-	// }
-
-	tag, e := util.JSTag(n.Doc)
-	if e != nil {
-		return nil, e
-	}
-
-	// point human-friendly names to the declaration
-
 	return &methods{
 		id:       id,
 		index:    index,
@@ -129,10 +87,8 @@ func Method(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (def.
 		path:     packagePath,
 		name:     name,
 		node:     n,
-		params:   params,
 		kind:     info.TypeOf(n.Name),
 		recv:     recv,
-		tag:      tag,
 		runtime:  fromRuntime,
 		imports:  map[string]string{},
 	}, nil
@@ -261,7 +217,7 @@ func (d *methods) maybeAsync(def def.Definition) error {
 		return nil
 	}
 
-	fn, ok := def.(fn.Function)
+	fn, ok := def.(Functioner)
 	if !ok {
 		return nil
 	}
