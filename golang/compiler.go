@@ -105,7 +105,7 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 	// assemble into scripts
 	var files []*file
 	for _, main := range mains {
-		// log.Infof("main: %s", main.Path())
+		log.Debugf("main: %s", main.Path())
 
 		sorted, e := g.Sort(main)
 		if e != nil {
@@ -113,13 +113,13 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 		}
 
 		for _, d := range sorted {
-			log.Infof("sorted=%s", d.ID())
+			log.Debugf("sorted=%s", d.ID())
 		}
 
 		pruned, e := prune(sorted)
 
 		for _, d := range pruned {
-			log.Infof("pruned=%s", d.ID())
+			log.Debugf("pruned=%s", d.ID())
 		}
 
 		modules, e := group(pruned)

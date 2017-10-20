@@ -133,7 +133,7 @@ func interfaceType(ctx *context, n *ast.InterfaceType) error {
 	// for _, m := range n.Methods.List {
 
 	// }
-	// log.Infof("got an interface type %T", n)
+	// log.Debugf("got an interface type %T", n)
 	return nil
 }
 
@@ -165,7 +165,7 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 
 		methods := t.ImplementedBy(m.Sel.Name)
 		for _, m := range methods {
-			log.Infof("%s -> %s", ctx.d.ID(), m.ID())
+			log.Debugf("%s -> %s", ctx.d.ID(), m.ID())
 			ctx.state.deps = append(ctx.state.deps, m)
 		}
 	}
@@ -181,7 +181,7 @@ func chanType(ctx *context, n *ast.ChanType) error {
 
 	if len(deps) > 0 {
 		for _, def := range deps {
-			log.Infof("%s -> %s", ctx.d.ID(), def.ID())
+			log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
 			ctx.state.deps = append(ctx.state.deps, def)
 		}
 		ctx.state.imports["runtime"] = deps[0].Path()
@@ -207,7 +207,7 @@ func selectorExpr(ctx *context, n *ast.SelectorExpr) error {
 		ignore = ok && method.Recv().ID() == def.ID()
 
 		if !ignore {
-			log.Infof("%s -> %s", ctx.d.ID(), def.ID())
+			log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
 			ctx.state.deps = append(ctx.state.deps, def)
 		}
 	}
@@ -239,7 +239,7 @@ func ident(ctx *context, n *ast.Ident) error {
 		ignore = ok && method.Recv().ID() == def.ID()
 
 		if !ignore {
-			log.Infof("%s -> %s", ctx.d.ID(), def.ID())
+			log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
 			ctx.state.deps = append(ctx.state.deps, def)
 		}
 	}
@@ -277,7 +277,7 @@ func jsFile(ctx *context, n *ast.CallExpr) error {
 	}
 
 	ctx.idx.AddDefinition(def)
-	log.Infof("%s -> %s", ctx.d.ID(), def.ID())
+	log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
 	ctx.state.deps = append(ctx.state.deps, def)
 	return nil
 }

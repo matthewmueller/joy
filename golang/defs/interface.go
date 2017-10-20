@@ -123,8 +123,8 @@ func (d *interfaces) Type() types.Type {
 
 // TODO: optimize
 func (d *interfaces) ImplementedBy(m string) (defs []Methoder) {
-	for _, n := range d.index.All() {
-		method, ok := n.(Methoder)
+	for _, def := range d.index.All() {
+		method, ok := def.(Methoder)
 		if !ok {
 			continue
 		}
@@ -133,7 +133,9 @@ func (d *interfaces) ImplementedBy(m string) (defs []Methoder) {
 			continue
 		}
 
-		if types.Implements(method.Recv().Type(), d.kind) {
+		// TODO: pointer is required for the deep interfaces test and
+		// it works for the other tests, but will it always work?
+		if types.Implements(types.NewPointer(method.Recv().Type()), d.kind) {
 			defs = append(defs, method)
 		}
 	}

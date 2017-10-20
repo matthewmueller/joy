@@ -2,46 +2,74 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/40-vnodes"] = (function() {
-function main () {
-var c = New(new Props({
-  Location: "mars"
-}));
-console.log(c.String());
+function Element (o) {
+o = o || {};
+this.name = o.name || "";
+this.kind = o.kind || 0;
+this.attributes = o.attributes || {};
+this.children = o.children || [];
 };
 function New (p) {
 return NewComponent(new Page({
   props: p
 }));
 };
-function Props (o) {
-o = o || {};
-this.Location = o.Location || "";
-};
-;
 function NewComponent (com) {
 return new component({
   component: com
 });
 };
-;
-function component (o) {
-o = o || {};
-this.component = o.component || new Component();
+function NewElement (tagName, attributes, children) {
+return new Element({
+  name: tagName,
+  kind: 1,
+  attributes: attributes,
+  children: children
+});
 };
 function Page (o) {
 o = o || {};
 this.props = o.props || new Props();
 };
+function Props (o) {
+o = o || {};
+this.Location = o.Location || "";
+};
+Page.prototype.Render = function() {
+var p = this;
+return NewElement("div", null);
+};
+Element.prototype.String = function() {
+var e = this;
+var children = [];
+for (var _ = 0, child; _ < e.children.length; _++) {
+var child = e.children[_]
+children = children.concat(child.String())
+};
+return "<" + e.name + ">" + children.join("") + "</" + e.name + ">";
+};
 component.prototype.String = function() {
 var c = this;
 return c.component.Render().String();
 };
+function component (o) {
+o = o || {};
+this.component = o.component || new Component();
+};
+function main () {
+var c = New(new Props({
+  Location: "mars"
+}));
+console.log(c.String());
+};
 return {
-  main: main,
+  Element: Element,
   New: New,
-  Props: Props,
   NewComponent: NewComponent,
-  Page: Page
+  NewElement: NewElement,
+  Page: Page,
+  Props: Props,
+  main: main
 };
 })();
 return pkg["github.com/matthewmueller/golly/testdata/40-vnodes"].main();

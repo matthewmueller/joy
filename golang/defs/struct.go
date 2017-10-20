@@ -49,6 +49,8 @@ func Struct(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n *as
 	idParts := []string{packagePath, name}
 	id := strings.Join(idParts, " ")
 
+	// log.Infof("info.TypeOf(n.Name) %s", info.TypeOf(n.Name))
+
 	return &structdef{
 		exported: obj.Exported(),
 		path:     packagePath,
