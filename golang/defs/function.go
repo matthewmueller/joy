@@ -19,6 +19,7 @@ type Functioner interface {
 	IsAsync() (bool, error)
 	Node() *ast.FuncDecl
 	Rewrite(arguments []string) (string, error)
+	Params() []string
 }
 
 var _ Functioner = (*functions)(nil)
@@ -40,6 +41,7 @@ type functions struct {
 	async     bool
 	imports   map[string]string
 	omit      bool
+	params    []string
 }
 
 // Function fn
@@ -109,6 +111,7 @@ func (d *functions) process() (err error) {
 	d.imports = state.imports
 	d.omit = state.omit
 	d.rewrite = state.rewrite
+	d.params = state.params
 	d.tag = state.tag
 
 	return nil
@@ -188,6 +191,11 @@ func (d *functions) Rewrite(arguments []string) (string, error) {
 	}
 
 	return d.rewrite.Rewrite(arguments)
+}
+
+// Params fn
+func (d *functions) Params() []string {
+	return d.params
 }
 
 func (d *functions) Imports() map[string]string {

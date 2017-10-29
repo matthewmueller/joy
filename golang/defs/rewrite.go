@@ -1,36 +1,24 @@
 package defs
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 )
 
 type rewrite struct {
+	kind string
 	expr string
-	vars []string
+	vars []int
 }
 
 // Rewrite js.Rewrite(expr, arguments...)
 func (r *rewrite) Rewrite(args []string) (string, error) {
-	if len(args) != len(r.vars) {
-		return "", errors.New("Rewrite doesn't support spreads (e.g param...) yet")
-	}
-
 	// map out the replacements
-	replacements := map[string]string{}
-	for i, arg := range args {
-		replacements[r.vars[i]] = arg
-	}
-
-	// make the substitutions
+	// replacements := map[string]string{}
 	expr := r.expr
-	for i, variable := range r.vars {
-		replacement, isset := replacements[variable]
-		if !isset {
-			return "", errors.New("js.Rewrite() variable doesn't match the function parameter")
-		}
-		expr = strings.Replace(expr, "$"+strconv.Itoa(i+1), replacement, -1)
+	for i, arg := range args {
+		v := r.vars[i]
+		expr = strings.Replace(expr, "$"+strconv.Itoa(v), arg, -1)
 	}
 
 	return expr, nil

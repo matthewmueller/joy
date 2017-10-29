@@ -6,7 +6,6 @@ return function fetch(url) {
   return 'Google'
 }
 ;
-return {};
 })();
 pkg["github.com/matthewmueller/golly/testdata/25-external-file"] = (function() {
 function call () {

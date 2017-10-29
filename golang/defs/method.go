@@ -212,6 +212,11 @@ func (d *methods) Rewrite(arguments []string) (string, error) {
 	return d.rewrite.Rewrite(arguments)
 }
 
+// Params fn
+func (d *methods) Params() []string {
+	return d.params
+}
+
 func (d *methods) maybeAsync(def def.Definition) error {
 	if d.async || d.ID() == def.ID() {
 		return nil

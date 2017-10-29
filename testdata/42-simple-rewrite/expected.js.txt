@@ -1,0 +1,13 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/42-simple-rewrite"] = (function() {
+function main () {
+console.log("hi");
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/42-simple-rewrite"].main();
+})()

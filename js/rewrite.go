@@ -1,5 +1,6 @@
 package js
 
 // Rewrite an expression replacing the variables as needed
-func Rewrite(expr string, variables ...interface{}) {
+func Rewrite(expr string, variables ...interface{}) string {
+	return ""
 }

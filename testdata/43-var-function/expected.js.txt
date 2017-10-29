@@ -1,0 +1,17 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/43-var-function"] = (function() {
+function main () {
+console.log(test);
+};
+var test = tester();
+function tester () {
+return "hi world";
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/43-var-function"].main();
+})()

@@ -208,6 +208,31 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 			if len(defbody) == 0 {
 				continue
 			}
+
+			// handle raw files differently
+			if len(module.defs) == 1 &&
+				module.defs[0].Kind() == "FILE" {
+				// create: pkg["$dep"] = (function () { $yourPkg })()
+				body = append(body, jsast.CreateExpressionStatement(
+					jsast.CreateAssignmentExpression(
+						jsast.CreateMemberExpression(
+							jsast.CreateIdentifier("pkg"),
+							jsast.CreateString(module.path),
+							true,
+						),
+						jsast.AssignmentOperator("="),
+						jsast.CreateCallExpression(
+							jsast.CreateFunctionExpression(nil, []jsast.IPattern{},
+								jsast.CreateFunctionBody(defbody...),
+							),
+							[]jsast.IExpression{},
+						),
+					),
+				))
+				continue
+			}
+
+			// add the body to the module body
 			modbody = append(modbody, defbody...)
 
 			// create a return statement for the exported fields
@@ -341,5 +366,6 @@ func group(defs []def.Definition) (modules []*module, err error) {
 	for _, from := range order {
 		modules = append(modules, moduleMap[from])
 	}
+
 	return modules, nil
 }

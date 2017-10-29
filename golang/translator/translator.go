@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/matthewmueller/golly/golang/defs"
+	"github.com/matthewmueller/golly/golang/util"
 
 	"golang.org/x/tools/go/loader"
 
@@ -123,6 +124,7 @@ func (tr *Translator) functions(d defs.Functioner) (jsast.INode, error) {
 		body = append(body, jsStmt)
 	}
 
+	// function name
 	fnname := jsast.CreateIdentifier(n.Name.Name)
 
 	// async function
@@ -2229,13 +2231,15 @@ func (tr *Translator) jsRaw(d def.Definition, sp *scope.Scope, cx *ast.CallExpr)
 }
 
 func (tr *Translator) maybeJSRewrite(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
-	sel, ok := n.Fun.(*ast.SelectorExpr)
-	if !ok {
+	id, err := util.GetIdentifier(n)
+	if err != nil {
+		return nil, errors.Wrap(err, "js.rewrite")
+	} else if id == nil {
 		return nil, nil
 	}
 
 	// find the corresponding declaration (if there is one)
-	def, err := tr.index.DefinitionOf(d.Path(), sel)
+	def, err := tr.index.DefinitionOf(d.Path(), id)
 	if err != nil {
 		return nil, err
 	} else if def == nil {

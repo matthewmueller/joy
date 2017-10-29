@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go/ast"
 	"strconv"
+	"strings"
 
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
@@ -24,6 +25,7 @@ type state struct {
 	deps    []def.Definition
 	rewrite *rewrite
 	fields  []*field
+	params  []string
 	async   bool
 	omit    bool
 }
@@ -77,6 +79,20 @@ func funcDecl(ctx *context, n *ast.FuncDecl) error {
 		return e
 	}
 	ctx.state.tag = tag
+
+	if tag != nil && tag.HasOption("async") {
+		ctx.state.async = true
+	}
+
+	for _, field := range n.Type.Params.List {
+		for _, name := range field.Names {
+			ctx.state.params = append(
+				ctx.state.params,
+				name.Name,
+			)
+		}
+	}
+
 	return nil
 }
 
@@ -148,6 +164,8 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 		return jsFile(ctx, n)
 	case "js.Rewrite":
 		return jsRewrite(ctx, n)
+	case "js.Raw":
+		return jsRaw(ctx, n)
 	}
 
 	// TODO: handle interfaces
@@ -288,7 +306,7 @@ func jsRewrite(ctx *context, n *ast.CallExpr) error {
 	}
 
 	var expr string
-	var vars []string
+	var vars []int
 	for i, arg := range n.Args {
 		// handle expression first
 		if i == 0 {
@@ -309,7 +327,34 @@ func jsRewrite(ctx *context, n *ast.CallExpr) error {
 		if e != nil {
 			return e
 		}
-		vars = append(vars, a)
+
+		// pulled from above.
+		// TODO: should this be part of the indexing?
+		// there may be some conditions where this data isn't
+		// available yet, though I doubt it for this case.
+		params := ctx.state.params
+		match := ""
+		for _, param := range params {
+			if param == a {
+				match = param
+			}
+		}
+
+		// if there's no match, make replacement with
+		// variable itself, otherwise append for later
+		// replacement whenever we actually call that
+		// function
+		if match == "" {
+			expr = strings.Replace(expr, "$"+strconv.Itoa(i), a, -1)
+		} else {
+			vars = append(vars, i)
+		}
+	}
+
+	// async/await support within the rewrite
+	if strings.Contains(expr, "async") ||
+		strings.Contains(expr, "await") {
+		ctx.state.async = true
 	}
 
 	ctx.state.rewrite = &rewrite{
@@ -319,6 +364,38 @@ func jsRewrite(ctx *context, n *ast.CallExpr) error {
 
 	// omit func decl in any rewritten expression
 	ctx.state.omit = true
+	return nil
+}
+
+// right now, just used to figure out if function should be async
+func jsRaw(ctx *context, n *ast.CallExpr) error {
+	if len(n.Args) == 0 {
+		return nil
+	}
+
+	var expr string
+	for i := range n.Args {
+		// handle expression first
+		if i == 0 {
+			lit, ok := n.Args[0].(*ast.BasicLit)
+			if !ok {
+				return fmt.Errorf("process: expected rewrite expression to have basiclit argument, but got %T", n.Args[0])
+			}
+			exp, e := strconv.Unquote(lit.Value)
+			if e != nil {
+				return e
+			}
+			expr = exp
+			continue
+		}
+	}
+
+	// async/await support within the rewrite
+	if strings.Contains(expr, "async") ||
+		strings.Contains(expr, "await") {
+		ctx.state.async = true
+	}
+
 	return nil
 }
 

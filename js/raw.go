@@ -1,6 +1,6 @@
 package js
 
 // Raw inlines a JS expression
-func Raw(src string) interface{} {
+func Raw(src string, vars ...interface{}) interface{} {
 	return nil
 }

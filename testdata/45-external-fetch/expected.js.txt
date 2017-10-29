@@ -1,0 +1,141 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/45-external-fetch/fetch/unfetch.js"] = (function() {
+return function fetch(url, options) {
+  options = options || {}
+  return new Promise(function(resolve, reject) {
+    var request = new XMLHttpRequest()
+
+    request.open(options.method || 'get', url)
+
+    for (var i in options.headers) {
+      request.setRequestHeader(i, options.headers[i])
+    }
+
+    request.withCredentials = options.credentials == 'include'
+
+    request.onload = function() {
+      resolve(response())
+    }
+
+    request.onerror = reject
+
+    request.send(options.body)
+
+    function response() {
+      var keys = [],
+        all = [],
+        headers = {},
+        header
+
+      request
+        .getAllResponseHeaders()
+        .replace(/^(.*?):\s*([\s\S]*?)$/gm, function(m, key, value) {
+          keys.push((key = key.toLowerCase()))
+          all.push([key, value])
+          header = headers[key]
+          headers[key] = header ? header + ',' + value : value
+        })
+
+      return {
+        ok: ((request.status / 200) | 0) == 1, // 200-299
+        status: request.status,
+        statusText: request.statusText,
+        url: request.responseURL,
+        clone: response,
+        responseText: request.responseText,
+        text: function() {
+          return Promise.resolve(request.responseText)
+        },
+        json: function() {
+          return Promise.resolve(request.responseText).then(JSON.parse)
+        },
+        blob: function() {
+          return Promise.resolve(new Blob([request.response]))
+        },
+        headers: {
+          keys: function() {
+            return keys
+          },
+          entries: function() {
+            return all
+          },
+          get: function(n) {
+            return headers[n.toLowerCase()]
+          },
+          has: function(n) {
+            return n.toLowerCase() in headers
+          }
+        }
+      }
+    }
+  })
+}
+;
+})();
+pkg["github.com/matthewmueller/golly/testdata/45-external-fetch/fetch"] = (function() {
+async function Fetch (url, options) {
+
+	try {
+		var res = await unfetch(url, options)
+		return [ res, null ]
+	} catch (err) {
+		return [ null, err ]
+	}
+;
+return [null, null];
+};
+function Options (o) {
+o = o || {};
+this.Method = o.Method || "";
+};
+var unfetch = pkg["github.com/matthewmueller/golly/testdata/45-external-fetch/fetch/unfetch.js"];
+return {
+  Fetch: Fetch,
+  Options: Options
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/45-external-fetch"] = (function() {
+var fetch = pkg["github.com/matthewmueller/golly/testdata/45-external-fetch/fetch"];
+function Repo (o) {
+o = o || {};
+this.name = o.name || "";
+};
+async function main () {
+await test();
+};
+async function test () {
+var $response = await fetch.Fetch("https://api.github.com/users/matthewmueller/repos", new fetch.Options({
+  Method: "GET"
+})), response = $response[0], err = $response[1];
+if (err != null) {
+console.log(err)
+return 
+};
+var repos = [];
+var data = await response.text();
+var e = (function(data, v) {
+  try {
+    var o = JSON.parse(data)
+    for (var k in o) v[k] = o[k]
+    return null
+  } catch (e) { return e }
+})(data, repos);
+if (e != null) {
+throw e
+};
+for (var _ = 0, repo; _ < repos.length; _++) {
+var repo = repos[_]
+if (repo.name == ".dotfiles") {
+console.log(repo.name)
+}
+};
+};
+return {
+  Repo: Repo,
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/45-external-fetch"].main();
+})()
