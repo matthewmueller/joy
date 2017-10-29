@@ -12,12 +12,12 @@ return s.value;
 };
 function Subthing (o) {
 o = o || {};
-this.first = o.first || new Stringer();
-this.last = o.last || new Stringer();
+this.first = o.first || null;
+this.last = o.last || null;
 };
 function Thing (o) {
 o = o || {};
-this.Subthing = o.Subthing || new Subthing();
+this.Subthing = o.Subthing || null;
 };
 Subthing.prototype.firstName = function() {
 var s = this;

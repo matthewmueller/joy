@@ -8,7 +8,7 @@ return s.name;
 };
 function Thing (o) {
 o = o || {};
-this.subthing = o.subthing || new subthing();
+this.subthing = o.subthing || null;
 };
 function main () {
 var s = new Thing({

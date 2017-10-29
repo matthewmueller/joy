@@ -115,6 +115,8 @@ func GetIdentifier(n ast.Node) (*ast.Ident, error) {
 		return GetIdentifier(t.X)
 	case *ast.CallExpr:
 		return GetIdentifier(t.Fun)
+	case *ast.ParenExpr:
+		return GetIdentifier(t.X)
 	case *ast.ArrayType, *ast.MapType, *ast.StructType,
 		*ast.ChanType, *ast.FuncType, *ast.InterfaceType,
 		*ast.FuncLit:
@@ -189,6 +191,12 @@ func ExprToString(n ast.Node) (string, error) {
 		return `[]` + c, nil
 	case *ast.FuncLit:
 		return "func(){}()", nil
+	case *ast.ParenExpr:
+		x, e := ExprToString(t.X)
+		if e != nil {
+			return "", e
+		}
+		return "(" + x + ")", nil
 	default:
 		// log.Warnf("exprToString: unhandled %T", n)
 		// return "", nil

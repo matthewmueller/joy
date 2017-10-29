@@ -5,6 +5,7 @@ import (
 
 	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def"
+	"github.com/pkg/errors"
 	"github.com/stevenle/topsort"
 )
 
@@ -69,13 +70,14 @@ func (g *Graph) Sort(d def.Definition) (defs []def.Definition, err error) {
 	for parentPath, edge := range g.edges {
 		children := sortEdgeKeys(edge)
 		for _, childPath := range children {
+			log.Debugf("%s -> %s", parentPath, childPath)
 			graph.AddEdge(parentPath, childPath)
 		}
 	}
 
 	order, e := graph.TopSort(d.Path())
 	if e != nil {
-		return defs, e
+		return defs, errors.Wrap(e, "graph/toposort")
 	}
 
 	log.Debugf("main %s", d.ID())

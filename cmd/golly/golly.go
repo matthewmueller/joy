@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
-	"path"
 	"strings"
 	"syscall"
 
@@ -95,9 +94,10 @@ func build(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	for i, pkg := range packages {
-		packages[i] = path.Join(os.Getenv("GOPATH"), "src", pkg)
-	}
+	// for i, pkg := range packages {
+	// 	packages[i] = path.Join(os.Getenv("GOPATH"), "src", pkg)
+	// }
+	log.Infof("packages %+v", packages)
 
 	// start := time.Now()
 	compiler := golang.New()
@@ -161,6 +161,11 @@ func signalContext(ctx context.Context, sig ...os.Signal) context.Context {
 // Sourced from:
 // https://github.com/mitchellh/gox/blob/c9740af9c6574448fd48eb30a71f964014c7a837/go.go#L123
 func getMains(packages []string) ([]string, error) {
+	// pwd, err := os.Getwd()
+	// if err != nil {
+	// 	return nil, err
+	// }
+
 	goCmd, err := exec.LookPath("go")
 	if err != nil {
 		return nil, err
@@ -169,7 +174,6 @@ func getMains(packages []string) ([]string, error) {
 	args := make([]string, 0, len(packages)+3)
 	args = append(args, "list", "-f", "{{.Name}}|{{.ImportPath}}")
 	args = append(args, packages...)
-
 	output, err := execGo(goCmd, nil, "", args...)
 	if err != nil {
 		return nil, err
@@ -188,6 +192,12 @@ func getMains(packages []string) ([]string, error) {
 		}
 
 		if parts[0] == "main" {
+			// TODO: not sure if this is reliable
+			// but it's for when you pass a filepath
+			// to go list, it returns command-line-arguments
+			// if parts[1] == "command-line-arguments" {
+			// 	parts[1] =
+			// }
 			results = append(results, parts[1])
 		}
 	}

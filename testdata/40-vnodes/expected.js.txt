@@ -29,7 +29,7 @@ return new Element({
 };
 function Page (o) {
 o = o || {};
-this.props = o.props || new Props();
+this.props = o.props || null;
 };
 function Props (o) {
 o = o || {};
@@ -54,7 +54,7 @@ return c.component.Render().String();
 };
 function component (o) {
 o = o || {};
-this.component = o.component || new Component();
+this.component = o.component || null;
 };
 function main () {
 var c = New(new Props({

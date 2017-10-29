@@ -168,7 +168,6 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 		return jsRaw(ctx, n)
 	}
 
-	// TODO: handle interfaces
 	def, e := ctx.idx.DefinitionOf(ctx.d.Path(), n)
 	if e != nil {
 		return e
@@ -182,9 +181,9 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 		}
 
 		methods := t.ImplementedBy(m.Sel.Name)
-		for _, m := range methods {
-			log.Debugf("%s -> %s", ctx.d.ID(), m.ID())
-			ctx.state.deps = append(ctx.state.deps, m)
+		for _, def := range methods {
+			log.Debugf("implemented by: %s -> %s", ctx.d.ID(), def.ID())
+			ctx.state.deps = append(ctx.state.deps, def)
 		}
 	}
 

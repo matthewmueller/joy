@@ -1472,11 +1472,17 @@ func (tr *Translator) expression(d def.Definition, sp *scope.Scope, expr ast.Exp
 		return tr.sliceExpr(d, sp, t)
 	case *ast.TypeAssertExpr:
 		return tr.typeAssertExpr(d, sp, t)
+	case *ast.ParenExpr:
+		return tr.parenExpr(d, sp, t)
 	case nil:
 		return nil, nil
 	default:
 		return nil, fmt.Errorf("expression(): unhandled type: %s", reflect.TypeOf(expr))
 	}
+}
+
+func (tr *Translator) parenExpr(d def.Definition, sp *scope.Scope, n *ast.ParenExpr) (jsast.IExpression, error) {
+	return tr.expression(d, sp, n.X)
 }
 
 func (tr *Translator) typeAssertExpr(d def.Definition, sp *scope.Scope, n *ast.TypeAssertExpr) (jsast.IExpression, error) {
@@ -2141,6 +2147,12 @@ func (tr *Translator) defaultValue(d def.Definition, sp *scope.Scope, expr ast.E
 		case "nil":
 			return jsast.Null, nil
 		default:
+			def, err := tr.index.DefinitionOf(d.Path(), t)
+			if err != nil {
+				return nil, err
+			} else if def != nil && def.Kind() == "INTERFACE" {
+				return jsast.Null, nil
+			}
 			id := jsast.CreateIdentifier(t.Name)
 			return jsast.CreateNewExpression(id, nil), nil
 		}
@@ -2151,7 +2163,7 @@ func (tr *Translator) defaultValue(d def.Definition, sp *scope.Scope, expr ast.E
 	case *ast.InterfaceType:
 		return jsast.Null, nil
 	case *ast.StarExpr:
-		return tr.defaultValue(d, sp, t.X)
+		return jsast.Null, nil
 	case *ast.SelectorExpr:
 		x, e := tr.expression(d, sp, t.X)
 		if e != nil {

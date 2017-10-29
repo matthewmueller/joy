@@ -21,9 +21,9 @@ function User (o) {
 o = o || {};
 this.name = o.name || "";
 this.Age = o.Age || 0;
-this.phone = o.phone || new Phone();
-this.Settings = o.Settings || new dep.Settings();
-this.Settings2 = o.Settings2 || new dep.Settings();
+this.phone = o.phone || null;
+this.Settings = o.Settings || null;
+this.Settings2 = o.Settings2 || null;
 };
 function main () {
 var settings = new dep.Settings({

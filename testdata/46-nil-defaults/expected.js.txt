@@ -1,0 +1,47 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/46-nil-defaults/element"] = (function() {
+element.prototype.Attrs = function() {
+var c = this;
+return c.attrs;
+};
+function New (tag, child) {
+return new element({
+  tag: tag,
+  child: child
+});
+};
+element.prototype.Render = function() {
+var c = this;
+if (c.child == null) {
+return "<" + c.tag + "></" + c.tag + ">"
+};
+return "<" + c.tag + ">" + c.child.Render() + "</" + c.tag + ">";
+};
+function attrs (o) {
+o = o || {};
+};
+function element (o) {
+o = o || {};
+this.tag = o.tag || "";
+this.child = o.child || null;
+this.attrs = o.attrs || null;
+};
+return {
+  New: New
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/46-nil-defaults"] = (function() {
+var element = pkg["github.com/matthewmueller/golly/testdata/46-nil-defaults/element"];
+function main () {
+var el = element.New("header", element.New("strong", null));
+console.log(el.Render());
+console.log(el.Attrs());
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/46-nil-defaults"].main();
+})()
