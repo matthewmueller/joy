@@ -19,7 +19,8 @@ return new component({
   component: com
 });
 };
-function NewElement (tagName, attributes, children) {
+function NewElement (tagName, attributes) {
+var children = Array.prototype.slice.call(arguments, 2);
 return new Element({
   name: tagName,
   kind: 1,

@@ -100,12 +100,24 @@ func (tr *Translator) functions(d defs.Functioner) (jsast.INode, error) {
 		return jsast.CreateEmptyStatement(), nil
 	}
 
+	var body []interface{}
+
 	// build argument list
 	// var args
 	var params []jsast.IPattern
 	if n.Type != nil && n.Type.Params != nil {
 		fields := n.Type.Params.List
-		for _, field := range fields {
+		for i, field := range fields {
+			// handle func (items ...string)
+			// TODO: add faster version to runtime
+			_, ok := field.Type.(*ast.Ellipsis)
+			if ok {
+				for _, name := range field.Names {
+					body = append(body, slice(name.Name, i))
+				}
+				continue
+			}
+
 			// names because: (a, b string, c int) = [[a, b], c]
 			for _, name := range field.Names {
 				id := jsast.CreateIdentifier(name.Name)
@@ -115,7 +127,6 @@ func (tr *Translator) functions(d defs.Functioner) (jsast.INode, error) {
 	}
 
 	// create the body
-	var body []interface{}
 	for _, stmt := range n.Body.List {
 		jsStmt, e := tr.statement(d, sp, stmt)
 		if e != nil {
@@ -158,12 +169,24 @@ func (tr *Translator) methods(d defs.Methoder) (jsast.INode, error) {
 		return jsast.CreateEmptyStatement(), nil
 	}
 
+	var body []interface{}
+
 	// build argument list
 	// var args
 	var params []jsast.IPattern
 	if n.Type != nil && n.Type.Params != nil {
 		fields := n.Type.Params.List
-		for _, field := range fields {
+		for i, field := range fields {
+			// handle func (items ...string)
+			// TODO: add faster version to runtime
+			_, ok := field.Type.(*ast.Ellipsis)
+			if ok {
+				for _, name := range field.Names {
+					body = append(body, slice(name.Name, i))
+				}
+				continue
+			}
+
 			// names because: (a, b string, c int) = [[a, b], c]
 			for _, name := range field.Names {
 				id := jsast.CreateIdentifier(name.Name)
@@ -173,7 +196,6 @@ func (tr *Translator) methods(d defs.Methoder) (jsast.INode, error) {
 	}
 
 	// create the body
-	var body []interface{}
 	for _, stmt := range n.Body.List {
 		jsStmt, e := tr.statement(d, sp, stmt)
 		if e != nil {
@@ -2404,4 +2426,32 @@ func getIdentifier(n ast.Expr) (*ast.Ident, error) {
 
 func unhandled(fn string, n interface{}) error {
 	return fmt.Errorf("%s in %s() is not implemented yet", reflect.TypeOf(n), fn)
+}
+
+func slice(name string, i int) jsast.IStatement {
+	return jsast.CreateVariableDeclaration(
+		"var",
+		jsast.CreateVariableDeclarator(
+			jsast.CreateIdentifier(name),
+			jsast.CreateCallExpression(
+				jsast.CreateMemberExpression(
+					jsast.CreateMemberExpression(
+						jsast.CreateMemberExpression(
+							jsast.CreateIdentifier("Array"),
+							jsast.CreateIdentifier("prototype"),
+							false,
+						),
+						jsast.CreateIdentifier("slice"),
+						false,
+					),
+					jsast.CreateIdentifier("call"),
+					false,
+				),
+				[]jsast.IExpression{
+					jsast.CreateIdentifier("arguments"),
+					jsast.CreateInt(i),
+				},
+			),
+		),
+	)
 }
