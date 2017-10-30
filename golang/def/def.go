@@ -14,7 +14,7 @@ type Definition interface {
 	Omitted() bool
 	Type() types.Type
 	Kind() string
-	Dependencies() ([]Definition, error)
+	Dependencies() ([]Edge, error)
 	Imports() map[string]string
 	FromRuntime() bool
 }
@@ -28,4 +28,11 @@ type Field interface {
 // Rewrite interface
 type Rewrite interface {
 	Rewrite(arguments *ast.FieldList) (string, error)
+}
+
+// Edge interface
+type Edge interface {
+	Definition() Definition
+	
+	Type() string
 }

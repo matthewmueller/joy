@@ -32,7 +32,7 @@ type methods struct {
 	recv      string
 	async     bool
 	processed bool
-	deps      []def.Definition
+	edges     []def.Edge
 	tag       *structtag.Tag
 	runtime   bool
 	imports   map[string]string
@@ -103,7 +103,7 @@ func (d *methods) process() (err error) {
 	// copy state into function
 	d.processed = true
 	d.async = state.async
-	d.deps = state.deps
+	d.edges = state.edges.Edges()
 	d.imports = state.imports
 	d.omit = state.omit
 	d.rewrite = state.rewrite
@@ -112,15 +112,15 @@ func (d *methods) process() (err error) {
 	return nil
 }
 
-func (d *methods) Dependencies() (defs []def.Definition, err error) {
+func (d *methods) Dependencies() (edges []def.Edge, err error) {
 	if d.processed {
-		return d.deps, nil
+		return d.edges, nil
 	}
 	err = d.process()
 	if err != nil {
-		return defs, err
+		return edges, err
 	}
-	return d.deps, nil
+	return d.edges, nil
 }
 
 func (d *methods) IsAsync() (bool, error) {

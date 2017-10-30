@@ -51,8 +51,8 @@ func (d *files) Path() string {
 	return d.path
 }
 
-func (d *files) Dependencies() (defs []def.Definition, err error) {
-	return defs, nil
+func (d *files) Dependencies() (edges []def.Edge, err error) {
+	return edges, nil
 }
 
 func (d *files) Exported() bool {

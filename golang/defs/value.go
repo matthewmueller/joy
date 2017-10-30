@@ -29,7 +29,7 @@ type values struct {
 	node      *ast.ValueSpec
 	kind      types.Type
 	processed bool
-	deps      []def.Definition
+	edges     []def.Edge
 	imports   map[string]string
 	async     bool
 	omit      bool
@@ -74,7 +74,7 @@ func (d *values) process() (err error) {
 	// copy state into function
 	d.processed = true
 	d.async = state.async
-	d.deps = state.deps
+	d.edges = state.edges.Edges()
 	d.imports = state.imports
 	d.omit = state.omit
 	d.tag = state.tag
@@ -98,15 +98,15 @@ func (d *values) Path() string {
 	return d.path
 }
 
-func (d *values) Dependencies() (defs []def.Definition, err error) {
+func (d *values) Dependencies() (edges []def.Edge, err error) {
 	if d.processed {
-		return d.deps, nil
+		return d.edges, nil
 	}
 	e := d.process()
 	if e != nil {
-		return defs, e
+		return edges, e
 	}
-	return d.deps, nil
+	return d.edges, nil
 }
 
 func (d *values) Exported() bool {

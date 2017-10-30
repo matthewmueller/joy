@@ -22,7 +22,7 @@ type context struct {
 type state struct {
 	imports map[string]string
 	tag     *structtag.Tag
-	deps    []def.Definition
+	edges   *edges
 	rewrite *rewrite
 	fields  []*field
 	params  []string
@@ -34,6 +34,7 @@ type state struct {
 func process(idx *index.Index, d def.Definition, n ast.Node) (st *state, err error) {
 	st = &state{
 		imports: map[string]string{},
+		edges:   &edges{},
 	}
 
 	ctx := &context{
@@ -68,7 +69,7 @@ func process(idx *index.Index, d def.Definition, n ast.Node) (st *state, err err
 	}
 
 	// unique dependencies
-	st.deps = unique(st.deps)
+	// st.deps = unique(st.deps)
 
 	return st, nil
 }
@@ -183,7 +184,7 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 		methods := t.ImplementedBy(m.Sel.Name)
 		for _, def := range methods {
 			log.Debugf("implemented by: %s -> %s", ctx.d.ID(), def.ID())
-			ctx.state.deps = append(ctx.state.deps, def)
+			ctx.state.edges.Add("IMPLEMENTS", def)
 		}
 	}
 
@@ -199,7 +200,7 @@ func chanType(ctx *context, n *ast.ChanType) error {
 	if len(deps) > 0 {
 		for _, def := range deps {
 			log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
-			ctx.state.deps = append(ctx.state.deps, def)
+			ctx.state.edges.Add("DEPENDS", def)
 		}
 		ctx.state.imports["runtime"] = deps[0].Path()
 	}
@@ -225,7 +226,7 @@ func selectorExpr(ctx *context, n *ast.SelectorExpr) error {
 
 		if !ignore {
 			log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
-			ctx.state.deps = append(ctx.state.deps, def)
+			ctx.state.edges.Add("DEPENDS", def)
 		}
 	}
 
@@ -257,7 +258,7 @@ func ident(ctx *context, n *ast.Ident) error {
 
 		if !ignore {
 			log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
-			ctx.state.deps = append(ctx.state.deps, def)
+			ctx.state.edges.Add("DEPENDS", def)
 		}
 	}
 
@@ -295,7 +296,7 @@ func jsFile(ctx *context, n *ast.CallExpr) error {
 
 	ctx.idx.AddDefinition(def)
 	log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
-	ctx.state.deps = append(ctx.state.deps, def)
+	ctx.state.edges.Add("DEPENDS", def)
 	return nil
 }
 

@@ -1,0 +1,45 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/47-circular/element"] = (function() {
+function New (tag, child) {
+return new element({
+  tag: tag,
+  child: child
+});
+};
+element.prototype.Render = function() {
+var c = this;
+if (c.child == null) {
+return "<" + c.tag + "></" + c.tag + ">"
+};
+return "<" + c.tag + ">" + c.child.Render() + "</" + c.tag + ">";
+};
+function element (o) {
+o = o || {};
+this.tag = o.tag || "";
+this.child = o.child || null;
+};
+return {
+  New: New
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/47-circular"] = (function() {
+var element = pkg["github.com/matthewmueller/golly/testdata/47-circular/element"];
+page.prototype.Render = function() {
+var p = this;
+return element.New("header", element.New("strong", null)).Render();
+};
+function main () {
+var p = new page({});
+console.log(p.Render());
+};
+function page (o) {
+o = o || {};
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/47-circular"].main();
+})()

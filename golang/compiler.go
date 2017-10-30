@@ -63,6 +63,7 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 	}
 
 	// initial packages
+	buckets := map[string][]def.Definition{}
 	visited := map[string]bool{}
 	queue := []def.Definition{}
 	mains := index.Mains()
@@ -78,28 +79,36 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 	// build our dependencies graph
 	for len(queue) > 0 {
 		// dequeue
-		def := queue[0]
+		d := queue[0]
 		queue = queue[1:]
 
+		// path => definition buckets
+		// NOTE: may contain duplicate definitions
+		if buckets[d.Path()] == nil {
+			buckets[d.Path()] = []def.Definition{}
+		}
+		buckets[d.Path()] = append(buckets[d.Path()], d)
+
 		// get the dependencies
-		deps, err := def.Dependencies()
+		edges, err := d.Dependencies()
 		if err != nil {
 			return scripts, errors.Wrap(err, "error getting dependencies")
 		}
 
 		// add the dependencies to the graph
-		g.AddDependency(def, deps...)
+		for _, edge := range edges {
+			g.Edge(d.Path(), edge.Definition().Path(), edge.Type())
+		}
 
 		// add any dependency that hasn't
 		// already been visited
-		for _, dep := range deps {
-			if !visited[dep.ID()] {
-				queue = append(queue, dep)
-				visited[def.ID()] = true
+		for _, edge := range edges {
+			if !visited[edge.Definition().ID()] {
+				queue = append(queue, edge.Definition())
+				visited[d.ID()] = true
 			}
 		}
 	}
-
 	tr := translator.New(index)
 
 	// assemble into scripts
@@ -107,21 +116,37 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 	for _, main := range mains {
 		log.Debugf("main: %s", main.Path())
 
-		sorted, e := g.Sort(main)
-		if e != nil {
-			return scripts, e
-		}
+		sorted := g.Toposort(main.Path())
 
-		for _, d := range sorted {
+		// paths back to definitions
+		defs := []def.Definition{}
+		for _, path := range sorted {
+			// Sort to have a consistent definition order (alphabetical)
+			// TODO: investigate if we can maintain the order
+			// the code was written in. It seems difficult
+			// because we don't have easy access to raw source files,
+			// just package paths, which may put definitions across
+			// files in any order.
+			ds := sortByID(buckets[path])
+			defs = append(defs, ds...)
+		}
+		// uniquify all the duplicates per main file
+		defs = unique(defs)
+
+		for _, d := range defs {
 			log.Debugf("sorted=%s", d.ID())
 		}
 
-		pruned, e := prune(sorted)
-
+		// prune the definitions for any obvious
+		// errors that the graph wouldn't catch
+		pruned, e := prune(defs)
 		for _, d := range pruned {
 			log.Debugf("pruned=%s", d.ID())
 		}
 
+		// group into modules
+		// TODO: can we skip some steps here?
+		// seems like we're going paths => defs => paths
 		modules, e := group(pruned)
 		if e != nil {
 			return scripts, e
@@ -368,4 +393,37 @@ func group(defs []def.Definition) (modules []*module, err error) {
 	}
 
 	return modules, nil
+}
+
+func unique(defs []def.Definition) []def.Definition {
+	u := make([]def.Definition, 0, len(defs))
+	seen := make(map[string]bool)
+
+	for _, def := range defs {
+		if _, ok := seen[def.ID()]; !ok {
+			seen[def.ID()] = true
+			u = append(u, def)
+		}
+	}
+
+	return u
+}
+
+func sortByID(defs []def.Definition) (sorted []def.Definition) {
+	defmap := map[string]def.Definition{}
+	order := []string{}
+
+	for _, def := range defs {
+		id := def.ID()
+		defmap[def.ID()] = def
+		order = append(order, id)
+	}
+
+	sort.Strings(order)
+
+	for _, o := range order {
+		sorted = append(sorted, defmap[o])
+	}
+
+	return sorted
 }
