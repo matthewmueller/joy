@@ -147,13 +147,11 @@ func (db *DB) typeSpec(info *loader.PackageInfo, gn *ast.GenDecl, n *ast.TypeSpe
 		}
 		db.index.AddDefinition(iface)
 
-		// link the methods to the interface declaration
-		for _, m := range t.Methods.List {
-			for _, name := range m.Names {
-				mid := iface.Path() + " " + name.Name + " " + iface.Name()
-				db.index.Link(mid, iface)
-			}
+		methods := util.MethodsFromInterface(t, iface.Path(), iface.Name())
+		for _, method := range methods {
+			db.index.Link(method, iface)
 		}
+
 		return nil
 	default:
 		return fmt.Errorf("unhandled %T", n.Type)

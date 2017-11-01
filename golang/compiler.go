@@ -6,6 +6,7 @@ import (
 	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/defs"
+	"github.com/matthewmueller/golly/golang/index"
 	"github.com/matthewmueller/golly/golang/script"
 	"github.com/matthewmueller/golly/golang/translator"
 	"github.com/matthewmueller/golly/jsast"
@@ -48,26 +49,38 @@ func New() *Compiler {
 	return &Compiler{}
 }
 
-// Compile a series of packages
-//
-// packages should be fullpaths to the files or packages
+// Compile our code
 func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err error) {
-	program, err := loader.Load(packages...)
+	idx, g, err := c.Parse(packages...)
 	if err != nil {
-		return scripts, err
+		return scripts, errors.Wrap(err, "parse error")
 	}
 
-	index, err := db.New(program)
+	scripts, err = c.Assemble(idx, g)
 	if err != nil {
-		return scripts, nil
+		return scripts, errors.Wrap(err, "assemble error")
+	}
+
+	return scripts, nil
+}
+
+// Parse fn
+func (c *Compiler) Parse(packages ...string) (idx *index.Index, g *graph.Graph, err error) {
+	program, err := loader.Load(packages...)
+	if err != nil {
+		return idx, g, err
+	}
+
+	idx, err = db.New(program)
+	if err != nil {
+		return idx, g, nil
 	}
 
 	// initial packages
-	buckets := map[string][]def.Definition{}
 	visited := map[string]bool{}
 	queue := []def.Definition{}
-	mains := index.Mains()
-	g := graph.New()
+	mains := idx.Mains()
+	g = graph.New()
 
 	// queue the initial packages
 	queue = append(queue, mains...)
@@ -77,26 +90,39 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 	}
 
 	// build our dependencies graph
+	hotidx := index.New(program)
 	for len(queue) > 0 {
 		// dequeue
 		d := queue[0]
 		queue = queue[1:]
 
 		// path => definition buckets
-		// NOTE: may contain duplicate definitions
-		if buckets[d.Path()] == nil {
-			buckets[d.Path()] = []def.Definition{}
+		hotidx.AddDefinition(d)
+
+		// add aliases for interfaces
+		if iface, ok := d.(defs.Interfacer); ok {
+			for _, m := range iface.Methods() {
+				hotidx.Link(m, iface)
+			}
 		}
-		buckets[d.Path()] = append(buckets[d.Path()], d)
+		// // link the methods to the interface declaration
+		// for _, m := range t.Methods.List {
+		// 	for _, name := range m.Names {
+		// 		mid := iface.Path() + " " + name.Name + " " + iface.Name()
+		// 		log.Infof("linking %s => %s", mid, iface.ID())
+		// 		db.index.Link(mid, iface)
+		// 	}
+		// }
 
 		// get the dependencies
 		edges, err := d.Dependencies()
 		if err != nil {
-			return scripts, errors.Wrap(err, "error getting dependencies")
+			return idx, g, errors.Wrap(err, "error getting dependencies")
 		}
 
 		// add the dependencies to the graph
 		for _, edge := range edges {
+			log.Debugf("edge: %s->%s (%s)", d.Path(), edge.Definition().Path(), edge.Type())
 			g.Edge(d.Path(), edge.Definition().Path(), edge.Type())
 		}
 
@@ -109,14 +135,23 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 			}
 		}
 	}
-	tr := translator.New(index)
+
+	return hotidx, g, nil
+}
+
+// Assemble the code
+func (c *Compiler) Assemble(idx *index.Index, g *graph.Graph) (scripts []*script.Script, err error) {
+	tr := translator.New(idx)
 
 	// assemble into scripts
 	var files []*file
-	for _, main := range mains {
+	for _, main := range idx.Mains() {
 		log.Debugf("main: %s", main.Path())
 
 		sorted := g.Toposort(main.Path())
+		for _, path := range sorted {
+			log.Debugf("path=%s", path)
+		}
 
 		// paths back to definitions
 		defs := []def.Definition{}
@@ -127,7 +162,7 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 			// because we don't have easy access to raw source files,
 			// just package paths, which may put definitions across
 			// files in any order.
-			ds := sortByID(buckets[path])
+			ds := idx.DefinitionsByPath(path)
 			defs = append(defs, ds...)
 		}
 		// uniquify all the duplicates per main file
@@ -332,6 +367,13 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 	return scripts, nil
 }
 
+// Compile a series of packages
+//
+// packages should be fullpaths to the files or packages
+// func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err error) {
+
+// }
+
 // Prunes the definitions. Right now this means:
 // - remove any method that doesn't have a receiver present
 func prune(inp []def.Definition) (out []def.Definition, err error) {
@@ -407,23 +449,4 @@ func unique(defs []def.Definition) []def.Definition {
 	}
 
 	return u
-}
-
-func sortByID(defs []def.Definition) (sorted []def.Definition) {
-	defmap := map[string]def.Definition{}
-	order := []string{}
-
-	for _, def := range defs {
-		id := def.ID()
-		defmap[def.ID()] = def
-		order = append(order, id)
-	}
-
-	sort.Strings(order)
-
-	for _, o := range order {
-		sorted = append(sorted, defmap[o])
-	}
-
-	return sorted
 }

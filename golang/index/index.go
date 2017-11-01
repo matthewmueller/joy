@@ -15,23 +15,33 @@ import (
 
 // Index type
 type Index struct {
-	program *loader.Program
-	defs    map[string]def.Definition
-	imports map[string]map[string]string
+	program  *loader.Program
+	defs     map[string]def.Definition
+	defpaths map[string][]def.Definition
+	imports  map[string]map[string]string
 }
 
 // New index
 func New(program *loader.Program) *Index {
 	return &Index{
-		program: program,
-		defs:    map[string]def.Definition{},
-		imports: map[string]map[string]string{},
+		program:  program,
+		defs:     map[string]def.Definition{},
+		defpaths: map[string][]def.Definition{},
+		imports:  map[string]map[string]string{},
 	}
 }
 
 // AddDefinition adds a definition to the index
 func (i *Index) AddDefinition(d def.Definition) {
+	// add by id
 	i.defs[d.ID()] = d
+
+	// group by path
+	p := d.Path()
+	if i.defpaths[p] == nil {
+		i.defpaths[p] = []def.Definition{}
+	}
+	i.defpaths[p] = append(i.defpaths[p], d)
 }
 
 // AddImport fn
@@ -85,6 +95,32 @@ func (i *Index) Mains() (mains []def.Definition) {
 	}
 
 	return mains
+}
+
+// DefinitionsByPath returns a unique, deterministic number of definitions
+// given a particular path
+func (i *Index) DefinitionsByPath(path string) (defs []def.Definition) {
+	defs = i.defpaths[path]
+	return sortByID(defs)
+}
+
+func sortByID(defs []def.Definition) (sorted []def.Definition) {
+	defmap := map[string]def.Definition{}
+	order := []string{}
+
+	for _, def := range defs {
+		id := def.ID()
+		defmap[def.ID()] = def
+		order = append(order, id)
+	}
+
+	sort.Strings(order)
+
+	for _, o := range order {
+		sorted = append(sorted, defmap[o])
+	}
+
+	return sorted
 }
 
 // Runtime gets a definition from the runtime
@@ -268,5 +304,3 @@ func (i *Index) typeToDef(name string, kind types.Type) (arr []string, err error
 	// log.Infof("ident %+v", i/d)
 	return arr, nil
 }
-
-// func (db *DB) TypeOf(info *loader.PackageInfo, n ast.Node) ()

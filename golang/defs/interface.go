@@ -8,6 +8,7 @@ import (
 
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/index"
+	"github.com/matthewmueller/golly/golang/util"
 
 	"golang.org/x/tools/go/loader"
 )
@@ -18,6 +19,7 @@ type Interfacer interface {
 	ImplementedBy(method string) []Methoder
 	DependenciesOf(method string) ([]def.Definition, error)
 	Node() *ast.TypeSpec
+	Methods() []string
 }
 
 var _ Interfacer = (*interfaces)(nil)
@@ -42,14 +44,9 @@ func Interface(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n 
 	packagePath := obj.Pkg().Path()
 	idParts := []string{packagePath, n.Name.Name}
 	id := strings.Join(idParts, " ")
-	methods := []string{}
 
 	iface := n.Type.(*ast.InterfaceType)
-	for _, list := range iface.Methods.List {
-		for _, method := range list.Names {
-			methods = append(methods, method.Name)
-		}
-	}
+	methods := util.MethodsFromInterface(iface, packagePath, n.Name.Name)
 
 	kind, ok := info.TypeOf(n.Type).(*types.Interface)
 	if !ok {
@@ -161,4 +158,8 @@ func (d *interfaces) Imports() map[string]string {
 
 func (d *interfaces) FromRuntime() bool {
 	return false
+}
+
+func (d *interfaces) Methods() []string {
+	return d.methods
 }

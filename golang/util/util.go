@@ -257,3 +257,15 @@ func JSSourcePath() (string, error) {
 
 	return jsSourcePkg, nil
 }
+
+// MethodsFromInterface fn
+func MethodsFromInterface(n *ast.InterfaceType, path, name string) (methods []string) {
+	// link the methods to the interface declaration
+	for _, m := range n.Methods.List {
+		for _, n := range m.Names {
+			mid := path + " " + n.Name + " " + name
+			methods = append(methods, mid)
+		}
+	}
+	return methods
+}
