@@ -24,6 +24,17 @@ func New() *Graph {
 
 // Edge adds an edge
 func (g *Graph) Edge(parent, child, kind string) {
+	if parent == child {
+		return
+	}
+
+	// TODO: is this legit?
+	// maybe the package graph doesn't depend
+	// on interface links at all
+	if kind == "IMPLEMENTS" {
+		return
+	}
+
 	g.nodes[parent] = true
 	g.nodes[child] = true
 

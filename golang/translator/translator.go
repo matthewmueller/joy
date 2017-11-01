@@ -2186,6 +2186,8 @@ func (tr *Translator) defaultValue(d def.Definition, sp *scope.Scope, expr ast.E
 		return jsast.Null, nil
 	case *ast.StarExpr:
 		return jsast.Null, nil
+	case *ast.FuncType:
+		return jsast.Null, nil
 	case *ast.SelectorExpr:
 		x, e := tr.expression(d, sp, t.X)
 		if e != nil {

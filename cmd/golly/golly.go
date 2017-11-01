@@ -97,7 +97,7 @@ func build(ctx context.Context) error {
 	// for i, pkg := range packages {
 	// 	packages[i] = path.Join(os.Getenv("GOPATH"), "src", pkg)
 	// }
-	log.Infof("packages %+v", packages)
+	// log.Infof("packages %+v", packages)
 
 	// start := time.Now()
 	compiler := golang.New()
@@ -107,11 +107,11 @@ func build(ctx context.Context) error {
 	}
 
 	for _, file := range files {
-		fmt.Println("---")
-		fmt.Println(file.Name())
-		fmt.Println("---")
+		// fmt.Println("---")
+		// fmt.Println(file.Name())
+		// fmt.Println("---")
 		fmt.Println(file.Source())
-		fmt.Println("===")
+		// fmt.Println("===")
 	}
 	return nil
 }

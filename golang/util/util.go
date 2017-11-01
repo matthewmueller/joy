@@ -197,11 +197,21 @@ func ExprToString(n ast.Node) (string, error) {
 			return "", e
 		}
 		return "(" + x + ")", nil
+	case *ast.KeyValueExpr:
+		k, e := ExprToString(t.Key)
+		if e != nil {
+			return "", e
+		}
+		v, e := ExprToString(t.Value)
+		if e != nil {
+			return "", e
+		}
+		return "{" + k + ":" + v + "}", nil
 	default:
 		// log.Warnf("exprToString: unhandled %T", n)
 		// return "", nil
 		_, file, line, _ := runtime.Caller(2)
-		log.Warnf("file=%s line=%s", file, line)
+		log.Warnf("file=%s line=%d", file, line)
 		return "", fmt.Errorf("exprToString: unhandled %T", n)
 	}
 }

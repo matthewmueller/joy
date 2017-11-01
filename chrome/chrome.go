@@ -170,7 +170,8 @@ func doDial(ctx context.Context, devt *devtool.DevTools) (*devtool.Target, *rpcc
 	}
 
 	// Initiate a new RPC connection to the Chrome Debugging Protocol target.
-	conn, err := rpcc.DialContext(ctx, dt.WebSocketDebuggerURL)
+	// TODO: check 1MB buffer size. I'm not sure chrome can fully handle this with the headers and whatnot.
+	conn, err := rpcc.DialContext(ctx, dt.WebSocketDebuggerURL, rpcc.WithWriteBufferSize(1000000))
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "rpcc error")
 	}
