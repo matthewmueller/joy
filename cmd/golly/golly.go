@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"path"
+	"strconv"
 	"strings"
 	"syscall"
 
@@ -59,8 +61,8 @@ func main() {
 	switch command {
 	case "build":
 		e = build(ctx)
-	// case "serve":
-	// e = serve(ctx)
+	case "serve":
+		e = serve(ctx)
 	case "run":
 		e = run(ctx)
 	}
@@ -116,26 +118,26 @@ func build(ctx context.Context) error {
 	return nil
 }
 
-// func serve(ctx context.Context) error {
-// 	packages, err := getMains(*servePackages)
-// 	if err != nil {
-// 		return err
-// 	}
+func serve(ctx context.Context) error {
+	packages, err := getMains(*servePackages)
+	if err != nil {
+		return err
+	}
 
-// 	for i, pkg := range packages {
-// 		packages[i] = path.Join(os.Getenv("GOPATH"), "src", pkg)
-// 	}
+	for i, pkg := range packages {
+		packages[i] = path.Join(os.Getenv("GOPATH"), "src", pkg)
+	}
 
-// 	port, e := strconv.Atoi(*servePort)
-// 	if e != nil {
-// 		return errors.Wrap(e, "invalid port")
-// 	}
+	port, e := strconv.Atoi(*servePort)
+	if e != nil {
+		return errors.Wrap(e, "invalid port")
+	}
 
-// 	return api.Serve(ctx, &api.ServeSettings{
-// 		Packages: packages,
-// 		Port:     port,
-// 	})
-// }
+	return api.Serve(ctx, &api.ServeSettings{
+		Packages: packages,
+		Port:     port,
+	})
+}
 
 func signalContext(ctx context.Context, sig ...os.Signal) context.Context {
 	ctx, cancel := context.WithCancel(ctx)

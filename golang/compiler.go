@@ -105,14 +105,6 @@ func (c *Compiler) Parse(packages ...string) (idx *index.Index, g *graph.Graph, 
 				hotidx.Link(m, iface)
 			}
 		}
-		// // link the methods to the interface declaration
-		// for _, m := range t.Methods.List {
-		// 	for _, name := range m.Names {
-		// 		mid := iface.Path() + " " + name.Name + " " + iface.Name()
-		// 		log.Infof("linking %s => %s", mid, iface.ID())
-		// 		db.index.Link(mid, iface)
-		// 	}
-		// }
 
 		// get the dependencies
 		edges, err := d.Dependencies()

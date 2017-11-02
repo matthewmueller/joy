@@ -67,6 +67,14 @@ func (i *Index) All() map[string]def.Definition {
 	return i.defs
 }
 
+// Paths gets directory paths
+func (i *Index) Paths() (paths []string) {
+	for path := range i.defpaths {
+		paths = append(paths, path)
+	}
+	return paths
+}
+
 // Get all definitions from the index
 func (i *Index) Get(id string) def.Definition {
 	return i.defs[id]
