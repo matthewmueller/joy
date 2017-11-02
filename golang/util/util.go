@@ -12,12 +12,14 @@ import (
 
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
+	"github.com/matthewmueller/golly/golang/def"
 )
 
 var gollyPath string
 var goSourcePath string
 var runtimePkg string
 var jsSourcePkg string
+var jsxSourcePkg string
 
 // GollyPath absolute path
 func GollyPath() (string, error) {
@@ -115,6 +117,8 @@ func GetIdentifier(n ast.Node) (*ast.Ident, error) {
 		return GetIdentifier(t.X)
 	case *ast.CallExpr:
 		return GetIdentifier(t.Fun)
+	case *ast.CompositeLit:
+		return GetIdentifier(t.Type)
 	case *ast.ParenExpr:
 		return GetIdentifier(t.X)
 	case *ast.ArrayType, *ast.MapType, *ast.StructType,
@@ -258,6 +262,33 @@ func JSSourcePath() (string, error) {
 	return jsSourcePkg, nil
 }
 
+// JSXSourcePath gets the fullpath to the JSX source files
+func JSXSourcePath() (string, error) {
+	if jsxSourcePkg != "" {
+		return jsxSourcePkg, nil
+	}
+
+	root, e := GollyPath()
+	if e != nil {
+		return "", e
+	}
+	runtimePath := path.Join(root, "jsx")
+
+	gosrc, e := GoSourcePath()
+	if e != nil {
+		return "", e
+	}
+
+	// runtime package
+	rel, e := filepath.Rel(gosrc, runtimePath)
+	if e != nil {
+		return "", e
+	}
+	jsxSourcePkg = rel
+
+	return jsxSourcePkg, nil
+}
+
 // MethodsFromInterface fn
 func MethodsFromInterface(n *ast.InterfaceType, path, name string) (methods []string) {
 	// link the methods to the interface declaration
@@ -268,4 +299,19 @@ func MethodsFromInterface(n *ast.InterfaceType, path, name string) (methods []st
 		}
 	}
 	return methods
+}
+
+// Unique returns definitions unique by their id
+func Unique(defs []def.Definition) []def.Definition {
+	u := make([]def.Definition, 0, len(defs))
+	seen := make(map[string]bool)
+
+	for _, def := range defs {
+		if _, ok := seen[def.ID()]; !ok {
+			seen[def.ID()] = true
+			u = append(u, def)
+		}
+	}
+
+	return u
 }

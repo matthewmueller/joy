@@ -162,6 +162,7 @@ func (i *Index) Runtime(names ...string) (runtimes []def.Definition, err error) 
 // - basic type
 // - local variable that points to a basic type
 // - function parameters & results
+// TODO: memoize
 func (i *Index) DefinitionOf(packagePath string, n ast.Node) (def.Definition, error) {
 	switch t := n.(type) {
 	case *ast.SelectorExpr:

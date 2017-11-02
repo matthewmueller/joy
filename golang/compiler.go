@@ -9,6 +9,7 @@ import (
 	"github.com/matthewmueller/golly/golang/index"
 	"github.com/matthewmueller/golly/golang/script"
 	"github.com/matthewmueller/golly/golang/translator"
+	"github.com/matthewmueller/golly/golang/util"
 	"github.com/matthewmueller/golly/jsast"
 	"github.com/pkg/errors"
 
@@ -158,7 +159,7 @@ func (c *Compiler) Assemble(idx *index.Index, g *graph.Graph) (scripts []*script
 			defs = append(defs, ds...)
 		}
 		// uniquify all the duplicates per main file
-		defs = unique(defs)
+		defs = util.Unique(defs)
 
 		for _, d := range defs {
 			log.Debugf("sorted=%s", d.ID())
@@ -427,18 +428,4 @@ func group(defs []def.Definition) (modules []*module, err error) {
 	}
 
 	return modules, nil
-}
-
-func unique(defs []def.Definition) []def.Definition {
-	u := make([]def.Definition, 0, len(defs))
-	seen := make(map[string]bool)
-
-	for _, def := range defs {
-		if _, ok := seen[def.ID()]; !ok {
-			seen[def.ID()] = true
-			u = append(u, def)
-		}
-	}
-
-	return u
 }
