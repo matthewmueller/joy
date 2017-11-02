@@ -12,6 +12,7 @@ import (
 
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
+	"github.com/matthewmueller/golly/golang/def"
 )
 
 var gollyPath string
@@ -115,6 +116,8 @@ func GetIdentifier(n ast.Node) (*ast.Ident, error) {
 		return GetIdentifier(t.X)
 	case *ast.CallExpr:
 		return GetIdentifier(t.Fun)
+	case *ast.CompositeLit:
+		return GetIdentifier(t.Type)
 	case *ast.ParenExpr:
 		return GetIdentifier(t.X)
 	case *ast.ArrayType, *ast.MapType, *ast.StructType,
@@ -268,4 +271,19 @@ func MethodsFromInterface(n *ast.InterfaceType, path, name string) (methods []st
 		}
 	}
 	return methods
+}
+
+// Unique returns definitions unique by their id
+func Unique(defs []def.Definition) []def.Definition {
+	u := make([]def.Definition, 0, len(defs))
+	seen := make(map[string]bool)
+
+	for _, def := range defs {
+		if _, ok := seen[def.ID()]; !ok {
+			seen[def.ID()] = true
+			u = append(u, def)
+		}
+	}
+
+	return u
 }

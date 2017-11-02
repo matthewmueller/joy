@@ -14,5 +14,14 @@ func main() {
 		}},
 	}}
 
+	// var header = h("h2", { class: "hi" }, [
+	// 	"yo!",
+	// 	h(Header, { title: "lol" }, [
+	// 		"hi!"
+	// 	])
+	// ])
+
 	println(header.Render().String())
 }
+
+// 1. test if composite literal's struct implements jsx.Component

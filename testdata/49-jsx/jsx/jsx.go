@@ -26,13 +26,13 @@ type Element struct {
 
 func (e *Element) String() string {
 	var attrs []string
-	for key, val := range e.Attributes {
-		attrs = append(attrs, key+"=\""+val+"\"")
-		// // TODO: switch statements
-		// switch t := val.(type) {
-		// case string:
-		// }
-	}
+	// for key, val := range e.Attributes {
+	// 	attrs = append(attrs, key+"=\""+val+"\"")
+	// 	// // TODO: switch statements
+	// 	// switch t := val.(type) {
+	// 	// case string:
+	// 	// }
+	// }
 
 	var children []string
 	for _, child := range e.Children {

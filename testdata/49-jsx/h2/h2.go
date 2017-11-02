@@ -11,7 +11,7 @@ type MouseEvent struct {
 
 // H2 struct
 type H2 struct {
-	Class    string
+	Class    string `js:"class"`
 	OnClick  func(MouseEvent)
 	Children []jsx.Component
 }

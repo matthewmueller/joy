@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/defs"
 	"github.com/matthewmueller/golly/golang/util"
 
@@ -998,7 +999,7 @@ func (tr *Translator) rangeStmt(d def.Definition, sp *scope.Scope, n *ast.RangeS
 			body,
 		), nil
 	default:
-		return nil, unhandled("rangeStmt<rhs.obj.type>", asn.Rhs[0])
+		return nil, unhandled("rangeStmt<rhs.obj.type>", kind)
 	}
 }
 
@@ -1768,6 +1769,11 @@ func (tr *Translator) jsObjectExpression(d def.Definition, sp *scope.Scope, n *a
 }
 
 func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.CompositeLit) (j jsast.IExpression, err error) {
+	def, err := tr.index.DefinitionOf(d.Path(), n)
+	if err != nil {
+		return nil, err
+	}
+
 	fn, e := tr.expression(d, sp, n.Type)
 	if e != nil {
 		return nil, e
@@ -1780,6 +1786,63 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 			return nil, e
 		}
 		props = append(props, prop)
+	}
+
+	// JSX support
+	if stct, ok := def.(defs.Structer); ok {
+		log.Infof("composit def=%s kind=%s", def.ID(), def.Kind())
+		ifaces, err := stct.Implements()
+		if err != nil {
+			return nil, err
+		}
+
+		for _, iface := range ifaces {
+			// TODO: generalize
+			if iface.Name() == "Component" {
+				var attrs []jsast.Property
+				var children jsast.IExpression
+				var value jsast.IExpression
+
+				// TODO: not sure this is a good idea, reaching back into the JS
+				// there's certainly a better approach here, by normalizing the
+				// key values in go, before turning it into jsast.Property
+				for _, prop := range props {
+					if key, ok := prop.Key.(jsast.Identifier); ok {
+						if key.Name == "Children" {
+							children = prop.Value
+							continue
+						} else if key.Name == "Value" {
+							value = prop.Value
+							continue
+						}
+					}
+					attrs = append(attrs, prop)
+				}
+
+				if stct.Name() == "Text" {
+					return value, nil
+				}
+
+				if children == nil {
+					return jsast.CreateCallExpression(
+						jsast.CreateIdentifier("h"),
+						[]jsast.IExpression{
+							fn,
+							jsast.CreateObjectExpression(attrs),
+						},
+					), nil
+				}
+
+				return jsast.CreateCallExpression(
+					jsast.CreateIdentifier("h"),
+					[]jsast.IExpression{
+						fn,
+						jsast.CreateObjectExpression(attrs),
+						children,
+					},
+				), nil
+			}
+		}
 	}
 
 	return jsast.CreateNewExpression(
@@ -1801,6 +1864,10 @@ func (tr *Translator) jsArrayExpression(d def.Definition, sp *scope.Scope, n *as
 
 	return jsast.CreateArrayExpression(elements...), nil
 }
+
+// func (tr *Translator) getKeyValues(d def.Definition, sp *scope.Scope, c *ast.CompositeLit, idx int, n ast.Expr) (key string, value jsast.IExpression, err error) {
+
+// }
 
 // property formats initializing structs in all the various ways
 // e.g. User{"matt"},User{*name},User{name},User{Name:name}, etc.

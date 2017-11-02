@@ -1,6 +1,7 @@
 package defs
 
 import (
+	"errors"
 	"go/ast"
 	"go/types"
 	"strings"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/index"
+	"github.com/matthewmueller/golly/golang/util"
 
 	"golang.org/x/tools/go/loader"
 )
@@ -21,6 +23,7 @@ type Structer interface {
 	Field(name string) *field
 	OriginalName() string
 	Methods() []def.Definition
+	Implements() ([]def.Definition, error)
 }
 
 var _ Structer = (*structdef)(nil)
@@ -159,4 +162,27 @@ func (d *structdef) FromRuntime() bool {
 // Methods functions
 func (d *structdef) Methods() (defs []def.Definition) {
 	return defs
+}
+
+// Implements function
+func (d *structdef) Implements() (defs []def.Definition, err error) {
+	for _, def := range d.index.All() {
+		iface, ok := def.(Interfacer)
+		if !ok {
+			continue
+		}
+
+		structType := types.NewPointer(d.Type())
+		ifaceType, ok := iface.Type().(*types.Interface)
+		if !ok {
+			return defs, errors.New("interface type not an interface")
+		}
+
+		if types.Implements(structType, ifaceType) {
+			defs = append(defs, iface)
+		}
+	}
+
+	defs = util.Unique(defs)
+	return defs, nil
 }
