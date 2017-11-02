@@ -1,6 +1,10 @@
 package jsx
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/matthewmueller/golly/js"
+)
 
 // Component interface
 type Component interface {
@@ -13,6 +17,7 @@ type JSX interface {
 }
 
 // Text struct
+// js:"Text,omit"
 type Text struct {
 	Value string
 }
@@ -27,14 +32,31 @@ func (t *Text) String() string {
 }
 
 // Element struct
+// js:"Element,omit"
 type Element struct {
-	NodeName   string
-	Attributes map[string]string
-	Children   []Component
+	NodeName   string            `js:"nodeName"`
+	Attributes map[string]string `js:"attributes"`
+	Children   []Component       `js:"children"`
 }
 
 // Render element
 func (e *Element) Render() JSX {
+	// another hack to make sure preact is present
+	// when we do the transforms
+	var preact = js.RawFile("./preact.js")
+	_ = preact
+
+	// TODO: do not remove me...
+	var children []string
+	for _, child := range e.Children {
+		children = append(children, child.Render().String())
+	}
+	// ... this is a hack that tricks the dead-code elimination
+	// to include all the component's render functions.
+	//
+	// we'll need to find a better way to do this because this
+	// function is omitted from the build, so technically we
+	// should also be emitting all it's dependencies.
 	return e
 }
 

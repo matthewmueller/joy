@@ -1801,46 +1801,44 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 
 		for _, iface := range ifaces {
 			if iface.Path() == jsxPath && iface.Name() == "Component" {
-				var attrs []jsast.Property
-				var children jsast.IExpression
 				var value jsast.IExpression
+				var nodeName jsast.IExpression
 
-				// TODO: not sure this is a good idea, reaching back into the JS
+				// TODO: reaching back into the JS is brittle because you
+				// have to take into account aliasing (e.g. nodeName vs NodeName)
 				// there's certainly a better approach here, by normalizing the
 				// key values in go, before turning it into jsast.Property
 				for _, prop := range props {
 					if key, ok := prop.Key.(jsast.Identifier); ok {
-						if key.Name == "Children" {
-							children = prop.Value
-							continue
-						} else if key.Name == "Value" {
+						if key.Name == "Value" {
 							value = prop.Value
+							continue
+						} else if key.Name == "nodeName" {
+							nodeName = prop.Value
 							continue
 						}
 					}
-					attrs = append(attrs, prop)
 				}
 
-				if stct.Name() == "Text" {
+				if stct.Path() == jsxPath && stct.Name() == "Text" {
 					return value, nil
 				}
 
-				if children == nil {
+				if stct.Path() == jsxPath && stct.Name() == "Element" {
 					return jsast.CreateCallExpression(
-						jsast.CreateIdentifier("h"),
+						jsast.CreateIdentifier("preact.h"),
 						[]jsast.IExpression{
-							fn,
-							jsast.CreateObjectExpression(attrs),
+							nodeName,
+							jsast.CreateObjectExpression(props),
 						},
 					), nil
 				}
 
 				return jsast.CreateCallExpression(
-					jsast.CreateIdentifier("h"),
+					jsast.CreateIdentifier("preact.h"),
 					[]jsast.IExpression{
 						fn,
-						jsast.CreateObjectExpression(attrs),
-						children,
+						jsast.CreateObjectExpression(props),
 					},
 				), nil
 			}
