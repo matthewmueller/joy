@@ -14,5 +14,5 @@ func main() {
 		}},
 	}}
 
-	println(header.String())
+	println(header.Render().String())
 }
