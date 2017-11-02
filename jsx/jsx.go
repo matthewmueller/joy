@@ -4,17 +4,26 @@ import "strings"
 
 // Component interface
 type Component interface {
-	Render() Node
+	Render() JSX
 }
 
-// type vnode struct {
-// 	NodeName   string
-// 	Attributes map[string]interface{}
-// }
-
-// Node interface
-type Node interface {
+// JSX interface
+type JSX interface {
 	String() string
+}
+
+// Text struct
+type Text struct {
+	Value string
+}
+
+// Render text
+func (t *Text) Render() JSX {
+	return t
+}
+
+func (t *Text) String() string {
+	return t.Value
 }
 
 // Element struct
@@ -22,6 +31,11 @@ type Element struct {
 	NodeName   string
 	Attributes map[string]string
 	Children   []Component
+}
+
+// Render element
+func (e *Element) Render() JSX {
+	return e
 }
 
 func (e *Element) String() string {

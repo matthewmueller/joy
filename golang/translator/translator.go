@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/defs"
 	"github.com/matthewmueller/golly/golang/util"
 
@@ -1790,15 +1789,18 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 
 	// JSX support
 	if stct, ok := def.(defs.Structer); ok {
-		log.Infof("composit def=%s kind=%s", def.ID(), def.Kind())
 		ifaces, err := stct.Implements()
 		if err != nil {
 			return nil, err
 		}
 
+		jsxPath, err := util.JSXSourcePath()
+		if err != nil {
+			return nil, err
+		}
+
 		for _, iface := range ifaces {
-			// TODO: generalize
-			if iface.Name() == "Component" {
+			if iface.Path() == jsxPath && iface.Name() == "Component" {
 				var attrs []jsast.Property
 				var children jsast.IExpression
 				var value jsast.IExpression

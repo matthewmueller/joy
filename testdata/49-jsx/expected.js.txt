@@ -1,12 +1,20 @@
 ;
 (function() {
 var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/49-jsx/jsx"] = (function() {
+pkg["github.com/matthewmueller/golly/jsx"] = (function() {
 function Element (o) {
 o = o || {};
 this.NodeName = o.NodeName || "";
 this.Attributes = o.Attributes || {};
 this.Children = o.Children || [];
+};
+Element.prototype.Render = function() {
+var e = this;
+return e;
+};
+Text.prototype.Render = function() {
+var t = this;
+return t;
 };
 Element.prototype.String = function() {
 var e = this;
@@ -21,12 +29,21 @@ return "<" + e.NodeName + " " + attrs.join(" ") + ">" + children.join("") + "</"
 };
 return "<" + e.NodeName + ">" + children.join("") + "</" + e.NodeName + ">";
 };
+Text.prototype.String = function() {
+var t = this;
+return t.Value;
+};
+function Text (o) {
+o = o || {};
+this.Value = o.Value || "";
+};
 return {
-  Element: Element
+  Element: Element,
+  Text: Text
 };
 })();
 pkg["github.com/matthewmueller/golly/testdata/49-jsx/h2"] = (function() {
-var jsx = pkg["github.com/matthewmueller/golly/testdata/49-jsx/jsx"];
+var jsx = pkg["github.com/matthewmueller/golly/jsx"];
 function H2 (o) {
 o = o || {};
 this.class = o.class || "";
@@ -39,13 +56,12 @@ this.Type = o.Type || "";
 };
 H2.prototype.Render = function() {
 var d = this;
-return new jsx.Element({
+return h(jsx.Element, {
   NodeName: "h2",
   Attributes: {
   "class": d.class
-},
-  Children: d.Children
-});
+}
+}, d.Children);
 };
 H2.prototype.String = function() {
 var d = this;
@@ -57,8 +73,8 @@ return {
 };
 })();
 pkg["github.com/matthewmueller/golly/testdata/49-jsx/header"] = (function() {
+var jsx = pkg["github.com/matthewmueller/golly/jsx"];
 var h2 = pkg["github.com/matthewmueller/golly/testdata/49-jsx/h2"];
-var jsx = pkg["github.com/matthewmueller/golly/testdata/49-jsx/jsx"];
 function Header (o) {
 o = o || {};
 this.Title = o.Title || "";
@@ -74,29 +90,10 @@ return {
   Header: Header
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/49-jsx/text"] = (function() {
-var jsx = pkg["github.com/matthewmueller/golly/testdata/49-jsx/jsx"];
-Text.prototype.Render = function() {
-var t = this;
-return t;
-};
-Text.prototype.String = function() {
-var t = this;
-return t.Value;
-};
-function Text (o) {
-o = o || {};
-this.Value = o.Value || "";
-};
-return {
-  Text: Text
-};
-})();
 pkg["github.com/matthewmueller/golly/testdata/49-jsx"] = (function() {
+var jsx = pkg["github.com/matthewmueller/golly/jsx"];
 var h2 = pkg["github.com/matthewmueller/golly/testdata/49-jsx/h2"];
 var header = pkg["github.com/matthewmueller/golly/testdata/49-jsx/header"];
-var jsx = pkg["github.com/matthewmueller/golly/testdata/49-jsx/jsx"];
-var text = pkg["github.com/matthewmueller/golly/testdata/49-jsx/text"];
 function main () {
 var header = h(h2.H2, {
   class: "hi"

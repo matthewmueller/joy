@@ -19,6 +19,7 @@ var gollyPath string
 var goSourcePath string
 var runtimePkg string
 var jsSourcePkg string
+var jsxSourcePkg string
 
 // GollyPath absolute path
 func GollyPath() (string, error) {
@@ -259,6 +260,33 @@ func JSSourcePath() (string, error) {
 	jsSourcePkg = rel
 
 	return jsSourcePkg, nil
+}
+
+// JSXSourcePath gets the fullpath to the JSX source files
+func JSXSourcePath() (string, error) {
+	if jsxSourcePkg != "" {
+		return jsxSourcePkg, nil
+	}
+
+	root, e := GollyPath()
+	if e != nil {
+		return "", e
+	}
+	runtimePath := path.Join(root, "jsx")
+
+	gosrc, e := GoSourcePath()
+	if e != nil {
+		return "", e
+	}
+
+	// runtime package
+	rel, e := filepath.Rel(gosrc, runtimePath)
+	if e != nil {
+		return "", e
+	}
+	jsxSourcePkg = rel
+
+	return jsxSourcePkg, nil
 }
 
 // MethodsFromInterface fn

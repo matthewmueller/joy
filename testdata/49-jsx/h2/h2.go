@@ -1,8 +1,6 @@
 package h2
 
-import (
-	"github.com/matthewmueller/golly/testdata/49-jsx/jsx"
-)
+import "github.com/matthewmueller/golly/jsx"
 
 // MouseEvent struct
 type MouseEvent struct {
@@ -17,7 +15,7 @@ type H2 struct {
 }
 
 // Render fn
-func (d *H2) Render() jsx.Node {
+func (d *H2) Render() jsx.JSX {
 	return &jsx.Element{
 		NodeName: "h2",
 		Attributes: map[string]string{
