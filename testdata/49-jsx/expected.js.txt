@@ -614,45 +614,36 @@ pkg["github.com/matthewmueller/golly/jsx/preact.js"] = (function() {
 ;
 })();
 pkg["github.com/matthewmueller/golly/testdata/49-jsx/header"] = (function() {
-function Header (o) {
-o = o || {};
-this.Props = o.Props || null;
-};
-function Props (o) {
-o = o || {};
-this.Title = o.Title || "";
-this.Children = o.Children || [];
-};
-Header.prototype.render = function() {
-var d = this;
-return preact.h("h3", {
-  nodeName: "h3",
-  attributes: {
-  "class": d.Props.Title
-},
-  children: d.Props.Children
+function New (title) {
+var children = Array.prototype.slice.call(arguments, 1);
+return preact.h(header, {
+  title: title,
+  children: children,
+  bats: "are crazy"
 });
 };
+header.prototype.render = function() {
+var d = this;
+return preact.h("h3", {
+  "class": d.title
+}, d.children[0]);
+};
+function header (o) {
+o = o || {};
+this.title = o.title || "";
+this.children = o.children || [];
+this.bats = o.bats || "";
+};
 return {
-  Header: Header,
-  Props: Props
+  New: New
 };
 })();
 pkg["github.com/matthewmueller/golly/testdata/49-jsx"] = (function() {
 var header = pkg["github.com/matthewmueller/golly/testdata/49-jsx/header"];
 function main () {
 var hdr = preact.h("h2", {
-  nodeName: "h2",
-  attributes: {
   "class": "hi"
-},
-  children: ["yo!", preact.h(header.Header, {
-  Props: new header.Props({
-  Title: "lol",
-  Children: ["hi!"]
-})
-})]
-});
+}, header.New("lol", "hi!"));
 preact.render(hdr, document.body);
 console.log(document.body.innerHTML);
 };

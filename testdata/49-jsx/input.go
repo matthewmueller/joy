@@ -7,22 +7,15 @@ import (
 )
 
 func main() {
-	hdr := jsx.Element{NodeName: "h2", Attributes: map[string]string{"class": "hi"}, Children: []jsx.Component{
-		&jsx.Text{Value: "yo!"},
-		&header.Header{Props: &header.Props{Title: "lol", Children: []jsx.Component{
-			&jsx.Text{Value: "hi!"},
-		}}},
-	}}
-
-	// var header = h("h2", { class: "hi" }, [
-	// 	"yo!",
-	// 	h(Header, { title: "lol" }, [
-	// 		"hi!"
-	// 	])
-	// ])
+	hdr := jsx.H("h2", map[string]interface{}{"class": "hi"},
+		// &jsx.Text{Value: "yo!"},
+		header.New("lol", &jsx.Text{Value: "hi!"}),
+		// &strong.Strong{Class: "strength", Children: []jsx.Component{
+		// 	&jsx.Text{Value: "yo!"},
+		// }},
+	)
 
 	js.Raw("preact.render(hdr, document.body)", hdr.Render)
 	println(js.Raw("document.body.innerHTML"))
+	// println(hdr.String())
 }
-
-// 1. test if composite literal's struct implements jsx.Component

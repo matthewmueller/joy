@@ -211,6 +211,16 @@ func ExprToString(n ast.Node) (string, error) {
 			return "", e
 		}
 		return "{" + k + ":" + v + "}", nil
+	case *ast.MapType:
+		k, e := ExprToString(t.Key)
+		if e != nil {
+			return "", e
+		}
+		v, e := ExprToString(t.Value)
+		if e != nil {
+			return "", e
+		}
+		return "{" + k + ":" + v + "}", nil
 	default:
 		// log.Warnf("exprToString: unhandled %T", n)
 		// return "", nil

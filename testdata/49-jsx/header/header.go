@@ -5,24 +5,23 @@ import (
 )
 
 // Header struct
-type Header struct {
-	*Props
+type header struct {
+	title    string
+	children []jsx.Component
+	bats     string
 }
 
-// Props struct
-type Props struct {
-	Title    string
-	Children []jsx.Component
+// New Header
+func New(title string, children ...jsx.Component) jsx.Component {
+	return &header{
+		title:    title,
+		children: children,
+		bats:     "are crazy",
+	}
 }
 
 // Render header
 // js:"render"
-func (d *Header) Render() jsx.JSX {
-	return &jsx.Element{
-		NodeName: "h3",
-		Attributes: map[string]string{
-			"class": d.Props.Title,
-		},
-		Children: d.Props.Children,
-	}
+func (d *header) Render() jsx.JSX {
+	return jsx.H("h3", map[string]interface{}{"class": d.title}, d.children[0])
 }

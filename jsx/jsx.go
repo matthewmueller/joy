@@ -31,48 +31,59 @@ func (t *Text) String() string {
 	return t.Value
 }
 
-// Element struct
-// js:"Element,omit"
-type Element struct {
-	NodeName   string            `js:"nodeName"`
-	Attributes map[string]string `js:"attributes"`
-	Children   []Component       `js:"children"`
+// element struct
+// js:"element,omit"
+type element struct {
+	NodeName   string                 `js:"nodeName"`
+	Attributes map[string]interface{} `js:"attributes"`
+	Children   []JSX                  `js:"children"`
 }
 
-// Render element
-func (e *Element) Render() JSX {
-	// another hack to make sure preact is present
+// Element interface
+type Element interface {
+	Component
+	JSX
+}
+
+// H creates an HTML element
+func H(name string, attrs map[string]interface{}, children ...Component) Element {
+	js.Rewrite("preact.h($1, $2, $3)", name, attrs, children)
+
+	var chs []JSX
+	for _, child := range children {
+		chs = append(chs, child.Render())
+	}
+
+	// Hack to make sure preact is present
 	// when we do the transforms
 	var preact = js.RawFile("./preact.js")
 	_ = preact
 
-	// TODO: do not remove me...
-	var children []string
-	for _, child := range e.Children {
-		children = append(children, child.Render().String())
+	return &element{
+		NodeName:   name,
+		Attributes: attrs,
+		Children:   chs,
 	}
-	// ... this is a hack that tricks the dead-code elimination
-	// to include all the component's render functions.
-	//
-	// we'll need to find a better way to do this because this
-	// function is omitted from the build, so technically we
-	// should also be emitting all it's dependencies.
+}
+
+// Render element
+func (e *element) Render() JSX {
 	return e
 }
 
-func (e *Element) String() string {
+func (e *element) String() string {
 	var attrs []string
-	// for key, val := range e.Attributes {
-	// 	attrs = append(attrs, key+"=\""+val+"\"")
-	// 	// // TODO: switch statements
-	// 	// switch t := val.(type) {
-	// 	// case string:
-	// 	// }
-	// }
+	for key, val := range e.Attributes {
+		// TODO: switch statements
+		switch t := val.(type) {
+		case string:
+			attrs = append(attrs, key+"=\""+t+"\"")
+		}
+	}
 
 	var children []string
 	for _, child := range e.Children {
-		children = append(children, child.Render().String())
+		children = append(children, child.String())
 	}
 
 	if len(attrs) > 0 {
