@@ -226,7 +226,7 @@ func ExprToString(n ast.Node) (string, error) {
 		// return "", nil
 		_, file, line, _ := runtime.Caller(2)
 		log.Warnf("file=%s line=%d", file, line)
-		return "", fmt.Errorf("exprToString: unhandled %T", n)
+		return "", fmt.Errorf("util/ExprToString: unhandled %T", n)
 	}
 }
 

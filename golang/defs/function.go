@@ -17,7 +17,7 @@ import (
 type Functioner interface {
 	def.Definition
 	IsAsync() (bool, error)
-	IsVariadic() (bool, error)
+	IsVariadic() bool
 	Node() *ast.FuncDecl
 	Rewrite(arguments []string) (string, error)
 	Params() []string
@@ -55,9 +55,13 @@ func Function(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (de
 	id := strings.Join(idParts, " ")
 
 	var params []string
+	var variadic bool
 	for _, param := range n.Type.Params.List {
 		for _, ident := range param.Names {
 			params = append(params, ident.Name)
+		}
+		if _, ok := param.Type.(*ast.Ellipsis); ok {
+			variadic = true
 		}
 	}
 
@@ -80,11 +84,6 @@ func Function(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (de
 		fromRuntime = true
 	}
 
-	tag, e := util.JSTag(n.Doc)
-	if e != nil {
-		return nil, e
-	}
-
 	return &functions{
 		index:    index,
 		info:     info,
@@ -95,8 +94,9 @@ func Function(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (de
 		node:     n,
 		kind:     info.TypeOf(n.Name),
 		runtime:  fromRuntime,
-		tag:      tag,
 		imports:  map[string]string{},
+		params:   params,
+		variadic: variadic,
 	}, nil
 }
 
@@ -115,7 +115,6 @@ func (d *functions) process() (err error) {
 	d.rewrite = state.rewrite
 	d.params = state.params
 	d.tag = state.tag
-	d.variadic = state.variadic
 
 	return nil
 }
@@ -236,13 +235,6 @@ func (d *functions) maybeAsync(def def.Definition) error {
 	return nil
 }
 
-func (d *functions) IsVariadic() (bool, error) {
-	if d.processed {
-		return d.variadic, nil
-	}
-	e := d.process()
-	if e != nil {
-		return false, e
-	}
-	return d.variadic, nil
+func (d *functions) IsVariadic() bool {
+	return d.variadic
 }

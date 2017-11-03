@@ -61,6 +61,18 @@ func Method(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (def.
 
 	id := strings.Join(idParts, " ")
 
+	// loop over params and check if method is variadic
+	var params []string
+	var variadic bool
+	for _, param := range n.Type.Params.List {
+		for _, ident := range param.Names {
+			params = append(params, ident.Name)
+		}
+		if _, ok := param.Type.(*ast.Ellipsis); ok {
+			variadic = true
+		}
+	}
+
 	// if it's a method don't export,
 	// if it's the main() function
 	// export either way
@@ -91,6 +103,8 @@ func Method(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (def.
 		kind:     info.TypeOf(n.Name),
 		recv:     recv,
 		runtime:  fromRuntime,
+		params:   params,
+		variadic: variadic,
 		imports:  map[string]string{},
 	}, nil
 }
@@ -109,8 +123,6 @@ func (d *methods) process() (err error) {
 	d.omit = state.omit
 	d.rewrite = state.rewrite
 	d.tag = state.tag
-	d.variadic = state.variadic
-
 	return nil
 }
 
@@ -238,13 +250,6 @@ func (d *methods) maybeAsync(def def.Definition) error {
 	return nil
 }
 
-func (d *methods) IsVariadic() (bool, error) {
-	if d.processed {
-		return d.variadic, nil
-	}
-	e := d.process()
-	if e != nil {
-		return false, e
-	}
-	return d.variadic, nil
+func (d *methods) IsVariadic() bool {
+	return d.variadic
 }

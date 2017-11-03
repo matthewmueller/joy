@@ -20,15 +20,14 @@ type context struct {
 }
 
 type state struct {
-	imports  map[string]string
-	tag      *structtag.Tag
-	edges    *edges
-	rewrite  *rewrite
-	fields   []*field
-	params   []string
-	async    bool
-	omit     bool
-	variadic bool
+	imports map[string]string
+	tag     *structtag.Tag
+	edges   *edges
+	rewrite *rewrite
+	fields  []*field
+	params  []string
+	async   bool
+	omit    bool
 }
 
 // private processor for each of the definition types
@@ -85,20 +84,6 @@ func funcDecl(ctx *context, n *ast.FuncDecl) error {
 	if tag != nil && tag.HasOption("async") {
 		ctx.state.async = true
 	}
-
-	for _, field := range n.Type.Params.List {
-		for _, name := range field.Names {
-			ctx.state.params = append(
-				ctx.state.params,
-				name.Name,
-			)
-		}
-
-		if _, ok := field.Type.(*ast.Ellipsis); ok {
-			ctx.state.variadic = true
-		}
-	}
-
 	return nil
 }
 
@@ -310,6 +295,14 @@ func jsRewrite(ctx *context, n *ast.CallExpr) error {
 		return nil
 	}
 
+	// if it's a function/method, we'll also want to
+	// check if it has variadic arguments
+	var variadic bool
+	fn, isFn := ctx.d.(Functioner)
+	if isFn {
+		variadic = fn.IsVariadic()
+	}
+
 	var expr string
 	var vars []int
 	for i, arg := range n.Args {
@@ -333,20 +326,19 @@ func jsRewrite(ctx *context, n *ast.CallExpr) error {
 			return e
 		}
 
-		// pulled from above.
-		// TODO: should this be part of the indexing?
-		// there may be some conditions where this data isn't
-		// available yet, though I doubt it for this case.
-		params := ctx.state.params
+		// ensure the function parameter name
+		// matches what's inside the rewrite
 		match := ""
-		for _, param := range params {
-			if param == a {
-				match = param
+		if isFn {
+			for _, param := range fn.Params() {
+				if param == a {
+					match = param
+				}
 			}
 		}
 
 		// if there's no match, make replacement with
-		// variable itself, otherwise append for later
+		// variable right now, otherwise append for later
 		// replacement whenever we actually call that
 		// function
 		if match == "" {
@@ -363,8 +355,9 @@ func jsRewrite(ctx *context, n *ast.CallExpr) error {
 	}
 
 	ctx.state.rewrite = &rewrite{
-		expr: expr,
-		vars: vars,
+		expr:     expr,
+		vars:     vars,
+		variadic: variadic,
 	}
 
 	// omit func decl in any rewritten expression

@@ -6,16 +6,36 @@ import (
 )
 
 type rewrite struct {
-	kind string
-	expr string
-	vars []int
+	expr     string
+	vars     []int
+	variadic bool
 }
 
 // Rewrite js.Rewrite(expr, arguments...)
 func (r *rewrite) Rewrite(args []string) (string, error) {
 	// map out the replacements
-	// replacements := map[string]string{}
 	expr := r.expr
+
+	// handle rewrites inside variadic functions
+	if r.variadic {
+		last := len(r.vars)
+		rest := []string{}
+		for i, arg := range args {
+			if i >= last-1 {
+				rest = append(rest, arg)
+				continue
+			}
+
+			v := r.vars[i]
+			expr = strings.Replace(expr, "$"+strconv.Itoa(v), arg, -1)
+		}
+
+		lastv := "[" + strings.Join(rest, ",") + "]"
+		expr = strings.Replace(expr, "$"+strconv.Itoa(last), lastv, -1)
+		return expr, nil
+	}
+
+	// handle any other rewrite
 	for i, arg := range args {
 		v := r.vars[i]
 		expr = strings.Replace(expr, "$"+strconv.Itoa(v), arg, -1)

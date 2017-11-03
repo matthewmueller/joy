@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/defs"
 	"github.com/matthewmueller/golly/golang/util"
 
@@ -2472,7 +2471,6 @@ func (tr *Translator) maybeVariadic(d def.Definition, sp *scope.Scope, n *ast.Ca
 	switch n.Fun.(type) {
 	// e.g. func() {} ()
 	case *ast.FuncLit:
-		log.Infof("ignoring... variadic funclit")
 		return nil, nil
 	// e.g. []byte(...)
 	case *ast.ArrayType:
@@ -2489,12 +2487,7 @@ func (tr *Translator) maybeVariadic(d def.Definition, sp *scope.Scope, n *ast.Ca
 		return nil, nil
 	}
 
-	isVariadic, e := fn.IsVariadic()
-	if e != nil {
-		return nil, e
-	}
-
-	if !isVariadic {
+	if !fn.IsVariadic() {
 		return nil, nil
 	}
 
