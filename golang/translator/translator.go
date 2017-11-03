@@ -294,7 +294,12 @@ func (tr *Translator) values(d defs.Valuer) (jsast.INode, error) {
 	// handle balanced destructuring
 	var vars []jsast.VariableDeclarator
 	for i, ident := range n.Names {
-		lh := jsast.CreateIdentifier(ident.Name)
+		var lh jsast.Identifier
+		if i == 0 {
+			lh = jsast.CreateIdentifier(d.Name())
+		} else {
+			lh = jsast.CreateIdentifier(ident.Name)
+		}
 
 		var rh jsast.IExpression
 		if i < len(n.Values) {

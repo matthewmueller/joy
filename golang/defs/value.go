@@ -26,6 +26,7 @@ type values struct {
 	name      string
 	id        string
 	index     *index.Index
+	gen       *ast.GenDecl
 	node      *ast.ValueSpec
 	kind      types.Type
 	processed bool
@@ -61,12 +62,13 @@ func Value(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n *ast
 		id:       id,
 		index:    index,
 		node:     n,
+		gen:      gn,
 		imports:  map[string]string{},
 	}, nil
 }
 
 func (d *values) process() (err error) {
-	state, e := process(d.index, d, d.node)
+	state, e := process(d.index, d, d.gen)
 	if e != nil {
 		return e
 	}
@@ -87,6 +89,9 @@ func (d *values) ID() string {
 }
 
 func (d *values) Name() string {
+	if d.tag != nil {
+		return d.tag.Name
+	}
 	return d.name
 }
 
@@ -114,6 +119,9 @@ func (d *values) Exported() bool {
 }
 
 func (d *values) Omitted() bool {
+	if d.tag != nil {
+		return d.tag.HasOption("omit")
+	}
 	return false
 }
 
