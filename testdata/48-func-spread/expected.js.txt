@@ -6,13 +6,13 @@ function aa (o) {
 o = o || {};
 };
 function main () {
-var items = test("a", "b", "c", "d");
+var items = test.apply(null, ["a", "b", "c"].concat("d"));
 for (var _ = 0, item; _ < items.length; _++) {
 var item = items[_]
 console.log(item)
 };
 var a = new aa({});
-items = a.test2("a", "b", "c", "d");
+items = a.test2.apply(null, ["a", "b", "c"].concat("d"));
 for (var _ = 0, item; _ < items.length; _++) {
 var item = items[_]
 console.log(item)

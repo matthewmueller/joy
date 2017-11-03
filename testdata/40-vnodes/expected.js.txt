@@ -38,7 +38,7 @@ this.Location = o.Location || "";
 };
 Page.prototype.Render = function() {
 var p = this;
-return NewElement("div", null);
+return NewElement.apply(null, ["div"].concat(null));
 };
 Element.prototype.String = function() {
 var e = this;

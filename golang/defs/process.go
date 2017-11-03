@@ -20,14 +20,15 @@ type context struct {
 }
 
 type state struct {
-	imports map[string]string
-	tag     *structtag.Tag
-	edges   *edges
-	rewrite *rewrite
-	fields  []*field
-	params  []string
-	async   bool
-	omit    bool
+	imports  map[string]string
+	tag      *structtag.Tag
+	edges    *edges
+	rewrite  *rewrite
+	fields   []*field
+	params   []string
+	async    bool
+	omit     bool
+	variadic bool
 }
 
 // private processor for each of the definition types
@@ -91,6 +92,10 @@ func funcDecl(ctx *context, n *ast.FuncDecl) error {
 				ctx.state.params,
 				name.Name,
 			)
+		}
+
+		if _, ok := field.Type.(*ast.Ellipsis); ok {
+			ctx.state.variadic = true
 		}
 	}
 

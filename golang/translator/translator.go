@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/defs"
 	"github.com/matthewmueller/golly/golang/util"
 
@@ -1436,6 +1437,10 @@ func (tr *Translator) callExpr(d def.Definition, sp *scope.Scope, n *ast.CallExp
 		return expr, e
 	}
 
+	if expr, e := tr.maybeVariadic(d, sp, n); expr != nil || e != nil {
+		return expr, e
+	}
+
 	var args []jsast.IExpression
 	for _, arg := range n.Args {
 		v, e := tr.expression(d, sp, arg)
@@ -1804,7 +1809,7 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 				var value jsast.IExpression
 				var nodeName jsast.IExpression
 
-				// TODO: reaching back into the JS is brittle because you
+				// TODO: reaching back into the JS AST is brittle because you
 				// have to take into account aliasing (e.g. nodeName vs NodeName)
 				// there's certainly a better approach here, by normalizing the
 				// key values in go, before turning it into jsast.Property
@@ -2411,11 +2416,12 @@ func (tr *Translator) maybeError(d def.Definition, sp *scope.Scope, n *ast.CallE
 }
 
 func (tr *Translator) maybeAwait(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
-
 	// ignore these
 	switch n.Fun.(type) {
+	// e.g. func() {} ()
 	case *ast.FuncLit:
 		return nil, nil
+	// e.g. []byte(...)
 	case *ast.ArrayType:
 		return nil, nil
 	}
@@ -2458,6 +2464,78 @@ func (tr *Translator) maybeAwait(d def.Definition, sp *scope.Scope, n *ast.CallE
 			callee,
 			args,
 		),
+	), nil
+}
+
+func (tr *Translator) maybeVariadic(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
+	// ignore these
+	switch n.Fun.(type) {
+	// e.g. func() {} ()
+	case *ast.FuncLit:
+		log.Infof("ignoring... variadic funclit")
+		return nil, nil
+	// e.g. []byte(...)
+	case *ast.ArrayType:
+		return nil, nil
+	}
+
+	def, e := tr.index.DefinitionOf(d.Path(), n.Fun)
+	if e != nil {
+		return nil, e
+	}
+
+	fn, ok := def.(defs.Functioner)
+	if !ok {
+		return nil, nil
+	}
+
+	isVariadic, e := fn.IsVariadic()
+	if e != nil {
+		return nil, e
+	}
+
+	if !isVariadic {
+		return nil, nil
+	}
+
+	var left []jsast.IExpression
+	var right jsast.IExpression
+	last := len(n.Args) - 1
+	for i, arg := range n.Args {
+		v, e := tr.expression(d, sp, arg)
+		if e != nil {
+			return nil, e
+		}
+
+		if i == last {
+			right = v
+		} else {
+			left = append(left, v)
+		}
+	}
+
+	callee, e := tr.expression(d, sp, n.Fun)
+	if e != nil {
+		return nil, e
+	}
+
+	return jsast.CreateCallExpression(
+		jsast.CreateMemberExpression(
+			callee,
+			jsast.CreateIdentifier("apply"),
+			false,
+		),
+		[]jsast.IExpression{
+			jsast.CreateNull(),
+			jsast.CreateCallExpression(
+				jsast.CreateMemberExpression(
+					jsast.CreateArrayExpression(left...),
+					jsast.CreateIdentifier("concat"),
+					false,
+				),
+				[]jsast.IExpression{right},
+			),
+		},
 	), nil
 }
 

@@ -38,6 +38,7 @@ type methods struct {
 	imports   map[string]string
 	rewrite   *rewrite
 	omit      bool
+	variadic  bool
 }
 
 // Method fn
@@ -108,6 +109,7 @@ func (d *methods) process() (err error) {
 	d.omit = state.omit
 	d.rewrite = state.rewrite
 	d.tag = state.tag
+	d.variadic = state.variadic
 
 	return nil
 }
@@ -234,4 +236,15 @@ func (d *methods) maybeAsync(def def.Definition) error {
 	d.async = async
 
 	return nil
+}
+
+func (d *methods) IsVariadic() (bool, error) {
+	if d.processed {
+		return d.variadic, nil
+	}
+	e := d.process()
+	if e != nil {
+		return false, e
+	}
+	return d.variadic, nil
 }

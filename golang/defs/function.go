@@ -17,6 +17,7 @@ import (
 type Functioner interface {
 	def.Definition
 	IsAsync() (bool, error)
+	IsVariadic() (bool, error)
 	Node() *ast.FuncDecl
 	Rewrite(arguments []string) (string, error)
 	Params() []string
@@ -42,6 +43,7 @@ type functions struct {
 	imports   map[string]string
 	omit      bool
 	params    []string
+	variadic  bool
 }
 
 // Function fn
@@ -113,6 +115,7 @@ func (d *functions) process() (err error) {
 	d.rewrite = state.rewrite
 	d.params = state.params
 	d.tag = state.tag
+	d.variadic = state.variadic
 
 	return nil
 }
@@ -231,4 +234,15 @@ func (d *functions) maybeAsync(def def.Definition) error {
 	d.async = async
 
 	return nil
+}
+
+func (d *functions) IsVariadic() (bool, error) {
+	if d.processed {
+		return d.variadic, nil
+	}
+	e := d.process()
+	if e != nil {
+		return false, e
+	}
+	return d.variadic, nil
 }
