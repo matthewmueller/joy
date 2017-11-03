@@ -8,11 +8,8 @@ import (
 
 func main() {
 	hdr := jsx.H("h2", map[string]interface{}{"class": "hi"},
-		// &jsx.Text{Value: "yo!"},
+		&jsx.Text{Value: "yo!"},
 		header.New("lol", &jsx.Text{Value: "hi!"}),
-		// &strong.Strong{Class: "strength", Children: []jsx.Component{
-		// 	&jsx.Text{Value: "yo!"},
-		// }},
 	)
 
 	js.Raw("preact.render(hdr, document.body)", hdr.Render)

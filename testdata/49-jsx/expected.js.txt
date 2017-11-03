@@ -626,7 +626,7 @@ header.prototype.render = function() {
 var d = this;
 return preact.h("h3", {
   "class": d.title
-}, [d.children[0]]);
+}, [d.children]);
 };
 function header (o) {
 o = o || {};
@@ -643,7 +643,7 @@ var header = pkg["github.com/matthewmueller/golly/testdata/49-jsx/header"];
 function main () {
 var hdr = preact.h("h2", {
   "class": "hi"
-}, [header.New.apply(null, ["lol"].concat("hi!"))]);
+}, ["yo!",header.New.apply(null, ["lol"].concat("hi!"))]);
 preact.render(hdr, document.body);
 console.log(document.body.innerHTML);
 };
