@@ -16,6 +16,7 @@ import (
 type Valuer interface {
 	def.Definition
 	Node() *ast.ValueSpec
+	Rewrite(caller string, arguments ...string) (string, error)
 }
 
 var _ Valuer = (*values)(nil)
@@ -30,6 +31,7 @@ type values struct {
 	node      *ast.ValueSpec
 	kind      types.Type
 	processed bool
+	rewrite   *rewrite
 	edges     []def.Edge
 	imports   map[string]string
 	async     bool
@@ -78,6 +80,7 @@ func (d *values) process() (err error) {
 	d.async = state.async
 	d.edges = state.edges.Edges()
 	d.imports = state.imports
+	d.rewrite = state.rewrite
 	d.omit = state.omit
 	d.tag = state.tag
 
@@ -111,6 +114,7 @@ func (d *values) Dependencies() (edges []def.Edge, err error) {
 	if e != nil {
 		return edges, e
 	}
+
 	return d.edges, nil
 }
 
@@ -122,7 +126,7 @@ func (d *values) Omitted() bool {
 	if d.tag != nil {
 		return d.tag.HasOption("omit")
 	}
-	return false
+	return d.omit
 }
 
 func (d *values) Node() *ast.ValueSpec {
@@ -139,4 +143,19 @@ func (d *values) Imports() map[string]string {
 
 func (d *values) FromRuntime() bool {
 	return false
+}
+
+// Rewrite fn
+func (d *values) Rewrite(caller string, arguments ...string) (string, error) {
+	if !d.processed {
+		if e := d.process(); e != nil {
+			return "", e
+		}
+	}
+
+	if d.rewrite == nil {
+		return "", nil
+	}
+
+	return d.rewrite.Rewrite(caller, arguments)
 }

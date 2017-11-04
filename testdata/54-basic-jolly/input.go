@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/matthewmueller/golly/dom/document"
 	"github.com/matthewmueller/golly/jsx"
-	"github.com/matthewmueller/golly/testdata/52-basic-jolly/header"
-	"github.com/matthewmueller/golly/testdata/52-basic-jolly/preact"
+	"github.com/matthewmueller/golly/testdata/54-basic-jolly/header"
+	"github.com/matthewmueller/golly/testdata/54-basic-jolly/preact"
 )
 
 func main() {
@@ -14,6 +14,5 @@ func main() {
 	)
 
 	preact.Render(hdr, document.Body)
-	// println(document.Body.InnerHTML())
-	// println(hdr.String())
+	println(document.Body.InnerHTML())
 }

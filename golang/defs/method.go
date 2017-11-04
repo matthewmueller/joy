@@ -212,7 +212,7 @@ func (d *methods) FromRuntime() bool {
 }
 
 // Rewrite fn
-func (d *methods) Rewrite(arguments []string) (string, error) {
+func (d *methods) Rewrite(caller string, arguments ...string) (string, error) {
 	if !d.processed {
 		if e := d.process(); e != nil {
 			return "", e
@@ -223,7 +223,7 @@ func (d *methods) Rewrite(arguments []string) (string, error) {
 		return "", nil
 	}
 
-	return d.rewrite.Rewrite(arguments)
+	return d.rewrite.Rewrite(caller, arguments)
 }
 
 // Params fn
