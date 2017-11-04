@@ -325,3 +325,16 @@ func Unique(defs []def.Definition) []def.Definition {
 
 	return u
 }
+
+// GetExprCaller gets the expression caller
+// e.g. x.Cool() => x
+func GetExprCaller(n ast.Node) (ast.Expr, error) {
+	switch t := n.(type) {
+	case *ast.SelectorExpr:
+		return t.X, nil
+	case *ast.Ident:
+		return nil, nil
+	default:
+		return nil, fmt.Errorf("util/GetExprCaller: unhandled %T", t)
+	}
+}

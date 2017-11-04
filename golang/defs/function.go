@@ -19,7 +19,7 @@ type Functioner interface {
 	IsAsync() (bool, error)
 	IsVariadic() bool
 	Node() *ast.FuncDecl
-	Rewrite(arguments []string) (string, error)
+	Rewrite(caller string, arguments ...string) (string, error)
 	Params() []string
 }
 
@@ -181,7 +181,7 @@ func (d *functions) IsAsync() (bool, error) {
 }
 
 // Rewrite fn
-func (d *functions) Rewrite(arguments []string) (string, error) {
+func (d *functions) Rewrite(caller string, arguments ...string) (string, error) {
 	if !d.processed {
 		if e := d.process(); e != nil {
 			return "", e
@@ -192,7 +192,7 @@ func (d *functions) Rewrite(arguments []string) (string, error) {
 		return "", nil
 	}
 
-	return d.rewrite.Rewrite(arguments)
+	return d.rewrite.Rewrite(caller, arguments)
 }
 
 // Params fn

@@ -1,10 +1,16 @@
-package document
+package dom
 
 import (
 	"strings"
 
 	"github.com/matthewmueller/golly/js"
 )
+
+// Body is a reference to the document body
+var Body = js.Rewrite("document.body").(*Element)
+
+// Hello string
+var Hello = "hi!"
 
 // Element struct
 // js:"element,omit"
@@ -13,25 +19,13 @@ type Element struct {
 	nodeName string
 }
 
-// Body is a reference to the document body
-var Body = js.Rewrite("document.body").(*Element)
-
 // NodeName gets the node name
 func (e *Element) NodeName() string {
 	js.Rewrite("$<.nodeName", e)
 	return e.nodeName
 }
 
-// InnerHTML fn
-// TODO: go implementation
-func (e *Element) InnerHTML() string {
-	js.Rewrite("$<.innerHTML")
-	// lower := strings.ToLower(e.nodeName)
-	return ""
-}
-
 // OuterHTML fn
-// TODO: go implementation
 func (e *Element) OuterHTML() string {
 	js.Rewrite("$<.outerHTML")
 	lower := strings.ToLower(e.nodeName)

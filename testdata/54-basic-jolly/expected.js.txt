@@ -1,7 +1,7 @@
 ;
 (function() {
 var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/52-basic-jolly/header"] = (function() {
+pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/header"] = (function() {
 function New (title) {
 var children = Array.prototype.slice.call(arguments, 1);
 return preact.h(header, {
@@ -26,7 +26,7 @@ return {
   New: New
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/52-basic-jolly/preact/preact.js"] = (function() {
+pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"] = (function() {
 !(function() {
   'use strict'
   function VNode() {}
@@ -638,21 +638,22 @@ pkg["github.com/matthewmueller/golly/testdata/52-basic-jolly/preact/preact.js"] 
 })()
 ;
 })();
-pkg["github.com/matthewmueller/golly/testdata/52-basic-jolly/preact"] = (function() {
-var preact = pkg["github.com/matthewmueller/golly/testdata/52-basic-jolly/preact/preact.js"];
+pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact"] = (function() {
+var preact = pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"];
 return {};
 })();
-pkg["github.com/matthewmueller/golly/testdata/52-basic-jolly"] = (function() {
-var header = pkg["github.com/matthewmueller/golly/testdata/52-basic-jolly/header"];
+pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly"] = (function() {
+var header = pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/header"];
 function main () {
 var hdr = preact.h("h2", {
   "class": "hi"
 }, ["yo!",header.New.apply(null, ["lol"].concat("hi!"))]);
-preact.render(hdr, document.Body);
+preact.render(hdr, document.body);
+console.log(document.body.innerHTML);
 };
 return {
   main: main
 };
 })();
-return pkg["github.com/matthewmueller/golly/testdata/52-basic-jolly"].main();
+return pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly"].main();
 })()
