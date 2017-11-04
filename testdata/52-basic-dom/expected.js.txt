@@ -1,0 +1,13 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/52-basic-dom"] = (function() {
+function main () {
+;
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/52-basic-dom"].main();
+})()
