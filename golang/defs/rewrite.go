@@ -25,13 +25,13 @@ func (r *rewrite) Rewrite(caller string, args []string) (string, error) {
 				rest = append(rest, arg)
 				continue
 			}
-
 			v := r.vars[i]
 			expr = strings.Replace(expr, "$"+strconv.Itoa(v), arg, -1)
 		}
 
 		lastv := "[" + strings.Join(rest, ",") + "]"
-		expr = strings.Replace(expr, "$"+strconv.Itoa(last), lastv, -1)
+		lasti := r.vars[last-1]
+		expr = strings.Replace(expr, "$"+strconv.Itoa(lasti), lastv, -1)
 		return expr, nil
 	}
 
