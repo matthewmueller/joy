@@ -32,7 +32,7 @@ type methods struct {
 	recv      string
 	async     bool
 	processed bool
-	edges     []def.Edge
+	deps      []def.Definition
 	tag       *structtag.Tag
 	runtime   bool
 	imports   map[string]string
@@ -118,7 +118,7 @@ func (d *methods) process() (err error) {
 	// copy state into function
 	d.processed = true
 	d.async = state.async
-	d.edges = state.edges.Edges()
+	d.deps = state.deps
 	d.imports = state.imports
 	d.omit = state.omit
 	d.rewrite = state.rewrite
@@ -126,15 +126,15 @@ func (d *methods) process() (err error) {
 	return nil
 }
 
-func (d *methods) Dependencies() (edges []def.Edge, err error) {
+func (d *methods) Dependencies() (deps []def.Definition, err error) {
 	if d.processed {
-		return d.edges, nil
+		return d.deps, nil
 	}
 	err = d.process()
 	if err != nil {
-		return edges, err
+		return deps, err
 	}
-	return d.edges, nil
+	return d.deps, nil
 }
 
 func (d *methods) IsAsync() (bool, error) {
@@ -212,7 +212,7 @@ func (d *methods) FromRuntime() bool {
 }
 
 // Rewrite fn
-func (d *methods) Rewrite(arguments []string) (string, error) {
+func (d *methods) Rewrite(caller string, arguments ...string) (string, error) {
 	if !d.processed {
 		if e := d.process(); e != nil {
 			return "", e
@@ -223,7 +223,7 @@ func (d *methods) Rewrite(arguments []string) (string, error) {
 		return "", nil
 	}
 
-	return d.rewrite.Rewrite(arguments)
+	return d.rewrite.Rewrite(caller, arguments)
 }
 
 // Params fn

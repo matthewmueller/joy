@@ -12,7 +12,7 @@ type rewrite struct {
 }
 
 // Rewrite js.Rewrite(expr, arguments...)
-func (r *rewrite) Rewrite(args []string) (string, error) {
+func (r *rewrite) Rewrite(caller string, args []string) (string, error) {
 	// map out the replacements
 	expr := r.expr
 
@@ -40,6 +40,9 @@ func (r *rewrite) Rewrite(args []string) (string, error) {
 		v := r.vars[i]
 		expr = strings.Replace(expr, "$"+strconv.Itoa(v), arg, -1)
 	}
+
+	// handle the caller
+	expr = strings.Replace(expr, "$<", caller, -1)
 
 	return expr, nil
 }

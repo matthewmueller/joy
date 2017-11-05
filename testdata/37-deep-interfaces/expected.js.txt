@@ -10,9 +10,9 @@ function index (o) {
 o = o || {};
 this.location = o.location || "";
 };
-function main () {
-var c = newIndex("mars");
-console.log(c.String());
+function vnode (o) {
+o = o || {};
+this.c = o.c || null;
 };
 function newComponent (c) {
 return new vnode({
@@ -24,9 +24,9 @@ return newComponent(new index({
   location: location
 }));
 };
-function vnode (o) {
-o = o || {};
-this.c = o.c || null;
+function main () {
+var c = newIndex("mars");
+console.log(c.String());
 };
 return {
   main: main

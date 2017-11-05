@@ -6,6 +6,10 @@ subthing.prototype.Name = function() {
 var s = this;
 return s.name;
 };
+function subthing (o) {
+o = o || {};
+this.name = o.name || "";
+};
 function Thing (o) {
 o = o || {};
 this.subthing = o.subthing || null;
@@ -17,10 +21,6 @@ var s = new Thing({
 })
 });
 console.log(s.subthing.Name());
-};
-function subthing (o) {
-o = o || {};
-this.name = o.name || "";
 };
 return {
   Thing: Thing,

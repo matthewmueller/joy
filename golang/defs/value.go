@@ -16,6 +16,7 @@ import (
 type Valuer interface {
 	def.Definition
 	Node() *ast.ValueSpec
+	Rewrite(caller string, arguments ...string) (string, error)
 }
 
 var _ Valuer = (*values)(nil)
@@ -26,10 +27,12 @@ type values struct {
 	name      string
 	id        string
 	index     *index.Index
+	gen       *ast.GenDecl
 	node      *ast.ValueSpec
 	kind      types.Type
 	processed bool
-	edges     []def.Edge
+	rewrite   *rewrite
+	deps      []def.Definition
 	imports   map[string]string
 	async     bool
 	omit      bool
@@ -61,12 +64,13 @@ func Value(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n *ast
 		id:       id,
 		index:    index,
 		node:     n,
+		gen:      gn,
 		imports:  map[string]string{},
 	}, nil
 }
 
 func (d *values) process() (err error) {
-	state, e := process(d.index, d, d.node)
+	state, e := process(d.index, d, d.gen)
 	if e != nil {
 		return e
 	}
@@ -74,8 +78,9 @@ func (d *values) process() (err error) {
 	// copy state into function
 	d.processed = true
 	d.async = state.async
-	d.edges = state.edges.Edges()
+	d.deps = state.deps
 	d.imports = state.imports
+	d.rewrite = state.rewrite
 	d.omit = state.omit
 	d.tag = state.tag
 
@@ -87,6 +92,9 @@ func (d *values) ID() string {
 }
 
 func (d *values) Name() string {
+	if d.tag != nil {
+		return d.tag.Name
+	}
 	return d.name
 }
 
@@ -98,15 +106,16 @@ func (d *values) Path() string {
 	return d.path
 }
 
-func (d *values) Dependencies() (edges []def.Edge, err error) {
+func (d *values) Dependencies() (deps []def.Definition, err error) {
 	if d.processed {
-		return d.edges, nil
+		return d.deps, nil
 	}
 	e := d.process()
 	if e != nil {
-		return edges, e
+		return deps, e
 	}
-	return d.edges, nil
+
+	return d.deps, nil
 }
 
 func (d *values) Exported() bool {
@@ -114,7 +123,10 @@ func (d *values) Exported() bool {
 }
 
 func (d *values) Omitted() bool {
-	return false
+	if d.tag != nil {
+		return d.tag.HasOption("omit")
+	}
+	return d.omit
 }
 
 func (d *values) Node() *ast.ValueSpec {
@@ -131,4 +143,19 @@ func (d *values) Imports() map[string]string {
 
 func (d *values) FromRuntime() bool {
 	return false
+}
+
+// Rewrite fn
+func (d *values) Rewrite(caller string, arguments ...string) (string, error) {
+	if !d.processed {
+		if e := d.process(); e != nil {
+			return "", e
+		}
+	}
+
+	if d.rewrite == nil {
+		return "", nil
+	}
+
+	return d.rewrite.Rewrite(caller, arguments)
 }

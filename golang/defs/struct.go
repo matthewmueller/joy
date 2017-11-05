@@ -39,7 +39,7 @@ type structdef struct {
 	kind      types.Type
 	tag       *structtag.Tag
 	fields    []*field
-	edges     []def.Edge
+	deps      []def.Definition
 	processed bool
 	omit      bool
 }
@@ -74,7 +74,7 @@ func (d *structdef) process() (err error) {
 
 	// copy state into function
 	d.processed = true
-	d.edges = state.edges.Edges()
+	d.deps = state.deps
 	d.omit = state.omit
 	d.tag = state.tag
 	d.fields = state.fields
@@ -82,15 +82,15 @@ func (d *structdef) process() (err error) {
 	return nil
 }
 
-func (d *structdef) Dependencies() (edges []def.Edge, err error) {
+func (d *structdef) Dependencies() (deps []def.Definition, err error) {
 	if d.processed {
-		return d.edges, nil
+		return d.deps, nil
 	}
 	err = d.process()
 	if err != nil {
-		return edges, err
+		return deps, err
 	}
-	return d.edges, nil
+	return d.deps, nil
 }
 
 func (d *structdef) ID() string {

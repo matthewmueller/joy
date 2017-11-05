@@ -1,7 +1,3 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"] = (function() {
 !(function() {
   'use strict'
   function VNode() {}
@@ -610,47 +606,4 @@ pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"] = (funct
   }
   if ('undefined' != typeof module) module.exports = preact
   else self.preact = preact
-})()
-;
-})();
-pkg["github.com/matthewmueller/golly/testdata/49-jsx/header"] = (function() {
-header.prototype.render = function() {
-var d = this;
-return preact.h("h3", {
-  "class": d.title
-}, [d.children]);
-};
-function header (o) {
-o = o || {};
-this.title = o.title || "";
-this.children = o.children || [];
-this.bats = o.bats || "";
-};
-function New (title) {
-var children = Array.prototype.slice.call(arguments, 1);
-return preact.h(header, {
-  title: title,
-  children: children,
-  bats: "are crazy"
-});
-};
-return {
-  New: New
-};
-})();
-pkg["github.com/matthewmueller/golly/testdata/49-jsx"] = (function() {
-var header = pkg["github.com/matthewmueller/golly/testdata/49-jsx/header"];
-function main () {
-;
-var hdr = preact.h("h2", {
-  "class": "hi"
-}, ["yo!",header.New.apply(null, ["lol"].concat("hi!"))]);
-preact.render(hdr, document.body);
-console.log(document.body.innerHTML);
-};
-return {
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/49-jsx"].main();
 })()

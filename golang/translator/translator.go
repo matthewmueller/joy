@@ -50,16 +50,6 @@ func New(index *index.Index) *Translator {
 
 // Translate fn
 func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
-	// sp := scope.New(d.Node())
-
-	// if this declaration has the global option,
-	// don't include it in the build
-	if d.Omitted() {
-		return jsast.CreateEmptyStatement(), nil
-	}
-
-	// TODO: exclude anything from the js path
-
 	// NOTE: order matters here
 	// e.g. Method can also be a Function
 	switch t := d.(type) {
@@ -67,12 +57,12 @@ func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
 		return tr.methods(t)
 	case defs.Functioner:
 		return tr.functions(t)
+	case defs.Valuer:
+		return tr.values(t)
 	case defs.Interfacer:
 		return tr.interfaces(t)
 	case defs.Structer:
 		return tr.structs(t)
-	case defs.Valuer:
-		return tr.values(t)
 	case defs.Filer:
 		return tr.jsfile(t)
 	default:
@@ -294,7 +284,12 @@ func (tr *Translator) values(d defs.Valuer) (jsast.INode, error) {
 	// handle balanced destructuring
 	var vars []jsast.VariableDeclarator
 	for i, ident := range n.Names {
-		lh := jsast.CreateIdentifier(ident.Name)
+		var lh jsast.Identifier
+		if i == 0 {
+			lh = jsast.CreateIdentifier(d.Name())
+		} else {
+			lh = jsast.CreateIdentifier(ident.Name)
+		}
 
 		var rh jsast.IExpression
 		if i < len(n.Values) {
@@ -1414,6 +1409,18 @@ func (tr *Translator) returnStmt(d def.Definition, sp *scope.Scope, n *ast.Retur
 }
 
 func (tr *Translator) callExpr(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (j jsast.IExpression, err error) {
+	expr, e := util.ExprToString(n.Fun)
+	if e != nil {
+		return nil, e
+	}
+
+	// TODO: move all special expressions to this style
+	switch expr {
+	case "jsx.Use":
+		// remove calls to jsx.Use(...) from the source
+		return nil, nil
+	}
+
 	// create an expression for built-in golang functions like append
 	// TODO: turn this into an ast.Walk()-like thing
 	if expr, e := tr.maybeBuiltinExpr(d, sp, n); expr != nil || e != nil {
@@ -1511,6 +1518,7 @@ func (tr *Translator) parenExpr(d def.Definition, sp *scope.Scope, n *ast.ParenE
 	return tr.expression(d, sp, n.X)
 }
 
+// ignores type assertions for now
 func (tr *Translator) typeAssertExpr(d def.Definition, sp *scope.Scope, n *ast.TypeAssertExpr) (jsast.IExpression, error) {
 	return tr.expression(d, sp, n.X)
 }
@@ -1805,6 +1813,11 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 
 		for _, iface := range ifaces {
 			if iface.Path() == jsxPath && iface.Name() == "Component" {
+				pragma, err := tr.index.JSXPragma()
+				if err != nil {
+					return nil, err
+				}
+
 				var value jsast.IExpression
 				var nodeName jsast.IExpression
 
@@ -1830,7 +1843,7 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 
 				if stct.Path() == jsxPath && stct.Name() == "Element" {
 					return jsast.CreateCallExpression(
-						jsast.CreateIdentifier("preact.h"),
+						jsast.CreateIdentifier(pragma),
 						[]jsast.IExpression{
 							nodeName,
 							jsast.CreateObjectExpression(props),
@@ -1839,7 +1852,7 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 				}
 
 				return jsast.CreateCallExpression(
-					jsast.CreateIdentifier("preact.h"),
+					jsast.CreateIdentifier(pragma),
 					[]jsast.IExpression{
 						fn,
 						jsast.CreateObjectExpression(props),
@@ -1969,11 +1982,11 @@ func (tr *Translator) keyValueExpr(d def.Definition, sp *scope.Scope, c *ast.Com
 	}
 }
 
-func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.SelectorExpr) (j jsast.MemberExpression, err error) {
+func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.SelectorExpr) (j jsast.IExpression, err error) {
 	// (user.phone).number
 	x, e := tr.expression(d, sp, n.X)
 	if e != nil {
-		return j, e
+		return nil, e
 	}
 
 	// get the rightmost name
@@ -1982,10 +1995,8 @@ func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.Sel
 	// get the definition of the selector
 	def, e := tr.index.DefinitionOf(d.Path(), n)
 	if e != nil {
-		return j, e
+		return nil, e
 	}
-
-	// log.Infof("selector: %s: %s -> %s", x, name, def.Name())
 
 	// maybe alias based on the selector's definition
 	switch t := def.(type) {
@@ -2001,7 +2012,25 @@ func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.Sel
 				name = f.Name()
 			}
 		}
-	case defs.Functioner, defs.Methoder:
+	case defs.Functioner:
+		caller, err := tr.callerToString(d, sp, n)
+		if err != nil {
+			return nil, err
+		}
+		expr, err := t.Rewrite(caller)
+		if err != nil {
+			return nil, err
+		} else if expr != "" {
+			return jsast.CreateRaw(expr), nil
+		}
+		name = t.Name()
+	case defs.Valuer:
+		expr, err := t.Rewrite(t.Name())
+		if err != nil {
+			return nil, err
+		} else if expr != "" {
+			return jsast.CreateRaw(expr), nil
+		}
 		name = t.Name()
 	}
 
@@ -2338,7 +2367,7 @@ func (tr *Translator) jsRaw(d def.Definition, sp *scope.Scope, cx *ast.CallExpr)
 }
 
 func (tr *Translator) maybeJSRewrite(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
-	id, err := util.GetIdentifier(n)
+	id, err := util.GetIdentifier(n.Fun)
 	if err != nil {
 		return nil, errors.Wrap(err, "js.rewrite")
 	} else if id == nil {
@@ -2372,11 +2401,16 @@ func (tr *Translator) maybeJSRewrite(d def.Definition, sp *scope.Scope, n *ast.C
 		args = append(args, s.String())
 	}
 
-	expr, e := fn.Rewrite(args)
+	caller, err := tr.callerToString(d, sp, n.Fun)
+	if err != nil {
+		return nil, err
+	}
+
+	expr, e := fn.Rewrite(caller, args...)
 	if e != nil {
 		return nil, e
 	} else if expr == "" {
-		return nil, e
+		return nil, nil
 	}
 
 	return jsast.CreateRaw(expr), nil
@@ -2594,4 +2628,25 @@ func slice(name string, i int) jsast.IStatement {
 			),
 		),
 	)
+}
+
+func (tr *Translator) callerToString(d def.Definition, sp *scope.Scope, n ast.Node) (string, error) {
+	xc, err := util.GetExprCaller(n)
+	if err != nil {
+		return "", err
+	} else if xc == nil {
+		return "", nil
+	}
+
+	c, e := tr.expression(d, sp, xc)
+	if e != nil {
+		return "", e
+	}
+
+	s, ok := c.(fmt.Stringer)
+	if !ok {
+		return "", fmt.Errorf("maybeJSRewrite: expression not a fmt.Stringer")
+	}
+
+	return s.String(), nil
 }

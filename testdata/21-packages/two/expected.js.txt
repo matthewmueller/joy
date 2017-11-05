@@ -27,11 +27,11 @@ function Another () {
 var deep = deepdep.New();
 return "exported another " + deep.String();
 };
-function Dep (dep) {
-return dep + " " + another();
-};
 function another () {
 return "another";
+};
+function Dep (dep) {
+return dep + " " + another();
 };
 return {
   A: A,

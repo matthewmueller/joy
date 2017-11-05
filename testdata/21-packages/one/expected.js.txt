@@ -1,55 +1,28 @@
 ;
 (function() {
 var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/21-packages/deepdep"] = (function() {
-function Dep (o) {
-o = o || {};
-this.deep = o.deep || "";
-};
-function New () {
-return new Dep({
-  deep: "deep"
-});
-};
-Dep.prototype.String = function() {
-var d = this;
-return d.deep;
-};
-return {
-  Dep: Dep,
-  New: New
-};
-})();
 pkg["github.com/matthewmueller/golly/testdata/21-packages/dep"] = (function() {
-var deepdep = pkg["github.com/matthewmueller/golly/testdata/21-packages/deepdep"];
-var A = "A";
-function Another () {
-var deep = deepdep.New();
-return "exported another " + deep.String();
+function another () {
+return "another";
 };
 function Dep (dep) {
 return dep + " " + another();
 };
-function another () {
-return "another";
-};
 return {
-  A: A,
-  Another: Another,
   Dep: Dep
 };
 })();
 pkg["github.com/matthewmueller/golly/testdata/21-packages/one"] = (function() {
 var zarg = pkg["github.com/matthewmueller/golly/testdata/21-packages/dep"];
+function test (o) {
+o = o || {};
+this.String = o.String || "";
+};
 function main () {
 var t = new test({
   String: "hi"
 });
 console.log(zarg.Dep("one") + t.String);
-};
-function test (o) {
-o = o || {};
-this.String = o.String || "";
 };
 return {
   main: main

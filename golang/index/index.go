@@ -13,12 +13,19 @@ import (
 	"golang.org/x/tools/go/loader"
 )
 
+type jsxSettings struct {
+	Pragma   string
+	Filepath string
+}
+
 // Index type
 type Index struct {
 	program  *loader.Program
 	defs     map[string]def.Definition
+	aliases  map[string]def.Definition
 	defpaths map[string][]def.Definition
 	imports  map[string]map[string]string
+	jsx      jsxSettings
 }
 
 // New index
@@ -27,6 +34,7 @@ func New(program *loader.Program) *Index {
 		program:  program,
 		defs:     map[string]def.Definition{},
 		defpaths: map[string][]def.Definition{},
+		aliases:  map[string]def.Definition{},
 		imports:  map[string]map[string]string{},
 	}
 }
@@ -77,12 +85,15 @@ func (i *Index) Paths() (paths []string) {
 
 // Get all definitions from the index
 func (i *Index) Get(id string) def.Definition {
+	if i.aliases[id] != nil {
+		return i.aliases[id]
+	}
 	return i.defs[id]
 }
 
 // Link is like a symlink to a definition
 func (i *Index) Link(alias string, d def.Definition) {
-	i.defs[alias] = d
+	i.aliases[alias] = d
 }
 
 // Mains gets all the main functions
@@ -312,4 +323,17 @@ func (i *Index) typeToDef(name string, kind types.Type) (arr []string, err error
 
 	// log.Infof("ident %+v", i/d)
 	return arr, nil
+}
+
+// SetJSXPragma sets up JSX
+func (i *Index) SetJSXPragma(pragma string) {
+	i.jsx.Pragma = pragma
+}
+
+// JSXPragma gets our jsx settings if we've specified them
+func (i *Index) JSXPragma() (string, error) {
+	if i.jsx.Pragma == "" {
+		return "", errors.New("JSX not setup. Please use jsx.Use(pragma, filepath) in an init()")
+	}
+	return i.jsx.Pragma, nil
 }

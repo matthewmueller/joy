@@ -6,6 +6,11 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// Use fn
+// js:"use,omit"
+func Use(pragma, filepath string) {
+}
+
 // Component interface
 type Component interface {
 	Render() JSX
@@ -56,8 +61,8 @@ func H(name string, attrs map[string]interface{}, children ...Component) Element
 
 	// Hack to make sure preact is present
 	// when we do the transforms
-	var preact = js.RawFile("./preact.js")
-	_ = preact
+	// var preact = js.RawFile("./preact.js")
+	// _ = preact
 
 	return &element{
 		NodeName:   name,
