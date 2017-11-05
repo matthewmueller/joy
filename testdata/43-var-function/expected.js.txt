@@ -2,12 +2,12 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/43-var-function"] = (function() {
-function main () {
-console.log(test);
-};
-var test = tester();
 function tester () {
 return "hi world";
+};
+var test = tester();
+function main () {
+console.log(test);
 };
 return {
   main: main

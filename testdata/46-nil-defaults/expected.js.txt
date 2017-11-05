@@ -2,9 +2,18 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/46-nil-defaults/element"] = (function() {
+function attrs (o) {
+o = o || {};
+};
 element.prototype.Attrs = function() {
 var c = this;
 return c.attrs;
+};
+function element (o) {
+o = o || {};
+this.tag = o.tag || "";
+this.child = o.child || null;
+this.attrs = o.attrs || null;
 };
 function New (tag, child) {
 return new element({
@@ -18,15 +27,6 @@ if (c.child == null) {
 return "<" + c.tag + "></" + c.tag + ">"
 };
 return "<" + c.tag + ">" + c.child.Render() + "</" + c.tag + ">";
-};
-function attrs (o) {
-o = o || {};
-};
-function element (o) {
-o = o || {};
-this.tag = o.tag || "";
-this.child = o.child || null;
-this.attrs = o.attrs || null;
 };
 return {
   New: New

@@ -5,6 +5,14 @@ pkg["github.com/matthewmueller/golly/testdata/48-func-spread"] = (function() {
 function aa (o) {
 o = o || {};
 };
+function test (a) {
+var items = Array.prototype.slice.call(arguments, 1);
+return items;
+};
+aa.prototype.test2 = function(a) {
+var items = Array.prototype.slice.call(arguments, 1);
+return items;
+};
 function main () {
 var items = test.apply(null, ["a", "b", "c"].concat("d"));
 for (var _ = 0, item; _ < items.length; _++) {
@@ -17,14 +25,6 @@ for (var _ = 0, item; _ < items.length; _++) {
 var item = items[_]
 console.log(item)
 };
-};
-function test (a) {
-var items = Array.prototype.slice.call(arguments, 1);
-return items;
-};
-aa.prototype.test2 = function(a) {
-var items = Array.prototype.slice.call(arguments, 1);
-return items;
 };
 return {
   main: main

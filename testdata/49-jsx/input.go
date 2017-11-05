@@ -7,6 +7,8 @@ import (
 )
 
 func main() {
+	jsx.Use("preact.h", "./preact/preact.js")
+
 	hdr := jsx.H("h2", map[string]interface{}{"class": "hi"},
 		&jsx.Text{Value: "yo!"},
 		header.New("lol", &jsx.Text{Value: "hi!"}),

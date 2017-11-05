@@ -30,6 +30,11 @@ self.catch = p.catch.bind(p)
 ;
 return self;
 };
+function send (o) {
+o = o || {};
+this.value = o.value || null;
+this.promise = o.promise || null;
+};
 Chan.prototype.Recv = function() {
 var c = this;
 if (c.values.length > 0) {
@@ -78,11 +83,6 @@ c.sends = c.sends.concat(new send({
   promise: promise
 }));
 return promise;
-};
-function send (o) {
-o = o || {};
-this.value = o.value || null;
-this.promise = o.promise || null;
 };
 return {
   Chan: Chan,

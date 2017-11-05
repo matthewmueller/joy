@@ -1,6 +1,7 @@
 package golang
 
 import (
+	"fmt"
 	"sort"
 
 	"github.com/apex/log"
@@ -9,7 +10,6 @@ import (
 	"github.com/matthewmueller/golly/golang/index"
 	"github.com/matthewmueller/golly/golang/script"
 	"github.com/matthewmueller/golly/golang/translator"
-	"github.com/matthewmueller/golly/golang/util"
 	"github.com/matthewmueller/golly/jsast"
 	"github.com/pkg/errors"
 
@@ -91,45 +91,35 @@ func (c *Compiler) Parse(packages ...string) (idx *index.Index, g *graph.Graph, 
 	}
 
 	// build our dependencies graph
-	hotidx := index.New(program)
+	// hotidx := idx.Copy()
 	for len(queue) > 0 {
 		// dequeue
 		d := queue[0]
 		queue = queue[1:]
 
-		// path => definition buckets
-		hotidx.AddDefinition(d)
-
-		// add aliases for interfaces
-		if iface, ok := d.(defs.Interfacer); ok {
-			for _, m := range iface.Methods() {
-				hotidx.Link(m, iface)
-			}
-		}
+		// mark as visited
+		visited[d.ID()] = true
 
 		// get the dependencies
-		edges, err := d.Dependencies()
+		deps, err := d.Dependencies()
 		if err != nil {
 			return idx, g, errors.Wrap(err, "error getting dependencies")
 		}
 
 		// add the dependencies to the graph
-		for _, edge := range edges {
-			log.Debugf("edge: %s->%s (%s)", d.Path(), edge.Definition().Path(), edge.Type())
-			g.Edge(d.Path(), edge.Definition().Path(), edge.Type())
-		}
+		for _, dep := range deps {
+			log.Debugf("edge: %s->%s", d.Path(), dep.Path())
+			g.Edge(d, dep)
 
-		// add any dependency that hasn't
-		// already been visited
-		for _, edge := range edges {
-			if !visited[edge.Definition().ID()] {
-				queue = append(queue, edge.Definition())
-				visited[d.ID()] = true
+			// queue up any dependency that hasn't
+			// already been visited
+			if !visited[dep.ID()] {
+				queue = append(queue, dep)
 			}
 		}
 	}
 
-	return hotidx, g, nil
+	return idx, g, nil
 }
 
 // Assemble the code
@@ -139,27 +129,35 @@ func (c *Compiler) Assemble(idx *index.Index, g *graph.Graph) (scripts []*script
 	// assemble into scripts
 	var files []*file
 	for _, main := range idx.Mains() {
-		log.Debugf("main: %s", main.Path())
+		log.Debugf("main: %s", main.ID())
 
-		sorted := g.Toposort(main.Path())
+		sorted := g.Toposort(main)
 		for _, path := range sorted {
 			log.Debugf("path=%s", path)
 		}
 
 		// paths back to definitions
 		defs := []def.Definition{}
-		for _, path := range sorted {
-			// Sort to have a consistent definition order (alphabetical)
-			// TODO: investigate if we can maintain the order
-			// the code was written in. It seems difficult
-			// because we don't have easy access to raw source files,
-			// just package paths, which may put definitions across
-			// files in any order.
-			ds := idx.DefinitionsByPath(path)
-			defs = append(defs, ds...)
+		for _, id := range sorted {
+			def := idx.Get(id)
+			if def == nil {
+				return scripts, fmt.Errorf("compiler/assemble: couldn't find def: %s", id)
+			}
+			defs = append(defs, def)
 		}
-		// uniquify all the duplicates per main file
-		defs = util.Unique(defs)
+
+		// for _, path := range sorted {
+		// 	// Sort to have a consistent definition order (alphabetical)
+		// 	// TODO: investigate if we can maintain the order
+		// 	// the code was written in. It seems difficult
+		// 	// because we don't have easy access to raw source files,
+		// 	// just package paths, which may put definitions across
+		// 	// files in any order.
+		// 	ds := idx.DefinitionsByPath(path)
+		// 	defs = append(defs, ds...)
+		// }
+		// // uniquify all the duplicates per main file
+		// defs = util.Unique(defs)
 
 		for _, d := range defs {
 			log.Debugf("sorted=%s", d.ID())

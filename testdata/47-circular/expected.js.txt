@@ -2,6 +2,11 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/47-circular/element"] = (function() {
+function element (o) {
+o = o || {};
+this.tag = o.tag || "";
+this.child = o.child || null;
+};
 function New (tag, child) {
 return new element({
   tag: tag,
@@ -15,11 +20,6 @@ return "<" + c.tag + "></" + c.tag + ">"
 };
 return "<" + c.tag + ">" + c.child.Render() + "</" + c.tag + ">";
 };
-function element (o) {
-o = o || {};
-this.tag = o.tag || "";
-this.child = o.child || null;
-};
 return {
   New: New
 };
@@ -30,12 +30,12 @@ page.prototype.Render = function() {
 var p = this;
 return element.New("header", element.New("strong", null)).Render();
 };
+function page (o) {
+o = o || {};
+};
 function main () {
 var p = new page({});
 console.log(p.Render());
-};
-function page (o) {
-o = o || {};
 };
 return {
   main: main

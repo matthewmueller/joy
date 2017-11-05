@@ -1409,6 +1409,18 @@ func (tr *Translator) returnStmt(d def.Definition, sp *scope.Scope, n *ast.Retur
 }
 
 func (tr *Translator) callExpr(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (j jsast.IExpression, err error) {
+	expr, e := util.ExprToString(n.Fun)
+	if e != nil {
+		return nil, e
+	}
+
+	// TODO: move all special expressions to this style
+	switch expr {
+	case "jsx.Use":
+		// remove calls to jsx.Use(...) from the source
+		return nil, nil
+	}
+
 	// create an expression for built-in golang functions like append
 	// TODO: turn this into an ast.Walk()-like thing
 	if expr, e := tr.maybeBuiltinExpr(d, sp, n); expr != nil || e != nil {
@@ -1801,6 +1813,11 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 
 		for _, iface := range ifaces {
 			if iface.Path() == jsxPath && iface.Name() == "Component" {
+				pragma, err := tr.index.JSXPragma()
+				if err != nil {
+					return nil, err
+				}
+
 				var value jsast.IExpression
 				var nodeName jsast.IExpression
 
@@ -1826,7 +1843,7 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 
 				if stct.Path() == jsxPath && stct.Name() == "Element" {
 					return jsast.CreateCallExpression(
-						jsast.CreateIdentifier("preact.h"),
+						jsast.CreateIdentifier(pragma),
 						[]jsast.IExpression{
 							nodeName,
 							jsast.CreateObjectExpression(props),
@@ -1835,7 +1852,7 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 				}
 
 				return jsast.CreateCallExpression(
-					jsast.CreateIdentifier("preact.h"),
+					jsast.CreateIdentifier(pragma),
 					[]jsast.IExpression{
 						fn,
 						jsast.CreateObjectExpression(props),

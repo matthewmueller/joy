@@ -6,6 +6,11 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// Use fn
+// js:"use,omit"
+func Use(pragma, filepath string) {
+}
+
 // Component interface
 type Component interface {
 	Render() JSX

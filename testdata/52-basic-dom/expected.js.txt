@@ -1,14 +1,14 @@
 ;
 (function() {
 var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/55-macros/dom"] = (function() {
+pkg["github.com/matthewmueller/golly/testdata/52-basic-dom/dom"] = (function() {
 var Hello = "hi!";
 return {
   Hello: Hello
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/55-macros"] = (function() {
-var dom = pkg["github.com/matthewmueller/golly/testdata/55-macros/dom"];
+pkg["github.com/matthewmueller/golly/testdata/52-basic-dom"] = (function() {
+var dom = pkg["github.com/matthewmueller/golly/testdata/52-basic-dom/dom"];
 function main () {
 var a = document.createElement("a");
 console.log(a.nodeName);
@@ -21,5 +21,5 @@ return {
   main: main
 };
 })();
-return pkg["github.com/matthewmueller/golly/testdata/55-macros"].main();
+return pkg["github.com/matthewmueller/golly/testdata/52-basic-dom"].main();
 })()

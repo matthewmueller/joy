@@ -9,7 +9,7 @@ import (
 var preact = js.RawFile("./preact.js")
 
 // Render the component
-func Render(component jsx.Component, el *document.Node) {
+func Render(component jsx.Component, el *document.Element) {
 	js.Rewrite("$1.render($2, $3)", preact, component, el)
 }
 

@@ -2,22 +2,34 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/40-vnodes"] = (function() {
-function Element (o) {
+function component (o) {
 o = o || {};
-this.name = o.name || "";
-this.kind = o.kind || 0;
-this.attributes = o.attributes || {};
-this.children = o.children || [];
+this.component = o.component || null;
+};
+function NewComponent (com) {
+return new component({
+  component: com
+});
+};
+function Props (o) {
+o = o || {};
+this.Location = o.Location || "";
+};
+function Page (o) {
+o = o || {};
+this.props = o.props || null;
 };
 function New (p) {
 return NewComponent(new Page({
   props: p
 }));
 };
-function NewComponent (com) {
-return new component({
-  component: com
-});
+function Element (o) {
+o = o || {};
+this.name = o.name || "";
+this.kind = o.kind || 0;
+this.attributes = o.attributes || {};
+this.children = o.children || [];
 };
 function NewElement (tagName, attributes) {
 var children = Array.prototype.slice.call(arguments, 2);
@@ -28,17 +40,13 @@ return new Element({
   children: children
 });
 };
-function Page (o) {
-o = o || {};
-this.props = o.props || null;
-};
-function Props (o) {
-o = o || {};
-this.Location = o.Location || "";
-};
 Page.prototype.Render = function() {
 var p = this;
 return NewElement.apply(null, ["div"].concat(null));
+};
+component.prototype.String = function() {
+var c = this;
+return c.component.Render().String();
 };
 Element.prototype.String = function() {
 var e = this;
@@ -49,14 +57,6 @@ children = children.concat(child.String())
 };
 return "<" + e.name + ">" + children.join("") + "</" + e.name + ">";
 };
-component.prototype.String = function() {
-var c = this;
-return c.component.Render().String();
-};
-function component (o) {
-o = o || {};
-this.component = o.component || null;
-};
 function main () {
 var c = New(new Props({
   Location: "mars"
@@ -64,12 +64,12 @@ var c = New(new Props({
 console.log(c.String());
 };
 return {
-  Element: Element,
-  New: New,
   NewComponent: NewComponent,
-  NewElement: NewElement,
-  Page: Page,
   Props: Props,
+  Page: Page,
+  New: New,
+  Element: Element,
+  NewElement: NewElement,
   main: main
 };
 })();

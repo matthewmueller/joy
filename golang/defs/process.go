@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pkg/errors"
+
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/golang/def"
@@ -22,7 +24,7 @@ type context struct {
 type state struct {
 	imports map[string]string
 	tag     *structtag.Tag
-	edges   *edges
+	deps    []def.Definition
 	rewrite *rewrite
 	fields  []*field
 	params  []string
@@ -34,7 +36,6 @@ type state struct {
 func process(idx *index.Index, d def.Definition, n ast.Node) (st *state, err error) {
 	st = &state{
 		imports: map[string]string{},
-		edges:   &edges{},
 	}
 
 	ctx := &context{
@@ -67,9 +68,6 @@ func process(idx *index.Index, d def.Definition, n ast.Node) (st *state, err err
 	if err != nil {
 		return nil, err
 	}
-
-	// unique dependencies
-	// st.deps = unique(st.deps)
 
 	return st, nil
 }
@@ -157,6 +155,8 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 		return jsRewrite(ctx, n)
 	case "js.Raw":
 		return jsRaw(ctx, n)
+	case "jsx.Use":
+		return jsxUse(ctx, n)
 	}
 
 	def, e := ctx.idx.DefinitionOf(ctx.d.Path(), n)
@@ -174,7 +174,7 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 		methods := t.ImplementedBy(m.Sel.Name)
 		for _, def := range methods {
 			log.Debugf("implemented by: %s -> %s", ctx.d.ID(), def.ID())
-			ctx.state.edges.Add("IMPLEMENTS", def)
+			ctx.state.deps = append(ctx.state.deps, def)
 		}
 	}
 
@@ -190,7 +190,7 @@ func chanType(ctx *context, n *ast.ChanType) error {
 	if len(deps) > 0 {
 		for _, def := range deps {
 			log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
-			ctx.state.edges.Add("DEPENDS", def)
+			ctx.state.deps = append(ctx.state.deps, def)
 		}
 		ctx.state.imports["runtime"] = deps[0].Path()
 	}
@@ -216,7 +216,7 @@ func selectorExpr(ctx *context, n *ast.SelectorExpr) error {
 
 		if !ignore {
 			log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
-			ctx.state.edges.Add("DEPENDS", def)
+			ctx.state.deps = append(ctx.state.deps, def)
 		}
 	}
 
@@ -248,7 +248,7 @@ func ident(ctx *context, n *ast.Ident) error {
 
 		if !ignore {
 			log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
-			ctx.state.edges.Add("DEPENDS", def)
+			ctx.state.deps = append(ctx.state.deps, def)
 		}
 	}
 
@@ -286,7 +286,7 @@ func jsFile(ctx *context, n *ast.CallExpr) error {
 
 	ctx.idx.AddDefinition(def)
 	log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
-	ctx.state.edges.Add("DEPENDS", def)
+	ctx.state.deps = append(ctx.state.deps, def)
 	return nil
 }
 
@@ -393,6 +393,44 @@ func jsRaw(ctx *context, n *ast.CallExpr) error {
 		strings.Contains(expr, "await") {
 		ctx.state.async = true
 	}
+
+	return nil
+}
+
+func jsxUse(ctx *context, n *ast.CallExpr) error {
+	if len(n.Args) < 2 {
+		return errors.New("process/jsxUse: expected atleast 2 arguments")
+	}
+
+	p, err := util.ExprToString(n.Args[0])
+	if err != nil {
+		return errors.Wrap(err, "process/jsxUse: error getting pragma")
+	}
+	pragma, err := strconv.Unquote(p)
+	if err != nil {
+		return errors.Wrap(err, "process/jsxUse: couldn't unquote pragma")
+	}
+
+	f, err := util.ExprToString(n.Args[1])
+	if err != nil {
+		return errors.Wrap(err, "process/jsxUse: error getting filepath")
+	}
+	filepath, err := strconv.Unquote(f)
+	if err != nil {
+		return errors.Wrap(err, "process/jsxUse: couldn't unquote filepath")
+	}
+
+	// add to the index
+	ctx.idx.SetJSXPragma(pragma)
+
+	// add the file dependency
+	def, e := File(ctx.d.Path(), filepath)
+	if e != nil {
+		return e
+	}
+	ctx.idx.AddDefinition(def)
+	log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
+	ctx.state.deps = append(ctx.state.deps, def)
 
 	return nil
 }

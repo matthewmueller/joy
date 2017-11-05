@@ -32,7 +32,7 @@ type values struct {
 	kind      types.Type
 	processed bool
 	rewrite   *rewrite
-	edges     []def.Edge
+	deps      []def.Definition
 	imports   map[string]string
 	async     bool
 	omit      bool
@@ -78,7 +78,7 @@ func (d *values) process() (err error) {
 	// copy state into function
 	d.processed = true
 	d.async = state.async
-	d.edges = state.edges.Edges()
+	d.deps = state.deps
 	d.imports = state.imports
 	d.rewrite = state.rewrite
 	d.omit = state.omit
@@ -106,16 +106,16 @@ func (d *values) Path() string {
 	return d.path
 }
 
-func (d *values) Dependencies() (edges []def.Edge, err error) {
+func (d *values) Dependencies() (deps []def.Definition, err error) {
 	if d.processed {
-		return d.edges, nil
+		return d.deps, nil
 	}
 	e := d.process()
 	if e != nil {
-		return edges, e
+		return deps, e
 	}
 
-	return d.edges, nil
+	return d.deps, nil
 }
 
 func (d *values) Exported() bool {

@@ -37,7 +37,7 @@ type functions struct {
 	tag       *structtag.Tag
 	runtime   bool
 	processed bool
-	edges     []def.Edge
+	deps      []def.Definition
 	rewrite   *rewrite
 	async     bool
 	imports   map[string]string
@@ -109,7 +109,7 @@ func (d *functions) process() (err error) {
 	// copy state into function
 	d.processed = true
 	d.async = state.async
-	d.edges = state.edges.Edges()
+	d.deps = state.deps
 	d.imports = state.imports
 	d.omit = state.omit
 	d.rewrite = state.rewrite
@@ -134,16 +134,16 @@ func (d *functions) Path() string {
 	return d.path
 }
 
-func (d *functions) Dependencies() (edges []def.Edge, err error) {
+func (d *functions) Dependencies() (deps []def.Definition, err error) {
 	if d.processed {
-		return d.edges, nil
+		return d.deps, nil
 	}
 	e := d.process()
 	if e != nil {
-		return edges, e
+		return deps, e
 	}
 
-	return d.edges, nil
+	return d.deps, nil
 }
 
 func (d *functions) Exported() bool {

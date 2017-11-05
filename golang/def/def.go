@@ -14,7 +14,7 @@ type Definition interface {
 	Omitted() bool
 	Type() types.Type
 	Kind() string
-	Dependencies() ([]Edge, error)
+	Dependencies() ([]Definition, error)
 	Imports() map[string]string
 	FromRuntime() bool
 }
@@ -33,6 +33,6 @@ type Rewrite interface {
 // Edge interface
 type Edge interface {
 	Definition() Definition
-	
+
 	Type() string
 }

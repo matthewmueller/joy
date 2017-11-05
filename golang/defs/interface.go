@@ -80,11 +80,11 @@ func (d *interfaces) process() (err error) {
 }
 
 // interfaces don't include dependencies on their own
-func (d *interfaces) Dependencies() (edges []def.Edge, err error) {
+func (d *interfaces) Dependencies() (deps []def.Definition, err error) {
 	if !d.processed {
 		d.process()
 	}
-	return edges, nil
+	return deps, nil
 }
 
 func (d *interfaces) ID() string {
