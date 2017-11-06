@@ -660,6 +660,63 @@ func (tr *Translator) structs(d defs.Structer) (j jsast.IStatement, err error) {
 				),
 			),
 		))
+
+		// TODO: this works surprisingly well, but
+		// I'm not 100% sure it's to spec yet.
+		if field.Embedded() {
+			fullName, err := util.ExprToString(field.Type())
+			if err != nil {
+				return nil, err
+			}
+
+			left := jsast.CreateVariableDeclaration(
+				"var",
+				jsast.CreateVariableDeclarator(
+					jsast.CreateIdentifier("$k"),
+					nil,
+				),
+			)
+
+			right := jsast.CreateLogicalExpression(
+				jsast.CreateMemberExpression(
+					jsast.CreateThisExpression(),
+					jsast.CreateIdentifier(field.Name()),
+					false,
+				),
+				jsast.LogicalOperator("||"),
+				jsast.CreateMemberExpression(
+					// TODO: this is lazy & should probably
+					// be a member fn
+					jsast.CreateRaw(fullName),
+					jsast.CreateIdentifier("prototype"),
+					false,
+				),
+			)
+
+			body := jsast.CreateBlockStatement(
+				jsast.CreateExpressionStatement(
+					jsast.CreateAssignmentExpression(
+						jsast.CreateMemberExpression(
+							jsast.CreateThisExpression(),
+							jsast.CreateIdentifier("$k"),
+							true,
+						),
+						jsast.AssignmentOperator("="),
+						jsast.CreateMemberExpression(
+							right,
+							jsast.CreateIdentifier("$k"),
+							true,
+						),
+					),
+				),
+			)
+
+			ivars = append(ivars, jsast.CreateForInStatement(
+				left,
+				right,
+				body,
+			))
+		}
 	}
 
 	ident := jsast.CreateIdentifier(d.Name())

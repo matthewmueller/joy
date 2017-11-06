@@ -185,6 +185,13 @@ func (n MemberExpression) String() string {
 	obj := stringify(n.Object)
 	prop := stringify(n.Property)
 
+	// TODO: there maybe quite a few more
+	// cases where we'll want to do this
+	switch n.Object.Expression().Type {
+	case "LogicalExpression":
+		obj = "(" + obj + ")"
+	}
+
 	// e.g. hi[world]
 	if n.Computed {
 		return obj + "[" + prop + "]"
@@ -376,6 +383,13 @@ func (n MultiStatement) String() string {
 	return strings.Join(a, ";\n")
 }
 
+func (n ForInStatement) String() string {
+	left := stringify(n.Left)
+	right := stringify(n.Right)
+	body := stringify(n.Body)
+	return "for (" + left + " in " + right + ") " + body
+}
+
 // func (n DebuggerStatement) String() string {
 // 	return "DebuggerStatement", nil
 // }
@@ -414,14 +428,6 @@ func (n MultiStatement) String() string {
 
 // func (n DoWhileStatement) String() string {
 // 	return "DoWhileStatement", nil
-// }
-
-// func (n ForStatement) String() string {
-// 	return "ForStatement", nil
-// }
-
-// func (n ForInStatement) String() string {
-// 	return "ForInStatement", nil
 // }
 
 // func (n Declaration) String() string {

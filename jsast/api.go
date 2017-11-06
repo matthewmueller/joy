@@ -415,3 +415,13 @@ func CreateMultiStatement(statements ...IStatement) IStatement {
 		Statements: statements,
 	}
 }
+
+// CreateForInStatement fn
+func CreateForInStatement(left interface{}, right IExpression, body IStatement) ForInStatement {
+	return ForInStatement{
+		Type:  "ForInStatement",
+		Left:  left,
+		Right: right,
+		Body:  body,
+	}
+}

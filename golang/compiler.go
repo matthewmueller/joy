@@ -386,6 +386,13 @@ func prune(inp []def.Definition) (out []def.Definition, err error) {
 	return out, nil
 }
 
+// TODO: rearrange fixes the order for some common issues the
+// graph wouldn't know about. Right now this:
+// 1. moves methods below constructors
+func rearrange(defs []def.Definition) []def.Definition {
+	return defs
+}
+
 // group declarations into modules
 func group(defs []def.Definition) (modules []*module, err error) {
 	moduleMap := map[string]*module{}

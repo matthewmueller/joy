@@ -8,9 +8,10 @@ import (
 
 // field of a struct
 type field struct {
-	name string
-	tag  *structtag.Tag
-	kind ast.Expr
+	name     string
+	tag      *structtag.Tag
+	kind     ast.Expr
+	embedded bool
 }
 
 func (f *field) Name() string {
@@ -22,4 +23,8 @@ func (f *field) Name() string {
 
 func (f *field) Type() ast.Expr {
 	return f.kind
+}
+
+func (f *field) Embedded() bool {
+	return f.embedded
 }

@@ -23,6 +23,9 @@ this.name = o.name || "";
 this.Age = o.Age || 0;
 this.phone = o.phone || null;
 this.Settings = o.Settings || null;
+for (var $k in this.Settings || dep.Settings.prototype) {
+this[$k] = (this.Settings || dep.Settings.prototype)[$k]
+};
 this.Settings2 = o.Settings2 || null;
 };
 function main () {

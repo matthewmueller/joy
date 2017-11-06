@@ -117,7 +117,9 @@ func structType(ctx *context, n *ast.StructType) error {
 			if e != nil {
 				return e
 			}
+
 			fld.name = id.Name
+			fld.embedded = true
 			ctx.state.fields = append(ctx.state.fields, fld)
 			continue
 		}
