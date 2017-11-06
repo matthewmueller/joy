@@ -18,6 +18,7 @@ import (
 // Structer interface
 type Structer interface {
 	def.Definition
+	Gen() *ast.GenDecl
 	Node() *ast.TypeSpec
 	Fields() []*field
 	Field(name string) *field
@@ -125,6 +126,10 @@ func (d *structdef) Omitted() bool {
 		return d.tag.HasOption("omit")
 	}
 	return false
+}
+
+func (d *structdef) Gen() *ast.GenDecl {
+	return d.gen
 }
 
 func (d *structdef) Node() *ast.TypeSpec {

@@ -27,7 +27,7 @@ function Thing (o) {
 o = o || {};
 this.Subthing = o.Subthing || null;
 for (var $k in this.Subthing || Subthing.prototype) {
-this[$k] = (this.Subthing || Subthing.prototype)[$k]
+this[$k] = this[$k] || (this.Subthing || Subthing.prototype)[$k]
 };
 };
 function stringer (o) {

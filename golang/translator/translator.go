@@ -537,36 +537,6 @@ func (tr *Translator) typeSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl
 		return nil, unhandled("typeSpec<StructType>", s.Type)
 	}
 
-	// decl, err := tr.db.DefinitionOf(ctx.info, s.Name)
-	// if err != nil {
-	// 	return nil, err
-	// } else if decl == nil {
-	// 	return nil, errors.New("typeSpec expected a declaration")
-	// }
-
-	// // don't include in the build if it has the global option
-	// if decl.JSTag != nil && decl.JSTag.HasOption("global") {
-	// 	return jsast.CreateEmptyStatement(), nil
-	// }
-
-	// tag, e := getCommentTag(n.Doc)
-	// if e != nil {
-	// 	return nil, e
-	// }
-
-	// fieldtags, e :=
-
-	// store the tag for later renaming
-	// objectof := ctx.info.ObjectOf(s.Name)
-	// typeof := ctx.info.TypeOf(s.Name)
-	// if tag != nil && objectof != nil {
-	// 	ctx.aliases[objectof.String()] = tag
-	// 	ctx.aliases[typeof.String()] = tag
-	// 	// TODO: not sure if this is a good idea or not
-	// 	// but it's to handle pointer receivers in 1 spot
-	// 	ctx.aliases["*"+typeof.String()] = tag
-	// }
-
 	var ivars []interface{}
 	o := jsast.CreateIdentifier("o")
 	expr := jsast.CreateAssignmentExpression(o, jsast.AssignmentOperator("="), defaulted("o", jsast.CreateObjectExpression(nil)))
@@ -625,6 +595,7 @@ func (tr *Translator) typeSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl
 	), nil
 }
 
+// TODO: revamp typeDecl above
 func (tr *Translator) structs(d defs.Structer) (j jsast.IStatement, err error) {
 	n := d.Node()
 	sp := scope.New(n)
@@ -702,10 +673,18 @@ func (tr *Translator) structs(d defs.Structer) (j jsast.IStatement, err error) {
 							true,
 						),
 						jsast.AssignmentOperator("="),
-						jsast.CreateMemberExpression(
-							right,
-							jsast.CreateIdentifier("$k"),
-							true,
+						jsast.CreateLogicalExpression(
+							jsast.CreateMemberExpression(
+								jsast.CreateThisExpression(),
+								jsast.CreateIdentifier("$k"),
+								true,
+							),
+							jsast.LogicalOperator("||"),
+							jsast.CreateMemberExpression(
+								right,
+								jsast.CreateIdentifier("$k"),
+								true,
+							),
 						),
 					),
 				),
@@ -1847,13 +1826,9 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 		return nil, e
 	}
 
-	var props []jsast.Property
-	for i, elt := range n.Elts {
-		prop, e := tr.property(d, sp, n, i, elt)
-		if e != nil {
-			return nil, e
-		}
-		props = append(props, prop)
+	kvs, e := tr.getKeyValues(d, sp, n)
+	if e != nil {
+		return nil, e
 	}
 
 	// JSX support
@@ -1869,43 +1844,41 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 		}
 
 		for _, iface := range ifaces {
-			if iface.Path() == jsxPath && iface.Name() == "Component" {
+			if iface.Path() == jsxPath && iface.Name() == "Node" {
 				pragma, err := tr.index.JSXPragma()
 				if err != nil {
 					return nil, err
 				}
 
-				var value jsast.IExpression
-				var nodeName jsast.IExpression
-
-				// TODO: reaching back into the JS AST is brittle because you
-				// have to take into account aliasing (e.g. nodeName vs NodeName)
-				// there's certainly a better approach here, by normalizing the
-				// key values in go, before turning it into jsast.Property
-				for _, prop := range props {
-					if key, ok := prop.Key.(jsast.Identifier); ok {
-						if key.Name == "Value" {
-							value = prop.Value
-							continue
-						} else if key.Name == "nodeName" {
-							nodeName = prop.Value
-							continue
+				// handle text nodes differently
+				if stct.OriginalName() == "Text" {
+					for key, val := range kvs {
+						if strings.ToLower(key) == "value" {
+							return tr.expression(d, sp, val)
 						}
 					}
+					return jsast.CreateString(""), nil
 				}
 
-				if stct.Path() == jsxPath && stct.Name() == "Text" {
-					return value, nil
-				}
+				// look for props if we have them
+				var props []jsast.Property
+				for key, val := range kvs {
+					if strings.ToLower(key) == "props" {
+						c, ok := val.(*ast.CompositeLit)
+						if !ok {
+							// TODO: should we error here? or just ignore?
+							continue
+							// return nil, fmt.Errorf("translator/jsNewFunction: expected props to be a compositLiteral, but got %T", val)
+						}
 
-				if stct.Path() == jsxPath && stct.Name() == "Element" {
-					return jsast.CreateCallExpression(
-						jsast.CreateIdentifier(pragma),
-						[]jsast.IExpression{
-							nodeName,
-							jsast.CreateObjectExpression(props),
-						},
-					), nil
+						for i, elt := range c.Elts {
+							p, e := tr.property(d, sp, c, i, elt)
+							if e != nil {
+								return nil, e
+							}
+							props = append(props, p)
+						}
+					}
 				}
 
 				return jsast.CreateCallExpression(
@@ -1917,6 +1890,15 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 				), nil
 			}
 		}
+	}
+
+	var props []jsast.Property
+	for i, elt := range n.Elts {
+		prop, e := tr.property(d, sp, n, i, elt)
+		if e != nil {
+			return nil, e
+		}
+		props = append(props, prop)
 	}
 
 	return jsast.CreateNewExpression(
@@ -1939,9 +1921,84 @@ func (tr *Translator) jsArrayExpression(d def.Definition, sp *scope.Scope, n *as
 	return jsast.CreateArrayExpression(elements...), nil
 }
 
-// func (tr *Translator) getKeyValues(d def.Definition, sp *scope.Scope, c *ast.CompositeLit, idx int, n ast.Expr) (key string, value jsast.IExpression, err error) {
+func (tr *Translator) getKeyValues(d def.Definition, sp *scope.Scope, c *ast.CompositeLit) (result map[string]ast.Expr, err error) {
+	result = map[string]ast.Expr{}
 
-// }
+	for i, elt := range c.Elts {
+		var k string
+		var v ast.Expr
+		var e error
+
+		// fast-track: User{Name:name}, User{&name}
+		switch t := elt.(type) {
+		case *ast.UnaryExpr:
+			k, v, e = tr.getKeyValue(d, sp, c, i, t.X)
+		case *ast.KeyValueExpr:
+			k, v, e = tr.getKeyValueExpr(d, sp, c, t)
+		default:
+			k, v, e = tr.getKeyValue(d, sp, c, i, elt)
+		}
+
+		if e != nil {
+			return result, e
+		}
+		result[k] = v
+	}
+
+	return result, nil
+}
+
+func (tr *Translator) getKeyValue(d def.Definition, sp *scope.Scope, c *ast.CompositeLit, idx int, n ast.Expr) (string, ast.Expr, error) {
+	def, e := tr.index.DefinitionOf(d.Path(), c.Type)
+	if e != nil {
+		return "", nil, e
+	}
+	st, ok := def.(defs.Structer)
+	if !ok {
+		return "", nil, fmt.Errorf("property: expected a struct, but got a %T", def)
+	}
+
+	var fields []string
+	for _, field := range st.Fields() {
+		fields = append(fields, field.Name())
+	}
+	if idx >= len(fields) {
+		return "", nil, fmt.Errorf("property: expected idx=%d to be less than len(fields)=%d", idx, len(fields))
+	}
+
+	// User{"matt"},User{name},User{Settings{...}}
+	return fields[idx], n, nil
+}
+
+func (tr *Translator) getKeyValueExpr(d def.Definition, sp *scope.Scope, c *ast.CompositeLit, n *ast.KeyValueExpr) (string, ast.Expr, error) {
+	// fasttrack basic keys: User{"a"}, { "a": ... }
+	switch t := n.Key.(type) {
+	case *ast.BasicLit:
+		return t.Value, n.Value, nil
+	}
+
+	// get the definition of the composite type
+	def, err := tr.index.DefinitionOf(d.Path(), c.Type)
+	if err != nil {
+		return "", nil, err
+	}
+	st, ok := def.(defs.Structer)
+	if !ok {
+		return "", nil, fmt.Errorf("keyValueExpr: expected struct, but got %T", def)
+	}
+
+	// turn into a property
+	switch t := n.Key.(type) {
+	case *ast.Ident:
+		field := st.Field(t.Name)
+		if field == nil {
+			return "", nil, fmt.Errorf("keyValueExpr: didn't expect field (%s) to be nil", t.Name)
+		}
+		return field.Name(), n.Value, nil
+	default:
+		return "", nil, unhandled("keyValueExpr<key>", n.Key)
+	}
+}
 
 // property formats initializing structs in all the various ways
 // e.g. User{"matt"},User{*name},User{name},User{Name:name}, etc.
@@ -2069,6 +2126,32 @@ func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.Sel
 				name = f.Name()
 			}
 		}
+	case defs.Methoder:
+		caller, err := tr.callerToString(d, sp, n)
+		if err != nil {
+			return nil, err
+		}
+		expr, err := t.Rewrite(caller)
+		if err != nil {
+			return nil, err
+		} else if expr != "" {
+			return jsast.CreateRaw(expr), nil
+		}
+
+		return jsast.CreateCallExpression(
+			jsast.CreateMemberExpression(
+				jsast.CreateMemberExpression(
+					x,
+					jsast.CreateIdentifier(t.Name()),
+					false,
+				),
+				jsast.CreateIdentifier("bind"),
+				false,
+			),
+			[]jsast.IExpression{
+				jsast.CreateThisExpression(),
+			},
+		), nil
 	case defs.Functioner:
 		caller, err := tr.callerToString(d, sp, n)
 		if err != nil {

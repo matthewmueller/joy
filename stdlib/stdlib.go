@@ -174,7 +174,7 @@ var stdlib = map[string]bool{
 	"runtime/race":        false,
 	"runtime/trace":       false,
 	"sort":                false,
-	"strconv":             false,
+	"strconv":             true,
 	"strings":             true,
 	"sync":                false,
 	"sync/atomic":         false,

@@ -14,6 +14,8 @@ func main() {
 		header.New("lol", &jsx.Text{Value: "hi!"}),
 	)
 
+	// preact.Render(hdr, js.Raw("document.body"))
+	// println(document.Body.InnerHTML())
 	js.Raw("preact.render(hdr, document.body)", hdr.Render)
 	println(js.Raw("document.body.innerHTML"))
 	// println(hdr.String())

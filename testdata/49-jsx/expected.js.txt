@@ -614,17 +614,38 @@ pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"] = (funct
 ;
 })();
 pkg["github.com/matthewmueller/golly/testdata/49-jsx/header"] = (function() {
-header.prototype.render = function() {
-var d = this;
-return preact.h("h3", {
-  "class": d.title
-}, [d.children]);
+function state (o) {
+o = o || {};
+this.count = o.count || 0;
 };
-function header (o) {
+header.prototype.onClick = function(e) {
+var d = this;
+d.setState.bind(this)(new state({
+  count: d.state.count + 1
+}));
+};
+function props (o) {
 o = o || {};
 this.title = o.title || "";
 this.children = o.children || [];
 this.bats = o.bats || "";
+};
+header.prototype.render = function() {
+var d = this;
+var children = d.props.children.concat(String(d.state.count));
+return preact.h("h3", {
+  "class": d.props.title,
+  "onClick": d.onClick.bind(this)
+}, [children]);
+};
+function header (o) {
+o = o || {};
+this.Component = o.Component || new preact.Component();
+for (var $k in this.Component || preact.Component.prototype) {
+this[$k] = this[$k] || (this.Component || preact.Component.prototype)[$k]
+};
+this.props = o.props || new props();
+this.state = o.state || new state();
 };
 function New (title) {
 var children = Array.prototype.slice.call(arguments, 1);
