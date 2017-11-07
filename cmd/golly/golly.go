@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
-	"path"
 	"strconv"
 	"strings"
 	"syscall"
@@ -96,10 +95,6 @@ func build(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	// for i, pkg := range packages {
-	// 	packages[i] = path.Join(os.Getenv("GOPATH"), "src", pkg)
-	// }
-	// log.Infof("packages %+v", packages)
 
 	// start := time.Now()
 	compiler := golang.New()
@@ -122,10 +117,6 @@ func serve(ctx context.Context) error {
 	packages, err := getMains(*servePackages)
 	if err != nil {
 		return err
-	}
-
-	for i, pkg := range packages {
-		packages[i] = path.Join(os.Getenv("GOPATH"), "src", pkg)
 	}
 
 	port, e := strconv.Atoi(*servePort)
@@ -156,7 +147,7 @@ func signalContext(ctx context.Context, sig ...os.Signal) context.Context {
 	return ctx
 }
 
-// GoMainDirs returns the file paths to the packages that are "main"
+// GoMainDirs returns absolute file paths to the packages that are "main"
 // packages, from the list of packages given. The list of packages can
 // include relative paths, the special "..." Go keyword, etc.
 //
@@ -200,7 +191,8 @@ func getMains(packages []string) ([]string, error) {
 			// if parts[1] == "command-line-arguments" {
 			// 	parts[1] =
 			// }
-			results = append(results, parts[1])
+
+			results = append(results, strings.TrimPrefix(parts[1], "_"))
 		}
 	}
 

@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/golly/dom/document"
 	"github.com/matthewmueller/golly/jsx"
 	"github.com/matthewmueller/golly/testdata/49-jsx/header"
+	"github.com/matthewmueller/golly/testdata/49-jsx/preact"
 )
 
 func main() {
@@ -14,9 +15,9 @@ func main() {
 		header.New("lol", &jsx.Text{Value: "hi!"}),
 	)
 
-	// preact.Render(hdr, js.Raw("document.body"))
-	// println(document.Body.InnerHTML())
-	js.Raw("preact.render(hdr, document.body)", hdr.Render)
-	println(js.Raw("document.body.innerHTML"))
+	preact.Render(hdr, document.Body)
+	println(document.Body.InnerHTML())
+	// js.Raw("preact.render(hdr, document.body)", hdr.Render)
+	// println(js.Raw("document.body.innerHTML"))
 	// println(hdr.String())
 }

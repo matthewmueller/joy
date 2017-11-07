@@ -613,14 +613,24 @@ pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"] = (funct
 })()
 ;
 })();
+pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact"] = (function() {
+var preact = pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"];
+return {};
+})();
 pkg["github.com/matthewmueller/golly/testdata/49-jsx/header"] = (function() {
 function state (o) {
 o = o || {};
 this.count = o.count || 0;
 };
+header.prototype.getInitialState = function() {
+var d = this;
+return new state({
+  count: 5
+});
+};
 header.prototype.onClick = function(e) {
 var d = this;
-d.setState.bind(this)(new state({
+d.setState(new state({
   count: d.state.count + 1
 }));
 };
@@ -632,11 +642,12 @@ this.bats = o.bats || "";
 };
 header.prototype.render = function() {
 var d = this;
-var children = d.props.children.concat(String(d.state.count));
+;
 return preact.h("h3", {
   "class": d.props.title,
-  "onClick": d.onClick.bind(this)
-}, [children]);
+  "onClick": d.onClick.bind(d),
+  "count": d.state.count
+}, [d.props.children]);
 };
 function header (o) {
 o = o || {};

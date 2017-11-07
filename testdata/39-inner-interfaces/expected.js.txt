@@ -16,7 +16,7 @@ return s.last;
 };
 Subthing.prototype.Name = function() {
 var s = this;
-return s.firstName().String() + " " + s.lastName().String();
+return s.firstName.bind(s)().String() + " " + s.lastName.bind(s)().String();
 };
 function Subthing (o) {
 o = o || {};
@@ -45,7 +45,7 @@ var s = new Thing({
 })
 })
 });
-console.log(s.Subthing.Name());
+console.log(s.Subthing.Name.bind(s.Subthing)());
 };
 return {
   Subthing: Subthing,

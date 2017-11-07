@@ -3,7 +3,6 @@ package loader
 import (
 	"go/build"
 	"go/parser"
-	"os"
 	"path"
 	"path/filepath"
 
@@ -13,18 +12,21 @@ import (
 	"golang.org/x/tools/go/loader"
 )
 
-// Load the packages (Phase I)
+// Load takes full paths to packages and loads them
+// e.g. $GOPATH/src/github.com/matthewmueller/golly/
 func Load(packages ...string) (program *loader.Program, err error) {
 	// defer log.Trace("load").Stop(&err)
 	var conf loader.Config
 
-	// TODO: will this work everytime?
-	gosrc := path.Join(os.Getenv("GOPATH"), "src")
+	goSrc, err := util.GoSourcePath()
+	if err != nil {
+		return nil, err
+	}
 
 	// add all the packages as imports
 	for _, pkgpath := range packages {
-		if filepath.HasPrefix(pkgpath, gosrc) {
-			rel, e := filepath.Rel(gosrc, pkgpath)
+		if filepath.HasPrefix(pkgpath, goSrc) {
+			rel, e := filepath.Rel(goSrc, pkgpath)
 			if e != nil {
 				return nil, e
 			}

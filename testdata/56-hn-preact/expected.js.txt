@@ -1,7 +1,7 @@
 ;
 (function() {
 var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"] = (function() {
+pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/preact/preact.js"] = (function() {
 !(function() {
   'use strict'
   function VNode() {}
@@ -613,38 +613,29 @@ pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"] 
 })()
 ;
 })();
-pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact"] = (function() {
-var preact = pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"];
-return {};
-})();
-pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/header"] = (function() {
-function state (o) {
+pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/item"] = (function() {
+function Item (o) {
 o = o || {};
-this.count = o.count || 0;
+this.ID = o.ID || "";
+this.Score = o.Score || 0;
+this.Descendants = o.Descendants || 0;
+this.Title = o.Title || "";
+this.URL = o.URL || "";
 };
-Header.prototype.OnClick = function(e) {
-var d = this;
-console.log(e.type);
-d.setState(new state({
-  count: d.state.count + 1
-}));
+return {
+  Item: Item
 };
+})();
+pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/app"] = (function() {
+var item = pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/item"];
 function props (o) {
 o = o || {};
-this.title = o.title || "";
-this.children = o.children || [];
-this.bats = o.bats || "";
 };
-Header.prototype.render = function() {
-var d = this;
-var children = d.props.children.concat(String(d.state.count));
-return preact.h("h3", {
-  "class": d.props.title,
-  "count": d.state.count,
-  "onClick": d.OnClick.bind(d)
-}, [children]);
+function state (o) {
+o = o || {};
+this.items = o.items || [];
 };
-function Header (o) {
+function app (o) {
 o = o || {};
 this.Component = o.Component || new preact.Component();
 for (var $k in this.Component || preact.Component.prototype) {
@@ -653,32 +644,26 @@ this[$k] = this[$k] || (this.Component || preact.Component.prototype)[$k]
 this.props = o.props || new props();
 this.state = o.state || new state();
 };
-function New (title) {
-var children = Array.prototype.slice.call(arguments, 1);
-return preact.h(Header, {
-  title: title,
-  children: children,
-  bats: "are crazy"
-});
+function New () {
+return preact.h(app, {});
 };
 return {
-  Header: Header,
   New: New
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly"] = (function() {
-var header = pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/header"];
+pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/preact"] = (function() {
+var preact = pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/preact/preact.js"];
+return {};
+})();
+pkg["github.com/matthewmueller/golly/testdata/56-hn-preact"] = (function() {
+var app = pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/app"];
 function main () {
 ;
-var hdr = preact.h("h2", {
-  "class": "hi"
-}, ["yo!",header.New.apply(null, ["lol"].concat("hi!"))]);
-preact.render(hdr, document.body);
-console.log(document.body.innerHTML);
+preact.render(app.New(), document.body);
 };
 return {
   main: main
 };
 })();
-return pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly"].main();
+return pkg["github.com/matthewmueller/golly/testdata/56-hn-preact"].main();
 })()

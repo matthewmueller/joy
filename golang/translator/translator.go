@@ -2138,20 +2138,26 @@ func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.Sel
 			return jsast.CreateRaw(expr), nil
 		}
 
-		return jsast.CreateCallExpression(
-			jsast.CreateMemberExpression(
+		// only if it's pointing to the same package
+		// TODO: this needs a major cleanup
+		// This should only be present
+		// when it's NOT a call expression
+		if t.Path() == d.Path() {
+			return jsast.CreateCallExpression(
 				jsast.CreateMemberExpression(
-					x,
-					jsast.CreateIdentifier(t.Name()),
+					jsast.CreateMemberExpression(
+						x,
+						jsast.CreateIdentifier(t.Name()),
+						false,
+					),
+					jsast.CreateIdentifier("bind"),
 					false,
 				),
-				jsast.CreateIdentifier("bind"),
-				false,
-			),
-			[]jsast.IExpression{
-				jsast.CreateThisExpression(),
-			},
-		), nil
+				[]jsast.IExpression{x},
+			), nil
+		}
+
+		name = t.Name()
 	case defs.Functioner:
 		caller, err := tr.callerToString(d, sp, n)
 		if err != nil {

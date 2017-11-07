@@ -16,7 +16,13 @@ type Node struct {
 }
 
 // Body is a reference to the document body
-var Body = js.Rewrite("document.body").(*Node)
+var Body = func() *Node {
+	js.Rewrite("document.body")
+	return &Node{
+		nodeType: 1,
+		nodeName: "BODY",
+	}
+}()
 
 // NodeName gets the node name
 func (e *Node) NodeName() string {

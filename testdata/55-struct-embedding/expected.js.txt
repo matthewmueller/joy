@@ -49,7 +49,7 @@ var d = new dog({
   kind: "sloth"
 })
 });
-console.log(d.Name(), d.Legs(), d.kind, d.Type(), d.Entity());
+console.log(d.Name.bind(d)(), d.Legs.bind(d)(), d.kind, d.Type.bind(d)(), d.Entity.bind(d)());
 };
 return {
   main: main

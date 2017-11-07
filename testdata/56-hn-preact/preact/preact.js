@@ -1,7 +1,3 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"] = (function() {
 !(function() {
   'use strict'
   function VNode() {}
@@ -610,75 +606,4 @@ pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"] 
   }
   if ('undefined' != typeof module) module.exports = preact
   else self.preact = preact
-})()
-;
-})();
-pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact"] = (function() {
-var preact = pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"];
-return {};
-})();
-pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/header"] = (function() {
-function state (o) {
-o = o || {};
-this.count = o.count || 0;
-};
-Header.prototype.OnClick = function(e) {
-var d = this;
-console.log(e.type);
-d.setState(new state({
-  count: d.state.count + 1
-}));
-};
-function props (o) {
-o = o || {};
-this.title = o.title || "";
-this.children = o.children || [];
-this.bats = o.bats || "";
-};
-Header.prototype.render = function() {
-var d = this;
-var children = d.props.children.concat(String(d.state.count));
-return preact.h("h3", {
-  "class": d.props.title,
-  "count": d.state.count,
-  "onClick": d.OnClick.bind(d)
-}, [children]);
-};
-function Header (o) {
-o = o || {};
-this.Component = o.Component || new preact.Component();
-for (var $k in this.Component || preact.Component.prototype) {
-this[$k] = this[$k] || (this.Component || preact.Component.prototype)[$k]
-};
-this.props = o.props || new props();
-this.state = o.state || new state();
-};
-function New (title) {
-var children = Array.prototype.slice.call(arguments, 1);
-return preact.h(Header, {
-  title: title,
-  children: children,
-  bats: "are crazy"
-});
-};
-return {
-  Header: Header,
-  New: New
-};
-})();
-pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly"] = (function() {
-var header = pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/header"];
-function main () {
-;
-var hdr = preact.h("h2", {
-  "class": "hi"
-}, ["yo!",header.New.apply(null, ["lol"].concat("hi!"))]);
-preact.render(hdr, document.body);
-console.log(document.body.innerHTML);
-};
-return {
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly"].main();
 })()

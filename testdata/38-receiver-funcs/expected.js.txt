@@ -23,7 +23,7 @@ var s = new Thing({
   name: "matt"
 })
 });
-console.log(s.subthing.Name());
+console.log(s.subthing.Name.bind(s.subthing)());
 };
 return {
   Thing: Thing,

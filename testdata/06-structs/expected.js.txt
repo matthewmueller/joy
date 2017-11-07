@@ -16,7 +16,7 @@ return new Document({
 };
 function main () {
 var doc = New();
-var el = doc.GetElementByID("canvas");
+var el = doc.GetElementByID.bind(doc)("canvas");
 console.log("got element " + el);
 };
 return {
