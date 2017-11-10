@@ -123,8 +123,10 @@ func GetIdentifier(n ast.Node) (*ast.Ident, error) {
 		return GetIdentifier(t.X)
 	case *ast.ArrayType, *ast.MapType, *ast.StructType,
 		*ast.ChanType, *ast.FuncType, *ast.InterfaceType,
-		*ast.FuncLit:
+		*ast.FuncLit, *ast.BinaryExpr:
 		return nil, nil
+	case *ast.SliceExpr:
+		return GetIdentifier(t.X)
 	default:
 		_, file, line, _ := runtime.Caller(2)
 		log.Warnf("file=%s line=%s", file, line)
@@ -221,6 +223,18 @@ func ExprToString(n ast.Node) (string, error) {
 			return "", e
 		}
 		return "{" + k + ":" + v + "}", nil
+	case *ast.BinaryExpr:
+		x, e := ExprToString(t.X)
+		if e != nil {
+			return "", e
+		}
+		y, e := ExprToString(t.Y)
+		if e != nil {
+			return "", e
+		}
+		return x + " " + t.Op.String() + " " + y, nil
+	case *ast.InterfaceType:
+		return "interface{}", nil
 	default:
 		// log.Warnf("exprToString: unhandled %T", n)
 		// return "", nil

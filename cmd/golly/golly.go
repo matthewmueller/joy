@@ -72,22 +72,21 @@ func main() {
 }
 
 func run(ctx context.Context) error {
-	// cwd, err := os.Getwd()
-	// if err != nil {
-	// 	return err
-	// }
-
-	// filePath := path.Join(cwd, *runFile)
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	filePath := path.Join(cwd, *runFile)
 
 	result, err := api.Run(ctx, &api.RunSettings{
 		ChromePath: os.Getenv("GOLLY_CHROME_PATH"),
-		FilePath:   *runFile,
+		FilePath:   filePath,
 	})
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	fmt.Println(result)
 
+	fmt.Println(result)
 	return nil
 }
 
@@ -96,10 +95,6 @@ func build(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	// for i, pkg := range packages {
-	// 	packages[i] = path.Join(os.Getenv("GOPATH"), "src", pkg)
-	// }
-	// log.Infof("packages %+v", packages)
 
 	// start := time.Now()
 	compiler := golang.New()
@@ -122,10 +117,6 @@ func serve(ctx context.Context) error {
 	packages, err := getMains(*servePackages)
 	if err != nil {
 		return err
-	}
-
-	for i, pkg := range packages {
-		packages[i] = path.Join(os.Getenv("GOPATH"), "src", pkg)
 	}
 
 	port, e := strconv.Atoi(*servePort)
@@ -156,7 +147,7 @@ func signalContext(ctx context.Context, sig ...os.Signal) context.Context {
 	return ctx
 }
 
-// GoMainDirs returns the file paths to the packages that are "main"
+// GoMainDirs returns absolute file paths to the packages that are "main"
 // packages, from the list of packages given. The list of packages can
 // include relative paths, the special "..." Go keyword, etc.
 //
@@ -197,10 +188,10 @@ func getMains(packages []string) ([]string, error) {
 			// TODO: not sure if this is reliable
 			// but it's for when you pass a filepath
 			// to go list, it returns command-line-arguments
-			// if parts[1] == "command-line-arguments" {
-			// 	parts[1] =
-			// }
-			results = append(results, parts[1])
+			if parts[1] == "command-line-arguments" {
+				return results, errors.New("building a single file not available yet")
+			}
+			results = append(results, strings.TrimPrefix(parts[1], "_"))
 		}
 	}
 

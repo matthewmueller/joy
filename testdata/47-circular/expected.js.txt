@@ -35,7 +35,7 @@ o = o || {};
 };
 function main () {
 var p = new page({});
-console.log(p.Render());
+console.log(p.Render.bind(p)());
 };
 return {
   main: main

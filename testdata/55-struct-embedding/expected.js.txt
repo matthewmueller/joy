@@ -29,18 +29,18 @@ o = o || {};
 this.kind = o.kind || "";
 this.thing = o.thing || null;
 for (var $k in this.thing || thing.prototype) {
-this[$k] = (this.thing || thing.prototype)[$k]
+this[$k] = this[$k] || (this.thing || thing.prototype)[$k]
 };
 this.entity = o.entity || new entity();
 for (var $k in this.entity || entity.prototype) {
-this[$k] = (this.entity || entity.prototype)[$k]
+this[$k] = this[$k] || (this.entity || entity.prototype)[$k]
 };
 };
 function dog (o) {
 o = o || {};
 this.animal = o.animal || null;
 for (var $k in this.animal || animal.prototype) {
-this[$k] = (this.animal || animal.prototype)[$k]
+this[$k] = this[$k] || (this.animal || animal.prototype)[$k]
 };
 };
 function main () {
@@ -49,7 +49,7 @@ var d = new dog({
   kind: "sloth"
 })
 });
-console.log(d.Name(), d.Legs(), d.kind, d.Type(), d.Entity());
+console.log(d.Name.bind(d)(), d.Legs.bind(d)(), d.kind, d.Type.bind(d)(), d.Entity.bind(d)());
 };
 return {
   main: main

@@ -11,8 +11,8 @@ import (
 func Use(pragma, filepath string) {
 }
 
-// Component interface
-type Component interface {
+// Node interface
+type Node interface {
 	Render() JSX
 }
 
@@ -39,19 +39,22 @@ func (t *Text) String() string {
 // element struct
 // js:"element,omit"
 type element struct {
-	NodeName   string                 `js:"nodeName"`
-	Attributes map[string]interface{} `js:"attributes"`
-	Children   []JSX                  `js:"children"`
+	NodeName   string
+	Attributes map[string]interface{}
+	Children   []JSX
 }
 
 // Element interface
 type Element interface {
-	Component
+	Node
 	JSX
 }
 
+// Attr map
+// type Attr map[string]interface{}
+
 // H creates an HTML element
-func H(name string, attrs map[string]interface{}, children ...Component) Element {
+func H(name string, attrs map[string]interface{}, children ...Node) Element {
 	js.Rewrite("preact.h($1, $2, $3)", name, attrs, children)
 
 	var chs []JSX

@@ -6,8 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pkg/errors"
-
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/golang/def"
@@ -25,7 +23,7 @@ type state struct {
 	imports map[string]string
 	tag     *structtag.Tag
 	deps    []def.Definition
-	rewrite *rewrite
+	rewrite def.Rewrite
 	fields  []*field
 	params  []string
 	async   bool
@@ -62,6 +60,8 @@ func process(idx *index.Index, d def.Definition, n ast.Node) (st *state, err err
 			err = chanType(ctx, t)
 		case *ast.Ident:
 			err = ident(ctx, t)
+		case *ast.CompositeLit:
+			err = compositLit(ctx, t)
 		}
 		return err == nil
 	})
@@ -77,11 +77,17 @@ func funcDecl(ctx *context, n *ast.FuncDecl) error {
 	if e != nil {
 		return e
 	}
-	ctx.state.tag = tag
+
+	// only update state for these top-level definitions
+	switch ctx.d.Kind() {
+	case "FUNCTION", "METHOD":
+		ctx.state.tag = tag
+	}
 
 	if tag != nil && tag.HasOption("async") {
 		ctx.state.async = true
 	}
+
 	return nil
 }
 
@@ -90,7 +96,13 @@ func genDecl(ctx *context, n *ast.GenDecl) error {
 	if e != nil {
 		return e
 	}
-	ctx.state.tag = tag
+
+	// only update state for these top-level definitions
+	switch ctx.d.Kind() {
+	case "STRUCT", "VALUE":
+		ctx.state.tag = tag
+	}
+
 	return nil
 }
 
@@ -132,6 +144,23 @@ func structType(ctx *context, n *ast.StructType) error {
 			})
 		}
 	}
+
+	// stct, ok := ctx.d.(Structer)
+	// if !ok {
+	// 	return errors.New("process/structType: expected struct type to be a structer")
+	// }
+
+	// ifaces, err := stct.Implements()
+	// if err != nil {
+	// 	return err
+	// }
+	// for _, iface := range ifaces {
+	// 	log.Infof("got iface: %s", iface.ID())
+	// }
+
+	// for _, method := range stct.Methods() {
+	// 	log.Infof("method=%s", method)
+	// }
 
 	return nil
 }
@@ -242,6 +271,7 @@ func ident(ctx *context, n *ast.Ident) error {
 
 	// add dependencies
 	if def != nil {
+		// log.Infof("def=%s", def.ID())
 		ignore := false
 
 		// methods shouldn't automatically add their receivers
@@ -261,6 +291,14 @@ func ident(ctx *context, n *ast.Ident) error {
 			return e
 		}
 		ctx.state.async = async
+	}
+
+	return nil
+}
+
+func compositLit(ctx *context, n *ast.CompositeLit) error {
+	if e := maybeVDOMCompositLit(ctx, n); e != nil {
+		return e
 	}
 
 	return nil
@@ -306,7 +344,7 @@ func jsRewrite(ctx *context, n *ast.CallExpr) error {
 	}
 
 	var expr string
-	var vars []int
+	var vars []def.RewriteVariable
 	for i, arg := range n.Args {
 		// handle expression first
 		if i == 0 {
@@ -322,32 +360,17 @@ func jsRewrite(ctx *context, n *ast.CallExpr) error {
 			continue
 		}
 
-		// tack on args when i > 0
-		a, e := util.ExprToString(arg)
+		def, e := ctx.idx.DefinitionOf(ctx.d.Path(), arg)
 		if e != nil {
 			return e
+		} else if def == nil {
+			def = ctx.d
 		}
 
-		// ensure the function parameter name
-		// matches what's inside the rewrite
-		match := ""
-		if isFn {
-			for _, param := range fn.Params() {
-				if param == a {
-					match = param
-				}
-			}
-		}
-
-		// if there's no match, make replacement with
-		// variable right now, otherwise append for later
-		// replacement whenever we actually call that
-		// function
-		if match == "" {
-			expr = strings.Replace(expr, "$"+strconv.Itoa(i), a, -1)
-		} else {
-			vars = append(vars, i)
-		}
+		vars = append(vars, &variable{
+			def:  def,
+			node: arg,
+		})
 	}
 
 	// async/await support within the rewrite
@@ -357,6 +380,7 @@ func jsRewrite(ctx *context, n *ast.CallExpr) error {
 	}
 
 	ctx.state.rewrite = &rewrite{
+		def:      ctx.d,
 		expr:     expr,
 		vars:     vars,
 		variadic: variadic,
@@ -395,44 +419,6 @@ func jsRaw(ctx *context, n *ast.CallExpr) error {
 		strings.Contains(expr, "await") {
 		ctx.state.async = true
 	}
-
-	return nil
-}
-
-func jsxUse(ctx *context, n *ast.CallExpr) error {
-	if len(n.Args) < 2 {
-		return errors.New("process/jsxUse: expected atleast 2 arguments")
-	}
-
-	p, err := util.ExprToString(n.Args[0])
-	if err != nil {
-		return errors.Wrap(err, "process/jsxUse: error getting pragma")
-	}
-	pragma, err := strconv.Unquote(p)
-	if err != nil {
-		return errors.Wrap(err, "process/jsxUse: couldn't unquote pragma")
-	}
-
-	f, err := util.ExprToString(n.Args[1])
-	if err != nil {
-		return errors.Wrap(err, "process/jsxUse: error getting filepath")
-	}
-	filepath, err := strconv.Unquote(f)
-	if err != nil {
-		return errors.Wrap(err, "process/jsxUse: couldn't unquote filepath")
-	}
-
-	// add to the index
-	ctx.idx.SetJSXPragma(pragma)
-
-	// add the file dependency
-	def, e := File(ctx.d.Path(), filepath)
-	if e != nil {
-		return e
-	}
-	ctx.idx.AddDefinition(def)
-	log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
-	ctx.state.deps = append(ctx.state.deps, def)
 
 	return nil
 }

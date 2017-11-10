@@ -212,7 +212,7 @@ func (t *Target) Run(source string) (result string, err error) {
 
 	// hack but probably will work (until I compile with regenerator)
 	awaitPromise := false
-	if strings.Contains(source, "async function main ()") {
+	if strings.Contains(source, "async function main") {
 		awaitPromise = true
 	}
 
@@ -223,10 +223,10 @@ func (t *Target) Run(source string) (result string, err error) {
 		AwaitPromise:    &awaitPromise,
 		GeneratePreview: &generatePreview,
 	})
+
 	if err != nil {
 		return "", err
 	}
-
 	if res.ExceptionDetails != nil {
 		return "", res.ExceptionDetails
 	}

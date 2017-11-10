@@ -7,7 +7,13 @@ import (
 )
 
 // Body is a reference to the document body
-var Body = js.Rewrite("document.body").(*Element)
+var Body = func() *Element {
+	js.Rewrite("document.body")
+	return &Element{
+		nodeType: 1,
+		nodeName: "BODY",
+	}
+}()
 
 // Hello string
 var Hello = "hi!"

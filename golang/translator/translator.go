@@ -126,7 +126,7 @@ func (tr *Translator) functions(d defs.Functioner) (jsast.INode, error) {
 	}
 
 	// function name
-	fnname := jsast.CreateIdentifier(n.Name.Name)
+	fnname := jsast.CreateIdentifier(d.Name())
 
 	// async function
 	isAsync, e := d.IsAsync()
@@ -319,7 +319,6 @@ func (tr *Translator) jsfile(d defs.Filer) (jsast.INode, error) {
 	if e != nil {
 		return nil, e
 	}
-
 	return jsast.CreateRaw(string(buf)), nil
 }
 
@@ -537,36 +536,6 @@ func (tr *Translator) typeSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl
 		return nil, unhandled("typeSpec<StructType>", s.Type)
 	}
 
-	// decl, err := tr.db.DefinitionOf(ctx.info, s.Name)
-	// if err != nil {
-	// 	return nil, err
-	// } else if decl == nil {
-	// 	return nil, errors.New("typeSpec expected a declaration")
-	// }
-
-	// // don't include in the build if it has the global option
-	// if decl.JSTag != nil && decl.JSTag.HasOption("global") {
-	// 	return jsast.CreateEmptyStatement(), nil
-	// }
-
-	// tag, e := getCommentTag(n.Doc)
-	// if e != nil {
-	// 	return nil, e
-	// }
-
-	// fieldtags, e :=
-
-	// store the tag for later renaming
-	// objectof := ctx.info.ObjectOf(s.Name)
-	// typeof := ctx.info.TypeOf(s.Name)
-	// if tag != nil && objectof != nil {
-	// 	ctx.aliases[objectof.String()] = tag
-	// 	ctx.aliases[typeof.String()] = tag
-	// 	// TODO: not sure if this is a good idea or not
-	// 	// but it's to handle pointer receivers in 1 spot
-	// 	ctx.aliases["*"+typeof.String()] = tag
-	// }
-
 	var ivars []interface{}
 	o := jsast.CreateIdentifier("o")
 	expr := jsast.CreateAssignmentExpression(o, jsast.AssignmentOperator("="), defaulted("o", jsast.CreateObjectExpression(nil)))
@@ -625,6 +594,7 @@ func (tr *Translator) typeSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl
 	), nil
 }
 
+// TODO: revamp typeDecl above
 func (tr *Translator) structs(d defs.Structer) (j jsast.IStatement, err error) {
 	n := d.Node()
 	sp := scope.New(n)
@@ -702,10 +672,18 @@ func (tr *Translator) structs(d defs.Structer) (j jsast.IStatement, err error) {
 							true,
 						),
 						jsast.AssignmentOperator("="),
-						jsast.CreateMemberExpression(
-							right,
-							jsast.CreateIdentifier("$k"),
-							true,
+						jsast.CreateLogicalExpression(
+							jsast.CreateMemberExpression(
+								jsast.CreateThisExpression(),
+								jsast.CreateIdentifier("$k"),
+								true,
+							),
+							jsast.LogicalOperator("||"),
+							jsast.CreateMemberExpression(
+								right,
+								jsast.CreateIdentifier("$k"),
+								true,
+							),
 						),
 					),
 				),
@@ -1447,6 +1425,10 @@ func (tr *Translator) returnStmt(d def.Definition, sp *scope.Scope, n *ast.Retur
 		return jsast.CreateReturnStatement(nil), nil
 	}
 
+	// if expr, e := tr.maybeVDOMReturn(d, n); e != nil || expr != nil {
+	// 	return expr, e
+	// }
+
 	var args []jsast.IExpression
 	for _, arg := range n.Results {
 		a, e := tr.expression(d, sp, arg)
@@ -1837,9 +1819,9 @@ func (tr *Translator) jsObjectExpression(d def.Definition, sp *scope.Scope, n *a
 }
 
 func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.CompositeLit) (j jsast.IExpression, err error) {
-	def, err := tr.index.DefinitionOf(d.Path(), n)
-	if err != nil {
-		return nil, err
+	// JSX support
+	if expr, e := tr.maybeVDOMLit(d, n); expr != nil || e != nil {
+		return expr, e
 	}
 
 	fn, e := tr.expression(d, sp, n.Type)
@@ -1854,69 +1836,6 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 			return nil, e
 		}
 		props = append(props, prop)
-	}
-
-	// JSX support
-	if stct, ok := def.(defs.Structer); ok {
-		ifaces, err := stct.Implements()
-		if err != nil {
-			return nil, err
-		}
-
-		jsxPath, err := util.JSXSourcePath()
-		if err != nil {
-			return nil, err
-		}
-
-		for _, iface := range ifaces {
-			if iface.Path() == jsxPath && iface.Name() == "Component" {
-				pragma, err := tr.index.JSXPragma()
-				if err != nil {
-					return nil, err
-				}
-
-				var value jsast.IExpression
-				var nodeName jsast.IExpression
-
-				// TODO: reaching back into the JS AST is brittle because you
-				// have to take into account aliasing (e.g. nodeName vs NodeName)
-				// there's certainly a better approach here, by normalizing the
-				// key values in go, before turning it into jsast.Property
-				for _, prop := range props {
-					if key, ok := prop.Key.(jsast.Identifier); ok {
-						if key.Name == "Value" {
-							value = prop.Value
-							continue
-						} else if key.Name == "nodeName" {
-							nodeName = prop.Value
-							continue
-						}
-					}
-				}
-
-				if stct.Path() == jsxPath && stct.Name() == "Text" {
-					return value, nil
-				}
-
-				if stct.Path() == jsxPath && stct.Name() == "Element" {
-					return jsast.CreateCallExpression(
-						jsast.CreateIdentifier(pragma),
-						[]jsast.IExpression{
-							nodeName,
-							jsast.CreateObjectExpression(props),
-						},
-					), nil
-				}
-
-				return jsast.CreateCallExpression(
-					jsast.CreateIdentifier(pragma),
-					[]jsast.IExpression{
-						fn,
-						jsast.CreateObjectExpression(props),
-					},
-				), nil
-			}
-		}
 	}
 
 	return jsast.CreateNewExpression(
@@ -1939,9 +1858,84 @@ func (tr *Translator) jsArrayExpression(d def.Definition, sp *scope.Scope, n *as
 	return jsast.CreateArrayExpression(elements...), nil
 }
 
-// func (tr *Translator) getKeyValues(d def.Definition, sp *scope.Scope, c *ast.CompositeLit, idx int, n ast.Expr) (key string, value jsast.IExpression, err error) {
+func (tr *Translator) getKeyValues(d def.Definition, sp *scope.Scope, c *ast.CompositeLit) (result map[string]ast.Expr, err error) {
+	result = map[string]ast.Expr{}
 
-// }
+	for i, elt := range c.Elts {
+		var k string
+		var v ast.Expr
+		var e error
+
+		// fast-track: User{Name:name}, User{&name}
+		switch t := elt.(type) {
+		case *ast.UnaryExpr:
+			k, v, e = tr.getKeyValue(d, sp, c, i, t.X)
+		case *ast.KeyValueExpr:
+			k, v, e = tr.getKeyValueExpr(d, sp, c, t)
+		default:
+			k, v, e = tr.getKeyValue(d, sp, c, i, elt)
+		}
+
+		if e != nil {
+			return result, e
+		}
+		result[k] = v
+	}
+
+	return result, nil
+}
+
+func (tr *Translator) getKeyValue(d def.Definition, sp *scope.Scope, c *ast.CompositeLit, idx int, n ast.Expr) (string, ast.Expr, error) {
+	def, e := tr.index.DefinitionOf(d.Path(), c.Type)
+	if e != nil {
+		return "", nil, e
+	}
+	st, ok := def.(defs.Structer)
+	if !ok {
+		return "", nil, fmt.Errorf("property: expected a struct, but got a %T", def)
+	}
+
+	var fields []string
+	for _, field := range st.Fields() {
+		fields = append(fields, field.Name())
+	}
+	if idx >= len(fields) {
+		return "", nil, fmt.Errorf("property: expected idx=%d to be less than len(fields)=%d", idx, len(fields))
+	}
+
+	// User{"matt"},User{name},User{Settings{...}}
+	return fields[idx], n, nil
+}
+
+func (tr *Translator) getKeyValueExpr(d def.Definition, sp *scope.Scope, c *ast.CompositeLit, n *ast.KeyValueExpr) (string, ast.Expr, error) {
+	// fasttrack basic keys: User{"a"}, { "a": ... }
+	switch t := n.Key.(type) {
+	case *ast.BasicLit:
+		return t.Value, n.Value, nil
+	}
+
+	// get the definition of the composite type
+	def, err := tr.index.DefinitionOf(d.Path(), c.Type)
+	if err != nil {
+		return "", nil, err
+	}
+	st, ok := def.(defs.Structer)
+	if !ok {
+		return "", nil, fmt.Errorf("keyValueExpr: expected struct, but got %T", def)
+	}
+
+	// turn into a property
+	switch t := n.Key.(type) {
+	case *ast.Ident:
+		field := st.Field(t.Name)
+		if field == nil {
+			return "", nil, fmt.Errorf("keyValueExpr: didn't expect field (%s) to be nil", t.Name)
+		}
+		return field.Name(), n.Value, nil
+	default:
+		return "", nil, unhandled("keyValueExpr<key>", n.Key)
+	}
+}
 
 // property formats initializing structs in all the various ways
 // e.g. User{"matt"},User{*name},User{name},User{Name:name}, etc.
@@ -2069,24 +2063,48 @@ func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.Sel
 				name = f.Name()
 			}
 		}
-	case defs.Functioner:
-		caller, err := tr.callerToString(d, sp, n)
+	case defs.Methoder:
+		expr, err := tr.Rewrite(t.Rewrite(), d, sp, n)
 		if err != nil {
 			return nil, err
+		} else if expr != nil {
+			return expr, nil
 		}
-		expr, err := t.Rewrite(caller)
+
+		// only if it's pointing to the same package
+		// TODO: this needs a major cleanup
+		// This should only be present
+		// when it's NOT a call expression
+		if t.Path() == d.Path() {
+			return jsast.CreateCallExpression(
+				jsast.CreateMemberExpression(
+					jsast.CreateMemberExpression(
+						x,
+						jsast.CreateIdentifier(t.Name()),
+						false,
+					),
+					jsast.CreateIdentifier("bind"),
+					false,
+				),
+				[]jsast.IExpression{x},
+			), nil
+		}
+
+		name = t.Name()
+	case defs.Functioner:
+		expr, err := tr.Rewrite(t.Rewrite(), d, sp, n)
 		if err != nil {
 			return nil, err
-		} else if expr != "" {
-			return jsast.CreateRaw(expr), nil
+		} else if expr != nil {
+			return expr, nil
 		}
 		name = t.Name()
 	case defs.Valuer:
-		expr, err := t.Rewrite(t.Name())
+		expr, err := tr.Rewrite(t.Rewrite(), d, sp, n)
 		if err != nil {
 			return nil, err
-		} else if expr != "" {
-			return jsast.CreateRaw(expr), nil
+		} else if expr != nil {
+			return expr, nil
 		}
 		name = t.Name()
 	}
@@ -2444,33 +2462,14 @@ func (tr *Translator) maybeJSRewrite(d def.Definition, sp *scope.Scope, n *ast.C
 		return nil, nil
 	}
 
-	// arguments
-	var args []string
-	for _, arg := range n.Args {
-		x, e := tr.expression(d, sp, arg)
-		if e != nil {
-			return nil, e
-		}
-		s, ok := x.(fmt.Stringer)
-		if !ok {
-			return nil, fmt.Errorf("maybeJSRewrite: expression not a fmt.Stringer")
-		}
-		args = append(args, s.String())
-	}
-
-	caller, err := tr.callerToString(d, sp, n.Fun)
-	if err != nil {
-		return nil, err
-	}
-
-	expr, e := fn.Rewrite(caller, args...)
+	expr, e := tr.Rewrite(fn.Rewrite(), d, sp, n.Fun, n.Args...)
 	if e != nil {
 		return nil, e
-	} else if expr == "" {
+	} else if expr == nil {
 		return nil, nil
 	}
 
-	return jsast.CreateRaw(expr), nil
+	return expr, nil
 }
 
 func (tr *Translator) maybeError(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
@@ -2685,25 +2684,4 @@ func slice(name string, i int) jsast.IStatement {
 			),
 		),
 	)
-}
-
-func (tr *Translator) callerToString(d def.Definition, sp *scope.Scope, n ast.Node) (string, error) {
-	xc, err := util.GetExprCaller(n)
-	if err != nil {
-		return "", err
-	} else if xc == nil {
-		return "", nil
-	}
-
-	c, e := tr.expression(d, sp, xc)
-	if e != nil {
-		return "", e
-	}
-
-	s, ok := c.(fmt.Stringer)
-	if !ok {
-		return "", fmt.Errorf("maybeJSRewrite: expression not a fmt.Stringer")
-	}
-
-	return s.String(), nil
 }

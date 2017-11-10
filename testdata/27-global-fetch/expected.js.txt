@@ -97,7 +97,7 @@ var p = fetch("https://api.github.com/users/matthewmueller", null);
 var ch = new runtime.Channel();
 p.then(await async function(v) {
 var res = v;
-return res.json();
+return res.json.bind(res)();
 }).then(await async function(v) {
 await ch.Send(v);
 return null;

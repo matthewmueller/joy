@@ -16,7 +16,7 @@ import (
 type Valuer interface {
 	def.Definition
 	Node() *ast.ValueSpec
-	Rewrite(caller string, arguments ...string) (string, error)
+	Rewrite() def.Rewrite
 }
 
 var _ Valuer = (*values)(nil)
@@ -31,7 +31,7 @@ type values struct {
 	node      *ast.ValueSpec
 	kind      types.Type
 	processed bool
-	rewrite   *rewrite
+	rewrite   def.Rewrite
 	deps      []def.Definition
 	imports   map[string]string
 	async     bool
@@ -123,8 +123,8 @@ func (d *values) Exported() bool {
 }
 
 func (d *values) Omitted() bool {
-	if d.tag != nil {
-		return d.tag.HasOption("omit")
+	if d.tag != nil && d.tag.HasOption("omit") {
+		return true
 	}
 	return d.omit
 }
@@ -146,16 +146,6 @@ func (d *values) FromRuntime() bool {
 }
 
 // Rewrite fn
-func (d *values) Rewrite(caller string, arguments ...string) (string, error) {
-	if !d.processed {
-		if e := d.process(); e != nil {
-			return "", e
-		}
-	}
-
-	if d.rewrite == nil {
-		return "", nil
-	}
-
-	return d.rewrite.Rewrite(caller, arguments)
+func (d *values) Rewrite() def.Rewrite {
+	return d.rewrite
 }

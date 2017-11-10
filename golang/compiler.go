@@ -74,7 +74,7 @@ func (c *Compiler) Parse(packages ...string) (idx *index.Index, g *graph.Graph, 
 
 	idx, err = db.New(program)
 	if err != nil {
-		return idx, g, nil
+		return idx, g, err
 	}
 
 	// initial packages
@@ -85,9 +85,10 @@ func (c *Compiler) Parse(packages ...string) (idx *index.Index, g *graph.Graph, 
 
 	// queue the initial packages
 	queue = append(queue, mains...)
+
 	// mark mains as visited immediately
-	for _, main := range mains {
-		visited[main.ID()] = true
+	for _, q := range queue {
+		visited[q.ID()] = true
 	}
 
 	// build our dependencies graph
@@ -210,6 +211,7 @@ func (c *Compiler) Assemble(idx *index.Index, g *graph.Graph) (scripts []*script
 			// e.g. var runner = pkg["github.com/gorunner/runner"]
 			imports := map[string]jsast.VariableDeclarator{}
 			order := []string{}
+
 			for alias, path := range module.imports {
 				// don't implicitly include imports that don't
 				// have any exports. Note that jsfiles don't

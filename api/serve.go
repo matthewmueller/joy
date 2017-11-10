@@ -124,6 +124,10 @@ func Serve(ctx context.Context, settings *ServeSettings) error {
 		fmt.Fprint(w, html)
 	})
 
+	router.GET("/favicon.ico", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		w.WriteHeader(200)
+	})
+
 	router.GET("/bundle.js", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		w.Header().Add("Content-Type", "application/javascript")
 		bundleLock.RLock()
