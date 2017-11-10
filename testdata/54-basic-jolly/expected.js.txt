@@ -672,7 +672,7 @@ function main () {
 ;
 var hdr = preact.h("h2", {
   "class": "hi"
-}, ["yo!",header.New.apply(null, ["lol"].concat("hi!"))]);
+}, ["yo!", header.New.apply(null, ["lol"].concat("hi!"))]);
 preact.render(hdr, document.body);
 console.log(document.body.innerHTML);
 };

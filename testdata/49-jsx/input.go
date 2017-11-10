@@ -17,7 +17,4 @@ func main() {
 
 	preact.Render(hdr, document.Body)
 	println(document.Body.InnerHTML())
-	// js.Raw("preact.render(hdr, document.body)", hdr.Render)
-	// println(js.Raw("document.body.innerHTML"))
-	// println(hdr.String())
 }

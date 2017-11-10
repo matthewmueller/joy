@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"path"
 	"strconv"
 	"strings"
 	"syscall"
@@ -71,22 +72,21 @@ func main() {
 }
 
 func run(ctx context.Context) error {
-	// cwd, err := os.Getwd()
-	// if err != nil {
-	// 	return err
-	// }
-
-	// filePath := path.Join(cwd, *runFile)
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	filePath := path.Join(cwd, *runFile)
 
 	result, err := api.Run(ctx, &api.RunSettings{
 		ChromePath: os.Getenv("GOLLY_CHROME_PATH"),
-		FilePath:   *runFile,
+		FilePath:   filePath,
 	})
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	fmt.Println(result)
 
+	fmt.Println(result)
 	return nil
 }
 
@@ -188,10 +188,9 @@ func getMains(packages []string) ([]string, error) {
 			// TODO: not sure if this is reliable
 			// but it's for when you pass a filepath
 			// to go list, it returns command-line-arguments
-			// if parts[1] == "command-line-arguments" {
-			// 	parts[1] =
-			// }
-
+			if parts[1] == "command-line-arguments" {
+				return results, errors.New("building a single file not available yet")
+			}
 			results = append(results, strings.TrimPrefix(parts[1], "_"))
 		}
 	}

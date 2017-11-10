@@ -1,0 +1,13 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/58-time-sleep"] = (function() {
+async function main () {
+await new Promise(function(resolve, reject) { setTimeout(resolve, 1 * 1000) });
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/58-time-sleep"].main();
+})()

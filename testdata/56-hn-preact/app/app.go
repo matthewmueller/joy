@@ -35,48 +35,67 @@ func New() jsx.Node {
 	return a
 }
 
-func (a *app) loadItems() {
+func (a *app) loadFirst(nth int) ([]item.Item, error) {
 	res, err := fetch.Get(api + "/v0/topstories.json")
 	if err != nil {
-		println(err)
-		return
+		return nil, err
 	}
 
 	var itemIDs []int
 	if err := res.JSON(&itemIDs); err != nil {
-		return
+		return nil, err
 	}
 
 	// get each item's details
+	// TODO: waitgroup
 	var items []item.Item
-	for _, id := range itemIDs {
-		res, err := fetch.Get(api + "/v0/items/" + strconv.Itoa(id) + ".json")
+	for _, id := range itemIDs[:nth] {
+		res, err := fetch.Get(api + "/v0/item/" + strconv.Itoa(id) + ".json")
 		if err != nil {
-			println(err)
-			return
+			return nil, err
 		}
 
-		var item item.Item
-		if err := res.JSON(&item); err != nil {
-			return
+		var it item.Item
+		if err := res.JSON(&it); err != nil {
+			return nil, err
 		}
-		items = append(items, item)
+		items = append(items, it)
 	}
 
-	a.SetState(&state{
-		items: items,
-	})
+	return items, nil
 }
 
 // js:"componentDidMount"
 func (a *app) ComponentDidMount() {
-	println("component did mount...")
-	a.loadItems()
+	println("loading first...")
+	items, err := a.loadFirst(2)
+	if err != nil {
+		panic(err)
+	}
+
+	println("setting state...")
+	a.SetState(state{
+		items: items,
+	})
 }
 
 // Render
 // js:"render"
 func (a *app) Render() jsx.JSX {
-	println("here")
-	return jsx.H("div", nil, &jsx.Text{Value: "hi..."})
+	var items []jsx.Node
+	// for _, item := range a.state.items {
+	// 	// items = append(items, jsx.T(`
+	// 	// 	<div>{item.ID}</div>
+	// 	// `))
+	// 	items = append(items, jsx.H("div", map[string]interface{}{
+	// 		"key": item.ID,
+	// 	}, &jsx.Text{Value: item.Title}))
+	// }
+
+	// println(items)
+	// // return jsx.T(`
+	// // 	<div>{}</div>
+	// // `)
+	children := append([]jsx.Node{&jsx.Text{Value: "Hi"}}, items...)
+	return jsx.H("div", nil, children...)
 }

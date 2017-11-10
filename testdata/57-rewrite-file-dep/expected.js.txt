@@ -1,0 +1,122 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/57-rewrite-file-dep/fetch/unfetch.js"] = (function() {
+return function fetch(url, options) {
+  options = options || {}
+  return new Promise(function(resolve, reject) {
+    var request = new XMLHttpRequest()
+
+    request.open(options.method || 'get', url)
+
+    for (var i in options.headers) {
+      request.setRequestHeader(i, options.headers[i])
+    }
+
+    request.withCredentials = options.credentials == 'include'
+
+    request.onload = function() {
+      resolve(response())
+    }
+
+    request.onerror = reject
+
+    request.send(options.body)
+
+    function response() {
+      var keys = [],
+        all = [],
+        headers = {},
+        header
+
+      request
+        .getAllResponseHeaders()
+        .replace(/^(.*?):\s*([\s\S]*?)$/gm, function(m, key, value) {
+          keys.push((key = key.toLowerCase()))
+          all.push([key, value])
+          header = headers[key]
+          headers[key] = header ? header + ',' + value : value
+        })
+
+      return {
+        ok: ((request.status / 200) | 0) == 1, // 200-299
+        status: request.status,
+        statusText: request.statusText,
+        url: request.responseURL,
+        clone: response,
+        responseText: request.responseText,
+        text: function() {
+          return Promise.resolve(request.responseText)
+        },
+        json: function() {
+          return Promise.resolve(request.responseText).then(JSON.parse)
+        },
+        blob: function() {
+          return Promise.resolve(new Blob([request.response]))
+        },
+        headers: {
+          keys: function() {
+            return keys
+          },
+          entries: function() {
+            return all
+          },
+          get: function(n) {
+            return headers[n.toLowerCase()]
+          },
+          has: function(n) {
+            return n.toLowerCase() in headers
+          }
+        }
+      }
+    }
+  })
+}
+;
+})();
+pkg["github.com/matthewmueller/golly/testdata/57-rewrite-file-dep"] = (function() {
+function Repo (o) {
+o = o || {};
+this.name = o.name || "";
+};
+async function main () {
+var $response = await (async function (unfetch, url) {
+		try {
+			var res = await unfetch(url)
+			return [ res, null ]
+		} catch (err) {
+			return [ null, err ]
+		}
+	})(pkg["github.com/matthewmueller/golly/testdata/57-rewrite-file-dep/fetch/unfetch.js"], "https://api.github.com/users/matthewmueller/repos")
+	, response = $response[0], err = $response[1];
+if (err != null) {
+console.log(err)
+return 
+};
+var repos = [];
+var e = await (async function ($obj) {
+		try {
+			var $o = await response.json()
+			for (var $k in $o) $obj[$k] = $o[$k]
+			return null
+		} catch ($e) {
+			return $e 
+		}
+	})(repos);
+if (e != null) {
+throw e
+};
+for (var _ = 0, repo; _ < repos.length; _++) {
+var repo = repos[_]
+if (repo.name == ".dotfiles") {
+console.log(repo.name)
+}
+};
+};
+return {
+  Repo: Repo,
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/57-rewrite-file-dep"].main();
+})()

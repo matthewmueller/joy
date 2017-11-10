@@ -26,6 +26,7 @@ func (c *Component) SetState(interface{}) {
 }
 
 // ForceUpdate fn
+// js:"forceUpdate"
 func (c *Component) ForceUpdate() {
 
 }

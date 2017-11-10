@@ -1,0 +1,23 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/59-rename-method/dep"] = (function() {
+function Test () {
+return null;
+};
+return {
+  test: test
+};
+})();
+pkg["github.com/matthewmueller/golly/testdata/59-rename-method"] = (function() {
+var dep = pkg["github.com/matthewmueller/golly/testdata/59-rename-method/dep"];
+function main () {
+console.log(typeof dep.test);
+console.log(dep.test());
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/59-rename-method"].main();
+})()

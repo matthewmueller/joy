@@ -10,4 +10,5 @@ import (
 func main() {
 	jsx.Use("preact.h", "./preact/preact.js")
 	preact.Render(app.New(), document.Body)
+	// time.Sleep(10 * time.Second)
 }

@@ -613,6 +613,79 @@ pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/preact/preact.js"] = 
 })()
 ;
 })();
+pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/fetch/unfetch.js"] = (function() {
+return function fetch(url, options) {
+  options = options || {}
+  return new Promise(function(resolve, reject) {
+    var request = new XMLHttpRequest()
+
+    request.open(options.method || 'get', url)
+
+    for (var i in options.headers) {
+      request.setRequestHeader(i, options.headers[i])
+    }
+
+    request.withCredentials = options.credentials == 'include'
+
+    request.onload = function() {
+      resolve(response())
+    }
+
+    request.onerror = reject
+
+    request.send(options.body)
+
+    function response() {
+      var keys = [],
+        all = [],
+        headers = {},
+        header
+
+      request
+        .getAllResponseHeaders()
+        .replace(/^(.*?):\s*([\s\S]*?)$/gm, function(m, key, value) {
+          keys.push((key = key.toLowerCase()))
+          all.push([key, value])
+          header = headers[key]
+          headers[key] = header ? header + ',' + value : value
+        })
+
+      return {
+        ok: ((request.status / 200) | 0) == 1, // 200-299
+        status: request.status,
+        statusText: request.statusText,
+        url: request.responseURL,
+        clone: response,
+        responseText: request.responseText,
+        text: function() {
+          return Promise.resolve(request.responseText)
+        },
+        json: function() {
+          return Promise.resolve(request.responseText).then(JSON.parse)
+        },
+        blob: function() {
+          return Promise.resolve(new Blob([request.response]))
+        },
+        headers: {
+          keys: function() {
+            return keys
+          },
+          entries: function() {
+            return all
+          },
+          get: function(n) {
+            return headers[n.toLowerCase()]
+          },
+          has: function(n) {
+            return n.toLowerCase() in headers
+          }
+        }
+      }
+    }
+  })
+}
+;
+})();
 pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/item"] = (function() {
 function Item (o) {
 o = o || {};
@@ -626,14 +699,90 @@ return {
   Item: Item
 };
 })();
+pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/preact"] = (function() {
+var preact = pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/preact/preact.js"];
+return {};
+})();
 pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/app"] = (function() {
 var item = pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/item"];
-function props (o) {
-o = o || {};
-};
+var api = "https://hacker-news.firebaseio.com";
 function state (o) {
 o = o || {};
 this.items = o.items || [];
+};
+app.prototype.loadFirst = async function(nth) {
+var a = this;
+var $res = await (async function (unfetch, url) {
+		try {
+			var res = await unfetch(url)
+			return [ res, null ]
+		} catch (err) {
+			return [ null, err ]
+		}
+	})(pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/fetch/unfetch.js"], api + "/v0/topstories.json")
+	, res = $res[0], err = $res[1];
+if (err != null) {
+throw err
+};
+var itemIDs = [];
+var err = await (async function ($obj) {
+		try {
+			var $o = await res.json()
+			for (var $k in $o) $obj[$k] = $o[$k]
+			return null
+		} catch ($e) {
+			return $e
+		}
+	})(itemIDs);
+if (err != null) {
+return 
+};
+var items = [];
+for (var _ = 0, id; _ < itemIDs.slice(0, nth).length; _++) {
+var id = itemIDs.slice(0, nth)[_]
+var $res = await (async function (unfetch, url) {
+		try {
+			var res = await unfetch(url)
+			return [ res, null ]
+		} catch (err) {
+			return [ null, err ]
+		}
+	})(pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/fetch/unfetch.js"], api + "/v0/items/" + String(id) + ".json")
+	, res = $res[0], err = $res[1]
+if (err != null) {
+throw err
+}
+var it = new item.Item()
+var err = await (async function ($obj) {
+		try {
+			var $o = await res.json()
+			for (var $k in $o) $obj[$k] = $o[$k]
+			return null
+		} catch ($e) {
+			return $e
+		}
+	})(it);
+if (err != null) {
+throw err
+}
+items = items.concat(it)
+};
+a.setState(new state({
+  items: items
+}));
+};
+app.prototype.componentDidMount = async function() {
+var a = this;
+console.log("component did mount...");
+await a.loadFirst.bind(a)(2);
+console.log("component finished mounting...");
+};
+app.prototype.render = function() {
+var a = this;
+return preact.h("div", null, ["hi..."]);
+};
+function props (o) {
+o = o || {};
 };
 function app (o) {
 o = o || {};
@@ -644,22 +793,21 @@ this[$k] = this[$k] || (this.Component || preact.Component.prototype)[$k]
 this.props = o.props || new props();
 this.state = o.state || new state();
 };
-function New () {
-return preact.h(app, {});
+async function New () {
+var a = preact.h(app, {});
+;
+;
+return a;
 };
 return {
   New: New
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/preact"] = (function() {
-var preact = pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/preact/preact.js"];
-return {};
-})();
 pkg["github.com/matthewmueller/golly/testdata/56-hn-preact"] = (function() {
 var app = pkg["github.com/matthewmueller/golly/testdata/56-hn-preact/app"];
-function main () {
+async function main () {
 ;
-preact.render(app.New(), document.body);
+preact.render(await app.New(), document.body);
 };
 return {
   main: main

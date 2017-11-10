@@ -16,6 +16,7 @@ import (
 type Methoder interface {
 	Functioner
 	Recv() def.Definition
+	OriginalName() string
 }
 
 var _ Methoder = (*methods)(nil)
@@ -29,6 +30,7 @@ type methods struct {
 	node      *ast.FuncDecl
 	exported  bool
 	params    []string
+	results   []def.FunctionResult
 	recv      string
 	async     bool
 	processed bool
@@ -36,7 +38,7 @@ type methods struct {
 	tag       *structtag.Tag
 	runtime   bool
 	imports   map[string]string
-	rewrite   *rewrite
+	rewrite   def.Rewrite
 	omit      bool
 	variadic  bool
 }
@@ -73,6 +75,29 @@ func Method(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (def.
 		}
 	}
 
+	var results []def.FunctionResult
+	if n.Type.Results != nil {
+		for _, r := range n.Type.Results.List {
+			def, err := index.DefinitionOf(packagePath, r.Type)
+			if err != nil {
+				return nil, err
+			}
+
+			if len(r.Names) == 0 {
+				results = append(results, &result{
+					def: def,
+				})
+			}
+
+			for _, id := range r.Names {
+				results = append(results, &result{
+					name: id.Name,
+					def:  def,
+				})
+			}
+		}
+	}
+
 	// if it's a method don't export,
 	// if it's the main() function
 	// export either way
@@ -93,6 +118,17 @@ func Method(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (def.
 		fromRuntime = true
 	}
 
+	tag, e := util.JSTag(n.Doc)
+	if e != nil {
+		return nil, e
+	}
+
+	// log.Infof("before id=%s tag=%s", id, tag)
+	// async := false
+	// if tag != nil && tag.HasOption("async") {
+	// 	async = true
+	// }
+
 	return &methods{
 		id:       id,
 		index:    index,
@@ -104,8 +140,11 @@ func Method(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (def.
 		recv:     recv,
 		runtime:  fromRuntime,
 		params:   params,
+		results:  results,
 		variadic: variadic,
 		imports:  map[string]string{},
+		tag:      tag,
+		// async:    async,
 	}, nil
 }
 
@@ -114,6 +153,8 @@ func (d *methods) process() (err error) {
 	if e != nil {
 		return e
 	}
+
+	// log.Infof("after name=%s tag=%s", d.name, state.tag)
 
 	// copy state into function
 	d.processed = true
@@ -159,6 +200,10 @@ func (d *methods) Name() string {
 	return d.name
 }
 
+func (d *methods) OriginalName() string {
+	return d.name
+}
+
 func (d *methods) Path() string {
 	return d.path
 }
@@ -179,6 +224,7 @@ func (d *methods) Omitted() bool {
 
 	return d.omit
 }
+
 func (d *methods) Node() *ast.FuncDecl {
 	return d.node
 }
@@ -212,18 +258,8 @@ func (d *methods) FromRuntime() bool {
 }
 
 // Rewrite fn
-func (d *methods) Rewrite(caller string, arguments ...string) (string, error) {
-	if !d.processed {
-		if e := d.process(); e != nil {
-			return "", e
-		}
-	}
-
-	if d.rewrite == nil {
-		return "", nil
-	}
-
-	return d.rewrite.Rewrite(caller, arguments)
+func (d *methods) Rewrite() def.Rewrite {
+	return d.rewrite
 }
 
 // Params fn
@@ -252,4 +288,8 @@ func (d *methods) maybeAsync(def def.Definition) error {
 
 func (d *methods) IsVariadic() bool {
 	return d.variadic
+}
+
+func (d *methods) Results() []def.FunctionResult {
+	return d.results
 }

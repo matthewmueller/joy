@@ -4,7 +4,7 @@ var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/51-variadic-rewrite"] = (function() {
 var one = "1";
 function main () {
-console.log(1, ["b","c"].map(function(a) { return one + "a" + a }).join(' '));
+console.log(1, ["b", "c"].map(function(a) { return one + "a" + a }).join(' '));
 console.log(2, [].map(function(a) { return one + "a" + a }).join(' '));
 };
 return {

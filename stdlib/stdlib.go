@@ -186,7 +186,7 @@ var stdlib = map[string]bool{
 	"text/tabwriter":      false,
 	"text/template":       false,
 	"text/template/parse": false,
-	"time":                false,
+	"time":                true,
 	"unicode":             false,
 	"unicode/utf16":       false,
 	"unicode/utf8":        false,

@@ -122,8 +122,8 @@ func (d *structdef) Exported() bool {
 }
 
 func (d *structdef) Omitted() bool {
-	if d.tag != nil {
-		return d.tag.HasOption("omit")
+	if d.tag != nil && d.tag.HasOption("omit") {
+		return true
 	}
 	return false
 }
@@ -165,8 +165,17 @@ func (d *structdef) FromRuntime() bool {
 }
 
 // Methods functions
-func (d *structdef) Methods() (defs []def.Definition) {
-	return defs
+func (d *structdef) Methods() (methods []def.Definition) {
+	for _, def := range d.index.All() {
+		method, ok := def.(Methoder)
+		if !ok {
+			continue
+		}
+		if d.ID() == method.Recv().ID() {
+			methods = append(methods, method)
+		}
+	}
+	return methods
 }
 
 // Implements function

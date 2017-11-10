@@ -47,3 +47,51 @@ func jsxUse(ctx *context, n *ast.CallExpr) error {
 	return nil
 }
 
+func maybeVDOMCompositLit(ctx *context, n *ast.CompositeLit) error {
+	def, err := ctx.idx.DefinitionOf(ctx.d.Path(), n)
+	if err != nil {
+		return err
+	}
+
+	stct, ok := def.(Structer)
+	if !ok {
+		return nil
+	}
+
+	jsxPath, err := util.JSXSourcePath()
+	if err != nil {
+		return err
+	}
+
+	ifaces, err := stct.Implements()
+	if err != nil {
+		return err
+	}
+
+	isNode := false
+	for _, iface := range ifaces {
+		if iface.Path() == jsxPath && iface.Name() == "Node" {
+			isNode = true
+			break
+		}
+	}
+	if !isNode {
+		return nil
+	}
+
+	for _, method := range stct.Methods() {
+		ctx.state.deps = append(
+			ctx.state.deps,
+			method,
+		)
+	}
+
+	// pragma, err := ctx.idx.JSXPragma()
+	// if err != nil {
+	// 	return err
+	// }
+
+	// log.Infof("name=%s pragma=%s", stct.OriginalName(), pragma)
+
+	return nil
+}

@@ -50,6 +50,9 @@ type Element interface {
 	JSX
 }
 
+// Attr map
+// type Attr map[string]interface{}
+
 // H creates an HTML element
 func H(name string, attrs map[string]interface{}, children ...Node) Element {
 	js.Rewrite("preact.h($1, $2, $3)", name, attrs, children)

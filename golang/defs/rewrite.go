@@ -1,48 +1,51 @@
 package defs
 
 import (
-	"strconv"
-	"strings"
+	"go/ast"
+
+	"github.com/matthewmueller/golly/golang/def"
+	"github.com/matthewmueller/golly/golang/util"
 )
 
+var _ def.Rewrite = (*rewrite)(nil)
+var _ def.RewriteVariable = (*variable)(nil)
+
 type rewrite struct {
+	def      def.Definition
 	expr     string
-	vars     []int
+	vars     []def.RewriteVariable
 	variadic bool
 }
 
-// Rewrite js.Rewrite(expr, arguments...)
-func (r *rewrite) Rewrite(caller string, args []string) (string, error) {
-	// map out the replacements
-	expr := r.expr
+func (r *rewrite) Definition() def.Definition {
+	return r.def
+}
 
-	// handle rewrites inside variadic functions
-	if r.variadic {
-		last := len(r.vars)
-		rest := []string{}
-		for i, arg := range args {
-			if i >= last-1 {
-				rest = append(rest, arg)
-				continue
-			}
-			v := r.vars[i]
-			expr = strings.Replace(expr, "$"+strconv.Itoa(v), arg, -1)
-		}
+func (r *rewrite) Expression() string {
+	return r.expr
+}
 
-		lastv := "[" + strings.Join(rest, ",") + "]"
-		lasti := r.vars[last-1]
-		expr = strings.Replace(expr, "$"+strconv.Itoa(lasti), lastv, -1)
-		return expr, nil
-	}
+func (r *rewrite) Vars() []def.RewriteVariable {
+	return r.vars
+}
 
-	// handle any other rewrite
-	for i, arg := range args {
-		v := r.vars[i]
-		expr = strings.Replace(expr, "$"+strconv.Itoa(v), arg, -1)
-	}
+func (r *rewrite) Variadic() bool {
+	return r.variadic
+}
 
-	// handle the caller
-	expr = strings.Replace(expr, "$<", caller, -1)
+type variable struct {
+	def  def.Definition
+	node ast.Expr
+}
 
-	return expr, nil
+func (v *variable) Definition() def.Definition {
+	return v.def
+}
+
+func (v *variable) Node() ast.Expr {
+	return v.node
+}
+
+func (v *variable) String() (string, error) {
+	return util.ExprToString(v.node)
 }

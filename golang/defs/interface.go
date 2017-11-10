@@ -126,7 +126,7 @@ func (d *interfaces) ImplementedBy(m string) (defs []Methoder) {
 			continue
 		}
 
-		if method.Name() != m {
+		if method.OriginalName() != m {
 			continue
 		}
 

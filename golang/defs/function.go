@@ -19,8 +19,9 @@ type Functioner interface {
 	IsAsync() (bool, error)
 	IsVariadic() bool
 	Node() *ast.FuncDecl
-	Rewrite(caller string, arguments ...string) (string, error)
+	Rewrite() def.Rewrite
 	Params() []string
+	Results() []def.FunctionResult
 }
 
 var _ Functioner = (*functions)(nil)
@@ -38,12 +39,26 @@ type functions struct {
 	runtime   bool
 	processed bool
 	deps      []def.Definition
-	rewrite   *rewrite
+	rewrite   def.Rewrite
+	results   []def.FunctionResult
 	async     bool
 	imports   map[string]string
 	omit      bool
 	params    []string
 	variadic  bool
+}
+
+type result struct {
+	name string
+	def  def.Definition
+}
+
+func (r *result) Name() string {
+	return r.name
+}
+
+func (r *result) Definition() def.Definition {
+	return r.def
 }
 
 // Function fn
@@ -54,6 +69,9 @@ func Function(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (de
 	idParts := []string{packagePath, name}
 	id := strings.Join(idParts, " ")
 
+	// TODO: scoping
+	// scope := info.Scopes[n.Type]
+
 	var params []string
 	var variadic bool
 	for _, param := range n.Type.Params.List {
@@ -62,6 +80,29 @@ func Function(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (de
 		}
 		if _, ok := param.Type.(*ast.Ellipsis); ok {
 			variadic = true
+		}
+	}
+
+	var results []def.FunctionResult
+	if n.Type.Results != nil {
+		for _, r := range n.Type.Results.List {
+			def, err := index.DefinitionOf(packagePath, r.Type)
+			if err != nil {
+				return nil, err
+			}
+
+			if len(r.Names) == 0 {
+				results = append(results, &result{
+					def: def,
+				})
+			}
+
+			for _, id := range r.Names {
+				results = append(results, &result{
+					name: id.Name,
+					def:  def,
+				})
+			}
 		}
 	}
 
@@ -96,6 +137,7 @@ func Function(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (de
 		runtime:  fromRuntime,
 		imports:  map[string]string{},
 		params:   params,
+		results:  results,
 		variadic: variadic,
 	}, nil
 }
@@ -113,7 +155,6 @@ func (d *functions) process() (err error) {
 	d.imports = state.imports
 	d.omit = state.omit
 	d.rewrite = state.rewrite
-	d.params = state.params
 	d.tag = state.tag
 
 	return nil
@@ -151,8 +192,8 @@ func (d *functions) Exported() bool {
 }
 
 func (d *functions) Omitted() bool {
-	if d.tag != nil {
-		return d.tag.HasOption("omit")
+	if d.tag != nil && d.tag.HasOption("omit") {
+		return true
 	}
 	return d.omit
 }
@@ -181,18 +222,8 @@ func (d *functions) IsAsync() (bool, error) {
 }
 
 // Rewrite fn
-func (d *functions) Rewrite(caller string, arguments ...string) (string, error) {
-	if !d.processed {
-		if e := d.process(); e != nil {
-			return "", e
-		}
-	}
-
-	if d.rewrite == nil {
-		return "", nil
-	}
-
-	return d.rewrite.Rewrite(caller, arguments)
+func (d *functions) Rewrite() def.Rewrite {
+	return d.rewrite
 }
 
 // Params fn
@@ -237,4 +268,8 @@ func (d *functions) maybeAsync(def def.Definition) error {
 
 func (d *functions) IsVariadic() bool {
 	return d.variadic
+}
+
+func (d *functions) Results() []def.FunctionResult {
+	return d.results
 }

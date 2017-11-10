@@ -6,6 +6,7 @@ import (
 	"path"
 	"path/filepath"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/util"
 	"github.com/matthewmueller/golly/stdlib"
 	"github.com/pkg/errors"
@@ -24,20 +25,19 @@ func Load(packages ...string) (program *loader.Program, err error) {
 	}
 
 	// add all the packages as imports
-	for _, pkgpath := range packages {
-		if filepath.HasPrefix(pkgpath, goSrc) {
-			rel, e := filepath.Rel(goSrc, pkgpath)
-			if e != nil {
-				return nil, e
-			}
-			pkgpath = rel
+	for _, fullpath := range packages {
+		packagePath, e := filepath.Rel(goSrc, fullpath)
+		if e != nil {
+			return nil, e
 		}
 
 		// support both files and packages
-		if path.Ext(pkgpath) == ".go" {
-			conf.CreateFromFilenames(path.Dir(pkgpath), pkgpath)
+		if path.Ext(fullpath) == ".go" {
+			log.Debugf("path=%s filename=%s", path.Dir(packagePath), fullpath)
+			conf.CreateFromFilenames(path.Dir(packagePath), fullpath)
 		} else {
-			conf.Import(pkgpath)
+			log.Debugf("pkgpath=%s", packagePath)
+			conf.Import(packagePath)
 		}
 	}
 

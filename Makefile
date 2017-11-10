@@ -7,9 +7,15 @@ test:
 		| xargs -n1 go test -timeout=5m -parallel=10 $(TESTARGS)
 .PHONY: tests
 
+jsx:
+	@echo "==> Running jsx example..."
+	@go run cmd/golly/golly.go build ./testdata/49-jsx/
+.PHONY: jsx
+
 hn:
 	@echo "==> Running hackernews example..."
 	@go run cmd/golly/golly.go serve ./testdata/56-hn-preact/
+.PHONY: hn
 
 # Install the commands.
 install:

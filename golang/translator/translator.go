@@ -319,7 +319,6 @@ func (tr *Translator) jsfile(d defs.Filer) (jsast.INode, error) {
 	if e != nil {
 		return nil, e
 	}
-
 	return jsast.CreateRaw(string(buf)), nil
 }
 
@@ -1426,6 +1425,10 @@ func (tr *Translator) returnStmt(d def.Definition, sp *scope.Scope, n *ast.Retur
 		return jsast.CreateReturnStatement(nil), nil
 	}
 
+	// if expr, e := tr.maybeVDOMReturn(d, n); e != nil || expr != nil {
+	// 	return expr, e
+	// }
+
 	var args []jsast.IExpression
 	for _, arg := range n.Results {
 		a, e := tr.expression(d, sp, arg)
@@ -1816,80 +1819,14 @@ func (tr *Translator) jsObjectExpression(d def.Definition, sp *scope.Scope, n *a
 }
 
 func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.CompositeLit) (j jsast.IExpression, err error) {
-	def, err := tr.index.DefinitionOf(d.Path(), n)
-	if err != nil {
-		return nil, err
+	// JSX support
+	if expr, e := tr.maybeVDOMLit(d, n); expr != nil || e != nil {
+		return expr, e
 	}
 
 	fn, e := tr.expression(d, sp, n.Type)
 	if e != nil {
 		return nil, e
-	}
-
-	kvs, e := tr.getKeyValues(d, sp, n)
-	if e != nil {
-		return nil, e
-	}
-
-	// JSX support
-	if stct, ok := def.(defs.Structer); ok {
-		ifaces, err := stct.Implements()
-		if err != nil {
-			return nil, err
-		}
-
-		jsxPath, err := util.JSXSourcePath()
-		if err != nil {
-			return nil, err
-		}
-
-		for _, iface := range ifaces {
-			if iface.Path() == jsxPath && iface.Name() == "Node" {
-				pragma, err := tr.index.JSXPragma()
-				if err != nil {
-					return nil, err
-				}
-
-				// handle text nodes differently
-				if stct.OriginalName() == "Text" {
-					for key, val := range kvs {
-						if strings.ToLower(key) == "value" {
-							return tr.expression(d, sp, val)
-						}
-					}
-					return jsast.CreateString(""), nil
-				}
-
-				// look for props if we have them
-				var props []jsast.Property
-				for key, val := range kvs {
-					if strings.ToLower(key) == "props" {
-						c, ok := val.(*ast.CompositeLit)
-						if !ok {
-							// TODO: should we error here? or just ignore?
-							continue
-							// return nil, fmt.Errorf("translator/jsNewFunction: expected props to be a compositLiteral, but got %T", val)
-						}
-
-						for i, elt := range c.Elts {
-							p, e := tr.property(d, sp, c, i, elt)
-							if e != nil {
-								return nil, e
-							}
-							props = append(props, p)
-						}
-					}
-				}
-
-				return jsast.CreateCallExpression(
-					jsast.CreateIdentifier(pragma),
-					[]jsast.IExpression{
-						fn,
-						jsast.CreateObjectExpression(props),
-					},
-				), nil
-			}
-		}
 	}
 
 	var props []jsast.Property
@@ -2127,15 +2064,11 @@ func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.Sel
 			}
 		}
 	case defs.Methoder:
-		caller, err := tr.callerToString(d, sp, n)
+		expr, err := tr.Rewrite(t.Rewrite(), d, sp, n)
 		if err != nil {
 			return nil, err
-		}
-		expr, err := t.Rewrite(caller)
-		if err != nil {
-			return nil, err
-		} else if expr != "" {
-			return jsast.CreateRaw(expr), nil
+		} else if expr != nil {
+			return expr, nil
 		}
 
 		// only if it's pointing to the same package
@@ -2159,23 +2092,19 @@ func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.Sel
 
 		name = t.Name()
 	case defs.Functioner:
-		caller, err := tr.callerToString(d, sp, n)
+		expr, err := tr.Rewrite(t.Rewrite(), d, sp, n)
 		if err != nil {
 			return nil, err
-		}
-		expr, err := t.Rewrite(caller)
-		if err != nil {
-			return nil, err
-		} else if expr != "" {
-			return jsast.CreateRaw(expr), nil
+		} else if expr != nil {
+			return expr, nil
 		}
 		name = t.Name()
 	case defs.Valuer:
-		expr, err := t.Rewrite(t.Name())
+		expr, err := tr.Rewrite(t.Rewrite(), d, sp, n)
 		if err != nil {
 			return nil, err
-		} else if expr != "" {
-			return jsast.CreateRaw(expr), nil
+		} else if expr != nil {
+			return expr, nil
 		}
 		name = t.Name()
 	}
@@ -2533,33 +2462,14 @@ func (tr *Translator) maybeJSRewrite(d def.Definition, sp *scope.Scope, n *ast.C
 		return nil, nil
 	}
 
-	// arguments
-	var args []string
-	for _, arg := range n.Args {
-		x, e := tr.expression(d, sp, arg)
-		if e != nil {
-			return nil, e
-		}
-		s, ok := x.(fmt.Stringer)
-		if !ok {
-			return nil, fmt.Errorf("maybeJSRewrite: expression not a fmt.Stringer")
-		}
-		args = append(args, s.String())
-	}
-
-	caller, err := tr.callerToString(d, sp, n.Fun)
-	if err != nil {
-		return nil, err
-	}
-
-	expr, e := fn.Rewrite(caller, args...)
+	expr, e := tr.Rewrite(fn.Rewrite(), d, sp, n.Fun, n.Args...)
 	if e != nil {
 		return nil, e
-	} else if expr == "" {
+	} else if expr == nil {
 		return nil, nil
 	}
 
-	return jsast.CreateRaw(expr), nil
+	return expr, nil
 }
 
 func (tr *Translator) maybeError(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
@@ -2774,25 +2684,4 @@ func slice(name string, i int) jsast.IStatement {
 			),
 		),
 	)
-}
-
-func (tr *Translator) callerToString(d def.Definition, sp *scope.Scope, n ast.Node) (string, error) {
-	xc, err := util.GetExprCaller(n)
-	if err != nil {
-		return "", err
-	} else if xc == nil {
-		return "", nil
-	}
-
-	c, e := tr.expression(d, sp, xc)
-	if e != nil {
-		return "", e
-	}
-
-	s, ok := c.(fmt.Stringer)
-	if !ok {
-		return "", fmt.Errorf("maybeJSRewrite: expression not a fmt.Stringer")
-	}
-
-	return s.String(), nil
 }

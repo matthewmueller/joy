@@ -4,22 +4,12 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// unfetch
+var unfetch = js.RawFile("./unfetch.js")
+
 // Options struct
 type Options struct {
 	Method string
-}
-
-// Fetch fn
-func Fetch(url string, options *Options) (Response, error) {
-	js.Rewrite(`
-	try {
-		var res = await unfetch(url, options)
-		return [ res, null ]
-	} catch (err) {
-		return [ null, err ]
-	}
-`, js.RawFile("./unfetch.js"), url, options)
-	return Response{}, nil
 }
 
 // Get fn
@@ -56,7 +46,7 @@ func (r *Response) JSON(v interface{}) error {
 			for (var $k in $o) $obj[$k] = $o[$k]
 			return null
 		} catch ($e) {
-			return $e
+			return $e 
 		}
 	})($1)`, v)
 	return nil

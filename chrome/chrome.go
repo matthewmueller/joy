@@ -223,10 +223,10 @@ func (t *Target) Run(source string) (result string, err error) {
 		AwaitPromise:    &awaitPromise,
 		GeneratePreview: &generatePreview,
 	})
+
 	if err != nil {
 		return "", err
 	}
-
 	if res.ExceptionDetails != nil {
 		return "", res.ExceptionDetails
 	}

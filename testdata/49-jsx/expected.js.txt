@@ -622,13 +622,7 @@ function state (o) {
 o = o || {};
 this.count = o.count || 0;
 };
-header.prototype.getInitialState = function() {
-var d = this;
-return new state({
-  count: 5
-});
-};
-header.prototype.onClick = function(e) {
+Header.prototype.onClick = function(e) {
 var d = this;
 d.setState(new state({
   count: d.state.count + 1
@@ -637,19 +631,22 @@ d.setState(new state({
 function props (o) {
 o = o || {};
 this.title = o.title || "";
-this.children = o.children || [];
 this.bats = o.bats || "";
+this.children = o.children || [];
 };
-header.prototype.render = function() {
+Header.prototype.render = function() {
 var d = this;
-;
 return preact.h("h3", {
   "class": d.props.title,
   "onClick": d.onClick.bind(d),
   "count": d.state.count
 }, [d.props.children]);
 };
-function header (o) {
+Header.prototype.componentWillMount = function() {
+var d = this;
+d.state.count = 5;
+};
+function Header (o) {
 o = o || {};
 this.Component = o.Component || new preact.Component();
 for (var $k in this.Component || preact.Component.prototype) {
@@ -660,13 +657,13 @@ this.state = o.state || new state();
 };
 function New (title) {
 var children = Array.prototype.slice.call(arguments, 1);
-return preact.h(header, {
+return preact.h(Header, {
   title: title,
-  children: children,
-  bats: "are crazy"
+  children: children
 });
 };
 return {
+  Header: Header,
   New: New
 };
 })();
@@ -676,7 +673,7 @@ function main () {
 ;
 var hdr = preact.h("h2", {
   "class": "hi"
-}, ["yo!",header.New.apply(null, ["lol"].concat("hi!"))]);
+}, ["yo!", header.New.apply(null, ["lol"].concat("hi!"))]);
 preact.render(hdr, document.body);
 console.log(document.body.innerHTML);
 };
