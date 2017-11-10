@@ -14,7 +14,7 @@ jsx:
 
 hn:
 	@echo "==> Running hackernews example..."
-	@go run cmd/golly/golly.go serve ./testdata/56-hn-preact/
+	@go run cmd/golly/golly.go serve ./_examples/hn
 .PHONY: hn
 
 # Install the commands.

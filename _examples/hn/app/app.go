@@ -4,9 +4,9 @@ import (
 	"strconv"
 
 	"github.com/matthewmueller/golly/jsx"
-	"github.com/matthewmueller/golly/testdata/56-hn-preact/fetch"
-	"github.com/matthewmueller/golly/testdata/56-hn-preact/item"
-	"github.com/matthewmueller/golly/testdata/56-hn-preact/preact"
+	"github.com/matthewmueller/golly/_examples/hn/fetch"
+	"github.com/matthewmueller/golly/_examples/hn/item"
+	"github.com/matthewmueller/golly/_examples/hn/preact"
 )
 
 var api = "https://hacker-news.firebaseio.com"

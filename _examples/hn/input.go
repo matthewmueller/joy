@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/matthewmueller/golly/dom/document"
 	"github.com/matthewmueller/golly/jsx"
-	"github.com/matthewmueller/golly/testdata/56-hn-preact/app"
-	"github.com/matthewmueller/golly/testdata/56-hn-preact/preact"
+	"github.com/matthewmueller/golly/_examples/hn/app"
+	"github.com/matthewmueller/golly/_examples/hn/preact"
 )
 
 func main() {

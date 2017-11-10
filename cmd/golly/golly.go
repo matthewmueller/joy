@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/matthewmueller/golly/golang/util"
 	"bytes"
 	"context"
 	"fmt"
@@ -159,6 +160,11 @@ func getMains(packages []string) ([]string, error) {
 	// 	return nil, err
 	// }
 
+	goSrc, err := util.GoSourcePath()
+	if err != nil {
+		return nil, err
+	}
+
 	goCmd, err := exec.LookPath("go")
 	if err != nil {
 		return nil, err
@@ -191,7 +197,13 @@ func getMains(packages []string) ([]string, error) {
 			if parts[1] == "command-line-arguments" {
 				return results, errors.New("building a single file not available yet")
 			}
-			results = append(results, strings.TrimPrefix(parts[1], "_"))
+
+			fullpath := strings.TrimPrefix(parts[1], "_")
+			if fullpath[0] != '/' {
+				fullpath = path.Join(goSrc, fullpath)
+			}
+			
+			results = append(results, fullpath)
 		}
 	}
 
