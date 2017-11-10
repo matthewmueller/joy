@@ -126,7 +126,7 @@ func (tr *Translator) functions(d defs.Functioner) (jsast.INode, error) {
 	}
 
 	// function name
-	fnname := jsast.CreateIdentifier(n.Name.Name)
+	fnname := jsast.CreateIdentifier(d.Name())
 
 	// async function
 	isAsync, e := d.IsAsync()

@@ -67,13 +67,11 @@ func (a *app) loadFirst(nth int) ([]item.Item, error) {
 
 // js:"componentDidMount"
 func (a *app) ComponentDidMount() {
-	println("loading first...")
-	items, err := a.loadFirst(2)
+	items, err := a.loadFirst(5)
 	if err != nil {
 		panic(err)
 	}
 
-	println("setting state...")
 	a.SetState(state{
 		items: items,
 	})
@@ -83,19 +81,18 @@ func (a *app) ComponentDidMount() {
 // js:"render"
 func (a *app) Render() jsx.JSX {
 	var items []jsx.Node
-	// for _, item := range a.state.items {
-	// 	// items = append(items, jsx.T(`
-	// 	// 	<div>{item.ID}</div>
-	// 	// `))
-	// 	items = append(items, jsx.H("div", map[string]interface{}{
-	// 		"key": item.ID,
-	// 	}, &jsx.Text{Value: item.Title}))
-	// }
+	for _, item := range a.state.items {
+		items = append(items, jsx.H("div", map[string]interface{}{
+			"key": item.ID,
+		}, jsx.H("a", map[string]interface{}{
+			"href": item.URL,
+			"target":"_blank",
+		}, &jsx.Text{Value: item.Title})))
+	}
 
-	// println(items)
-	// // return jsx.T(`
-	// // 	<div>{}</div>
-	// // `)
-	children := append([]jsx.Node{&jsx.Text{Value: "Hi"}}, items...)
-	return jsx.H("div", nil, children...)
+	if len(items) == 0 {
+		return jsx.H("div", nil, &jsx.Text{Value: "loading..."})
+	}
+
+	return jsx.H("div", nil, items...)
 }

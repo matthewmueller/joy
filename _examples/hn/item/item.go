@@ -4,11 +4,11 @@ import "github.com/matthewmueller/golly/jsx"
 
 // Item from hacker news
 type Item struct {
-	ID          string
-	Score       int
-	Descendants int
-	Title       string
-	URL         string
+	ID          string `json:"id,omitempty" js:"id"`
+	Score       int    `json:"score,omitempty" js:"score"`
+	Descendants int    `json:"descendants,omitempty" js:"descendants"`
+	Title       string `json:"title,omitempty" js:"title"`
+	URL         string `json:"url,omitempty" js:"url"`
 }
 
 type component struct {

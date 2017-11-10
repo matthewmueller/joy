@@ -125,6 +125,11 @@ func Function(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (de
 		fromRuntime = true
 	}
 
+	tag, e := util.JSTag(n.Doc)
+	if e != nil {
+		return nil, e
+	}
+
 	return &functions{
 		index:    index,
 		info:     info,
@@ -139,6 +144,7 @@ func Function(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (de
 		params:   params,
 		results:  results,
 		variadic: variadic,
+		tag:      tag,
 	}, nil
 }
 
@@ -155,7 +161,10 @@ func (d *functions) process() (err error) {
 	d.imports = state.imports
 	d.omit = state.omit
 	d.rewrite = state.rewrite
-	d.tag = state.tag
+
+	if d.tag == nil {
+		d.tag = state.tag
+	}
 
 	return nil
 }

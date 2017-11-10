@@ -2,8 +2,9 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/59-rename-method/dep"] = (function() {
-function Test () {
-return null;
+function test () {
+var items = [];
+return items.concat("a", "b", "c");
 };
 return {
   test: test

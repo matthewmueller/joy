@@ -77,12 +77,17 @@ func funcDecl(ctx *context, n *ast.FuncDecl) error {
 	if e != nil {
 		return e
 	}
-	ctx.state.tag = tag
-	// log.Infof("fundecl: name=%s tag=%+s", ctx.d.ID(), tag)
+
+	// only update state for these top-level definitions
+	switch ctx.d.Kind() {
+	case "FUNCTION", "METHOD":
+		ctx.state.tag = tag
+	}
 
 	if tag != nil && tag.HasOption("async") {
 		ctx.state.async = true
 	}
+
 	return nil
 }
 
@@ -91,7 +96,13 @@ func genDecl(ctx *context, n *ast.GenDecl) error {
 	if e != nil {
 		return e
 	}
-	ctx.state.tag = tag
+
+	// only update state for these top-level definitions
+	switch ctx.d.Kind() {
+	case "STRUCT", "VALUE":
+		ctx.state.tag = tag
+	}
+
 	return nil
 }
 

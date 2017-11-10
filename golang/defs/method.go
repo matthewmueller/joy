@@ -122,7 +122,6 @@ func Method(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (def.
 	if e != nil {
 		return nil, e
 	}
-
 	// log.Infof("before id=%s tag=%s", id, tag)
 	// async := false
 	// if tag != nil && tag.HasOption("async") {
@@ -154,8 +153,6 @@ func (d *methods) process() (err error) {
 		return e
 	}
 
-	// log.Infof("after name=%s tag=%s", d.name, state.tag)
-
 	// copy state into function
 	d.processed = true
 	d.async = state.async
@@ -163,7 +160,11 @@ func (d *methods) process() (err error) {
 	d.imports = state.imports
 	d.omit = state.omit
 	d.rewrite = state.rewrite
-	d.tag = state.tag
+
+	if d.tag == nil {
+		d.tag = state.tag
+	}
+
 	return nil
 }
 
