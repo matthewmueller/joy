@@ -67,11 +67,9 @@ func (tr *Translator) maybeVDOMLit(d def.Definition, n *ast.CompositeLit) (jsast
 	var props []jsast.Property
 	for key, val := range kvs {
 		if strings.ToLower(key) == "props" {
-			c, ok := val.(*ast.CompositeLit)
-			if !ok {
-				// TODO: should we error here? or just ignore?
+			c := findCompositLit(val)
+			if c == nil {
 				continue
-				// return nil, fmt.Errorf("translator/jsNewFunction: expected props to be a compositLiteral, but got %T", val)
 			}
 
 			for i, elt := range c.Elts {
@@ -179,4 +177,14 @@ func findComponentIndex(fn defs.Functioner) (int, error) {
 	}
 
 	return -1, nil
+}
+
+func findCompositLit(n ast.Expr) (*ast.CompositeLit) {
+	switch t := n.(type) {
+	case *ast.CompositeLit:
+		return t
+	case *ast.UnaryExpr:
+		return findCompositLit(t.X)
+	}
+	return nil
 }

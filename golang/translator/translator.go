@@ -2583,7 +2583,7 @@ func (tr *Translator) maybeVariadic(d def.Definition, sp *scope.Scope, n *ast.Ca
 
 	var left []jsast.IExpression
 	var right jsast.IExpression
-	last := len(n.Args) - 1
+	last := len(n.Args) -1
 	for i, arg := range n.Args {
 		v, e := tr.expression(d, sp, arg)
 		if e != nil {

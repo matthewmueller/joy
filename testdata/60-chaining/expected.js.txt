@@ -1,0 +1,41 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.js"] = (function() {
+;
+})();
+pkg["github.com/matthewmueller/golly/testdata/60-chaining/header"] = (function() {
+function props (o) {
+o = o || {};
+this.title = o.title || "";
+this.body = o.body || "";
+this.children = o.children || [];
+};
+header.prototype.Render = function() {
+var h = this;
+return preact.h('strong', map.set('class', h.props.title).json(), []);
+};
+function state (o) {
+o = o || {};
+};
+function header (o) {
+o = o || {};
+this.props = o.props || null;
+this.state = o.state || null;
+};
+return {};
+})();
+pkg["github.com/matthewmueller/golly/testdata/60-chaining"] = (function() {
+function main () {
+;
+var props = map.set('class', "hi").set('id', "cool");
+var h = preact.h(header, { title: "welcome", body: "world" }, [preact.h('strong', map.set('class', "lol...").set('key', "child").json(), [])]);
+var s = preact.h('strong', props.set('key', "lol").json(), [h]);
+console.log(s);
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/60-chaining"].main();
+})()
