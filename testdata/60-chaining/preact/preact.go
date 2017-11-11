@@ -6,8 +6,6 @@ import (
 	"github.com/matthewmueller/golly/jsx"
 )
 
-var preact = js.RawFile("./preact.js")
-
 var _ jsx.Node = (*Component)(nil)
 
 // Component interface
@@ -32,5 +30,5 @@ func (c *Component) ForceUpdate() {
 
 // Render the component
 func Render(component jsx.Node, el *document.Node) {
-	js.Rewrite("$1.render($2, $3)", preact, component, el)
+	js.Rewrite("$1.render($2, $3)", js.RawFile("./preact.js"), component, el)
 }

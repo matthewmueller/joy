@@ -41,6 +41,7 @@ type methods struct {
 	rewrite   def.Rewrite
 	omit      bool
 	variadic  bool
+	rename string
 }
 
 // Method fn
@@ -153,6 +154,8 @@ func (d *methods) process() (err error) {
 		return e
 	}
 
+
+
 	// copy state into function
 	d.processed = true
 	d.async = state.async
@@ -160,6 +163,7 @@ func (d *methods) process() (err error) {
 	d.imports = state.imports
 	d.omit = state.omit
 	d.rewrite = state.rewrite
+	d.rename = state.rename
 
 	if d.tag == nil {
 		d.tag = state.tag
@@ -197,6 +201,9 @@ func (d *methods) ID() string {
 func (d *methods) Name() string {
 	if d.tag != nil {
 		return d.tag.Name
+	}
+	if d.rename != "" {
+		return d.rename
 	}
 	return d.name
 }

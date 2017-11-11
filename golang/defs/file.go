@@ -11,6 +11,7 @@ import (
 // Filer interface
 type Filer interface {
 	def.Definition
+	Implicit() bool
 }
 
 // files struct
@@ -18,12 +19,21 @@ type files struct {
 	id   string
 	path string
 	name string
+	implicit bool
 }
 
 var _ Filer = (*files)(nil)
 
+var filecache = map[string]def.Definition{}
+
 // File constructor
-func File(packagePath, relative string) (def.Definition, error) {
+// 
+// NOTE: implicit includes are files that have been added 
+// during the process, that have no representation
+// in the source code (e.g. preact := js.File("./preact.js"))
+// you shouldn't need this option unless you're working on
+// the compiler
+func File(packagePath, relative string, implicit bool) (def.Definition, error) {
 	src, e := util.GoSourcePath()
 	if e != nil {
 		return nil, e
@@ -32,11 +42,19 @@ func File(packagePath, relative string) (def.Definition, error) {
 	pkgpath := path.Join(packagePath, relative)
 	fullpath := path.Join(src, packagePath, relative)
 
-	return &files{
+	if filecache[fullpath] != nil {
+		return filecache[fullpath], nil
+	}
+	
+	def := &files{
 		id:   fullpath,
 		path: pkgpath,
+		implicit: implicit,
 		name: path.Base(fullpath),
-	}, nil
+	}
+
+	filecache[fullpath] = def
+	return def, nil
 }
 
 func (d *files) ID() string {
@@ -77,4 +95,8 @@ func (d *files) FromRuntime() bool {
 
 func (d *files) Imports() map[string]string {
 	return map[string]string{}
+}
+
+func (d *files) Implicit() bool {
+	return d.implicit
 }

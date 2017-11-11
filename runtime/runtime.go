@@ -108,3 +108,27 @@ func (c *Chan) Recv() interface{} {
 	c.recvs = append(c.recvs, promise)
 	return promise
 }
+
+// Mapper interface
+type Mapper interface {
+	Set(key string, value interface{}) Mapper
+	JSON() map[string]interface{}
+}
+
+type mapper struct {
+	obj map[string]interface{}
+}
+
+// Map creates a new map
+func Map() Mapper {
+	return &mapper{}
+}
+
+func (m *mapper) Set(key string, value interface{}) Mapper {
+	m.obj[key] = value
+	return m
+}
+
+func (m *mapper) JSON() map[string]interface{} {
+	return m.obj
+}

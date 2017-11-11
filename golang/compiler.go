@@ -30,6 +30,7 @@ type module struct {
 	defs    []def.Definition
 	exports []string
 	imports map[string]string
+	isImplicitFile bool
 }
 
 // file struct
@@ -216,9 +217,12 @@ func (c *Compiler) Assemble(idx *index.Index, g *graph.Graph) (scripts []*script
 				// don't implicitly include imports that don't
 				// have any exports. Note that jsfiles don't
 				// have any dependencies but they will still be
-				// included because of an explicit include:
-				// e.g. js.RawFile => pkg[]
-				if len(moduleMap[path].exports) == 0 {
+				// included because of an explicit include
+				// in the code itself:
+				// 
+				// e.g. preact := js.File("./preact.js") translates
+				// to   var preact = pkg["./preact.js"]
+				if len(moduleMap[path].exports) == 0 && !moduleMap[path].isImplicitFile {
 					continue
 				}
 
@@ -396,15 +400,20 @@ func rearrange(defs []def.Definition) []def.Definition {
 }
 
 // group declarations into modules
-func group(defs []def.Definition) (modules []*module, err error) {
+func group(definitions []def.Definition) (modules []*module, err error) {
 	moduleMap := map[string]*module{}
 	order := []string{}
-	for _, def := range defs {
+	for _, def := range definitions {
 		from := def.Path()
+
 
 		if moduleMap[from] == nil {
 			moduleMap[from] = &module{path: from}
 			order = append(order, from)
+		}
+
+		if file, ok := def.(defs.Filer); ok {
+			moduleMap[from].isImplicitFile = file.Implicit()
 		}
 
 		moduleMap[from].defs = append(
@@ -412,7 +421,7 @@ func group(defs []def.Definition) (modules []*module, err error) {
 			def,
 		)
 
-		// log.Debugf("%s: exported=%t omitted=%t", def.ID(), def.Exported(), def.Omitted())
+		log.Debugf("%s: exported=%t omitted=%t", def.ID(), def.Exported(), def.Omitted())
 		if def.Exported() && !def.Omitted() {
 			moduleMap[from].exports = append(
 				moduleMap[from].exports,
@@ -422,9 +431,10 @@ func group(defs []def.Definition) (modules []*module, err error) {
 
 		moduleMap[from].imports = map[string]string{}
 		for alias, path := range def.Imports() {
-			// only include modules whos path is in our
+			// only include modules whose path is in our
 			// topologically sorted map
 			if moduleMap[path] != nil {
+				log.Debugf("adding path %s => %s", alias, path)
 				moduleMap[from].imports[alias] = path
 			}
 		}

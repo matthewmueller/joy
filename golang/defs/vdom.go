@@ -2,6 +2,7 @@ package defs
 
 import (
 	"go/ast"
+	"strings"
 	"strconv"
 
 	"github.com/apex/log"
@@ -32,17 +33,16 @@ func jsxUse(ctx *context, n *ast.CallExpr) error {
 		return errors.Wrap(err, "process/jsxUse: couldn't unquote filepath")
 	}
 
-	// add to the index
-	ctx.idx.SetJSXPragma(pragma)
-
 	// add the file dependency
-	def, e := File(ctx.d.Path(), filepath)
+	file, e := File(ctx.d.Path(), filepath, true)
 	if e != nil {
 		return e
 	}
-	ctx.idx.AddDefinition(def)
-	log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
-	ctx.state.deps = append(ctx.state.deps, def)
+
+	ctx.idx.SetJSXFile(file)
+
+	// add to the index
+	ctx.idx.SetJSXPragma(pragma)	
 
 	return nil
 }
@@ -51,6 +51,8 @@ func maybeVDOMCompositLit(ctx *context, n *ast.CompositeLit) error {
 	def, err := ctx.idx.DefinitionOf(ctx.d.Path(), n)
 	if err != nil {
 		return err
+	} else if def == nil {
+		return nil
 	}
 
 	stct, ok := def.(Structer)
@@ -79,6 +81,29 @@ func maybeVDOMCompositLit(ctx *context, n *ast.CompositeLit) error {
 		return nil
 	}
 
+	file, err := ctx.idx.JSXFile()
+	if err != nil {
+		return err
+	}
+
+	pragma, err := ctx.idx.JSXPragma()
+	if err != nil {
+		return err
+	}
+
+	// get the first part of the pragma
+	// e.g.
+	//   preact.h => preact
+	//   React.createElement => React
+	ids := strings.SplitN(pragma, ".", 2)
+
+
+	ctx.idx.AddDefinition(file)
+	log.Infof("%s -> %s", ctx.d.ID(), file.ID())
+	ctx.state.deps = append(ctx.state.deps, file)
+	ctx.state.imports[ids[0]] = file.Path()
+
+	
 	for _, method := range stct.Methods() {
 		ctx.state.deps = append(
 			ctx.state.deps,
@@ -92,6 +117,45 @@ func maybeVDOMCompositLit(ctx *context, n *ast.CompositeLit) error {
 	// }
 
 	// log.Infof("name=%s pragma=%s", stct.OriginalName(), pragma)
+
+	return nil
+}
+
+func maybeVDOMFuncDecl(ctx *context, n *ast.FuncDecl) error {
+	def, err := ctx.idx.DefinitionOf(ctx.d.Path(), n)
+	if err != nil {
+		return err
+	} else if def == nil {
+		return nil
+	}
+
+	method, ok := def.(Methoder)
+	if !ok {
+		return nil
+	}
+
+	recv := method.Recv()
+	if recv == nil {
+		return nil
+	}
+
+	if method.OriginalName() == "Render" {
+		ctx.state.rename = "render"
+		log.Infof("name=%s", method.ID())
+	}
+
+
+	// ctx.state.
+
+	// jsxPath, err := util.JSXSourcePath()
+	// if err != nil {
+	// 	return err
+	// }
+
+	// ifaces, err := stct.Implements()
+	// if err != nil {
+	// 	return err
+	// }
 
 	return nil
 }

@@ -26,6 +26,7 @@ type state struct {
 	rewrite def.Rewrite
 	fields  []*field
 	params  []string
+	rename string
 	async   bool
 	omit    bool
 }
@@ -86,6 +87,10 @@ func funcDecl(ctx *context, n *ast.FuncDecl) error {
 
 	if tag != nil && tag.HasOption("async") {
 		ctx.state.async = true
+	}
+
+	if e := maybeVDOMFuncDecl(ctx, n); e != nil {
+		return e
 	}
 
 	return nil
@@ -180,6 +185,8 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 	}
 
 	switch cx {
+	case "js.Runtime":
+		return jsRuntime(ctx, n)
 	case "js.RawFile":
 		return jsFile(ctx, n)
 	case "js.Rewrite":
@@ -304,6 +311,50 @@ func compositLit(ctx *context, n *ast.CompositeLit) error {
 	return nil
 }
 
+func jsRuntime(ctx *context, n *ast.CallExpr) error {
+	if len(n.Args) == 0 {
+		return nil
+	}
+
+	var deps []string
+	for _, arg := range n.Args {
+		lit, ok := arg.(*ast.BasicLit)
+		if !ok {
+			return fmt.Errorf("fn process: expected rawfile to have basiclit argument, but got %T", arg)
+		}
+
+		dep, e := strconv.Unquote(lit.Value)
+		if e != nil {
+			return e
+		}
+
+		deps = append(deps, dep)
+	}
+
+	defs, e := ctx.idx.Runtime(deps...)
+	if e != nil {
+		return e
+	}
+	if len(defs) == 0 {
+		return nil
+	}
+
+	// add the runtime path
+	runtimePath, e := util.RuntimePath()	
+	if e != nil {
+		return e
+	}
+	ctx.state.imports["runtime"] = runtimePath
+
+	// update the deps
+	for _, def := range defs {
+		log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
+		ctx.state.deps = append(ctx.state.deps, def)
+	}
+
+	return nil
+}
+
 func jsFile(ctx *context, n *ast.CallExpr) error {
 	if len(n.Args) == 0 {
 		return nil
@@ -319,7 +370,7 @@ func jsFile(ctx *context, n *ast.CallExpr) error {
 		return e
 	}
 
-	def, e := File(ctx.d.Path(), path)
+	def, e := File(ctx.d.Path(), path, false)
 	if e != nil {
 		return e
 	}
