@@ -1,12 +1,13 @@
 package main
 
-
-import "github.com/matthewmueller/golly/testdata/60-chaining/vdom"
-import "github.com/matthewmueller/golly/testdata/60-chaining/header"
-import "github.com/matthewmueller/golly/testdata/60-chaining/strong"
-import "github.com/matthewmueller/golly/testdata/60-chaining/preact"
-import "github.com/matthewmueller/golly/dom/document"
-import "github.com/matthewmueller/golly/jsx"
+import (
+	"github.com/matthewmueller/golly/dom/document"
+	"github.com/matthewmueller/golly/jsx"
+	"github.com/matthewmueller/golly/testdata/60-chaining/header"
+	"github.com/matthewmueller/golly/testdata/60-chaining/preact"
+	"github.com/matthewmueller/golly/testdata/60-chaining/strong"
+	"github.com/matthewmueller/golly/testdata/60-chaining/vdom"
+)
 
 // - type-safe props + state
 // - no generation step so it has IDE proper support
@@ -19,21 +20,14 @@ import "github.com/matthewmueller/golly/jsx"
 
 func main() {
 	jsx.Use("preact.h", "./preact/preact.js")
-	// props := strong.Class("hi").ID("cool")
 
 	v := header.New("some title", "some body",
-		strong.New(strong.Class("some class").ID("some id"), 
+		strong.New(strong.Class("some class").ID("some id"),
 			vdom.T("some text"),
+			header.New("subtitle", "subbody", vdom.T("subbody")),
 		),
 	)
 
-	println(document.Body)
 	preact.Render(v, document.Body)
-	println(document.Body.InnerHTML())	
-	// println(v.Render().String())
-	// h := header.New("welcome", "world", strong.New(strong.Class("lol...").Key("child")))
-	// s := strong.New(props.Key("lol"), h)
-	// println(s)
-	// println(h)
+	println(document.Body.InnerHTML())
 }
-

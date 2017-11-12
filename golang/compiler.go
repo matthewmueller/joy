@@ -26,10 +26,10 @@ import (
 
 // module struct
 type module struct {
-	path    string
-	defs    []def.Definition
-	exports []string
-	imports map[string]string
+	path           string
+	defs           []def.Definition
+	exports        []string
+	imports        map[string]string
 	isImplicitFile bool
 }
 
@@ -219,7 +219,7 @@ func (c *Compiler) Assemble(idx *index.Index, g *graph.Graph) (scripts []*script
 				// have any dependencies but they will still be
 				// included because of an explicit include
 				// in the code itself:
-				// 
+				//
 				// e.g. preact := js.File("./preact.js") translates
 				// to   var preact = pkg["./preact.js"]
 				if len(moduleMap[path].exports) == 0 && !moduleMap[path].isImplicitFile {
@@ -405,7 +405,6 @@ func group(definitions []def.Definition) (modules []*module, err error) {
 	order := []string{}
 	for _, def := range definitions {
 		from := def.Path()
-
 
 		if moduleMap[from] == nil {
 			moduleMap[from] = &module{path: from}

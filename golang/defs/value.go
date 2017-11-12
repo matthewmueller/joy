@@ -98,6 +98,10 @@ func (d *values) Name() string {
 	return d.name
 }
 
+func (d *values) OriginalName() string {
+	return d.name
+}
+
 func (d *values) Kind() string {
 	return "VALUE"
 }

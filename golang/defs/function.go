@@ -185,6 +185,10 @@ func (d *functions) Name() string {
 	return d.name
 }
 
+func (d *functions) OriginalName() string {
+	return d.name
+}
+
 func (d *functions) Path() string {
 	return d.path
 }

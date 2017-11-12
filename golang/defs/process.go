@@ -26,7 +26,7 @@ type state struct {
 	rewrite def.Rewrite
 	fields  []*field
 	params  []string
-	rename string
+	rename  string
 	async   bool
 	omit    bool
 }
@@ -246,7 +246,7 @@ func selectorExpr(ctx *context, n *ast.SelectorExpr) error {
 
 	// add dependencies
 	if def != nil {
-		ignore := false
+		var ignore bool
 
 		// methods shouldn't automatically add their receivers
 		method, ok := ctx.d.(Methoder)
@@ -279,7 +279,7 @@ func ident(ctx *context, n *ast.Ident) error {
 	// add dependencies
 	if def != nil {
 		// log.Infof("def=%s", def.ID())
-		ignore := false
+		var ignore bool
 
 		// methods shouldn't automatically add their receivers
 		method, ok := ctx.d.(Methoder)
@@ -340,7 +340,7 @@ func jsRuntime(ctx *context, n *ast.CallExpr) error {
 	}
 
 	// add the runtime path
-	runtimePath, e := util.RuntimePath()	
+	runtimePath, e := util.RuntimePath()
 	if e != nil {
 		return e
 	}

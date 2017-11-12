@@ -16,7 +16,6 @@ import (
 type Methoder interface {
 	Functioner
 	Recv() def.Definition
-	OriginalName() string
 }
 
 var _ Methoder = (*methods)(nil)

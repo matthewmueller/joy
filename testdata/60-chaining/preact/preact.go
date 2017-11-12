@@ -32,3 +32,7 @@ func (c *Component) ForceUpdate() {
 func Render(component jsx.Node, el *document.Node) {
 	js.Rewrite("$1.render($2, $3)", js.RawFile("./preact.js"), component, el)
 }
+
+func String(component jsx.Node) string {
+	return component.Render().String()
+}

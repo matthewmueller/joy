@@ -1,38 +1,52 @@
 package header
 
-import "github.com/matthewmueller/golly/testdata/60-chaining/strong"
-// import "github.com/matthewmueller/golly/js"
-import "github.com/matthewmueller/golly/jsx"
+import (
+	"strconv"
 
-// Header struct
-type Header struct {
+	"github.com/matthewmueller/golly/jsx"
+	"github.com/matthewmueller/golly/testdata/60-chaining/strong"
+)
+
+// import "github.com/matthewmueller/golly/js"
+
+// header struct
+type header struct {
 	props *props
 	state *state
 }
 
-type props struct{
-	title string
-	body string
+type props struct {
+	title    string
+	body     string
 	children []jsx.Node
 }
 
-type state struct{
-	
+type state struct {
+	id string
 }
 
 // New fn
-func New(title string, body string, children ...jsx.Node) *Header {
-	// js.Rewrite("$1.h(header.Header, { title: $2, body: $3 }, $4)", js.RawFile("../preact/preact.js"), title, body, children)
-	return &Header{
+func New(title string, body string, children ...jsx.Node) *header {
+	return &header{
 		props: &props{
-			title: title,
-			body: body,
+			title:    title,
+			body:     body,
 			children: children,
 		},
 	}
 }
 
 // Render function
-func (h *Header) Render() jsx.JSX {
-	return strong.New(strong.Class(h.props.title))
+func (h *header) Render() jsx.JSX {
+	return strong.New(strong.Class(h.props.title).ID(h.state.id), h.props.children...)
+}
+
+// ComponentWillMount function
+func (h *header) ComponentWillMount() {
+	h.state.id = strconv.Itoa(5)
+}
+
+// ComponentDidMount function
+func (h *header) ComponentDidMount() {
+	println("did mount")
 }

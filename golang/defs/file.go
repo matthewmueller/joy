@@ -26,6 +26,7 @@ var _ Filer = (*files)(nil)
 
 var filecache = map[string]def.Definition{}
 
+
 // File constructor
 // 
 // NOTE: implicit includes are files that have been added 
@@ -62,6 +63,10 @@ func (d *files) ID() string {
 }
 
 func (d *files) Name() string {
+	return d.name
+}
+
+func (d *files) OriginalName() string {
 	return d.name
 }
 
