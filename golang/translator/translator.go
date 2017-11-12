@@ -1458,6 +1458,8 @@ func (tr *Translator) callExpr(d def.Definition, sp *scope.Scope, n *ast.CallExp
 	case "jsx.Use":
 		// remove calls to jsx.Use(...) from the source
 		return nil, nil
+	case "js.Runtime":
+		return tr.jsRuntime(d, sp, n)
 	}
 
 	// create an expression for built-in golang functions like append
@@ -2583,7 +2585,7 @@ func (tr *Translator) maybeVariadic(d def.Definition, sp *scope.Scope, n *ast.Ca
 
 	var left []jsast.IExpression
 	var right jsast.IExpression
-	last := len(n.Args) - 1
+	last := len(n.Args) -1
 	for i, arg := range n.Args {
 		v, e := tr.expression(d, sp, arg)
 		if e != nil {
@@ -2619,6 +2621,44 @@ func (tr *Translator) maybeVariadic(d def.Definition, sp *scope.Scope, n *ast.Ca
 				[]jsast.IExpression{right},
 			),
 		},
+	), nil
+}
+
+func (tr *Translator) jsRuntime(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
+	if len(n.Args) == 0 {
+		return nil, nil
+	}
+
+	lit, ok := n.Args[0].(*ast.BasicLit)
+	if !ok {
+		return nil, fmt.Errorf("fn process: expected js.Runtime to have basiclit argument, but got %T", n.Args[0])
+	}
+
+	dep, e := strconv.Unquote(lit.Value)
+	if e != nil {
+		return nil, e
+	}
+
+	defs, e := tr.index.Runtime(dep)
+	if e != nil {
+		return nil, e
+	}
+
+	if len(defs) == 0 {
+		return nil, fmt.Errorf("fn process: expected js.Runtime to return at least 1 definitions")
+	}
+	def := defs[0]
+
+	// return:
+	// pkg[$runtimepath].$name
+	return jsast.CreateMemberExpression(
+		jsast.CreateMemberExpression(
+			jsast.CreateIdentifier("pkg"),
+			jsast.CreateString(def.Path()),
+			true,
+		),
+		jsast.CreateIdentifier(def.Name()),
+		false,
 	), nil
 }
 

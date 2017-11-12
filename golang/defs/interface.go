@@ -95,6 +95,10 @@ func (d *interfaces) Name() string {
 	return d.name
 }
 
+func (d *interfaces) OriginalName() string {
+	return d.name
+}
+
 func (d *interfaces) Path() string {
 	return d.path
 }

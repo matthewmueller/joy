@@ -22,7 +22,6 @@ type Structer interface {
 	Node() *ast.TypeSpec
 	Fields() []*field
 	Field(name string) *field
-	OriginalName() string
 	Methods() []def.Definition
 	Implements() ([]def.Definition, error)
 }

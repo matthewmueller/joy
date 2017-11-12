@@ -119,6 +119,8 @@ func GetIdentifier(n ast.Node) (*ast.Ident, error) {
 		return GetIdentifier(t.Fun)
 	case *ast.CompositeLit:
 		return GetIdentifier(t.Type)
+	case *ast.FuncDecl:
+		return t.Name, nil
 	case *ast.ParenExpr:
 		return GetIdentifier(t.X)
 	case *ast.ArrayType, *ast.MapType, *ast.StructType,
@@ -129,7 +131,7 @@ func GetIdentifier(n ast.Node) (*ast.Ident, error) {
 		return GetIdentifier(t.X)
 	default:
 		_, file, line, _ := runtime.Caller(2)
-		log.Warnf("file=%s line=%s", file, line)
+		log.Warnf("GetIdentifier: file=%s line=%s", file, line)
 		return nil, fmt.Errorf("GetIdentifier: unhandled %T", n)
 	}
 }

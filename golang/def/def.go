@@ -10,6 +10,7 @@ type Definition interface {
 	ID() string
 	Path() string
 	Name() string
+	OriginalName() string
 	Exported() bool
 	Omitted() bool
 	Type() types.Type

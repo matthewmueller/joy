@@ -15,7 +15,7 @@ import (
 
 type jsxSettings struct {
 	Pragma   string
-	Filepath string
+	File def.Definition
 }
 
 // Index type
@@ -328,6 +328,19 @@ func (i *Index) typeToDef(name string, kind types.Type) (arr []string, err error
 // SetJSXPragma sets up JSX
 func (i *Index) SetJSXPragma(pragma string) {
 	i.jsx.Pragma = pragma
+}
+
+// SetJSXFile sets the jsx file
+func (i *Index) SetJSXFile(def def.Definition) {
+	i.jsx.File = def
+}
+
+// JSXFile gets the jsx file
+func (i *Index) JSXFile() (def.Definition, error) {
+	if i.jsx.File == nil {
+		return nil, errors.New("JSX not setup. Please use jsx.Use(pragma, filepath) in an init()")
+	}
+	return i.jsx.File, nil
 }
 
 // JSXPragma gets our jsx settings if we've specified them

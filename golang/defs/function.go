@@ -46,6 +46,7 @@ type functions struct {
 	omit      bool
 	params    []string
 	variadic  bool
+	rename string
 }
 
 type result struct {
@@ -161,6 +162,7 @@ func (d *functions) process() (err error) {
 	d.imports = state.imports
 	d.omit = state.omit
 	d.rewrite = state.rewrite
+	d.rename = state.rename
 
 	if d.tag == nil {
 		d.tag = state.tag
@@ -177,6 +179,13 @@ func (d *functions) Name() string {
 	if d.tag != nil {
 		return d.tag.Name
 	}
+	if d.rename != "" {
+		return d.rename
+	}
+	return d.name
+}
+
+func (d *functions) OriginalName() string {
 	return d.name
 }
 
