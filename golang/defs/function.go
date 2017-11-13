@@ -46,7 +46,7 @@ type functions struct {
 	omit      bool
 	params    []string
 	variadic  bool
-	rename string
+	rename    string
 }
 
 type result struct {

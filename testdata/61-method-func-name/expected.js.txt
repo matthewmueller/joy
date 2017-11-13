@@ -1,0 +1,25 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/61-method-func-name"] = (function() {
+function test () {
+console.log("func");
+};
+tester.prototype.test = function() {
+var t = this;
+console.log("method");
+};
+function tester (o) {
+o = o || {};
+};
+function main () {
+test();
+var t = new tester({});
+t.test.bind(t)();
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/61-method-func-name"].main();
+})()

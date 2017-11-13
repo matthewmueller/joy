@@ -3,7 +3,6 @@ package defs
 import (
 	"go/ast"
 	"strconv"
-	"strings"
 
 	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/util"
@@ -23,27 +22,27 @@ var componentAPI = map[string]string{
 	"ComponentDidCatch":         "componentDidCatch",
 }
 
-func jsxUse(ctx *context, n *ast.CallExpr) error {
+func vdomUse(ctx *context, n *ast.CallExpr) error {
 	if len(n.Args) < 2 {
-		return errors.New("process/jsxUse: expected atleast 2 arguments")
+		return errors.New("process/vdomUse: expected atleast 2 arguments")
 	}
 
 	p, err := util.ExprToString(n.Args[0])
 	if err != nil {
-		return errors.Wrap(err, "process/jsxUse: error getting pragma")
+		return errors.Wrap(err, "process/vdomUse: error getting pragma")
 	}
 	pragma, err := strconv.Unquote(p)
 	if err != nil {
-		return errors.Wrap(err, "process/jsxUse: couldn't unquote pragma")
+		return errors.Wrap(err, "process/vdomUse: couldn't unquote pragma")
 	}
 
 	f, err := util.ExprToString(n.Args[1])
 	if err != nil {
-		return errors.Wrap(err, "process/jsxUse: error getting filepath")
+		return errors.Wrap(err, "process/vdomUse: error getting filepath")
 	}
 	filepath, err := strconv.Unquote(f)
 	if err != nil {
-		return errors.Wrap(err, "process/jsxUse: couldn't unquote filepath")
+		return errors.Wrap(err, "process/vdomUse: couldn't unquote filepath")
 	}
 
 	// add the file dependency
@@ -52,10 +51,10 @@ func jsxUse(ctx *context, n *ast.CallExpr) error {
 		return e
 	}
 
-	ctx.idx.SetJSXFile(file)
+	ctx.idx.SetVDOMFile(file)
 
 	// add to the index
-	ctx.idx.SetJSXPragma(pragma)
+	ctx.idx.SetVDOMPragma(pragma)
 
 	return nil
 }
@@ -73,7 +72,7 @@ func maybeVDOMCompositLit(ctx *context, n *ast.CompositeLit) error {
 		return nil
 	}
 
-	jsxPath, err := util.JSXSourcePath()
+	vdomPath, err := util.VDOMSourcePath()
 	if err != nil {
 		return err
 	}
@@ -85,7 +84,7 @@ func maybeVDOMCompositLit(ctx *context, n *ast.CompositeLit) error {
 
 	isNode := false
 	for _, iface := range ifaces {
-		if iface.Path() == jsxPath && iface.Name() == "Node" {
+		if iface.Path() == vdomPath && iface.Name() == "Component" {
 			isNode = true
 			break
 		}
@@ -106,26 +105,26 @@ func maybeVDOMCompositLit(ctx *context, n *ast.CompositeLit) error {
 		)
 	}
 
-	file, err := ctx.idx.JSXFile()
+	file, err := ctx.idx.VDOMFile()
 	if err != nil {
 		return err
 	}
 
-	pragma, err := ctx.idx.JSXPragma()
-	if err != nil {
-		return err
-	}
+	// pragma, err := ctx.idx.VDOMPragma()
+	// if err != nil {
+	// 	return err
+	// }
 
 	// get the first part of the pragma
 	// e.g.
 	//   preact.h => preact
 	//   React.createElement => React
-	ids := strings.SplitN(pragma, ".", 2)
+	// ids := strings.SplitN(pragma, ".", 2)
 
 	ctx.idx.AddDefinition(file)
 	log.Debugf("%s -> %s", ctx.d.ID(), file.ID())
 	ctx.state.deps = append(ctx.state.deps, file)
-	ctx.state.imports[ids[0]] = file.Path()
+	// ctx.state.imports[ids[0]] = file.Path()
 
 	return nil
 }
@@ -153,7 +152,7 @@ func maybeVDOMFuncDecl(ctx *context, n *ast.FuncDecl) error {
 		return errors.New("maybeVDOMFuncDecl: expected receiver to be a struct")
 	}
 
-	jsxPath, err := util.JSXSourcePath()
+	vdomPath, err := util.VDOMSourcePath()
 	if err != nil {
 		return err
 	}
@@ -165,7 +164,7 @@ func maybeVDOMFuncDecl(ctx *context, n *ast.FuncDecl) error {
 
 	isComponent := false
 	for _, def := range defs {
-		if def.OriginalName() == "Node" && jsxPath == def.Path() {
+		if def.OriginalName() == "Component" && vdomPath == def.Path() {
 			isComponent = true
 		}
 	}

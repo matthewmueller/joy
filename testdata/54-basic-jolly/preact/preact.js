@@ -1,20 +1,20 @@
-!(function() {
+return (function () {
   'use strict'
-  function VNode() {}
+  function VNode() { }
   function h(nodeName, attributes) {
     var lastSimple,
       child,
       simple,
       i,
       children = EMPTY_CHILDREN
-    for (i = arguments.length; i-- > 2; ) stack.push(arguments[i])
+    for (i = arguments.length; i-- > 2;) stack.push(arguments[i])
     if (attributes && null != attributes.children) {
       if (!stack.length) stack.push(attributes.children)
       delete attributes.children
     }
     while (stack.length)
       if ((child = stack.pop()) && void 0 !== child.pop)
-        for (i = child.length; i--; ) stack.push(child[i])
+        for (i = child.length; i--;) stack.push(child[i])
       else {
         if ('boolean' == typeof child) child = null
         if ((simple = 'function' != typeof nodeName))
@@ -115,7 +115,7 @@
       if (value) {
         if (!old) node.addEventListener(name, eventProxy, useCapture)
       } else node.removeEventListener(name, eventProxy, useCapture)
-      ;(node.__l || (node.__l = {}))[name] = value
+        ; (node.__l || (node.__l = {}))[name] = value
     } else if ('list' !== name && 'type' !== name && !isSvg && name in node) {
       setProperty(node, name, null == value ? '' : value)
       if (null == value || !1 === value) node.removeAttribute(name)
@@ -141,7 +141,7 @@
   function setProperty(node, name, value) {
     try {
       node[name] = value
-    } catch (e) {}
+    } catch (e) { }
   }
   function eventProxy(e) {
     return this.__l[e.type]((options.event && options.event(e)) || e)
@@ -207,7 +207,7 @@
       vchildren = vnode.children
     if (null == props) {
       props = out.__preactattr_ = {}
-      for (var a = out.attributes, i = a.length; i--; )
+      for (var a = out.attributes, i = a.length; i--;)
         props[a[i].name] = a[i].value
     }
     if (
@@ -332,14 +332,14 @@
           'innerHTML' === name ||
           (name in old &&
             attrs[name] ===
-              ('value' === name || 'checked' === name ? dom[name] : old[name]))
+            ('value' === name || 'checked' === name ? dom[name] : old[name]))
         )
       )
         setAccessor(dom, name, old[name], (old[name] = attrs[name]), isSvgMode)
   }
   function collectComponent(component) {
     var name = component.constructor.name
-    ;(components[name] || (components[name] = [])).push(component)
+      ; (components[name] || (components[name] = [])).push(component)
   }
   function createComponent(Ctor, props, context) {
     var inst,
@@ -353,7 +353,7 @@
       inst.render = doRender
     }
     if (list)
-      for (var i = list.length; i--; )
+      for (var i = list.length; i--;)
         if (list[i].constructor === Ctor) {
           inst.__b = list[i].__b
           list.splice(i, 1)
@@ -582,20 +582,20 @@
   var hydrating = !1
   var components = {}
   extend(Component.prototype, {
-    setState: function(state, callback) {
+    setState: function (state, callback) {
       var s = this.state
       if (!this.__s) this.__s = extend({}, s)
       extend(s, 'function' == typeof state ? state(s, this.props) : state)
       if (callback) (this.__h = this.__h || []).push(callback)
       enqueueRender(this)
     },
-    forceUpdate: function(callback) {
+    forceUpdate: function (callback) {
       if (callback) (this.__h = this.__h || []).push(callback)
       renderComponent(this, 2)
     },
-    render: function() {}
+    render: function () { }
   })
-  var preact = {
+  return {
     h: h,
     createElement: h,
     cloneElement: cloneElement,
@@ -604,6 +604,4 @@
     rerender: rerender,
     options: options
   }
-  if ('undefined' != typeof module) module.exports = preact
-  else self.preact = preact
 })()

@@ -13,9 +13,9 @@ import (
 	"golang.org/x/tools/go/loader"
 )
 
-type jsxSettings struct {
-	Pragma   string
-	File def.Definition
+type vdomSettings struct {
+	Pragma string
+	File   def.Definition
 }
 
 // Index type
@@ -25,7 +25,7 @@ type Index struct {
 	aliases  map[string]def.Definition
 	defpaths map[string][]def.Definition
 	imports  map[string]map[string]string
-	jsx      jsxSettings
+	vdom     vdomSettings
 }
 
 // New index
@@ -207,6 +207,13 @@ func (i *Index) selectorDefinition(packagePath string, n *ast.SelectorExpr) (def
 		return nil, e
 	}
 
+	// x, e := util.ExprToString(n.Sel)
+	// if e != nil {
+	// 	return nil, e
+	// }
+	// log.Infof("got x=%s %s", x, sel.Kind())
+	// log.Infof("sel=%s", sel.Kind())
+
 	// prioritize selector definitions for functions
 	if sel != nil && sel.Kind() != "STRUCT" {
 		return sel, nil
@@ -246,13 +253,6 @@ func (i *Index) identDefinition(packagePath string, n *ast.Ident) (def.Definitio
 		return nil, nil
 	}
 
-	// first try getting the definition from
-	// the package and object name
-	d := i.defs[pkg.Path()+" "+obj.Name()]
-	if d != nil {
-		return d, nil
-	}
-
 	// lookup using the type. Useful for:
 	// - local variables
 	// - methods (funcs w/ receivers)
@@ -261,8 +261,30 @@ func (i *Index) identDefinition(packagePath string, n *ast.Ident) (def.Definitio
 		return nil, err
 	}
 
-	id := strings.Join(ids, " ")
-	return i.Get(id), nil
+	// first try getting the definition from
+	// the package and object name
+	//
+	// TODO: d.Kind() != "FUNCTION"
+	// is a hack to make sure that we prioritize methods over functions
+	// e.g. t.test() > test()
+	// ... but prioritize values over methods
+	// e.g (document.Body).InnerHTML() > document.(Body.InnerHTML()))
+	d := i.Get(pkg.Path() + " " + obj.Name())
+	if d != nil && d.Kind() != "FUNCTION" {
+		return d, nil
+	}
+
+	if len(ids) > 0 {
+		id := strings.Join(ids, " ")
+		if d := i.Get(id); d != nil {
+			return d, nil
+		}
+	}
+
+	// if we didn't find the method,
+	// return the function which may
+	// or may not be nil
+	return d, nil
 }
 
 // TypeOf fn
@@ -325,28 +347,28 @@ func (i *Index) typeToDef(name string, kind types.Type) (arr []string, err error
 	return arr, nil
 }
 
-// SetJSXPragma sets up JSX
-func (i *Index) SetJSXPragma(pragma string) {
-	i.jsx.Pragma = pragma
+// SetVDOMPragma sets up JSX
+func (i *Index) SetVDOMPragma(pragma string) {
+	i.vdom.Pragma = pragma
 }
 
-// SetJSXFile sets the jsx file
-func (i *Index) SetJSXFile(def def.Definition) {
-	i.jsx.File = def
+// SetVDOMFile sets the vdom file
+func (i *Index) SetVDOMFile(def def.Definition) {
+	i.vdom.File = def
 }
 
-// JSXFile gets the jsx file
-func (i *Index) JSXFile() (def.Definition, error) {
-	if i.jsx.File == nil {
+// VDOMFile gets the vdom file
+func (i *Index) VDOMFile() (def.Definition, error) {
+	if i.vdom.File == nil {
 		return nil, errors.New("JSX not setup. Please use jsx.Use(pragma, filepath) in an init()")
 	}
-	return i.jsx.File, nil
+	return i.vdom.File, nil
 }
 
-// JSXPragma gets our jsx settings if we've specified them
-func (i *Index) JSXPragma() (string, error) {
-	if i.jsx.Pragma == "" {
+// VDOMPragma gets our jsx settings if we've specified them
+func (i *Index) VDOMPragma() (string, error) {
+	if i.vdom.Pragma == "" {
 		return "", errors.New("JSX not setup. Please use jsx.Use(pragma, filepath) in an init()")
 	}
-	return i.jsx.Pragma, nil
+	return i.vdom.Pragma, nil
 }

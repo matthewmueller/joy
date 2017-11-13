@@ -634,7 +634,7 @@ func (tr *Translator) structs(d defs.Structer) (j jsast.IStatement, err error) {
 		// TODO: this works surprisingly well, but
 		// I'm not 100% sure it's to spec yet.
 		if field.Embedded() {
-			fullName, err := util.ExprToString(field.Type())
+			expr, err := tr.expression(d, sp, field.Type())
 			if err != nil {
 				return nil, err
 			}
@@ -657,7 +657,7 @@ func (tr *Translator) structs(d defs.Structer) (j jsast.IStatement, err error) {
 				jsast.CreateMemberExpression(
 					// TODO: this is lazy & should probably
 					// be a member fn
-					jsast.CreateRaw(fullName),
+					expr,
 					jsast.CreateIdentifier("prototype"),
 					false,
 				),
@@ -1455,9 +1455,13 @@ func (tr *Translator) callExpr(d def.Definition, sp *scope.Scope, n *ast.CallExp
 
 	// TODO: move all special expressions to this style
 	switch expr {
-	case "jsx.Use":
-		// remove calls to jsx.Use(...) from the source
+	case "vdom.Use":
+		// remove calls to vdom.Use(...) from the source
 		return nil, nil
+	case "vdom.Pragma":
+		return tr.vdomPragma(d, sp, n)
+	case "vdom.File":
+		return tr.vdomFile(d, sp, n)
 	case "js.Runtime":
 		return tr.jsRuntime(d, sp, n)
 	}
@@ -1821,7 +1825,7 @@ func (tr *Translator) jsObjectExpression(d def.Definition, sp *scope.Scope, n *a
 }
 
 func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.CompositeLit) (j jsast.IExpression, err error) {
-	// JSX support
+	// VDOM support
 	if expr, e := tr.maybeVDOMLit(d, n); expr != nil || e != nil {
 		return expr, e
 	}
@@ -2036,6 +2040,15 @@ func (tr *Translator) keyValueExpr(d def.Definition, sp *scope.Scope, c *ast.Com
 }
 
 func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.SelectorExpr) (j jsast.IExpression, err error) {
+	str, e := util.ExprToString(n)
+	if e != nil {
+		return nil, e
+	}
+	switch str {
+	case "vdom.Component":
+		return tr.vdomComponent(d, sp, n)
+	}
+
 	// (user.phone).number
 	x, e := tr.expression(d, sp, n.X)
 	if e != nil {
@@ -2366,13 +2379,12 @@ func (tr *Translator) defaultValue(d def.Definition, sp *scope.Scope, expr ast.E
 	case *ast.FuncType:
 		return jsast.Null, nil
 	case *ast.SelectorExpr:
-		x, e := tr.expression(d, sp, t.X)
+		x, e := tr.selectorExpr(d, sp, t)
 		if e != nil {
 			return nil, e
 		}
-		id := jsast.CreateIdentifier(t.Sel.Name)
 		return jsast.CreateNewExpression(
-			jsast.CreateMemberExpression(x, id, false),
+			x,
 			nil,
 		), nil
 	default:
@@ -2585,7 +2597,7 @@ func (tr *Translator) maybeVariadic(d def.Definition, sp *scope.Scope, n *ast.Ca
 
 	var left []jsast.IExpression
 	var right jsast.IExpression
-	last := len(n.Args) -1
+	last := len(n.Args) - 1
 	for i, arg := range n.Args {
 		v, e := tr.expression(d, sp, arg)
 		if e != nil {

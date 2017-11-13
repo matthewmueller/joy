@@ -102,6 +102,8 @@ func (c *Compiler) Parse(packages ...string) (idx *index.Index, g *graph.Graph, 
 		// mark as visited
 		visited[d.ID()] = true
 
+		log.Debugf("visiting=%s kind=%s", d.ID(), d.Kind())
+
 		// get the dependencies
 		deps, err := d.Dependencies()
 		if err != nil {

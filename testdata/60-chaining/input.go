@@ -2,11 +2,10 @@ package main
 
 import (
 	"github.com/matthewmueller/golly/dom/document"
-	"github.com/matthewmueller/golly/jsx"
 	"github.com/matthewmueller/golly/testdata/60-chaining/header"
 	"github.com/matthewmueller/golly/testdata/60-chaining/preact"
-	"github.com/matthewmueller/golly/testdata/60-chaining/strong"
-	"github.com/matthewmueller/golly/testdata/60-chaining/vdom"
+	"github.com/matthewmueller/golly/vdom"
+	"github.com/matthewmueller/golly/vdom/h/strong"
 )
 
 // - type-safe props + state
@@ -19,12 +18,12 @@ import (
 // - can have multiple elements in a single file
 
 func main() {
-	jsx.Use("preact.h", "./preact/preact.js")
+	vdom.Use("preact.h", "./preact/preact.js")
 
 	v := header.New("some title", "some body",
 		strong.New(strong.Class("some class").ID("some id"),
-			vdom.T("some text"),
-			header.New("subtitle", "subbody", vdom.T("subbody")),
+			vdom.S("some text"),
+			header.New("subtitle", "subbody", vdom.S("subbody")),
 		),
 	)
 

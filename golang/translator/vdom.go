@@ -4,9 +4,10 @@ import (
 	"go/ast"
 	"strings"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/defs"
+	"github.com/matthewmueller/golly/golang/index"
+	"github.com/matthewmueller/golly/golang/scope"
 	"github.com/matthewmueller/golly/golang/util"
 	"github.com/matthewmueller/golly/jsast"
 )
@@ -22,7 +23,7 @@ func (tr *Translator) maybeVDOMLit(d def.Definition, n *ast.CompositeLit) (jsast
 		return nil, nil
 	}
 
-	jsxPath, err := util.JSXSourcePath()
+	vdomPath, err := util.VDOMSourcePath()
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +35,7 @@ func (tr *Translator) maybeVDOMLit(d def.Definition, n *ast.CompositeLit) (jsast
 
 	isNode := false
 	for _, iface := range ifaces {
-		if iface.Path() == jsxPath && iface.Name() == "Node" {
+		if iface.Path() == vdomPath && iface.Name() == "Component" {
 			isNode = true
 			break
 		}
@@ -43,25 +44,20 @@ func (tr *Translator) maybeVDOMLit(d def.Definition, n *ast.CompositeLit) (jsast
 		return nil, nil
 	}
 
-	pragma, err := tr.index.JSXPragma()
-	if err != nil {
-		return nil, err
-	}
-
 	kvs, e := tr.getKeyValues(d, nil, n)
 	if e != nil {
 		return nil, e
 	}
 
 	// handle text nodes differently
-	if stct.OriginalName() == "Text" {
-		for key, val := range kvs {
-			if strings.ToLower(key) == "value" {
-				return tr.expression(d, nil, val)
-			}
-		}
-		return jsast.CreateString(""), nil
-	}
+	// if stct.OriginalName() == "Text" {
+	// 	for key, val := range kvs {
+	// 		if strings.ToLower(key) == "value" {
+	// 			return tr.expression(d, nil, val)
+	// 		}
+	// 	}
+	// 	return jsast.CreateString(""), nil
+	// }
 
 	// look for props if we have them
 	var props []jsast.Property
@@ -87,8 +83,13 @@ func (tr *Translator) maybeVDOMLit(d def.Definition, n *ast.CompositeLit) (jsast
 		return nil, e
 	}
 
+	pragma, err := resolveVDOMPragma(tr.index)
+	if err != nil {
+		return nil, err
+	}
+
 	return jsast.CreateCallExpression(
-		jsast.CreateIdentifier(pragma),
+		pragma,
 		[]jsast.IExpression{
 			fn,
 			jsast.CreateObjectExpression(props),
@@ -96,58 +97,67 @@ func (tr *Translator) maybeVDOMLit(d def.Definition, n *ast.CompositeLit) (jsast
 	), nil
 }
 
-func (tr *Translator) maybeVDOMReturn(d def.Definition, n *ast.ReturnStmt) (j jsast.IStatement, err error) {
-	fn, ok := d.(defs.Functioner)
-	if !ok {
-		return nil, nil
-	}
+func (tr *Translator) vdomPragma(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (j jsast.IExpression, err error) {
+	return resolveVDOMPragma(tr.index)
+}
 
-	idx, err := findComponentIndex(fn)
+func (tr *Translator) vdomFile(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (j jsast.IExpression, err error) {
+	return resolveVDOMFile(tr.index)
+}
+
+func (tr *Translator) vdomComponent(d def.Definition, sp *scope.Scope, n *ast.SelectorExpr) (j jsast.IExpression, err error) {
+	pkg, err := resolveVDOMFile(tr.index)
 	if err != nil {
 		return nil, err
-	} else if idx < 0 {
-		return nil, nil
 	}
 
-	var args []jsast.IExpression
-	for i, arg := range n.Results {
-		a, e := tr.expression(d, nil, arg)
-		if e != nil {
-			return nil, e
-		}
+	return jsast.CreateMemberExpression(
+		pkg,
+		jsast.CreateIdentifier("Component"),
+		false,
+	), nil
+}
 
-		// wrap the return in a sequence expression
-		if i == idx {
-			id, e := util.GetIdentifier(arg)
-			if e != nil {
-				return nil, e
-			}
-			s, e := util.ExprToString(id)
-			if e != nil {
-				return nil, e
-			}
-			log.Infof("s=%s", s)
-
-			a = jsast.CreateSequenceExpression(
-				a,
-				jsast.CreateRaw("preact.h("+s+", "+s+".props)"),
-			)
-		}
-
-		args = append(args, a)
+func resolveVDOMFile(idx *index.Index) (j jsast.MemberExpression, e error) {
+	file, err := idx.VDOMFile()
+	if err != nil {
+		return j, err
 	}
 
-	// return an array
-	if len(n.Results) > 1 {
-		return jsast.CreateReturnStatement(jsast.CreateArrayExpression(args...)), nil
+	return jsast.CreateMemberExpression(
+		jsast.CreateIdentifier("pkg"),
+		jsast.CreateString(file.Path()),
+		true,
+	), nil
+}
+
+func resolveVDOMPragma(idx *index.Index) (j jsast.MemberExpression, e error) {
+	pragma, err := idx.VDOMPragma()
+	if err != nil {
+		return j, err
 	}
 
-	// return the value by itself
-	return jsast.CreateReturnStatement(args[0]), nil
+	parts := strings.Split(pragma, ".")
+	remaining := strings.Join(parts[1:], ".")
+
+	file, err := idx.VDOMFile()
+	if err != nil {
+		return j, err
+	}
+
+	return jsast.CreateMemberExpression(
+		jsast.CreateMemberExpression(
+			jsast.CreateIdentifier("pkg"),
+			jsast.CreateString(file.Path()),
+			true,
+		),
+		jsast.CreateIdentifier(remaining),
+		false,
+	), nil
 }
 
 func findComponentIndex(fn defs.Functioner) (int, error) {
-	jsxPath, err := util.JSXSourcePath()
+	vdomPath, err := util.VDOMSourcePath()
 	if err != nil {
 		return -1, err
 	}
@@ -160,7 +170,7 @@ func findComponentIndex(fn defs.Functioner) (int, error) {
 
 		switch t := def.(type) {
 		case defs.Interfacer:
-			if t.Path() == jsxPath && t.Name() == "Node" {
+			if t.Path() == vdomPath && t.Name() == "Component" {
 				return i, nil
 			}
 		case defs.Structer:
@@ -169,7 +179,7 @@ func findComponentIndex(fn defs.Functioner) (int, error) {
 				return -1, err
 			}
 			for _, imp := range imps {
-				if imp.Path() == jsxPath && imp.Name() == "Node" {
+				if imp.Path() == vdomPath && imp.Name() == "Component" {
 					return i, nil
 				}
 			}
@@ -179,7 +189,7 @@ func findComponentIndex(fn defs.Functioner) (int, error) {
 	return -1, nil
 }
 
-func findCompositLit(n ast.Expr) (*ast.CompositeLit) {
+func findCompositLit(n ast.Expr) *ast.CompositeLit {
 	switch t := n.(type) {
 	case *ast.CompositeLit:
 		return t

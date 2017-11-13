@@ -633,7 +633,6 @@ return {
 };
 })();
 pkg["github.com/matthewmueller/golly/testdata/60-chaining/header"] = (function() {
-var preact = pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.js"];
 header.prototype.componentDidMount = function() {
 var h = this;
 console.log("did mount");
@@ -658,12 +657,16 @@ return pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.j
 };
 function header (o) {
 o = o || {};
+this.Component = o.Component || new pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.js"].Component();
+for (var $k in this.Component || pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.js"].Component.prototype) {
+this[$k] = this[$k] || (this.Component || pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.js"].Component.prototype)[$k]
+};
 this.props = o.props || null;
 this.state = o.state || null;
 };
 function New (title, body) {
 var children = Array.prototype.slice.call(arguments, 2);
-return preact.h(header, {
+return pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.js"].h(header, {
   title: title,
   body: body,
   children: children

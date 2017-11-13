@@ -3,14 +3,16 @@ package header
 import (
 	"strconv"
 
-	"github.com/matthewmueller/golly/jsx"
-	"github.com/matthewmueller/golly/testdata/60-chaining/strong"
+	"github.com/matthewmueller/golly/vdom"
+	"github.com/matthewmueller/golly/vdom/h/strong"
 )
 
 // import "github.com/matthewmueller/golly/js"
 
 // header struct
 type header struct {
+	vdom.Component
+
 	props *props
 	state *state
 }
@@ -18,7 +20,7 @@ type header struct {
 type props struct {
 	title    string
 	body     string
-	children []jsx.Node
+	children []vdom.Child
 }
 
 type state struct {
@@ -26,7 +28,7 @@ type state struct {
 }
 
 // New fn
-func New(title string, body string, children ...jsx.Node) *header {
+func New(title string, body string, children ...vdom.Child) vdom.Component {
 	return &header{
 		props: &props{
 			title:    title,
@@ -37,7 +39,7 @@ func New(title string, body string, children ...jsx.Node) *header {
 }
 
 // Render function
-func (h *header) Render() jsx.JSX {
+func (h *header) Render() vdom.Node {
 	return strong.New(strong.Class(h.props.title).ID(h.state.id), h.props.children...)
 }
 

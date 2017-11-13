@@ -3,17 +3,17 @@ package preact
 import (
 	"github.com/matthewmueller/golly/dom/document"
 	"github.com/matthewmueller/golly/js"
-	"github.com/matthewmueller/golly/jsx"
+	"github.com/matthewmueller/golly/vdom"
 )
 
-var _ jsx.Node = (*Component)(nil)
+var _ vdom.Component = (*Component)(nil)
 
 // Component interface
 // js:"component,omit"
 type Component struct{}
 
 // Render fn
-func (c *Component) Render() jsx.JSX {
+func (c *Component) Render() vdom.Node {
 	return nil
 }
 
@@ -29,10 +29,11 @@ func (c *Component) ForceUpdate() {
 }
 
 // Render the component
-func Render(component jsx.Node, el *document.Node) {
+func Render(component vdom.Component, el *document.Node) {
 	js.Rewrite("$1.render($2, $3)", js.RawFile("./preact.js"), component, el)
 }
 
-func String(component jsx.Node) string {
+// String turns the component into a string
+func String(component vdom.Component) string {
 	return component.Render().String()
 }

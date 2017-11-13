@@ -2,23 +2,23 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"] = (function() {
-!(function() {
+return (function () {
   'use strict'
-  function VNode() {}
+  function VNode() { }
   function h(nodeName, attributes) {
     var lastSimple,
       child,
       simple,
       i,
       children = EMPTY_CHILDREN
-    for (i = arguments.length; i-- > 2; ) stack.push(arguments[i])
+    for (i = arguments.length; i-- > 2;) stack.push(arguments[i])
     if (attributes && null != attributes.children) {
       if (!stack.length) stack.push(attributes.children)
       delete attributes.children
     }
     while (stack.length)
       if ((child = stack.pop()) && void 0 !== child.pop)
-        for (i = child.length; i--; ) stack.push(child[i])
+        for (i = child.length; i--;) stack.push(child[i])
       else {
         if ('boolean' == typeof child) child = null
         if ((simple = 'function' != typeof nodeName))
@@ -119,7 +119,7 @@ pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"] = (funct
       if (value) {
         if (!old) node.addEventListener(name, eventProxy, useCapture)
       } else node.removeEventListener(name, eventProxy, useCapture)
-      ;(node.__l || (node.__l = {}))[name] = value
+        ; (node.__l || (node.__l = {}))[name] = value
     } else if ('list' !== name && 'type' !== name && !isSvg && name in node) {
       setProperty(node, name, null == value ? '' : value)
       if (null == value || !1 === value) node.removeAttribute(name)
@@ -145,7 +145,7 @@ pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"] = (funct
   function setProperty(node, name, value) {
     try {
       node[name] = value
-    } catch (e) {}
+    } catch (e) { }
   }
   function eventProxy(e) {
     return this.__l[e.type]((options.event && options.event(e)) || e)
@@ -211,7 +211,7 @@ pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"] = (funct
       vchildren = vnode.children
     if (null == props) {
       props = out.__preactattr_ = {}
-      for (var a = out.attributes, i = a.length; i--; )
+      for (var a = out.attributes, i = a.length; i--;)
         props[a[i].name] = a[i].value
     }
     if (
@@ -336,14 +336,14 @@ pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"] = (funct
           'innerHTML' === name ||
           (name in old &&
             attrs[name] ===
-              ('value' === name || 'checked' === name ? dom[name] : old[name]))
+            ('value' === name || 'checked' === name ? dom[name] : old[name]))
         )
       )
         setAccessor(dom, name, old[name], (old[name] = attrs[name]), isSvgMode)
   }
   function collectComponent(component) {
     var name = component.constructor.name
-    ;(components[name] || (components[name] = [])).push(component)
+      ; (components[name] || (components[name] = [])).push(component)
   }
   function createComponent(Ctor, props, context) {
     var inst,
@@ -357,7 +357,7 @@ pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"] = (funct
       inst.render = doRender
     }
     if (list)
-      for (var i = list.length; i--; )
+      for (var i = list.length; i--;)
         if (list[i].constructor === Ctor) {
           inst.__b = list[i].__b
           list.splice(i, 1)
@@ -586,20 +586,20 @@ pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"] = (funct
   var hydrating = !1
   var components = {}
   extend(Component.prototype, {
-    setState: function(state, callback) {
+    setState: function (state, callback) {
       var s = this.state
       if (!this.__s) this.__s = extend({}, s)
       extend(s, 'function' == typeof state ? state(s, this.props) : state)
       if (callback) (this.__h = this.__h || []).push(callback)
       enqueueRender(this)
     },
-    forceUpdate: function(callback) {
+    forceUpdate: function (callback) {
       if (callback) (this.__h = this.__h || []).push(callback)
       renderComponent(this, 2)
     },
-    render: function() {}
+    render: function () { }
   })
-  var preact = {
+  return {
     h: h,
     createElement: h,
     cloneElement: cloneElement,
@@ -608,25 +608,38 @@ pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"] = (funct
     rerender: rerender,
     options: options
   }
-  if ('undefined' != typeof module) module.exports = preact
-  else self.preact = preact
 })()
 ;
 })();
-pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact"] = (function() {
-var preact = pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"];
-return {};
+pkg["github.com/matthewmueller/golly/runtime"] = (function() {
+mapper.prototype.JSON = function() {
+var m = this;
+return m.obj;
+};
+function mapper (o) {
+o = o || {};
+this.obj = o.obj || {};
+};
+function Map () {
+return new mapper({});
+};
+mapper.prototype.Set = function(key, value) {
+var m = this;
+m.obj[key] = value;
+return m;
+};
+return {
+  Map: Map
+};
 })();
 pkg["github.com/matthewmueller/golly/testdata/49-jsx/header"] = (function() {
 function state (o) {
 o = o || {};
 this.count = o.count || 0;
 };
-Header.prototype.onClick = function(e) {
+Header.prototype.componentWillMount = function() {
 var d = this;
-d.setState(new state({
-  count: d.state.count + 1
-}));
+d.state.count = 5;
 };
 function props (o) {
 o = o || {};
@@ -634,30 +647,22 @@ this.title = o.title || "";
 this.bats = o.bats || "";
 this.children = o.children || [];
 };
-Header.prototype.render = function() {
-var d = this;
-return preact.h("h3", {
-  "class": d.props.title,
-  "onClick": d.onClick.bind(d),
-  "count": d.state.count
-}, [d.props.children]);
-};
-Header.prototype.componentWillMount = function() {
-var d = this;
-d.state.count = 5;
-};
 function Header (o) {
 o = o || {};
-this.Component = o.Component || new preact.Component();
-for (var $k in this.Component || preact.Component.prototype) {
-this[$k] = this[$k] || (this.Component || preact.Component.prototype)[$k]
+this.Component = o.Component || new pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].Component();
+for (var $k in this.Component || pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].Component.prototype) {
+this[$k] = this[$k] || (this.Component || pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].Component.prototype)[$k]
 };
 this.props = o.props || new props();
 this.state = o.state || new state();
 };
+Header.prototype.render = function() {
+var d = this;
+return pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].h('h3', pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', d.props.title).Set("count", d.state.count).JSON(), [d.props.children]);
+};
 function New (title) {
 var children = Array.prototype.slice.call(arguments, 1);
-return preact.h(Header, {
+return pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].h(Header, {
   title: title,
   children: children
 });
@@ -671,10 +676,8 @@ pkg["github.com/matthewmueller/golly/testdata/49-jsx"] = (function() {
 var header = pkg["github.com/matthewmueller/golly/testdata/49-jsx/header"];
 function main () {
 ;
-var hdr = preact.h("h2", {
-  "class": "hi"
-}, ["yo!", header.New.apply(null, ["lol"].concat("hi!"))]);
-preact.render(hdr, document.body);
+var hdr = pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].h('h2', pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', "hi").JSON(), ["yo!", header.New.apply(null, ["lol"].concat("hi!"))]);
+pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].render(hdr, document.body);
 console.log(document.body.innerHTML);
 };
 return {

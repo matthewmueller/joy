@@ -19,7 +19,7 @@ var gollyPath string
 var goSourcePath string
 var runtimePkg string
 var jsSourcePkg string
-var jsxSourcePkg string
+var vdomSourcePkg string
 
 // GollyPath absolute path
 func GollyPath() (string, error) {
@@ -288,17 +288,17 @@ func JSSourcePath() (string, error) {
 	return jsSourcePkg, nil
 }
 
-// JSXSourcePath gets the fullpath to the JSX source files
-func JSXSourcePath() (string, error) {
-	if jsxSourcePkg != "" {
-		return jsxSourcePkg, nil
+// VDOMSourcePath gets the fullpath to the VDOM source files
+func VDOMSourcePath() (string, error) {
+	if vdomSourcePkg != "" {
+		return vdomSourcePkg, nil
 	}
 
 	root, e := GollyPath()
 	if e != nil {
 		return "", e
 	}
-	runtimePath := path.Join(root, "jsx")
+	runtimePath := path.Join(root, "vdom")
 
 	gosrc, e := GoSourcePath()
 	if e != nil {
@@ -310,9 +310,9 @@ func JSXSourcePath() (string, error) {
 	if e != nil {
 		return "", e
 	}
-	jsxSourcePkg = rel
+	vdomSourcePkg = rel
 
-	return jsxSourcePkg, nil
+	return vdomSourcePkg, nil
 }
 
 // MethodsFromInterface fn

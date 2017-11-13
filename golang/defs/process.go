@@ -193,8 +193,8 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 		return jsRewrite(ctx, n)
 	case "js.Raw":
 		return jsRaw(ctx, n)
-	case "jsx.Use":
-		return jsxUse(ctx, n)
+	case "vdom.Use":
+		return vdomUse(ctx, n)
 	}
 
 	def, e := ctx.idx.DefinitionOf(ctx.d.Path(), n)
@@ -255,6 +255,8 @@ func selectorExpr(ctx *context, n *ast.SelectorExpr) error {
 		if !ignore {
 			log.Debugf("%s -> %s", ctx.d.ID(), def.ID())
 			ctx.state.deps = append(ctx.state.deps, def)
+		} else {
+			log.Debugf("ignoring %s", def.ID())
 		}
 	}
 

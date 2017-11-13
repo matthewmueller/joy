@@ -3,13 +3,14 @@ package header
 import (
 	"strconv"
 
-	"github.com/matthewmueller/golly/jsx"
-	"github.com/matthewmueller/golly/testdata/54-basic-jolly/preact"
+	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/golly/vdom"
+	"github.com/matthewmueller/golly/vdom/h/h3"
 )
 
 // Header struct
 type Header struct {
-	preact.Component
+	vdom.Component
 
 	// props
 	props props
@@ -20,7 +21,7 @@ type Header struct {
 
 type props struct {
 	title    string
-	children []jsx.Node
+	children []vdom.Child
 	bats     string
 }
 
@@ -30,7 +31,7 @@ type state struct {
 }
 
 // New Header
-func New(title string, children ...jsx.Node) jsx.Node {
+func New(title string, children ...vdom.Child) vdom.Component {
 	return &Header{
 		props: props{
 			title:    title,
@@ -47,8 +48,8 @@ type MouseEvent struct {
 }
 
 // OnClick fn
-func (d *Header) OnClick(e MouseEvent) {
-	println(e.Type)
+func (d *Header) OnClick(e interface{}) {
+	println(js.Raw("e.type"))
 	d.SetState(&state{
 		count: d.state.count + 1,
 	})
@@ -56,7 +57,7 @@ func (d *Header) OnClick(e MouseEvent) {
 
 // Render header
 // js:"render"
-func (d *Header) Render() jsx.JSX {
-	children := append(d.props.children, &jsx.Text{Value: strconv.Itoa(d.state.count)})
-	return jsx.H("h3", map[string]interface{}{"class": d.props.title, "count": d.state.count, "onClick": d.OnClick}, children...)
+func (d *Header) Render() vdom.Node {
+	children := append(d.props.children, vdom.S(strconv.Itoa(d.state.count)))
+	return h3.New(h3.Class(d.props.title).Attr("count", d.state.count).OnClick(d.OnClick), children...)
 }

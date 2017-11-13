@@ -1,13 +1,13 @@
 package header
 
 import (
-	"github.com/matthewmueller/golly/jsx"
-	"github.com/matthewmueller/golly/testdata/49-jsx/preact"
+	"github.com/matthewmueller/golly/vdom"
+	"github.com/matthewmueller/golly/vdom/h/h3"
 )
 
 // Header struct
 type Header struct {
-	preact.Component
+	vdom.Component
 
 	props props
 	state state
@@ -17,7 +17,7 @@ type Header struct {
 type props struct {
 	title    string
 	bats     string
-	children []jsx.Node
+	children []vdom.Child
 }
 
 type state struct {
@@ -32,7 +32,7 @@ type state struct {
 // - works in all enumerations of code
 
 // New header
-func New(title string, children ...jsx.Node) jsx.Node {
+func New(title string, children ...vdom.Child) vdom.Component {
 	return &Header{
 		props: props{
 			title:    title,
@@ -58,7 +58,6 @@ func (d *Header) onClick(e interface{}) {
 
 // Render header
 // js:"render"
-func (d *Header) Render() jsx.JSX {
-	// children := append(d.props.children, &jsx.Text{Value: strconv.Itoa(d.state.count)})
-	return jsx.H("h3", map[string]interface{}{"class": d.props.title, "onClick": d.onClick, "count": d.state.count}, d.props.children...)
+func (d *Header) Render() vdom.Node {
+	return h3.New(h3.Class(d.props.title).Attr("count", d.state.count), d.props.children...)
 }
