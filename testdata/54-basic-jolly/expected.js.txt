@@ -655,7 +655,7 @@ this.state = o.state || new state();
 Header.prototype.OnClick = function(e) {
 var d = this;
 console.log(e.type);
-d.SetState(new state({
+d.setState(new state({
   count: d.state.count + 1
 }));
 };

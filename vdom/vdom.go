@@ -22,31 +22,16 @@ func File() string {
 // Component struct
 type Component interface {
 	Render() Node
+	// js:"setState"
 	SetState(state interface{})
+	// js:"forceUpdate"
+	ForceUpdate()
 }
 
 // Child interface
 type Child interface {
 	Render() Node
 }
-
-// // SetState struct
-// type SetState struct{}
-
-// // SetState struct
-// // js:"setState,omit"
-// func (s *SetState) SetState(state interface{}) {
-// 	return
-// }
-
-// type Component interface {
-// 	Render() Node
-// }
-
-// SetState interface
-// type SetState interface {
-// 	SetState(state interface{})
-// }
 
 // Node interface
 type Node interface {
