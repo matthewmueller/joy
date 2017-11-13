@@ -58,3 +58,9 @@ type FunctionResult interface {
 	Name() string
 	Definition() Definition
 }
+
+// InterfaceMethod interface
+type InterfaceMethod interface {
+	OriginalName() string
+	Name() string
+}

@@ -209,10 +209,13 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 			return fmt.Errorf("process/callExpr: expected *ast.SelectorExpr but got %T", n.Fun)
 		}
 
+		method := t.FindMethod(m.Sel.Name)
 		methods := t.ImplementedBy(m.Sel.Name)
 		for _, def := range methods {
-			log.Debugf("implemented by: %s -> %s", ctx.d.ID(), def.ID())
 			ctx.state.deps = append(ctx.state.deps, def)
+			if method.Name() != def.Name() {
+				return fmt.Errorf("interface must be named the same as all named methods. %s.%s != %s.%s", t.Name(), method.Name(), def.Recv().Name(), def.Name())
+			}
 		}
 	}
 

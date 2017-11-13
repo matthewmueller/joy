@@ -6,6 +6,8 @@ import (
 	"go/types"
 	"strings"
 
+	"github.com/fatih/structtag"
+
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/index"
 	"github.com/matthewmueller/golly/golang/util"
@@ -19,7 +21,8 @@ type Interfacer interface {
 	ImplementedBy(method string) []Methoder
 	DependenciesOf(method string) ([]def.Definition, error)
 	Node() *ast.TypeSpec
-	Methods() []string
+	Methods() []def.InterfaceMethod
+	FindMethod(name string) def.InterfaceMethod
 }
 
 var _ Interfacer = (*interfaces)(nil)
@@ -30,12 +33,28 @@ type interfaces struct {
 	name       string
 	id         string
 	index      *index.Index
-	methods    []string
+	methods    []def.InterfaceMethod
 	node       *ast.TypeSpec
 	kind       *types.Interface
 	processed  bool
 	methodDeps map[string]def.Definition
 	imports    map[string]string
+}
+
+type method struct {
+	name string
+	tag  *structtag.Tag
+}
+
+func (m *method) OriginalName() string {
+	return m.name
+}
+
+func (m *method) Name() string {
+	if m.tag != nil {
+		return m.tag.Name
+	}
+	return m.name
 }
 
 // Interface fn
@@ -45,8 +64,21 @@ func Interface(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n 
 	idParts := []string{packagePath, n.Name.Name}
 	id := strings.Join(idParts, " ")
 
+	// get the methods
+	var methods []def.InterfaceMethod
 	iface := n.Type.(*ast.InterfaceType)
-	methods := util.MethodsFromInterface(iface, packagePath, n.Name.Name)
+	for _, m := range iface.Methods.List {
+		tag, err := util.JSTag(m.Doc)
+		if err != nil {
+			return nil, err
+		}
+		for _, id := range m.Names {
+			methods = append(methods, &method{
+				name: id.Name,
+				tag:  tag,
+			})
+		}
+	}
 
 	kind, ok := info.TypeOf(n.Type).(*types.Interface)
 	if !ok {
@@ -164,6 +196,15 @@ func (d *interfaces) FromRuntime() bool {
 	return false
 }
 
-func (d *interfaces) Methods() []string {
+func (d *interfaces) Methods() []def.InterfaceMethod {
 	return d.methods
+}
+
+func (d *interfaces) FindMethod(name string) def.InterfaceMethod {
+	for _, method := range d.methods {
+		if name == method.OriginalName() {
+			return method
+		}
+	}
+	return nil
 }

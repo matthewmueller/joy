@@ -2122,6 +2122,11 @@ func (tr *Translator) selectorExpr(d def.Definition, sp *scope.Scope, n *ast.Sel
 			return expr, nil
 		}
 		name = t.Name()
+	case defs.Interfacer:
+		// handle interface function renames
+		if m := t.FindMethod(name); m != nil {
+			name = m.Name()
+		}
 	}
 
 	return jsast.CreateMemberExpression(
