@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/golang/util"
 	"bytes"
 	"context"
 	"fmt"
@@ -12,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+
+	"github.com/matthewmueller/golly/golang/util"
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
@@ -195,14 +196,18 @@ func getMains(packages []string) ([]string, error) {
 			// but it's for when you pass a filepath
 			// to go list, it returns command-line-arguments
 			if parts[1] == "command-line-arguments" {
-				return results, errors.New("building a single file not available yet")
+				// TODO: i don't think this will work for multiple files
+				for _, pkg := range packages {
+					results = append(results, pkg)
+				}
+				return results, nil
 			}
 
 			fullpath := strings.TrimPrefix(parts[1], "_")
 			if fullpath[0] != '/' {
 				fullpath = path.Join(goSrc, fullpath)
 			}
-			
+
 			results = append(results, fullpath)
 		}
 	}
