@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Noscript {
-	js.Rewrite("$1('noscript', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('noscript', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Noscript{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Noscript) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<noscript " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</noscript>"
+	if len(props) > 0 {
+		return "<noscript " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</noscript>"
+	}
+
+	return "<noscript>" + strings.Join(children, "") + "</noscript>"
 }
 
 // Accesskey fn

@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Meter {
-	js.Rewrite("$1('meter', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('meter', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Meter{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Meter) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<meter " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</meter>"
+	if len(props) > 0 {
+		return "<meter " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</meter>"
+	}
+
+	return "<meter>" + strings.Join(children, "") + "</meter>"
 }
 
 // Accesskey fn

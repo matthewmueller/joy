@@ -658,7 +658,7 @@ this.state = o.state || new state();
 };
 Header.prototype.render = function() {
 var d = this;
-return pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].h('h3', pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', d.props.title).Set("count", d.state.count).JSON(), [d.props.children]);
+return pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].h('h3', pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', d.props.title).Set("count", d.state.count) ? pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', d.props.title).Set("count", d.state.count).JSON() : {}, [d.props.children]);
 };
 function New (title) {
 var children = Array.prototype.slice.call(arguments, 1);
@@ -676,7 +676,7 @@ pkg["github.com/matthewmueller/golly/testdata/49-jsx"] = (function() {
 var header = pkg["github.com/matthewmueller/golly/testdata/49-jsx/header"];
 function main () {
 ;
-var hdr = pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].h('h2', pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', "hi").JSON(), ["yo!", header.New.apply(null, ["lol"].concat("hi!"))]);
+var hdr = pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].h('h2', pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', "hi") ? pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', "hi").JSON() : {}, ["yo!", header.New.apply(null, ["lol"].concat("hi!"))]);
 pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].render(hdr, document.body);
 console.log(document.body.innerHTML);
 };

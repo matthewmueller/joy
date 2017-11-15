@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Blockquote {
-	js.Rewrite("$1('blockquote', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('blockquote', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Blockquote{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Blockquote) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<blockquote " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</blockquote>"
+	if len(props) > 0 {
+		return "<blockquote " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</blockquote>"
+	}
+
+	return "<blockquote>" + strings.Join(children, "") + "</blockquote>"
 }
 
 // Accesskey fn

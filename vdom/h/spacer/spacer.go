@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Spacer {
-	js.Rewrite("$1('spacer', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('spacer', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Spacer{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Spacer) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<spacer " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</spacer>"
+	if len(props) > 0 {
+		return "<spacer " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</spacer>"
+	}
+
+	return "<spacer>" + strings.Join(children, "") + "</spacer>"
 }
 
 // Accesskey fn

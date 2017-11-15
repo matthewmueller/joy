@@ -59,5 +59,5 @@ func (d *Header) OnClick(e interface{}) {
 // js:"render"
 func (d *Header) Render() vdom.Node {
 	children := append(d.props.children, vdom.S(strconv.Itoa(d.state.count)))
-	return h3.New(h3.Class(d.props.title).Attr("count", d.state.count).OnClick(d.OnClick), children...)
+	return h3.New(h3.Class(d.props.title).Attr("count", d.state.count), children...)
 }

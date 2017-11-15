@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *H3 {
-	js.Rewrite("$1('h3', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('h3', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &H3{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *H3) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<h3 " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</h3>"
+	if len(props) > 0 {
+		return "<h3 " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</h3>"
+	}
+
+	return "<h3>" + strings.Join(children, "") + "</h3>"
 }
 
 // Accesskey fn
@@ -578,14 +585,14 @@ func (p *Props) OnSubmit(onsubmit string) *Props {
 }
 
 // OnClick fn
-func OnClick(onclick func(e interface{})) *Props {
+func OnClick(onclick string) *Props {
 	js.Rewrite("$1().Set('onclick', $2)", js.Runtime("Map", "Set", "JSON"), onclick)
 	p := &Props{attrs: map[string]interface{}{}}
 	return p.OnClick(onclick)
 }
 
 // OnClick fn
-func (p *Props) OnClick(onclick func(e interface{})) *Props {
+func (p *Props) OnClick(onclick string) *Props {
 	js.Rewrite("$<.Set('onclick', $1)", onclick)
 	p.attrs["onClick"] = onclick
 	return p

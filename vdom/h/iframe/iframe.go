@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Iframe {
-	js.Rewrite("$1('iframe', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('iframe', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Iframe{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Iframe) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<iframe " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</iframe>"
+	if len(props) > 0 {
+		return "<iframe " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</iframe>"
+	}
+
+	return "<iframe>" + strings.Join(children, "") + "</iframe>"
 }
 
 // Accesskey fn

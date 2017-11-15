@@ -653,7 +653,7 @@ this.children = o.children || [];
 };
 header.prototype.render = function() {
 var h = this;
-return pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.js"].h('strong', pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', h.props.title).Set('id', h.state.id).JSON(), [h.props.children]);
+return pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.js"].h('strong', pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', h.props.title).Set('id', h.state.id) ? pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', h.props.title).Set('id', h.state.id).JSON() : {}, [h.props.children]);
 };
 function header (o) {
 o = o || {};
@@ -680,7 +680,7 @@ pkg["github.com/matthewmueller/golly/testdata/60-chaining"] = (function() {
 var header = pkg["github.com/matthewmueller/golly/testdata/60-chaining/header"];
 function main () {
 ;
-var v = header.New.apply(null, ["some title", "some body"].concat(pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.js"].h('strong', pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', "some class").Set('id', "some id").JSON(), ["some text", header.New.apply(null, ["subtitle", "subbody"].concat("subbody"))])));
+var v = header.New.apply(null, ["some title", "some body"].concat(pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.js"].h('strong', pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', "some class").Set('id', "some id") ? pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', "some class").Set('id', "some id").JSON() : {}, ["some text", header.New.apply(null, ["subtitle", "subbody"].concat("subbody"))])));
 pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.js"].render(v, document.body);
 console.log(document.body.innerHTML);
 };

@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Acronym {
-	js.Rewrite("$1('acronym', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('acronym', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Acronym{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Acronym) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<acronym " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</acronym>"
+	if len(props) > 0 {
+		return "<acronym " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</acronym>"
+	}
+
+	return "<acronym>" + strings.Join(children, "") + "</acronym>"
 }
 
 // Accesskey fn

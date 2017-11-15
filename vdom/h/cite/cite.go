@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Cite {
-	js.Rewrite("$1('cite', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('cite', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Cite{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Cite) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<cite " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</cite>"
+	if len(props) > 0 {
+		return "<cite " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</cite>"
+	}
+
+	return "<cite>" + strings.Join(children, "") + "</cite>"
 }
 
 // Accesskey fn

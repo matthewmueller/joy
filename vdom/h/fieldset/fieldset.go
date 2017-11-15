@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Fieldset {
-	js.Rewrite("$1('fieldset', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('fieldset', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Fieldset{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Fieldset) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<fieldset " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</fieldset>"
+	if len(props) > 0 {
+		return "<fieldset " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</fieldset>"
+	}
+
+	return "<fieldset>" + strings.Join(children, "") + "</fieldset>"
 }
 
 // Accesskey fn

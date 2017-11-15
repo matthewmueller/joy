@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Del {
-	js.Rewrite("$1('del', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('del', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Del{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Del) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<del " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</del>"
+	if len(props) > 0 {
+		return "<del " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</del>"
+	}
+
+	return "<del>" + strings.Join(children, "") + "</del>"
 }
 
 // Accesskey fn

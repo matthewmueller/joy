@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Colgroup {
-	js.Rewrite("$1('colgroup', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('colgroup', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Colgroup{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Colgroup) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<colgroup " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</colgroup>"
+	if len(props) > 0 {
+		return "<colgroup " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</colgroup>"
+	}
+
+	return "<colgroup>" + strings.Join(children, "") + "</colgroup>"
 }
 
 // Accesskey fn

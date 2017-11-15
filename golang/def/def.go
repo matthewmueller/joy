@@ -27,11 +27,6 @@ type Field interface {
 }
 
 // Rewrite interface
-// type Rewrite interface {
-// 	Rewrite(arguments *ast.FieldList) (string, error)
-// }
-
-// Rewrite interface
 type Rewrite interface {
 	Definition() Definition
 	Expression() string
@@ -44,13 +39,6 @@ type RewriteVariable interface {
 	Definition() Definition
 	Node() ast.Expr
 	String() (string, error)
-}
-
-// Edge interface
-type Edge interface {
-	Definition() Definition
-
-	Type() string
 }
 
 // FunctionResult interface

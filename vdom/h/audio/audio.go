@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Audio {
-	js.Rewrite("$1('audio', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('audio', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Audio{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Audio) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<audio " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</audio>"
+	if len(props) > 0 {
+		return "<audio " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</audio>"
+	}
+
+	return "<audio>" + strings.Join(children, "") + "</audio>"
 }
 
 // Accesskey fn

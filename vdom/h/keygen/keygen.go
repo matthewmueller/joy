@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Keygen {
-	js.Rewrite("$1('keygen', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('keygen', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Keygen{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Keygen) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<keygen " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</keygen>"
+	if len(props) > 0 {
+		return "<keygen " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</keygen>"
+	}
+
+	return "<keygen>" + strings.Join(children, "") + "</keygen>"
 }
 
 // Accesskey fn

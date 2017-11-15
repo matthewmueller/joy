@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Noembed {
-	js.Rewrite("$1('noembed', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('noembed', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Noembed{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Noembed) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<noembed " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</noembed>"
+	if len(props) > 0 {
+		return "<noembed " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</noembed>"
+	}
+
+	return "<noembed>" + strings.Join(children, "") + "</noembed>"
 }
 
 // Accesskey fn

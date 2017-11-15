@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Datalist {
-	js.Rewrite("$1('datalist', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('datalist', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Datalist{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Datalist) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<datalist " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</datalist>"
+	if len(props) > 0 {
+		return "<datalist " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</datalist>"
+	}
+
+	return "<datalist>" + strings.Join(children, "") + "</datalist>"
 }
 
 // Accesskey fn

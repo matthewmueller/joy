@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Progress {
-	js.Rewrite("$1('progress', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('progress', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Progress{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Progress) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<progress " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</progress>"
+	if len(props) > 0 {
+		return "<progress " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</progress>"
+	}
+
+	return "<progress>" + strings.Join(children, "") + "</progress>"
 }
 
 // Accesskey fn

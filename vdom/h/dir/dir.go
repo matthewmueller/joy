@@ -26,7 +26,10 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *Dir {
-	js.Rewrite("$1('dir', $2.JSON(), $3)", vdom.Pragma(), props, children)
+	js.Rewrite("$1('dir', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	if props == nil {
+		props = &Props{attrs: map[string]interface{}{}}
+	}
 	return &Dir{
 		attrs:    props.attrs,
 		children: children,
@@ -56,7 +59,11 @@ func (s *Dir) String() string {
 		children = append(children, child.Render().String())
 	}
 
-	return "<dir " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</dir>"
+	if len(props) > 0 {
+		return "<dir " + strings.Join(props, " ") + ">" + strings.Join(children, "") + "</dir>"
+	}
+
+	return "<dir>" + strings.Join(children, "") + "</dir>"
 }
 
 // Accesskey fn

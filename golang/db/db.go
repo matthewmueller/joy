@@ -83,28 +83,6 @@ func (db *DB) inspect(info *loader.PackageInfo, node ast.Node) (recurse bool, er
 
 		db.index.AddDefinition(d)
 		return false, nil
-	// case *ast.ValueSpec:
-	// 	d, e := value.NewValue(db.index, info, gn, t)
-	// 	if e != nil {
-	// 		return false, e
-	// 	}
-	// 	db.index.AddDefinition(d)
-
-	// for _, name := range t.Names {
-	// 	if name.Name == "_" {
-	// 		continue
-	// 	}
-	// }
-	// return false, nil
-	// case *ast.TypeSpec:
-	// 	e := db.parseType(info, t)
-	// 	if e != nil {
-	// 		return false, e
-	// 	}
-	// 	return false, nil
-	// case *ast.ImportSpec:
-	// 	db.importSpec(info, t)
-	// 	return false, nil
 	case *ast.GenDecl:
 		for _, spec := range t.Specs {
 			e := db.spec(info, t, spec)
