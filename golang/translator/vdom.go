@@ -48,7 +48,7 @@ func (tr *Translator) maybeVDOMLit(d def.Definition, n *ast.CompositeLit) (jsast
 	var propsName string
 	fields := stct.Fields()
 	for _, field := range fields {
-		if strings.ToLower(field.Name()) == "props" {
+		if field.Name() == "props" {
 			propsStruct, err := tr.index.DefinitionOf(d.Path(), field.Type())
 			if err != nil {
 				return nil, err
@@ -57,6 +57,9 @@ func (tr *Translator) maybeVDOMLit(d def.Definition, n *ast.CompositeLit) (jsast
 			}
 			propsName = propsStruct.Name()
 		}
+	}
+	if propsName == "" {
+		return nil, fmt.Errorf(`vdom: "%s" struct must have a field named "props"`, stct.Name())
 	}
 
 	kvs, e := tr.getKeyValues(d, nil, n)
