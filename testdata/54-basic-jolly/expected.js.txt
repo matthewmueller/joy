@@ -659,11 +659,11 @@ return pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preac
 };
 function New (title) {
 var children = Array.prototype.slice.call(arguments, 1);
-return pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"].h(Header, {
+return pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"].h(Header, new props({
   title: title,
   children: children,
   bats: "are crazy"
-});
+}));
 };
 return {
   Header: Header,

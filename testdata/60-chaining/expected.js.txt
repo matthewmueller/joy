@@ -666,11 +666,11 @@ this.state = o.state || null;
 };
 function New (title, body) {
 var children = Array.prototype.slice.call(arguments, 2);
-return pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.js"].h(header, {
+return pkg["github.com/matthewmueller/golly/testdata/60-chaining/preact/preact.js"].h(header, new props({
   title: title,
   body: body,
   children: children
-});
+}));
 };
 return {
   New: New

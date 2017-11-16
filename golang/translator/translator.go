@@ -1453,17 +1453,37 @@ func (tr *Translator) callExpr(d def.Definition, sp *scope.Scope, n *ast.CallExp
 		return nil, e
 	}
 
-	// TODO: move all special expressions to this style
+	// TODO: cleanup, this is messy because vdom.File has
+	// a different package path than File
 	switch expr {
 	case "vdom.Use":
-		// remove calls to vdom.Use(...) from the source
 		return nil, nil
-	case "vdom.Pragma":
-		return tr.vdomPragma(d, sp, n)
 	case "vdom.File":
-		return tr.vdomFile(d, sp, n)
+		return tr.vdomFile()
+	case "vdom.Pragma":
+		return tr.vdomPragma()
 	case "js.Runtime":
 		return tr.jsRuntime(d, sp, n)
+	}
+	// handle identifiers
+	vdomPath, err := util.VDOMSourcePath()
+	if err != nil {
+		return nil, err
+	}
+	def, e := tr.index.DefinitionOf(d.Path(), n.Fun)
+	if e != nil {
+		return nil, e
+	}
+	if def != nil && def.Path() == vdomPath {
+		switch expr {
+		// remove calls to vdom.Use(...) from the source
+		case "Use":
+			return nil, nil
+		case "File":
+			return tr.vdomFile()
+		case "Pragma":
+			return tr.vdomPragma()
+		}
 	}
 
 	// create an expression for built-in golang functions like append

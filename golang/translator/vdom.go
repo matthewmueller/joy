@@ -1,6 +1,7 @@
 package translator
 
 import (
+	"fmt"
 	"go/ast"
 	"strings"
 
@@ -44,23 +45,27 @@ func (tr *Translator) maybeVDOMLit(d def.Definition, n *ast.CompositeLit) (jsast
 		return nil, nil
 	}
 
+	var propsName string
+	fields := stct.Fields()
+	for _, field := range fields {
+		if strings.ToLower(field.Name()) == "props" {
+			propsStruct, err := tr.index.DefinitionOf(d.Path(), field.Type())
+			if err != nil {
+				return nil, err
+			} else if propsStruct == nil || propsStruct.Kind() != "STRUCT" {
+				return nil, fmt.Errorf("maybeVDOMLit: expected the props field to point to a struct")
+			}
+			propsName = propsStruct.Name()
+		}
+	}
+
 	kvs, e := tr.getKeyValues(d, nil, n)
 	if e != nil {
 		return nil, e
 	}
 
-	// handle text nodes differently
-	// if stct.OriginalName() == "Text" {
-	// 	for key, val := range kvs {
-	// 		if strings.ToLower(key) == "value" {
-	// 			return tr.expression(d, nil, val)
-	// 		}
-	// 	}
-	// 	return jsast.CreateString(""), nil
-	// }
-
 	// look for props if we have them
-	var props []jsast.Property
+	var props jsast.IExpression
 	for key, val := range kvs {
 		if strings.ToLower(key) == "props" {
 			c := findCompositLit(val)
@@ -68,14 +73,18 @@ func (tr *Translator) maybeVDOMLit(d def.Definition, n *ast.CompositeLit) (jsast
 				continue
 			}
 
-			for i, elt := range c.Elts {
-				p, e := tr.property(d, nil, c, i, elt)
-				if e != nil {
-					return nil, e
-				}
-				props = append(props, p)
+			cl, err := tr.compositeLiteral(d, nil, c)
+			if err != nil {
+				return nil, err
 			}
+			props = cl
 		}
+	}
+	if props == nil {
+		props = jsast.CreateNewExpression(
+			jsast.CreateIdentifier(propsName),
+			[]jsast.IExpression{jsast.CreateObjectExpression(nil)},
+		)
 	}
 
 	fn, e := tr.expression(d, nil, n.Type)
@@ -92,16 +101,16 @@ func (tr *Translator) maybeVDOMLit(d def.Definition, n *ast.CompositeLit) (jsast
 		pragma,
 		[]jsast.IExpression{
 			fn,
-			jsast.CreateObjectExpression(props),
+			props,
 		},
 	), nil
 }
 
-func (tr *Translator) vdomPragma(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (j jsast.IExpression, err error) {
+func (tr *Translator) vdomPragma() (j jsast.IExpression, err error) {
 	return resolveVDOMPragma(tr.index)
 }
 
-func (tr *Translator) vdomFile(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (j jsast.IExpression, err error) {
+func (tr *Translator) vdomFile() (j jsast.IExpression, err error) {
 	return resolveVDOMFile(tr.index)
 }
 

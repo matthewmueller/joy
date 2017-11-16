@@ -662,10 +662,10 @@ return pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].h
 };
 function New (title) {
 var children = Array.prototype.slice.call(arguments, 1);
-return pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].h(Header, {
+return pkg["github.com/matthewmueller/golly/testdata/49-jsx/preact/preact.js"].h(Header, new props({
   title: title,
   children: children
-});
+}));
 };
 return {
   Header: Header,

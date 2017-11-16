@@ -207,13 +207,6 @@ func (i *Index) selectorDefinition(packagePath string, n *ast.SelectorExpr) (def
 		return nil, e
 	}
 
-	// x, e := util.ExprToString(n.Sel)
-	// if e != nil {
-	// 	return nil, e
-	// }
-	// log.Infof("got x=%s %s", x, sel.Kind())
-	// log.Infof("sel=%s", sel.Kind())
-
 	// prioritize selector definitions for functions
 	if sel != nil && sel.Kind() != "STRUCT" {
 		return sel, nil

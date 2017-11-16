@@ -46,6 +46,13 @@ func (e *Node) OuterHTML() string {
 	return "<" + lower + ">" + "</" + lower + ">"
 }
 
+// FirstElementChild fn
+// TODO: go implementation
+func (e *Node) FirstElementChild() *Node {
+	js.Rewrite("$<.firstElementChild")
+	return &Node{}
+}
+
 // CreateElement creates an element
 func CreateElement(element string) *Node {
 	js.Rewrite("document.createElement($1)", element)

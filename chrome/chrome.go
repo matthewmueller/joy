@@ -204,7 +204,7 @@ func (t *Target) Run(source string) (result string, err error) {
 			}
 			var line []string
 			for _, arg := range msg.Args {
-				line = append(line, formatValue(arg))
+				line = append(line, strings.TrimSpace(formatValue(arg)))
 			}
 			lines = append(lines, strings.Join(line, " "))
 		}
