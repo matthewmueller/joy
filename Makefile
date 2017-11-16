@@ -21,3 +21,7 @@ hn:
 install:
 	@go install ./cmd/...
 .PHONY: install
+
+dom:
+	@go generate ./dom/dom.go
+.PHONY: dom
