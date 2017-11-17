@@ -24,4 +24,5 @@ install:
 
 dom:
 	@go generate ./dom/dom.go
+	@go run _examples/dom/dom.go
 .PHONY: dom

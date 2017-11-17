@@ -2,19 +2,114 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"io/ioutil"
+	"os"
+	"regexp"
+	"strconv"
 	"strings"
 	"text/template"
 
 	"github.com/apex/log"
+	"github.com/apex/log/handlers/text"
 	"github.com/knq/snaker"
 	"github.com/matthewmueller/golly/dom/internal/generate/builtin"
+	"github.com/matthewmueller/golly/dom/internal/generate/formatter"
 )
 
+var resequence = regexp.MustCompile(`sequence<([\w<>]+)>`)
+var repromise = regexp.MustCompile(`Promise<([\w<>]+)>`)
+
 var typemap = map[string]string{
-	"DOMString": "string",
-	"boolean":   "bool",
+	"DOMString":           "string",
+	"USVString":           "string",
+	"IDBKeyPath":          "string",
+	"DOMHighResTimeStamp": "string",
+	"AAGUID":              "string",
+
+	"boolean": "bool",
+	"bool":    "bool",
+	"Boolean": "bool",
+
+	"unsigned long":      "uint",
+	"unsigned long long": "uint64",
+	"unsigned short":     "uint8",
+	"Uint8Array":         "[]uint8",
+
+	"short":     "int8",
+	"long":      "int",
+	"long long": "int64",
+
+	"float":               "float32",
+	"double":              "float32",
+	"unrestricted double": "float32",
+	"UnrestrictedDouble":  "float32",
+	"Float32Array":        "[]float32",
+
+	"void": "void",
+
+	"object":      "interface{}",
+	"any":         "interface{}",
+	"Dictionary":  "interface{}",
+	"payloadType": "interface{}",
+	"Entry":       "interface{}",
+
+	"ArrayBuffer":     "[]byte",
+	"ArrayBufferView": "[]byte",
+	"BufferSource":    "[]byte",
+	"octet":           "[8]byte",
+
+	"EventHandler": "EventHandler",
+
+	"RequestInfo": "*Request",
+
+	"function": "func()",
+
+	"Date": "time.Time",
+}
+
+type vartype struct {
+	Var  string
+	Type string
+}
+
+// Type transforms the XML type to a Go type
+func Type(idx *index, kind string) (string, error) {
+	kind = strings.TrimSpace(kind)
+	isSlice := false
+
+	// TODO: handle unions better
+	if strings.Contains(kind, " or ") {
+		return "interface{}", nil
+	}
+
+	matches := repromise.FindStringSubmatch(kind)
+	if len(matches) > 1 {
+		kind = matches[1]
+	}
+
+	matches = resequence.FindStringSubmatch(kind)
+	if len(matches) > 1 {
+		isSlice = true
+		kind = matches[1]
+	}
+
+	if typemap[kind] == "" {
+		kind = pointer(kind)
+	} else {
+		kind = typemap[kind]
+	}
+
+	if isSlice {
+		return "[]" + kind, nil
+	}
+	return kind, nil
+}
+
+func isAsync(kind string) bool {
+	return strings.Contains(kind, "Promise<")
 }
 
 // CallbackFunction struct
@@ -26,12 +121,62 @@ type CallbackFunction struct {
 	Params   []Param  `xml:"param"`
 }
 
+// callbackFunctionData struct
+type callbackFunctionData struct {
+	Params []string
+	Result string
+}
+
+// Generate fn
+func (c *CallbackFunction) Generate(idx *index) (string, error) {
+	data := callbackFunctionData{}
+
+	for _, param := range c.Params {
+		p, e := param.Generate(idx)
+		if e != nil {
+			return "", e
+		}
+		data.Params = append(data.Params, p)
+	}
+
+	t, e := Type(idx, c.Type)
+	if e != nil {
+		return "", e
+	}
+	data.Result = t
+
+	if t == "void" {
+		return generate("callback_fn/"+c.Name, data, `func ({{ join .Params }})`)
+	}
+
+	return generate("callback_fn/"+c.Name, data, `func ({{ join .Params }}) ({{ .Result }})`)
+}
+
 // Param struct
 type Param struct {
 	Name     string `xml:"name,attr"`
 	Type     string `xml:"type,attr,omitempty"`
 	Optional bool   `xml:"optional,attr,omitempty"`
 	Variadic bool   `xml:"variadic,attr,omitempty"`
+}
+
+type paramData struct {
+	Name string
+	Type string
+}
+
+// Generate fn
+func (p *Param) Generate(idx *index) (string, error) {
+	data := paramData{}
+	data.Name = name(p.Name)
+
+	t, e := Type(idx, p.Type)
+	if e != nil {
+		return "", e
+	}
+	data.Type = t
+
+	return generate("param/"+p.Name, data, `{{ .Name }} {{ .Type }}`)
 }
 
 // Method struct
@@ -42,6 +187,106 @@ type Method struct {
 	Setter                   bool    `xml:"setter,attr"`
 	DoNotCheckDomainSecurity bool    `xml:"do-not-check-domain-security,attr"`
 	Params                   []Param `xml:"param"`
+}
+
+type methodData struct {
+	Recv   string
+	Name   string
+	Params []vartype
+	Result vartype
+}
+
+// Generate fn
+func (m *Method) Generate(idx *index, recv *Interface) (string, error) {
+	data := methodData{}
+	data.Recv = pointer(recv.Name)
+	data.Name = m.Name
+
+	for _, param := range m.Params {
+		// Handle event listener
+		// TODO: this is defined in <callback-interfaces>
+		if param.Type == "EventListener" {
+			event := idx.Interfaces["Event"]
+
+			t, e := Type(idx, event.Name)
+			if e != nil {
+				return "", e
+			}
+
+			data.Params = append(data.Params, vartype{
+				Var:  name(param.Name),
+				Type: "func (e " + t + ")",
+			})
+			continue
+		}
+
+		// handle callback functions
+		if idx.CallbackFunctions[param.Type] != nil {
+			fn := idx.CallbackFunctions[param.Type]
+			t, e := fn.Generate(idx)
+			if e != nil {
+				return "", e
+			}
+
+			data.Params = append(data.Params, vartype{
+				Var:  name(fn.Name),
+				Type: t,
+			})
+			continue
+		}
+
+		t, e := Type(idx, param.Type)
+		if e != nil {
+			return "", e
+		}
+
+		data.Params = append(data.Params, vartype{
+			Var:  name(param.Name),
+			Type: t,
+		})
+	}
+
+	t, e := Type(idx, m.Type)
+	if e != nil {
+		return "", e
+	}
+	data.Result = vartype{
+		Var:  variable(t),
+		Type: t,
+	}
+
+	async := isAsync(m.Type)
+
+	if t == "void" {
+		if async {
+			return generate("method/"+m.Name, data, `
+				func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) {
+					js.Rewrite("await $<.{{ .Name }}({{ len .Params | countup }})", {{ joinv .Params }})
+				}
+			`)
+		}
+
+		return generate("method/"+m.Name, data, `
+			func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) {
+				js.Rewrite("$<.{{ .Name }}({{ len .Params | countup }})", {{ joinv .Params }})
+			}
+		`)
+	}
+
+	if async {
+		return generate("method/"+m.Name, data, `
+			func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) ({{ .Result.Var }} {{ .Result.Type }}) {
+				js.Rewrite("await $<.{{ .Name }}({{ len .Params | countup }})", {{ joinv .Params }})
+				return {{ .Result.Var }}
+			}
+		`)
+	}
+	return generate("method/"+m.Name, data, `
+		func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) ({{ .Result.Var }} {{ .Result.Type }}) {
+			js.Rewrite("$<.{{ .Name }}({{ len .Params | countup }})", {{ joinv .Params }})
+			return {{ .Result.Var }}
+		}
+	`)
 }
 
 // Event struct
@@ -83,6 +328,90 @@ type Property struct {
 	Unforgeable                       bool   `xml:"unforgeable,attr"`
 }
 
+type propertyData struct {
+	Recv   string
+	Name   string
+	Result vartype
+}
+
+// Generate fn
+func (p *Property) Generate(idx *index, recv *Interface) (string, error) {
+	var result []string
+
+	data := propertyData{}
+	data.Recv = pointer(recv.Name)
+	data.Name = p.Name
+
+	if p.Type == "EventHandler" {
+		n := "e"
+		event := idx.Interfaces["Event"]
+
+		ev := findEvent(idx, recv, p.EventHandler)
+		if ev != nil {
+			n = ev.Name
+			event = idx.Interfaces[ev.Type]
+		}
+		if event == nil {
+			return "", fmt.Errorf("%s.%s: couldn't find event name: %s", recv.Name, p.Name, p.EventHandler)
+		}
+
+		t, e := Type(idx, event.Name)
+		if e != nil {
+			return "", e
+		}
+
+		data.Result = vartype{
+			Var:  name(n),
+			Type: t,
+		}
+	} else if idx.CallbackFunctions[p.Type] != nil {
+		fn := idx.CallbackFunctions[p.Type]
+		t, e := fn.Generate(idx)
+		if e != nil {
+			return "", e
+		}
+
+		data.Result = vartype{
+			Var:  name(fn.Name),
+			Type: t,
+		}
+	} else {
+		t, e := Type(idx, p.Type)
+		if e != nil {
+			return "", e
+		}
+		data.Result = vartype{
+			Var:  name(p.Name),
+			Type: t,
+		}
+	}
+
+	getter, e := generate("property_getter/"+p.Name, data, `
+	func ({{ .Recv }}) Get{{ capitalize .Name }}() ({{ .Result.Var }} {{ .Result.Type }}) {
+		js.Rewrite("$<.{{ .Name }}")
+		return {{ .Result.Var }}
+	}
+	`)
+	if e != nil {
+		return "", e
+	}
+	result = append(result, getter)
+
+	if !p.ReadOnly {
+		setter, e := generate("property_setter/"+p.Name, data, `
+		func ({{ .Recv }}) Set{{ capitalize .Name }} ({{ .Result.Var }} {{ .Result.Type }}) {
+			js.Rewrite("$<.{{ .Name }} = $1", {{ .Result.Var }})
+		}
+		`)
+		if e != nil {
+			return "", e
+		}
+		result = append(result, setter)
+	}
+
+	return strings.Join(result, "\n"), nil
+}
+
 // Constant struct
 type Constant struct {
 	Name         string `xml:"name,attr"`
@@ -111,19 +440,19 @@ type AnonymousContentAttributes struct {
 
 // Interface struct
 type Interface struct {
-	Name                       string                       `xml:"name,attr"`
-	Extends                    string                       `xml:"extends,attr"`
-	Implements                 []string                     `xml:"implements,omitempty"`
-	NoInterfaceObject          bool                         `xml:"no-interface-object,attr"`
-	Element                    []Element                    `xml:"element"`
-	Methods                    []Method                     `xml:"methods>method"`
-	AnonymousMethods           []Method                     `xml:"anonymous-methods>method"`
-	Properties                 []Property                   `xml:"properties>property"`
-	Constants                  []Constant                   `xml:"constants>constant"`
-	Constructor                Constructor                  `xml:"constructor,omitempty"`
-	NamedConstructor           NamedConstructor             `xml:"named-constructor"`
-	Events                     []Event                      `xml:"events>event"`
-	AnonymousContentAttributes []AnonymousContentAttributes `xml:"anonymous-content-attributes>parsedattribute"`
+	Name                       string                        `xml:"name,attr"`
+	Extends                    string                        `xml:"extends,attr"`
+	Implements                 []string                      `xml:"implements,omitempty"`
+	NoInterfaceObject          bool                          `xml:"no-interface-object,attr"`
+	Element                    []*Element                    `xml:"element"`
+	Methods                    []*Method                     `xml:"methods>method"`
+	AnonymousMethods           []*Method                     `xml:"anonymous-methods>method"`
+	Properties                 []*Property                   `xml:"properties>property"`
+	Constants                  []*Constant                   `xml:"constants>constant"`
+	Constructor                Constructor                   `xml:"constructor,omitempty"`
+	NamedConstructor           NamedConstructor              `xml:"named-constructor"`
+	Events                     []*Event                      `xml:"events>event"`
+	AnonymousContentAttributes []*AnonymousContentAttributes `xml:"anonymous-content-attributes>parsedattribute"`
 }
 
 // Package fn
@@ -136,10 +465,72 @@ func (i *Interface) Type() string {
 	return i.Name
 }
 
+type interfaceData struct {
+	Name       string
+	Extends    string
+	Implements []string
+	Methods    []string
+	Properties []string
+}
+
 // Generate the type
-func (i *Interface) Generate(index *index) (string, error) {
-	return generate(i.Name, i, `
-	{{ .Name }}	
+func (i *Interface) Generate(idx *index, implementor *Interface) (string, error) {
+	data := interfaceData{}
+	data.Name = i.Name
+
+	recv := i
+	if implementor != nil {
+		recv = implementor
+	}
+
+	if i.Extends != "" && i.Extends != "Object" {
+		data.Extends = pointer(i.Extends)
+	}
+
+	for _, imp := range i.Implements {
+		data.Implements = append(data.Implements, pointer(imp))
+	}
+
+	for _, method := range i.Methods {
+		if method == nil {
+			continue
+		}
+
+		m, e := method.Generate(idx, recv)
+		if e != nil {
+			return "", e
+		}
+		data.Methods = append(data.Methods, m)
+	}
+
+	for _, property := range i.Properties {
+		if property == nil {
+			continue
+		}
+
+		m, e := property.Generate(idx, recv)
+		if e != nil {
+			return "", e
+		}
+		data.Properties = append(data.Properties, m)
+	}
+
+	return generate("interface/"+i.Name, data, `
+type {{ .Name }} struct {
+	{{ .Extends }}
+
+	{{- range .Implements }}
+	{{ . }}
+	{{- end }}
+}
+
+{{ range .Methods -}}
+{{ . }}
+{{- end }}
+
+{{ range .Properties -}}
+{{ . }}
+{{- end }}
 `)
 }
 
@@ -152,6 +543,33 @@ type Member struct {
 	Nullable bool   `xml:"nullable,attr,omitempty"`
 }
 
+type memberData struct {
+	Name string
+	Type string
+}
+
+// Generate fn
+func (m *Member) Generate(idx *index) (string, error) {
+	data := memberData{}
+	data.Name = name(m.Name)
+
+	t, e := Type(idx, m.Type)
+	if e != nil {
+		return "", e
+	}
+
+	// make the optional fields pointers
+	if m.Nullable || !m.Required {
+		zero, isset := builtin.Types[t]
+		if isset && zero != nil {
+			t = "*" + t
+		}
+	}
+	data.Type = t
+
+	return generate("member/"+m.Name, data, `{{ .Name }} {{ .Type }}`)
+}
+
 // Dictionary struct
 type Dictionary struct {
 	Name    string   `xml:"name,attr"`
@@ -159,10 +577,51 @@ type Dictionary struct {
 	Members []Member `xml:"members>member"`
 }
 
+type dictionaryData struct {
+	Name    string
+	Extends string
+	Members []string
+}
+
+// Generate fn
+func (d *Dictionary) Generate(idx *index) (string, error) {
+	data := &dictionaryData{}
+	data.Name = d.Name
+
+	if d.Extends != "" && d.Extends != "Object" {
+		data.Extends = pointer(d.Extends)
+	}
+
+	for _, member := range d.Members {
+		m, e := member.Generate(idx)
+		if e != nil {
+			return "", e
+		}
+		data.Members = append(data.Members, m)
+	}
+
+	return generate("dictionary/"+d.Name, data, `
+		type {{ .Name }} struct {
+			{{ .Extends }}
+
+			{{ range .Members }}
+			{{ . }}
+			{{- end }}
+		}
+	`)
+
+	// return "", nil
+}
+
 // Enum struct
 type Enum struct {
 	Name   string   `xml:"name,attr"`
 	Values []string `xml:"value"`
+}
+
+// Generate fn
+func (e *Enum) Generate(idx *index) (string, error) {
+	return generate("enum/"+e.Name, e, `type {{ .Name }} string`)
 }
 
 // Typedef struct
@@ -183,6 +642,29 @@ type DOM struct {
 	TypeDefs           []*Typedef          `xml:"typedefs>typedef"`
 }
 
+type addedType struct {
+	Kind           string `json:"kind,omitempty"`
+	Name           string `json:"name,omitempty"`
+	Type           string `json:"type,omitempty"`
+	Flavor         string `json:"flavor,omitempty"`
+	Interface      string `json:"interface,omitempty"`
+	Readonly       bool   `json:"readonly,omitempty"`
+	ExposeGlobally bool   `json:"expose_globally,omitempty"`
+	Extends        string `json:"extends,omitempty"`
+	Properties     []struct {
+		Name     string `json:"name,omitempty"`
+		Kind     string `json:"kind,omitempty"`
+		Readonly bool   `json:"readonly,omitempty"`
+	} `json:"properties,omitempty"`
+	Methods []struct {
+		Name       string   `json:"name,omitempty"`
+		Signatures []string `json:"signatures,omitempty"`
+	} `json:"methods,omitempty"`
+	Indexer []struct {
+		Signatures []string `json:"signatures,omitempty"`
+	} `json:"indexer,omitempty"`
+}
+
 type index struct {
 	CallbackFunctions  map[string]*CallbackFunction
 	CallbackInterfaces map[string]*Interface
@@ -194,16 +676,32 @@ type index struct {
 }
 
 func main() {
-	src, err := ioutil.ReadFile("./browser.webidl.xml")
+	log.SetHandler(text.New(os.Stderr))
+
+	src, err := ioutil.ReadFile("./inputs/browser.webidl.xml")
 	if err != nil {
-		log.WithError(err).Errorf("error reading file")
+		log.WithError(err).Fatalf("error reading file")
 		return
 	}
 
 	var dom DOM
-	decoder := xml.NewDecoder(bytes.NewBuffer(src))
-	if e := decoder.Decode(&dom); e != nil {
-		log.WithError(e).Errorf("error decoding")
+	xmlDecoder := xml.NewDecoder(bytes.NewBuffer(src))
+	if e := xmlDecoder.Decode(&dom); e != nil {
+		log.WithError(e).Fatalf("error decoding")
+		return
+	}
+
+	// append over override with added types
+	buf, err := ioutil.ReadFile("./inputs/addedTypes.json")
+	if err != nil {
+		log.WithError(err).Fatalf("error reading file")
+		return
+	}
+
+	var added []addedType
+	jsonDecoder := json.NewDecoder(bytes.NewBuffer(buf))
+	if e := jsonDecoder.Decode(&added); e != nil {
+		log.WithError(e).Fatalf("error decoding")
 		return
 	}
 
@@ -239,88 +737,82 @@ func main() {
 		idx.TypeDefs[node.NewType] = node
 	}
 
+	idx = adjust(idx)
+
 	// 2. generate
+	var stmts []string
 
-	d := &data{}
-	for _, iface := range dom.Interfaces {
-		if iface.Name != "Event" {
-			continue
+	// generate our enums
+	// TODO: actually generate enums
+	for _, enum := range dom.Enums {
+		str, e := enum.Generate(idx)
+		if e != nil {
+			log.WithError(e).Fatalf("error generating")
 		}
-
-		str, err := iface.Generate(idx)
-		if err != nil {
-			log.WithError(err).Errorf("error generating")
-		}
-		println(str)
-
-		// pkg := &Package{
-		// 	Name: lowercase(iface.Name),
-		// }
-
-		// for _, prop := range iface.Properties {
-		// 	// if prop.Name != "document" {
-		// 	// 	continue
-		// 	// }
-
-		// 	name := capitalize(prop.Name)
-
-		// 	kind := prop.Type
-		// 	if t, isset := typemap[kind]; isset {
-		// 		kind = t
-		// 	}
-
-		// 	// builtinType := true
-		// 	// if t, isset := builtin.Types[kind]; !isset {
-		// 	// 	builtinType = false
-		// 	// }
-
-		// 	variable := &Variable{
-		// 		Name: name,
-		// 		Type: kind,
-		// 		// BuiltinType: builtinType,
-		// 		Rewrite: lowercase(iface.Name) + "." + prop.Name,
-		// 	}
-		// 	pkg.Variables = append(pkg.Variables, variable)
-		// }
-
-		// d.Packages = append(d.Packages, pkg)
+		stmts = append(stmts, str)
 	}
 
-	for _, pkg := range d.Packages {
-		output, err := render(pkg)
-		if err != nil {
-			log.WithError(err).Errorf("error generating")
+	// generate our dictionaries
+	for _, dict := range dom.Dictionaries {
+		str, e := dict.Generate(idx)
+		if e != nil {
+			log.WithError(e).Fatalf("error generating")
+		}
+		stmts = append(stmts, str)
+	}
+
+	// generate our interfaces
+	for _, iface := range dom.Interfaces {
+		str, e := iface.Generate(idx, nil)
+		if e != nil {
+			log.WithError(e).Fatalf("error generating")
+		}
+		stmts = append(stmts, str)
+	}
+
+	// generate our mixin interfaces
+	for _, iface := range dom.MixinInterfaces {
+		str, e := iface.Generate(idx, nil)
+		if e != nil {
+			log.WithError(e).Fatalf("error generating")
+		}
+		stmts = append(stmts, str)
+	}
+
+	result := "package dom\n\n" + strings.Join(stmts, "\n")
+
+	output, e := formatter.Format(result)
+	if e != nil {
+		if e := ioutil.WriteFile("generated.go", []byte(result), os.ModePerm); e != nil {
+			log.WithError(e).Fatalf("unable to write")
 			return
 		}
-		println(output)
+		log.WithError(e).Fatalf("error formatting")
+		return
 	}
-
-	// pretty.Print(dom)
-
-	// 	cwd, err := os.Getwd()
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-	// 	log.Infof("cwd=%s", cwd)
+	if e := ioutil.WriteFile("generated.go", []byte(output), os.ModePerm); e != nil {
+		log.WithError(e).Fatalf("unable to write")
+		return
+	}
 }
 
-type data struct {
-	Packages []*Package
-}
+// type data struct {
+// 	Packages []*Package
+// }
 
-// Package struct
-type Package struct {
-	Name      string
-	Variables []*Variable
-}
+// // Package struct
+// type Package struct {
+// 	Name      string
+// 	Variables []*Variable
+// }
 
-// Variable struct
-type Variable struct {
-	Name        string
-	Rewrite     string
-	Type        string
-	BuiltinType bool
-}
+// // Variable struct
+// type Variable struct {
+// 	Name        string
+// 	Rewrite     string
+// 	Type        string
+// 	BuiltinType bool
+// }
 
 func generate(name string, data interface{}, tpl string) (string, error) {
 	// tpl, err := template.New(name).Funcs(templateMap).Parse(string(raw))
@@ -331,21 +823,6 @@ func generate(name string, data interface{}, tpl string) (string, error) {
 
 	var b bytes.Buffer
 	if e := t.Execute(&b, data); e != nil {
-		return "", e
-	}
-
-	return string(b.Bytes()), nil
-}
-
-func render(data *Package) (string, error) {
-	// tpl, err := template.New(name).Funcs(templateMap).Parse(string(raw))
-	tpl, err := template.New("interfaces").Funcs(fns()).Parse(tpl())
-	if err != nil {
-		return "", err
-	}
-
-	var b bytes.Buffer
-	if e := tpl.Execute(&b, data); e != nil {
 		return "", e
 	}
 
@@ -363,11 +840,56 @@ func lowercase(s string) string {
 	return strings.ToLower(snaker.SnakeToCamelIdentifier(s))
 }
 
+func name(s string) string {
+	if alias, isset := builtin.Identifiers[s]; isset {
+		return alias
+	}
+	return s
+}
+
+// Result transforms the XML type to a Go type
+func variable(s string) string {
+	s = strings.TrimLeft(s, "*[]")
+	if len(s) == 0 {
+		return s
+	}
+	letter := s[:1]
+	return name(lowercase(letter))
+}
+
 func pointer(s string) string {
 	if _, isset := builtin.Types[s]; isset {
 		return s
 	}
-	return "*" + lowercase(s) + "." + s
+	return "*" + s
+}
+
+func joinvt(vts []vartype) string {
+	var a []string
+	for _, vt := range vts {
+		a = append(a, vt.Var+" "+vt.Type)
+	}
+	return strings.Join(a, ", ")
+}
+
+func joinv(vts []vartype) string {
+	var a []string
+	for _, vt := range vts {
+		a = append(a, vt.Var)
+	}
+	return strings.Join(a, ", ")
+}
+
+func join(a []string) string {
+	return strings.Join(a, ", ")
+}
+
+func countup(until int) string {
+	var n []string
+	for i := 0; i < until; i++ {
+		n = append(n, "$"+strconv.Itoa(i+1))
+	}
+	return strings.Join(n, ", ")
 }
 
 func dereference(s string) string {
@@ -392,18 +914,83 @@ func fns() template.FuncMap {
 		"lowercase":   lowercase,
 		"pointer":     pointer,
 		"dereference": dereference,
+		"joinvt":      joinvt,
+		"joinv":       joinv,
+		"join":        join,
+		"countup":     countup,
 	}
 }
 
-func tpl() string {
-	return `
-package {{ .Name }}
+func findEvent(idx *index, i *Interface, name string) *Event {
 
-{{ range .Variables }}
-var {{ .Name }} = func() {{ pointer .Type }} {
-	js.Rewrite("{{ .Rewrite }}")
-	return {{ dereference .Type }}
-}()
-{{ end }}
-`
+	for _, event := range i.Events {
+		if event.Name == name {
+			return event
+		}
+	}
+
+	if i.Extends != "" && i.Extends != "Object" && idx.Interfaces[i.Extends] != nil {
+		return findEvent(idx, idx.Interfaces[i.Extends], name)
+	}
+
+	return nil
+}
+
+// manual adjustments
+func adjust(idx *index) *index {
+	// var iface *Interface
+
+	// AudioBufferSourceNode has wrong event-handler ref
+	// iface = idx.Interfaces["AudioBufferSourceNode"]
+	// for i, prop := range iface.Properties {
+	// 	if prop.Name == "onended" {
+	// 		iface.Properties[i].EventHandler = "end"
+	// 	}
+	// }
+
+	// remove state change since i'm not sure where that's coming from
+	// iface = idx.Interfaces["AudioContext"]
+	// for i, prop := range iface.Properties {
+	// 	if prop.Name == "onstatechange" {
+	// 		iface.Properties[i] = nil
+	// 		// iface.Properties[i].EventHandler = "end"
+	// 	}
+	// }
+
+	// remove state change since i'm not sure where that's coming from
+	// iface = idx.Interfaces["Document"]
+	// for i, prop := range iface.Properties {
+	// 	if prop.Name == "onabort" {
+	// 		iface.Properties[i] = nil
+	// 	}
+	// 	if prop.Name == "onactivate" {
+	// 		iface.Properties[i] = nil
+	// 	}
+	// 	if prop.Name == "onbeforeactivate" {
+	// 		iface.Properties[i] = nil
+	// 	}
+	// 	if prop.Name == "onbeforedeactivate" {
+	// 		iface.Properties[i] = nil
+	// 	}
+	// 	if prop.Name == "onblur" {
+	// 		iface.Properties[i] = nil
+	// 	}
+	// 	if prop.Name == "oncanplay" {
+	// 		iface.Properties[i] = nil
+	// 	}
+	// 	if prop.Name == "oncanplaythrough" {
+	// 		iface.Properties[i] = nil
+	// 	}
+	// 	if prop.Name == "onchange" {
+	// 		iface.Properties[i] = nil
+	// 	}
+	// 	if prop.Name == "onclick" {
+	// 		iface.Properties[i] = nil
+	// 	}
+	// 	if prop.Name == "oncontextmenu" {
+	// 		iface.Properties[i] = nil
+	// 	}
+	// }
+
+	return idx
 }

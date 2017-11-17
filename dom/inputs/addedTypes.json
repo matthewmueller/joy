@@ -1,0 +1,2472 @@
+[
+  {
+    "kind": "interface",
+    "name": "BroadcastChannel",
+    "extends": "EventTarget",
+    "constructorSignatures": [
+      "new(name: string): BroadcastChannel"
+    ],
+    "properties": [
+      {
+        "readonly": true,
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "onmessage",
+        "type": "(ev: MessageEvent) => any"
+      },
+      {
+        "name": "onmessageerror",
+        "type": "(ev: MessageEvent) => any"
+      }
+    ],
+    "methods": [
+      {
+        "name": "close",
+        "signatures": [
+          "close(): void"
+        ]
+      },
+      {
+        "name": "postMessage",
+        "signatures": [
+          "postMessage(message: any): void"
+        ]
+      },
+      {
+        "name": "addEventListener",
+        "signatures": [
+          "addEventListener<K extends keyof BroadcastChannelEventMap>(type: K, listener: (this: BroadcastChannel, ev: BroadcastChannelEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void",
+          "addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void"
+        ]
+      },
+      {
+        "name": "removeEventListener",
+        "signatures": [
+          "removeEventListener<K extends keyof BroadcastChannelEventMap>(type: K, listener: (this: BroadcastChannel, ev: BroadcastChannelEventMap[K]) => any, options?: boolean | EventListenerOptions): void",
+          "removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "BroadcastChannelEventMap",
+    "properties": [
+      {
+        "name": "message",
+        "type": "MessageEvent"
+      },
+      {
+        "name": "messageerror",
+        "type": "MessageEvent"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "ErrorEventInit",
+    "properties": [
+      {
+        "name": "message?",
+        "type": "string"
+      },
+      {
+        "name": "filename?",
+        "type": "string"
+      },
+      {
+        "name": "lineno?",
+        "type": "number"
+      },
+      {
+        "name": "conlno?",
+        "type": "number"
+      },
+      {
+        "name": "error?",
+        "type": "any"
+      }
+    ]
+  },
+  {
+    "kind": "property",
+    "interface": "CSSStyleDeclaration",
+    "name": "resize",
+    "type": "string | null"
+  },
+  {
+    "kind": "property",
+    "interface": "CSSStyleDeclaration",
+    "name": "userSelect",
+    "type": "string | null"
+  },
+  {
+    "kind": "interface",
+    "name": "StorageEventInit",
+    "flavor": "Web",
+    "extends": "EventInit",
+    "properties": [
+      {
+        "name": "key?",
+        "type": "string"
+      },
+      {
+        "name": "oldValue?",
+        "type": "string"
+      },
+      {
+        "name": "newValue?",
+        "type": "string"
+      },
+      {
+        "name": "url",
+        "type": "string"
+      },
+      {
+        "name": "storageArea?",
+        "type": "Storage"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "Canvas2DContextAttributes",
+    "flavor": "Web",
+    "properties": [
+      {
+        "name": "alpha?",
+        "type": "boolean"
+      },
+      {
+        "name": "willReadFrequently?",
+        "type": "boolean"
+      },
+      {
+        "name": "storage?",
+        "type": "boolean"
+      },
+      {
+        "name": "[attribute: string]",
+        "type": "boolean | string | undefined"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "flavor": "Worker",
+    "name": "ImageBitmapOptions",
+    "properties": [
+      {
+        "name": "imageOrientation?",
+        "type": "\"none\" | \"flipY\""
+      },
+      {
+        "name": "premultiplyAlpha?",
+        "type": "\"none\" | \"premultiply\" | \"default\""
+      },
+      {
+        "name": "colorSpaceConversion?",
+        "type": "\"none\" | \"default\""
+      },
+      {
+        "name": "resizeWidth?",
+        "type": "number"
+      },
+      {
+        "name": "resizeHeight?",
+        "type": "number"
+      },
+      {
+        "name": "resizeQuality?",
+        "type": "\"pixelated\" | \"low\" | \"medium\" | \"high\""
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "ImageBitmap",
+    "flavor": "Worker",
+    "properties": [
+      {
+        "name": "width",
+        "readonly": true,
+        "type": "number"
+      },
+      {
+        "name": "height",
+        "readonly": true,
+        "type": "number"
+      }
+    ],
+    "methods": [
+      {
+        "name": "close",
+        "signatures": [
+          "close(): void"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Window",
+    "name": "createImageBitmap",
+    "signatures": [
+      "createImageBitmap(image: HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | ImageData | Blob, options?: ImageBitmapOptions): Promise<ImageBitmap>",
+      "createImageBitmap(image: HTMLImageElement | SVGImageElement | HTMLVideoElement | HTMLCanvasElement | ImageBitmap | ImageData | Blob, sx: number, sy: number, sw: number, sh: number, options?: ImageBitmapOptions): Promise<ImageBitmap>"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "WorkerGlobalScope",
+    "name": "createImageBitmap",
+    "signatures": [
+      "createImageBitmap(image: ImageBitmap | ImageData | Blob, options?: ImageBitmapOptions): Promise<ImageBitmap>",
+      "createImageBitmap(image: ImageBitmap | ImageData | Blob, sx: number, sy: number, sw: number, sh: number, options?: ImageBitmapOptions): Promise<ImageBitmap>"
+    ]
+  },
+  {
+    "kind": "property",
+    "interface": "IDBObjectStoreParameters",
+    "name": "autoIncrement?",
+    "type": "boolean"
+  },
+  {
+    "kind": "property",
+    "interface": "IDBIndexParameters",
+    "name": "multiEntry?",
+    "type": "boolean"
+  },
+  {
+    "kind": "property",
+    "interface": "IDBIndex",
+    "name": "multiEntry",
+    "type": "boolean"
+  },
+  {
+    "kind": "interface",
+    "name": "URLSearchParams",
+    "constructorSignatures": [
+      "new (init?: string | URLSearchParams): URLSearchParams"
+    ],
+    "methods": [
+      {
+        "name": "append",
+        "signatures": [
+          "append(name: string, value: string): void"
+        ]
+      },
+      {
+        "name": "delete",
+        "signatures": [
+          "delete(name: string): void"
+        ]
+      },
+      {
+        "name": "get",
+        "signatures": [
+          "get(name: string): string | null"
+        ]
+      },
+      {
+        "name": "getAll",
+        "signatures": [
+          "getAll(name: string): string[]"
+        ]
+      },
+      {
+        "name": "has",
+        "signatures": [
+          "has(name: string): boolean"
+        ]
+      },
+      {
+        "name": "set",
+        "signatures": [
+          "set(name: string, value: string): void"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "property",
+    "interface": "URL",
+    "name": "searchParams",
+    "readonly": true,
+    "type": "URLSearchParams"
+  },
+  {
+    "kind": "property",
+    "interface": "Window",
+    "exposeGlobally": false,
+    "name": "URL",
+    "type": "typeof URL"
+  },
+  {
+    "kind": "property",
+    "interface": "Window",
+    "exposeGlobally": false,
+    "name": "URLSearchParams",
+    "type": "typeof URLSearchParams"
+  },
+  {
+    "kind": "property",
+    "interface": "Window",
+    "exposeGlobally": false,
+    "name": "Blob",
+    "type": "typeof Blob"
+  },
+  {
+    "kind": "interface",
+    "name": "NodeListOf<TNode extends Node>",
+    "flavor": "Web",
+    "extends": "NodeList",
+    "properties": [
+      {
+        "name": "length",
+        "type": "number"
+      }
+    ],
+    "methods": [
+      {
+        "name": "item",
+        "signatures": [
+          "item(index: number): TNode"
+        ]
+      }
+    ],
+    "indexer": [
+      {
+        "signatures": [
+          "[index: number]: TNode"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "HTMLCollectionOf<T extends Element>",
+    "flavor": "Web",
+    "extends": "HTMLCollection",
+    "methods": [
+      {
+        "name": "item",
+        "signatures": [
+          "item(index: number): T"
+        ]
+      },
+      {
+        "name": "namedItem",
+        "signatures": [
+          "namedItem(name: string): T"
+        ]
+      }
+    ],
+    "indexer": [
+      {
+        "signatures": [
+          "[index: number]: T"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "BlobPropertyBag",
+    "properties": [
+      {
+        "name": "type?",
+        "type": "string"
+      },
+      {
+        "name": "endings?",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "FilePropertyBag",
+    "extends": "BlobPropertyBag",
+    "properties": [
+      {
+        "name": "lastModified?",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "EventListenerObject",
+    "methods": [
+      {
+        "name": "handleEvent",
+        "signatures": [
+          "handleEvent(evt: Event): void"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "property",
+    "interface": "MessageEventInit",
+    "name": "lastEventId?",
+    "type": "string"
+  },
+  {
+    "kind": "property",
+    "interface": "MessageEventInit",
+    "name": "channel?",
+    "type": "string"
+  },
+  {
+    "kind": "interface",
+    "name": "ProgressEventInit",
+    "extends": "EventInit",
+    "properties": [
+      {
+        "name": "lengthComputable?",
+        "type": "boolean"
+      },
+      {
+        "name": "loaded?",
+        "type": "number"
+      },
+      {
+        "name": "total?",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Element",
+    "signatures": [
+      "getElementsByClassName(classNames: string): NodeListOf<Element>"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Element",
+    "signatures": [
+      "matches(selector: string): boolean"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Element",
+    "signatures": [
+      "closest<K extends keyof ElementTagNameMap>(selector: K): ElementTagNameMap[K] | null"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Element",
+    "signatures": [
+      "closest(selector: string): Element | null"
+    ]
+  },
+  {
+    "kind": "typedef",
+    "flavor": "Web",
+    "name": "ScrollBehavior",
+    "type": "\"auto\" | \"instant\" | \"smooth\""
+  },
+  {
+    "kind": "interface",
+    "flavor": "Web",
+    "name": "ScrollOptions",
+    "properties": [
+      {
+        "name": "behavior?",
+        "type": "ScrollBehavior"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "flavor": "Web",
+    "name": "ScrollToOptions",
+    "extends": "ScrollOptions",
+    "properties": [
+      {
+        "name": "left?",
+        "type": "number"
+      },
+      {
+        "name": "top?",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Window",
+    "signatures": [
+      "scroll(options?: ScrollToOptions): void"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Window",
+    "signatures": [
+      "scrollTo(options?: ScrollToOptions): void"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Window",
+    "signatures": [
+      "scrollBy(options?: ScrollToOptions): void"
+    ]
+  },
+  {
+    "kind": "typedef",
+    "flavor": "Web",
+    "name": "ScrollLogicalPosition",
+    "type": "\"start\" | \"center\" | \"end\" | \"nearest\""
+  },
+  {
+    "kind": "interface",
+    "flavor": "Web",
+    "name": "ScrollIntoViewOptions",
+    "extends": "ScrollOptions",
+    "properties": [
+      {
+        "name": "block?",
+        "type": "ScrollLogicalPosition"
+      },
+      {
+        "name": "inline?",
+        "type": "ScrollLogicalPosition"
+      }
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Element",
+    "signatures": [
+      "scrollIntoView(arg?: boolean | ScrollIntoViewOptions): void"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Element",
+    "signatures": [
+      "scroll(options?: ScrollToOptions): void",
+      "scroll(x: number, y: number): void"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Element",
+    "signatures": [
+      "scrollTo(options?: ScrollToOptions): void",
+      "scrollTo(x: number, y: number): void"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Element",
+    "signatures": [
+      "scrollBy(options?: ScrollToOptions): void",
+      "scrollBy(x: number, y: number): void"
+    ]
+  },
+  {
+    "kind": "signatureoverload",
+    "name": "createElementNS",
+    "interface": "Document",
+    "signatures": [
+      "createElementNS(namespaceURI: \"http://www.w3.org/1999/xhtml\", qualifiedName: string): HTMLElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"a\"): SVGAElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"circle\"): SVGCircleElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"clipPath\"): SVGClipPathElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"componentTransferFunction\"): SVGComponentTransferFunctionElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"defs\"): SVGDefsElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"desc\"): SVGDescElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"ellipse\"): SVGEllipseElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feBlend\"): SVGFEBlendElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feColorMatrix\"): SVGFEColorMatrixElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feComponentTransfer\"): SVGFEComponentTransferElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feComposite\"): SVGFECompositeElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feConvolveMatrix\"): SVGFEConvolveMatrixElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feDiffuseLighting\"): SVGFEDiffuseLightingElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feDisplacementMap\"): SVGFEDisplacementMapElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feDistantLight\"): SVGFEDistantLightElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feFlood\"): SVGFEFloodElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feFuncA\"): SVGFEFuncAElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feFuncB\"): SVGFEFuncBElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feFuncG\"): SVGFEFuncGElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feFuncR\"): SVGFEFuncRElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feGaussianBlur\"): SVGFEGaussianBlurElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feImage\"): SVGFEImageElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feMerge\"): SVGFEMergeElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feMergeNode\"): SVGFEMergeNodeElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feMorphology\"): SVGFEMorphologyElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feOffset\"): SVGFEOffsetElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"fePointLight\"): SVGFEPointLightElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feSpecularLighting\"): SVGFESpecularLightingElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feSpotLight\"): SVGFESpotLightElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feTile\"): SVGFETileElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"feTurbulence\"): SVGFETurbulenceElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"filter\"): SVGFilterElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"foreignObject\"): SVGForeignObjectElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"g\"): SVGGElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"image\"): SVGImageElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"gradient\"): SVGGradientElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"line\"): SVGLineElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"linearGradient\"): SVGLinearGradientElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"marker\"): SVGMarkerElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"mask\"): SVGMaskElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"path\"): SVGPathElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"metadata\"): SVGMetadataElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"pattern\"): SVGPatternElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"polygon\"): SVGPolygonElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"polyline\"): SVGPolylineElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"radialGradient\"): SVGRadialGradientElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"rect\"): SVGRectElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"svg\"): SVGSVGElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"script\"): SVGScriptElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"stop\"): SVGStopElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"style\"): SVGStyleElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"switch\"): SVGSwitchElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"symbol\"): SVGSymbolElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"tspan\"): SVGTSpanElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"textContent\"): SVGTextContentElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"text\"): SVGTextElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"textPath\"): SVGTextPathElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"textPositioning\"): SVGTextPositioningElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"title\"): SVGTitleElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"use\"): SVGUseElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: \"view\"): SVGViewElement",
+      "createElementNS(namespaceURI: \"http://www.w3.org/2000/svg\", qualifiedName: string): SVGElement"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Navigator",
+    "signatures": [
+      "vibrate(pattern: number | number[]): boolean"
+    ]
+  },
+  {
+    "kind": "property",
+    "interface": "Navigator",
+    "readonly": true,
+    "name": "doNotTrack",
+    "type": "string | null"
+  },
+  {
+    "kind": "property",
+    "interface": "Navigator",
+    "name": "hardwareConcurrency",
+    "readonly": true,
+    "type": "number"
+  },
+  {
+    "kind": "property",
+    "interface": "Navigator",
+    "name": "languages",
+    "readonly": true,
+    "type": "string[]"
+  },
+  {
+    "kind": "property",
+    "interface": "WorkerNavigator",
+    "name": "hardwareConcurrency",
+    "readonly": true,
+    "type": "number"
+  },
+  {
+    "kind": "property",
+    "interface": "HTMLLinkElement",
+    "name": "import?",
+    "type": "Document"
+  },
+  {
+    "kind": "method",
+    "interface": "HTMLCanvasElement",
+    "name": "toBlob",
+    "signatures": [
+      "toBlob(callback: (result: Blob | null) => void, type?: string, ...arguments: any[]): void"
+    ]
+  },
+  {
+    "kind": "property",
+    "interface": "StorageEvent",
+    "name": "key?",
+    "type": "string"
+  },
+  {
+    "kind": "property",
+    "interface": "StorageEvent",
+    "name": "oldValue?",
+    "type": "string"
+  },
+  {
+    "kind": "property",
+    "interface": "StorageEvent",
+    "name": "newValue?",
+    "type": "string"
+  },
+  {
+    "kind": "property",
+    "interface": "StorageEvent",
+    "name": "storageArea?",
+    "type": "Storage"
+  },
+  {
+    "kind": "property",
+    "interface": "IDBObjectStore",
+    "name": "autoIncrement",
+    "type": "boolean"
+  },
+  {
+    "kind": "interface",
+    "flavor": "Web",
+    "name": "ClipboardEventInit",
+    "extends": "EventInit",
+    "properties": [
+      {
+        "name": "data?",
+        "type": "string"
+      },
+      {
+        "name": "dataType?",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "kind": "typedef",
+    "name": "IDBValidKey",
+    "type": "number | string | Date | IDBArrayKey"
+  },
+  {
+    "kind": "interface",
+    "name": "IDBArrayKey",
+    "extends": "Array<IDBValidKey>"
+  },
+  {
+    "kind": "property",
+    "interface": "HTMLInputElement",
+    "name": "minLength",
+    "type": "number"
+  },
+  {
+    "kind": "property",
+    "interface": "HTMLTextAreaElement",
+    "name": "minLength",
+    "type": "number"
+  },
+  {
+    "kind": "property",
+    "interface": "IDBDatabase",
+    "name": "onversionchange",
+    "type": "(ev: IDBVersionChangeEvent) => any"
+  },
+  {
+    "kind": "method",
+    "interface": "IDBDatabase",
+    "name": "addEventListener",
+    "signatures": [
+      "addEventListener(type: \"versionchange\", listener: (this: IDBDatabase, ev: IDBVersionChangeEvent) => any, options?: boolean | AddEventListenerOptions): void"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "IDBDatabase",
+    "name": "removeEventListener",
+    "signatures": [
+      "removeEventListener(type: \"versionchange\", listener: (this: IDBDatabase, ev: IDBVersionChangeEvent) => any, options?: boolean | EventListenerOptions): void"
+    ]
+  },
+  {
+    "kind": "property",
+    "interface": "CanvasRenderingContext2D",
+    "name": "mozImageSmoothingEnabled",
+    "type": "boolean"
+  },
+  {
+    "kind": "property",
+    "interface": "CanvasRenderingContext2D",
+    "name": "webkitImageSmoothingEnabled",
+    "type": "boolean"
+  },
+  {
+    "kind": "property",
+    "interface": "CanvasRenderingContext2D",
+    "name": "oImageSmoothingEnabled",
+    "type": "boolean"
+  },
+  {
+    "kind": "property",
+    "interface": "WebGLContextAttributes",
+    "name": "failIfMajorPerformanceCaveat?",
+    "type": "boolean"
+  },
+  {
+    "kind": "typedef",
+    "name": "BufferSource",
+    "type": "ArrayBuffer | ArrayBufferView"
+  },
+  {
+    "kind": "interface",
+    "name": "RsaKeyGenParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "modulusLength",
+        "type": "number"
+      },
+      {
+        "name": "publicExponent",
+        "type": "Uint8Array"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "RsaHashedKeyGenParams",
+    "extends": "RsaKeyGenParams",
+    "properties": [
+      {
+        "name": "hash",
+        "type": "AlgorithmIdentifier"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "RsaKeyAlgorithm",
+    "extends": "KeyAlgorithm",
+    "properties": [
+      {
+        "name": "modulusLength",
+        "type": "number"
+      },
+      {
+        "name": "publicExponent",
+        "type": "Uint8Array"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "RsaHashedKeyAlgorithm",
+    "extends": "RsaKeyAlgorithm",
+    "properties": [
+      {
+        "name": "hash",
+        "type": "AlgorithmIdentifier"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "RsaHashedImportParams",
+    "properties": [
+      {
+        "name": "hash",
+        "type": "AlgorithmIdentifier"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "RsaPssParams",
+    "properties": [
+      {
+        "name": "saltLength",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "RsaOaepParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "label?",
+        "type": "BufferSource"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "EcdsaParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "hash",
+        "type": "AlgorithmIdentifier"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "EcKeyGenParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "namedCurve",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "EcKeyAlgorithm",
+    "extends": "KeyAlgorithm",
+    "properties": [
+      {
+        "name": "typedCurve",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "EcKeyImportParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "namedCurve",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "EcdhKeyDeriveParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "public",
+        "type": "CryptoKey"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "AesCtrParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "counter",
+        "type": "BufferSource"
+      },
+      {
+        "name": "length",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "AesKeyAlgorithm",
+    "extends": "KeyAlgorithm",
+    "properties": [
+      {
+        "name": "length",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "AesKeyGenParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "length",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "AesDerivedKeyParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "length",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "AesCbcParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "iv",
+        "type": "BufferSource"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "AesCmacParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "length",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "AesGcmParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "iv",
+        "type": "BufferSource"
+      },
+      {
+        "name": "additionalData?",
+        "type": "BufferSource"
+      },
+      {
+        "name": "tagLength?",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "AesCfbParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "iv",
+        "type": "BufferSource"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "HmacImportParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "hash?",
+        "type": "AlgorithmIdentifier"
+      },
+      {
+        "name": "length?",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "HmacKeyAlgorithm",
+    "extends": "KeyAlgorithm",
+    "properties": [
+      {
+        "name": "hash",
+        "type": "AlgorithmIdentifier"
+      },
+      {
+        "name": "length",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "HmacKeyGenParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "hash",
+        "type": "AlgorithmIdentifier"
+      },
+      {
+        "name": "length?",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "DhKeyGenParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "prime",
+        "type": "Uint8Array"
+      },
+      {
+        "name": "generator",
+        "type": "Uint8Array"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "DhKeyAlgorithm",
+    "extends": "KeyAlgorithm",
+    "properties": [
+      {
+        "name": "prime",
+        "type": "Uint8Array"
+      },
+      {
+        "name": "generator",
+        "type": "Uint8Array"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "DhKeyDeriveParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "public",
+        "type": "CryptoKey"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "DhImportKeyParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "prime",
+        "type": "Uint8Array"
+      },
+      {
+        "name": "generator",
+        "type": "Uint8Array"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "ConcatParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "hash?",
+        "type": "AlgorithmIdentifier"
+      },
+      {
+        "name": "algorithmId",
+        "type": "Uint8Array"
+      },
+      {
+        "name": "partyUInfo",
+        "type": "Uint8Array"
+      },
+      {
+        "name": "partyVInfo",
+        "type": "Uint8Array"
+      },
+      {
+        "name": "publicInfo?",
+        "type": "Uint8Array"
+      },
+      {
+        "name": "privateInfo?",
+        "type": "Uint8Array"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "HkdfCtrParams",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "hash",
+        "type": "AlgorithmIdentifier"
+      },
+      {
+        "name": "label",
+        "type": "BufferSource"
+      },
+      {
+        "name": "context",
+        "type": "BufferSource"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "Pbkdf2Params",
+    "extends": "Algorithm",
+    "properties": [
+      {
+        "name": "salt",
+        "type": "BufferSource"
+      },
+      {
+        "name": "iterations",
+        "type": "number"
+      },
+      {
+        "name": "hash",
+        "type": "AlgorithmIdentifier"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "RsaOtherPrimesInfo",
+    "properties": [
+      {
+        "name": "r",
+        "type": "string"
+      },
+      {
+        "name": "d",
+        "type": "string"
+      },
+      {
+        "name": "t",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "JsonWebKey",
+    "properties": [
+      {
+        "name": "kty",
+        "type": "string"
+      },
+      {
+        "name": "use?",
+        "type": "string"
+      },
+      {
+        "name": "key_ops?",
+        "type": "string[]"
+      },
+      {
+        "name": "alg?",
+        "type": "string"
+      },
+      {
+        "name": "kid?",
+        "type": "string"
+      },
+      {
+        "name": "x5u?",
+        "type": "string"
+      },
+      {
+        "name": "x5c?",
+        "type": "string"
+      },
+      {
+        "name": "x5t?",
+        "type": "string"
+      },
+      {
+        "name": "ext?",
+        "type": "boolean"
+      },
+      {
+        "name": "crv?",
+        "type": "string"
+      },
+      {
+        "name": "x?",
+        "type": "string"
+      },
+      {
+        "name": "y?",
+        "type": "string"
+      },
+      {
+        "name": "d?",
+        "type": "string"
+      },
+      {
+        "name": "n?",
+        "type": "string"
+      },
+      {
+        "name": "e?",
+        "type": "string"
+      },
+      {
+        "name": "p?",
+        "type": "string"
+      },
+      {
+        "name": "q?",
+        "type": "string"
+      },
+      {
+        "name": "dp?",
+        "type": "string"
+      },
+      {
+        "name": "dq?",
+        "type": "string"
+      },
+      {
+        "name": "qi?",
+        "type": "string"
+      },
+      {
+        "name": "oth?",
+        "type": "RsaOtherPrimesInfo[]"
+      },
+      {
+        "name": "k?",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "kind": "property",
+    "name": "msCaching?",
+    "interface": "XMLHttpRequest",
+    "type": "string"
+  },
+  {
+    "kind": "typedef",
+    "name": "MouseWheelEvent",
+    "flavor": "Web",
+    "type": "WheelEvent"
+  },
+  {
+    "kind": "method",
+    "interface": "DataTransfer",
+    "name": "setDragImage",
+    "signatures": [
+      "setDragImage(image: Element, x: number, y: number): void"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Element",
+    "name": "insertAdjacentElement",
+    "signatures": [
+      "insertAdjacentElement(position: InsertPosition, insertedElement: Element): Element | null"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Element",
+    "name": "insertAdjacentHTML",
+    "signatures": [
+      "insertAdjacentHTML(where: InsertPosition, html: string): void"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Element",
+    "name": "insertAdjacentText",
+    "signatures": [
+      "insertAdjacentText(where: InsertPosition, text: string): void"
+    ]
+  },
+  {
+    "kind": "property",
+    "name": "secureConnectionStart",
+    "interface": "PerformanceTiming",
+    "readonly": true,
+    "type": "number"
+  },
+  {
+    "kind": "property",
+    "interface": "HTMLLinkElement",
+    "name": "integrity",
+    "type": "string"
+  },
+  {
+    "kind": "property",
+    "interface": "HTMLScriptElement",
+    "name": "integrity",
+    "type": "string"
+  },
+  {
+    "kind": "property",
+    "interface": "KeyboardEvent",
+    "readonly": true,
+    "name": "code",
+    "type": "string"
+  },
+  {
+    "kind": "property",
+    "interface": "KeyboardEventInit",
+    "name": "code?",
+    "type": "string"
+  },
+  {
+    "kind": "interface",
+    "name": "ParentNode",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "name": "children",
+        "readonly": true,
+        "type": "HTMLCollection"
+      },
+      {
+        "name": "firstElementChild",
+        "readonly": true,
+        "type": "Element | null"
+      },
+      {
+        "name": "lastElementChild",
+        "readonly": true,
+        "type": "Element | null"
+      },
+      {
+        "name": "childElementCount",
+        "readonly": true,
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "extends",
+    "baseInterface": "ParentNode",
+    "interface": "Element"
+  },
+  {
+    "kind": "extends",
+    "baseInterface": "ParentNode",
+    "interface": "Document"
+  },
+  {
+    "kind": "extends",
+    "baseInterface": "ParentNode",
+    "interface": "DocumentFragment"
+  },
+  {
+    "kind": "typedef",
+    "name": "ScrollRestoration",
+    "flavor": "DOM",
+    "type": "\"auto\" | \"manual\""
+  },
+  {
+    "kind": "property",
+    "interface": "History",
+    "name": "scrollRestoration",
+    "type": "ScrollRestoration"
+  },
+  {
+    "kind": "method",
+    "interface": "CanvasPattern",
+    "name": "setTransform",
+    "signatures": [
+      "setTransform(matrix: SVGMatrix): void"
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "DocumentOrShadowRoot",
+    "flavor": "DOM",
+    "methods": [
+      {
+        "name": "getSelection",
+        "signatures": [
+          "getSelection(): Selection | null"
+        ]
+      },
+      {
+        "name": "elementFromPoint",
+        "signatures": [
+          "elementFromPoint(x: number, y: number): Element | null"
+        ]
+      },
+      {
+        "name": "elementsFromPoint",
+        "signatures": [
+          "elementsFromPoint(x: number, y: number): Element[]"
+        ]
+      }
+    ],
+    "properties": [
+      {
+        "name": "activeElement",
+        "type": "Element | null",
+        "readonly": true
+      },
+      {
+        "name": "stylesheets",
+        "type": "StyleSheetList",
+        "readonly": true
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "ShadowRoot",
+    "extends": "DocumentOrShadowRoot, DocumentFragment",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "name": "host",
+        "type": "Element",
+        "readonly": true
+      },
+      {
+        "name": "innerHTML",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Element",
+    "name": "attachShadow",
+    "signatures": [
+      "attachShadow(shadowRootInitDict: ShadowRootInit): ShadowRoot"
+    ]
+  },
+  {
+    "kind": "property",
+    "interface": "Element",
+    "name": "assignedSlot",
+    "type": "HTMLSlotElement | null",
+    "readonly": true
+  },
+  {
+    "kind": "property",
+    "interface": "Element",
+    "name": "slot",
+    "type": "string"
+  },
+  {
+    "kind": "property",
+    "interface": "Element",
+    "name": "shadowRoot",
+    "type": "ShadowRoot | null",
+    "readonly": true
+  },
+  {
+    "kind": "interface",
+    "name": "ShadowRootInit",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "name": "mode",
+        "type": "\"open\" | \"closed\""
+      },
+      {
+        "name": "delegatesFocus?",
+        "type": "boolean"
+      }
+    ]
+  },
+  {
+    "kind": "property",
+    "interface": "Text",
+    "name": "assignedSlot",
+    "type": "HTMLSlotElement | null",
+    "readonly": true
+  },
+  {
+    "kind": "interface",
+    "name": "HTMLSlotElement",
+    "extends": "HTMLElement",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "name": "name",
+        "type": "string"
+      }
+    ],
+    "methods": [
+      {
+        "name": "assignedNodes",
+        "signatures": [
+          "assignedNodes(options?: AssignedNodesOptions): Node[]"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "AssignedNodesOptions",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "name": "flatten?",
+        "type": "boolean"
+      }
+    ]
+  },
+  {
+    "kind": "property",
+    "interface": "EventInit",
+    "name": "scoped?",
+    "type": "boolean"
+  },
+  {
+    "kind": "property",
+    "interface": "Event",
+    "name": "scoped",
+    "type": "boolean",
+    "readonly": true
+  },
+  {
+    "kind": "method",
+    "interface": "Event",
+    "name": "deepPath",
+    "signatures": [
+      "deepPath(): EventTarget[]"
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "ElementDefinitionOptions",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "name": "extends",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "CustomElementRegistry",
+    "flavor": "DOM",
+    "methods": [
+      {
+        "name": "define",
+        "signatures": [
+          "define(name: string, constructor: Function, options?: ElementDefinitionOptions): void"
+        ]
+      },
+      {
+        "name": "get",
+        "signatures": [
+          "get(name: string): any"
+        ]
+      },
+      {
+        "name": "whenDefined",
+        "signatures": [
+          "whenDefined(name: string): PromiseLike<void>"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "property",
+    "interface": "Window",
+    "name": "customElements",
+    "type": "CustomElementRegistry"
+  },
+  {
+    "kind": "interface",
+    "name": "PromiseRejectionEvent",
+    "extends": "Event",
+    "flavor": "Web",
+    "properties": [
+      {
+        "name": "promise",
+        "type": "PromiseLike<any>",
+        "readonly": true
+      },
+      {
+        "name": "reason",
+        "type": "any",
+        "readonly": true
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "PromiseRejectionEventInit",
+    "extends": "EventInit",
+    "flavor": "Web",
+    "properties": [
+      {
+        "name": "promise",
+        "type": "PromiseLike<any>"
+      },
+      {
+        "name": "reason?",
+        "type": "any"
+      }
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "Body",
+    "name": "formData",
+    "flavor": "Web",
+    "signatures": [
+      "formData(): Promise<FormData>"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "DocumentFragment",
+    "name": "getElementById",
+    "flavor": "DOM",
+    "signatures": [
+      "getElementById(elementId: string): HTMLElement | null"
+    ]
+  },
+  {
+    "kind": "typedef",
+    "name": "FormDataEntryValue",
+    "type": "string | File"
+  },
+  {
+    "kind": "method",
+    "interface": "FormData",
+    "name": "delete",
+    "flavor": "Web",
+    "signatures": [
+      "delete(name: string): void"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "FormData",
+    "name": "get",
+    "flavor": "Web",
+    "signatures": [
+      "get(name: string): FormDataEntryValue | null"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "FormData",
+    "name": "getAll",
+    "flavor": "Web",
+    "signatures": [
+      "getAll(name: string): FormDataEntryValue[]"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "FormData",
+    "name": "has",
+    "flavor": "Web",
+    "signatures": [
+      "has(name: string): boolean"
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "FormData",
+    "name": "set",
+    "flavor": "Web",
+    "signatures": [
+      "set(name: string, value: string | Blob, fileName?: string): void"
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "EventListenerOptions",
+    "properties": [
+      {
+        "name": "capture?",
+        "type": "boolean"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "AddEventListenerOptions",
+    "extends": "EventListenerOptions",
+    "properties": [
+      {
+        "name": "passive?",
+        "type": "boolean"
+      },
+      {
+        "name": "once?",
+        "type": "boolean"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "TouchEventInit",
+    "flavor": "Web",
+    "extends": "EventModifierInit",
+    "properties": [
+      {
+        "name": "touches?",
+        "type": "Touch[]"
+      },
+      {
+        "name": "targetTouches?",
+        "type": "Touch[]"
+      },
+      {
+        "name": "changedTouches?",
+        "type": "Touch[]"
+      }
+    ]
+  },
+  {
+    "kind": "typedef",
+    "name": "InsertPosition",
+    "flavor": "Web",
+    "type": "\"beforebegin\" | \"afterbegin\" | \"beforeend\" | \"afterend\""
+  },
+  {
+    "kind": "property",
+    "interface": "IntersectionObserverEntryInit",
+    "name": "isIntersecting",
+    "type": "boolean"
+  },
+  {
+    "kind": "property",
+    "interface": "IntersectionObserverEntry",
+    "name": "isIntersecting",
+    "type": "boolean",
+    "readonly": true
+  },
+  {
+    "kind": "property",
+    "interface": "ValidityState",
+    "name": "tooShort",
+    "flavor": "Web",
+    "readonly": true,
+    "type": "boolean"
+  },
+  {
+    "kind": "interface",
+    "name": "HTMLDialogElement",
+    "constructorSignatures": [
+      "new(): HTMLDialogElement"
+    ],
+    "extends": "HTMLElement",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "name": "open",
+        "type": "boolean"
+      },
+      {
+        "name": "returnValue",
+        "type": "string"
+      }
+    ],
+    "methods": [
+      {
+        "name": "close",
+        "signatures": [
+          "close(returnValue?: string): void"
+        ]
+      },
+      {
+        "name": "show",
+        "signatures": [
+          "show(): void"
+        ]
+      },
+      {
+        "name": "showModal",
+        "signatures": [
+          "showModal(): void"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "property",
+    "interface": "Response",
+    "name": "redirected",
+    "readonly": true,
+    "type": "boolean"
+  },
+  {
+    "kind": "interface",
+    "name": "HTMLMainElement",
+    "constructorSignatures": [
+      "new(): HTMLMainElement"
+    ],
+    "extends": "HTMLElement",
+    "flavor": "DOM"
+  },
+  {
+    "kind": "interface",
+    "name": "HTMLDetailsElement",
+    "constructorSignatures": [
+      "new(): HTMLDetailsElement"
+    ],
+    "extends": "HTMLElement",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "name": "open",
+        "type": "boolean"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "HTMLSummaryElement",
+    "constructorSignatures": [
+      "new(): HTMLSummaryElement"
+    ],
+    "extends": "HTMLElement",
+    "flavor": "DOM"
+  },
+  {
+    "kind": "interface",
+    "name": "EXT_blend_minmax",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "readonly": true,
+        "name": "MIN_EXT",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "MAX_EXT",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "EXT_frag_depth",
+    "flavor": "DOM",
+    "properties": []
+  },
+  {
+    "kind": "interface",
+    "name": "EXT_shader_texture_lod",
+    "flavor": "DOM",
+    "properties": []
+  },
+  {
+    "kind": "interface",
+    "name": "EXT_sRGB",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "readonly": true,
+        "name": "SRGB_EXT",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "SRGB_ALPHA_EXT",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "SRGB8_ALPHA8_EXT",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING_EXT",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "OES_vertex_array_object",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "readonly": true,
+        "name": "VERTEX_ARRAY_BINDING_OES",
+        "type": "number"
+      }
+    ],
+    "methods": [
+      {
+        "name": "createVertexArrayOES",
+        "signatures": [
+          "createVertexArrayOES(): WebGLVertexArrayObjectOES"
+        ]
+      },
+      {
+        "name": "deleteVertexArrayOES",
+        "signatures": [
+          "deleteVertexArrayOES(arrayObject: WebGLVertexArrayObjectOES): void"
+        ]
+      },
+      {
+        "name": "isVertexArrayOES",
+        "signatures": [
+          "isVertexArrayOES(value: any): value is WebGLVertexArrayObjectOES"
+        ]
+      },
+      {
+        "name": "bindVertexArrayOES",
+        "signatures": [
+          "bindVertexArrayOES(arrayObject: WebGLVertexArrayObjectOES): void"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "WebGLVertexArrayObjectOES",
+    "flavor": "DOM",
+    "properties": []
+  },
+  {
+    "kind": "interface",
+    "name": "WEBGL_color_buffer_float",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "readonly": true,
+        "name": "RGBA32F_EXT",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "RGB32F_EXT",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE_EXT",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "UNSIGNED_NORMALIZED_EXT",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "WEBGL_compressed_texture_astc",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_4x4_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_5x4_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_5x5_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_6x5_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_6x6_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_8x5_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_8x6_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_8x8_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_10x5_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_10x6_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_10x8_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_10x10_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_12x10_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_RGBA_ASTC_12x12_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_4x4_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_5x4_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_5x5_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_6x5_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_6x6_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_8x5_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_8x6_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_8x8_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_10x5_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_10x6_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_10x8_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_10x10_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_12x10_KHR",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR",
+        "type": "number"
+      }
+    ],
+    "methods": [
+      {
+        "name": "getSupportedProfiles",
+        "signatures": [
+          "getSupportedProfiles(): string[]"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "WEBGL_compressed_texture_s3tc_srgb",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB_S3TC_DXT1_EXT",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT",
+        "type": "number"
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "WEBGL_debug_shaders",
+    "flavor": "DOM",
+    "methods": [
+      {
+        "name": "getTranslatedShaderSource",
+        "signatures": [
+          "getTranslatedShaderSource(shader: WebGLShader): string"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "WEBGL_draw_buffers",
+    "flavor": "DOM",
+    "properties": [
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT0_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT1_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT2_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT3_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT4_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT5_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT6_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT7_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT8_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT9_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT10_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT11_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT12_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT13_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT14_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "COLOR_ATTACHMENT15_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER0_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER1_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER2_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER3_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER4_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER5_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER6_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER7_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER8_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER9_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER10_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER11_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER12_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER13_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER14_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "DRAW_BUFFER15_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "MAX_COLOR_ATTACHMENTS_WEBGL",
+        "type": "number"
+      },
+      {
+        "readonly": true,
+        "name": "MAX_DRAW_BUFFERS_WEBGL",
+        "type": "number"
+      }
+    ],
+    "methods": [
+      {
+        "name": "drawBuffersWEBGL",
+        "signatures": [
+          "drawBuffersWEBGL(buffers: number[]): void"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "interface",
+    "name": "WEBGL_lose_context",
+    "flavor": "DOM",
+    "methods": [
+      {
+        "name": "loseContext",
+        "signatures": [
+          "loseContext(): void"
+        ]
+      },
+      {
+        "name": "restoreContext",
+        "signatures": [
+          "restoreContext(): void"
+        ]
+      }
+    ]
+  },
+  {
+    "kind": "method",
+    "interface": "HTMLFormElement",
+    "name": "reportValidity",
+    "flavor": "DOM",
+    "signatures": [
+      "reportValidity(): boolean"
+    ]
+  },
+  {
+    "kind": "typedef",
+    "name": "HeadersInit",
+    "type": "Headers | string[][] | { [key: string]: string }"
+  },
+  {
+    "kind": "property",
+    "interface": "HTMLLabelElement",
+    "readonly": true,
+    "name": "control",
+    "type": "HTMLInputElement | null"
+  }
+]
