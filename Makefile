@@ -21,3 +21,9 @@ hn:
 install:
 	@go install ./cmd/...
 .PHONY: install
+
+dom:
+	# @go generate ./dom/dom.go
+	@go run cmd/golly/golly.go build ./_examples/dom
+	# @go run _examples/dom/dom.go
+.PHONY: dom

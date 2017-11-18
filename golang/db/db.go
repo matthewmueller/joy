@@ -131,8 +131,15 @@ func (db *DB) typeSpec(info *loader.PackageInfo, gn *ast.GenDecl, n *ast.TypeSpe
 		}
 
 		return nil
+	case *ast.Ident, *ast.SelectorExpr, *ast.MapType, *ast.ArrayType:
+		typedef, e := defs.Type(db.index, info, gn, n)
+		if e != nil {
+			return e
+		}
+		db.index.AddDefinition(typedef)
+		return nil
 	default:
-		return fmt.Errorf("unhandled %T", n.Type)
+		return fmt.Errorf("unhandled typeSpec: %T", n.Type)
 	}
 }
 
