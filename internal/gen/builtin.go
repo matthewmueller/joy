@@ -1,7 +1,7 @@
-package builtin
+package gen
 
-// Identifiers map
-var Identifiers = map[string]string{
+// builtins map
+var builtins = map[string]string{
 	"bool":        "boolean",
 	"byte":        "b",
 	"complex64":   "c64",
@@ -68,8 +68,8 @@ var Identifiers = map[string]string{
 	"var":         "v",
 }
 
-// Types map
-var Types = map[string]interface{}{
+// default map
+var defaults = map[string]interface{}{
 	"bool":       false,
 	"byte":       0,
 	"complex64":  0,
