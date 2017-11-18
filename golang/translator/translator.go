@@ -63,6 +63,8 @@ func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
 		return tr.interfaces(t)
 	case defs.Structer:
 		return tr.structs(t)
+	case defs.Typer:
+		return tr.types(t)
 	case defs.Filer:
 		return tr.jsfile(t)
 	default:
@@ -704,6 +706,30 @@ func (tr *Translator) structs(d defs.Structer) (j jsast.IStatement, err error) {
 		[]jsast.IPattern{jsast.CreateIdentifier("o")},
 		jsast.CreateFunctionBody(ivars...),
 	), nil
+}
+
+// TODO: revamp typeDecl above
+func (tr *Translator) types(d defs.Typer) (j jsast.IStatement, err error) {
+	n := d.Node()
+	// sp := scope.New(n)
+
+	switch t := n.Type.(type) {
+	case *ast.Ident:
+		_ = t
+		return jsast.CreateEmptyStatement(), nil
+	}
+
+	// _ = sp
+	// log.Infof("n.Type=%T", n.Type)
+	// x, e := tr.expression(d, sp, n.Type)
+	// if e != nil {
+	// 	return nil, e
+	// }
+
+	// return jsast.CreateExpressionStatement(x), nil
+	// log.Infof("type=%s", d.Type().Underlying())
+
+	return nil, nil
 }
 
 func (tr *Translator) importSpec(d def.Definition, sp *scope.Scope, n *ast.GenDecl) (j jsast.IStatement, err error) {
@@ -1465,14 +1491,16 @@ func (tr *Translator) callExpr(d def.Definition, sp *scope.Scope, n *ast.CallExp
 	case "js.Runtime":
 		return tr.jsRuntime(d, sp, n)
 	}
-	// handle identifiers
-	vdomPath, err := util.VDOMSourcePath()
-	if err != nil {
-		return nil, err
-	}
+
 	def, e := tr.index.DefinitionOf(d.Path(), n.Fun)
 	if e != nil {
 		return nil, e
+	}
+
+	// handle VDOM identifiers
+	vdomPath, err := util.VDOMSourcePath()
+	if err != nil {
+		return nil, err
 	}
 	if def != nil && def.Path() == vdomPath {
 		switch expr {
@@ -1484,6 +1512,15 @@ func (tr *Translator) callExpr(d def.Definition, sp *scope.Scope, n *ast.CallExp
 		case "Pragma":
 			return tr.vdomPragma()
 		}
+	}
+
+	// handle types e.g. type Value map[string]string
+	if t, ok := def.(defs.Typer); ok {
+		x, e := t.Transform(n)
+		if e != nil {
+			return nil, e
+		}
+		return tr.expression(d, sp, x)
 	}
 
 	// create an expression for built-in golang functions like append
@@ -1562,8 +1599,8 @@ func (tr *Translator) expression(d def.Definition, sp *scope.Scope, expr ast.Exp
 		return tr.unaryExpr(d, sp, t)
 	case *ast.FuncLit:
 		return tr.funcLit(d, sp, t)
-	// case *ast.ArrayType:
-	// 	return tr.arrayType(d, sp, t)
+	case *ast.ArrayType:
+		return tr.arrayType(d, sp, t)
 	case *ast.ChanType:
 		return tr.chanType(d, sp, t)
 	case *ast.SliceExpr:
@@ -1812,7 +1849,22 @@ func (tr *Translator) basiclit(d def.Definition, sp *scope.Scope, lit *ast.Basic
 }
 
 func (tr *Translator) compositeLiteral(d def.Definition, sp *scope.Scope, n *ast.CompositeLit) (j jsast.IExpression, err error) {
-	switch n.Type.(type) {
+	node := n.Type
+
+	def, err := tr.index.DefinitionOf(d.Path(), n)
+	if err != nil {
+		return nil, err
+	}
+
+	if t, ok := def.(defs.Typer); ok {
+		x, e := t.Transform(n)
+		if e != nil {
+			return nil, e
+		}
+		node = x
+	}
+
+	switch node.(type) {
 	case *ast.Ident, *ast.SelectorExpr:
 		return tr.jsNewFunction(d, sp, n)
 	case *ast.ArrayType:
@@ -2387,9 +2439,23 @@ func (tr *Translator) defaultValue(d def.Definition, sp *scope.Scope, expr ast.E
 			def, err := tr.index.DefinitionOf(d.Path(), t)
 			if err != nil {
 				return nil, err
-			} else if def != nil && def.Kind() == "INTERFACE" {
-				return jsast.Null, nil
 			}
+
+			if def != nil {
+				if def.Kind() == "INTERFACE" {
+					return jsast.Null, nil
+				}
+
+				// Transform types
+				if ty, ok := def.(defs.Typer); ok {
+					x, e := ty.Transform(expr)
+					if e != nil {
+						return nil, e
+					}
+					return tr.expression(d, sp, x)
+				}
+			}
+
 			id := jsast.CreateIdentifier(t.Name)
 			return jsast.CreateNewExpression(id, nil), nil
 		}

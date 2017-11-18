@@ -149,7 +149,7 @@ func maybeVDOMFuncDecl(ctx *context, n *ast.FuncDecl) error {
 
 	stct, ok := recv.(Structer)
 	if !ok {
-		return errors.New("maybeVDOMFuncDecl: expected receiver to be a struct")
+		return nil
 	}
 
 	vdomPath, err := util.VDOMSourcePath()
