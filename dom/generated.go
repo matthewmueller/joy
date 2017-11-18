@@ -315,7 +315,7 @@ type IntersectionObserverEntryInit struct {
 	intersectionRect   *DOMRectInit
 	rootBounds         *DOMRectInit
 	target             *Element
-	time               string
+	time               int
 }
 
 type IntersectionObserverInit struct {
@@ -1117,7 +1117,7 @@ type RTCRtpCodecCapability struct {
 	numChannels           *uint
 	options               interface{}
 	parameters            interface{}
-	preferredPayloadType  [8]byte
+	preferredPayloadType  *byte
 	ptime                 *uint
 	rtcpFeedback          []*RTCRtcpFeedback
 	svcMultiStreamSupport *bool
@@ -1137,12 +1137,12 @@ type RTCRtpCodecParameters struct {
 type RTCRtpContributingSource struct {
 	audioLevel *byte
 	csrc       *uint
-	timestamp  *string
+	timestamp  *int
 }
 
 type RTCRtpEncodingParameters struct {
 	active                *bool
-	codecPayloadType      [8]byte
+	codecPayloadType      *byte
 	dependencyEncodingIds []string
 	encodingId            *string
 	fec                   *RTCRtpFecParameters
@@ -1205,7 +1205,7 @@ type RTCRTPStreamStats struct {
 
 type RTCRtpUnhandled struct {
 	muxId       *string
-	payloadType [8]byte
+	payloadType *byte
 	ssrc        *uint
 }
 
@@ -1237,7 +1237,7 @@ type RTCSsrcRange struct {
 type RTCStats struct {
 	id        *string
 	msType    *MSStatsType
-	timestamp *string
+	timestamp *int
 	kind      *RTCStatsType
 }
 
@@ -1780,8 +1780,8 @@ func (*AudioContext) CreateWaveShaper() (w *WaveShaperNode) {
 	return w
 }
 
-func (*AudioContext) DecodeAudioData(audioData []byte, DecodeSuccessCallback func(decodedData *AudioBuffer), DecodeErrorCallback func()) (a *AudioBuffer) {
-	js.Rewrite("await $<.decodeAudioData($1, $2, $3)", audioData, DecodeSuccessCallback, DecodeErrorCallback)
+func (*AudioContext) DecodeAudioData(audioData []byte, successCallback func(decodedData *AudioBuffer), errorCallback func()) (a *AudioBuffer) {
+	js.Rewrite("await $<.decodeAudioData($1, $2, $3)", audioData, successCallback, errorCallback)
 	return a
 }
 
@@ -6450,8 +6450,8 @@ func (*DataTransferItem) GetAsFile() (f *File) {
 	return f
 }
 
-func (*DataTransferItem) GetAsString(FunctionStringCallback func(data string)) {
-	js.Rewrite("$<.getAsString($1)", FunctionStringCallback)
+func (*DataTransferItem) GetAsString(_callback func(data string)) {
+	js.Rewrite("$<.getAsString($1)", _callback)
 }
 
 func (*DataTransferItem) WebkitGetAsEntry() (i interface{}) {
@@ -8859,7 +8859,7 @@ func (*Event) GetType() (kind string) {
 type EventTarget struct {
 }
 
-func (*EventTarget) AddEventListener(kind string, listener func(e *Event), useCapture bool) {
+func (*EventTarget) AddEventListener(kind string, listener func(evt *Event), useCapture bool) {
 	js.Rewrite("$<.addEventListener($1, $2, $3)", kind, listener, useCapture)
 }
 
@@ -8868,7 +8868,7 @@ func (*EventTarget) DispatchEvent(evt *Event) (b bool) {
 	return b
 }
 
-func (*EventTarget) RemoveEventListener(kind string, listener func(e *Event), useCapture bool) {
+func (*EventTarget) RemoveEventListener(kind string, listener func(evt *Event), useCapture bool) {
 	js.Rewrite("$<.removeEventListener($1, $2, $3)", kind, listener, useCapture)
 }
 
@@ -9068,7 +9068,7 @@ func (*Gamepad) GetMapping() (mapping string) {
 	return mapping
 }
 
-func (*Gamepad) GetTimestamp() (timestamp string) {
+func (*Gamepad) GetTimestamp() (timestamp int) {
 	js.Rewrite("$<.timestamp")
 	return timestamp
 }
@@ -9102,12 +9102,12 @@ func (*Geolocation) ClearWatch(watchId int) {
 	js.Rewrite("$<.clearWatch($1)", watchId)
 }
 
-func (*Geolocation) GetCurrentPosition(PositionCallback func(position *Position), PositionErrorCallback func(err *PositionError), options *PositionOptions) {
-	js.Rewrite("$<.getCurrentPosition($1, $2, $3)", PositionCallback, PositionErrorCallback, options)
+func (*Geolocation) GetCurrentPosition(successCallback func(position *Position), errorCallback func(err *PositionError), options *PositionOptions) {
+	js.Rewrite("$<.getCurrentPosition($1, $2, $3)", successCallback, errorCallback, options)
 }
 
-func (*Geolocation) WatchPosition(PositionCallback func(position *Position), PositionErrorCallback func(err *PositionError), options *PositionOptions) (i int) {
-	js.Rewrite("$<.watchPosition($1, $2, $3)", PositionCallback, PositionErrorCallback, options)
+func (*Geolocation) WatchPosition(successCallback func(position *Position), errorCallback func(err *PositionError), options *PositionOptions) (i int) {
+	js.Rewrite("$<.watchPosition($1, $2, $3)", successCallback, errorCallback, options)
 	return i
 }
 
@@ -9136,8 +9136,8 @@ func (*Headers) Delete(name string) {
 	js.Rewrite("$<.delete($1)", name)
 }
 
-func (*Headers) ForEach(ForEachCallback func(keyId []byte, status *MediaKeyStatus)) {
-	js.Rewrite("$<.forEach($1)", ForEachCallback)
+func (*Headers) ForEach(callback func(keyId []byte, status *MediaKeyStatus)) {
+	js.Rewrite("$<.forEach($1)", callback)
 }
 
 func (*Headers) Get(name string) (s string) {
@@ -15826,7 +15826,7 @@ func (*IIRFilterNode) GetFrequencyResponse(frequencyHz []float32, magResponse []
 type ImageData struct {
 }
 
-func (*ImageData) GetData() (data *Uint8ClampedArray) {
+func (*ImageData) GetData() (data []uint8) {
 	js.Rewrite("$<.data")
 	return data
 }
@@ -15904,7 +15904,7 @@ func (*IntersectionObserverEntry) GetTarget() (target *Element) {
 	return target
 }
 
-func (*IntersectionObserverEntry) GetTime() (time string) {
+func (*IntersectionObserverEntry) GetTime() (time int) {
 	js.Rewrite("$<.time")
 	return time
 }
@@ -16244,9 +16244,8 @@ func (*MediaKeySession) Update(response []byte) {
 	js.Rewrite("await $<.update($1)", response)
 }
 
-func (*MediaKeySession) GetClosed() (closed void) {
-	js.Rewrite("$<.closed")
-	return closed
+func (*MediaKeySession) GetClosed() {
+	js.Rewrite("await $<.closed")
 }
 
 func (*MediaKeySession) GetExpiration() (expiration float32) {
@@ -16267,8 +16266,8 @@ func (*MediaKeySession) GetSessionID() (sessionId string) {
 type MediaKeyStatusMap struct {
 }
 
-func (*MediaKeyStatusMap) ForEach(ForEachCallback func(keyId []byte, status *MediaKeyStatus)) {
-	js.Rewrite("$<.forEach($1)", ForEachCallback)
+func (*MediaKeyStatusMap) ForEach(callback func(keyId []byte, status *MediaKeyStatus)) {
+	js.Rewrite("$<.forEach($1)", callback)
 }
 
 func (*MediaKeyStatusMap) Get(keyId []byte) (m *MediaKeyStatus) {
@@ -16342,12 +16341,12 @@ func (*MediaList) SetMediaText(mediaText string) {
 type MediaQueryList struct {
 }
 
-func (*MediaQueryList) AddListener(MediaQueryListListener func(mql *MediaQueryList)) {
-	js.Rewrite("$<.addListener($1)", MediaQueryListListener)
+func (*MediaQueryList) AddListener(listener func(mql *MediaQueryList)) {
+	js.Rewrite("$<.addListener($1)", listener)
 }
 
-func (*MediaQueryList) RemoveListener(MediaQueryListListener func(mql *MediaQueryList)) {
-	js.Rewrite("$<.removeListener($1)", MediaQueryListListener)
+func (*MediaQueryList) RemoveListener(listener func(mql *MediaQueryList)) {
+	js.Rewrite("$<.removeListener($1)", listener)
 }
 
 func (*MediaQueryList) GetMatches() (matches bool) {
@@ -16369,7 +16368,7 @@ func (*MediaSource) AddSourceBuffer(kind string) (s *SourceBuffer) {
 	return s
 }
 
-func (*MediaSource) EndOfStream(err *EndOfStreamError) {
+func (*MediaSource) EndOfStream(err string) {
 	js.Rewrite("$<.endOfStream($1)", err)
 }
 
@@ -16396,7 +16395,7 @@ func (*MediaSource) SetDuration(duration float32) {
 	js.Rewrite("$<.duration = $1", duration)
 }
 
-func (*MediaSource) GetReadyState() (readyState *ReadyState) {
+func (*MediaSource) GetReadyState() (readyState string) {
 	js.Rewrite("$<.readyState")
 	return readyState
 }
@@ -16703,7 +16702,7 @@ func (*MessagePort) Close() {
 	js.Rewrite("$<.close()")
 }
 
-func (*MessagePort) PostMessage(message interface{}, transfer []*Transferable) {
+func (*MessagePort) PostMessage(message interface{}, transfer []interface{}) {
 	js.Rewrite("$<.postMessage($1, $2)", message, transfer)
 }
 
@@ -16927,12 +16926,12 @@ func (*MSApp) CreateStreamFromInputStream(kind string, inputStream interface{}) 
 	return m
 }
 
-func (*MSApp) ExecAsyncAtPriority(MSExecAtPriorityFunctionCallback func(args interface{}) interface{}, priority string, args interface{}) {
-	js.Rewrite("$<.execAsyncAtPriority($1, $2, $3)", MSExecAtPriorityFunctionCallback, priority, args)
+func (*MSApp) ExecAsyncAtPriority(asynchronousCallback func(args interface{}) interface{}, priority string, args interface{}) {
+	js.Rewrite("$<.execAsyncAtPriority($1, $2, $3)", asynchronousCallback, priority, args)
 }
 
-func (*MSApp) ExecAtPriority(MSExecAtPriorityFunctionCallback func(args interface{}) interface{}, priority string, args interface{}) (i interface{}) {
-	js.Rewrite("$<.execAtPriority($1, $2, $3)", MSExecAtPriorityFunctionCallback, priority, args)
+func (*MSApp) ExecAtPriority(synchronousCallback func(args interface{}) interface{}, priority string, args interface{}) (i interface{}) {
+	js.Rewrite("$<.execAtPriority($1, $2, $3)", synchronousCallback, priority, args)
 	return i
 }
 
@@ -17056,7 +17055,7 @@ func (*MSFIDOCredentialAssertion) GetAlgorithm() (algorithm interface{}) {
 	return algorithm
 }
 
-func (*MSFIDOCredentialAssertion) GetAttestation() (attestation *MSAttestationStatement) {
+func (*MSFIDOCredentialAssertion) GetAttestation() (attestation bool) {
 	js.Rewrite("$<.attestation")
 	return attestation
 }
@@ -17546,11 +17545,6 @@ func (*MSPointerEvent) InitPointerEvent(typeArg string, canBubbleArg bool, cance
 	js.Rewrite("$<.initPointerEvent($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27)", typeArg, canBubbleArg, cancelableArg, viewArg, detailArg, screenXArg, screenYArg, clientXArg, clientYArg, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg, buttonArg, relatedTargetArg, offsetXArg, offsetYArg, widthArg, heightArg, pressure, rotation, tiltX, tiltY, pointerIdArg, pointerType, hwTimestampArg, isPrimary)
 }
 
-func (*MSPointerEvent) GetCurrentPoint() (currentPoint interface{}) {
-	js.Rewrite("$<.currentPoint")
-	return currentPoint
-}
-
 func (*MSPointerEvent) GetHeight() (height int) {
 	js.Rewrite("$<.height")
 	return height
@@ -17559,11 +17553,6 @@ func (*MSPointerEvent) GetHeight() (height int) {
 func (*MSPointerEvent) GetHwTimestamp() (hwTimestamp uint64) {
 	js.Rewrite("$<.hwTimestamp")
 	return hwTimestamp
-}
-
-func (*MSPointerEvent) GetIntermediatePoints() (intermediatePoints interface{}) {
-	js.Rewrite("$<.intermediatePoints")
-	return intermediatePoints
 }
 
 func (*MSPointerEvent) GetIsPrimary() (isPrimary bool) {
@@ -17947,8 +17936,8 @@ func (*Navigator) JavaEnabled() (b bool) {
 	return b
 }
 
-func (*Navigator) MsLaunchURI(uri string, MSLaunchUriCallback func(), MSLaunchUriCallback func()) {
-	js.Rewrite("$<.msLaunchUri($1, $2, $3)", uri, MSLaunchUriCallback, MSLaunchUriCallback)
+func (*Navigator) MsLaunchURI(uri string, successCallback func(), noHandlerCallback func()) {
+	js.Rewrite("$<.msLaunchUri($1, $2, $3)", uri, successCallback, noHandlerCallback)
 }
 
 func (*Navigator) RequestMediaKeySystemAccess(keySystem string, supportedConfigurations []*MediaKeySystemConfiguration) (m *MediaKeySystemAccess) {
@@ -18257,8 +18246,8 @@ func (*Notification) Close() {
 	js.Rewrite("$<.close()")
 }
 
-func (*Notification) RequestPermission(NotificationPermissionCallback func(permission *NotificationPermission)) (n *NotificationPermission) {
-	js.Rewrite("await $<.requestPermission($1)", NotificationPermissionCallback)
+func (*Notification) RequestPermission(callback func(permission *NotificationPermission)) (n *NotificationPermission) {
+	js.Rewrite("await $<.requestPermission($1)", callback)
 	return n
 }
 
@@ -18763,9 +18752,9 @@ func (*Performance) Measure(measureName string, startMarkName string, endMarkNam
 	js.Rewrite("$<.measure($1, $2, $3)", measureName, startMarkName, endMarkName)
 }
 
-func (*Performance) Now() (s string) {
+func (*Performance) Now() (i int) {
 	js.Rewrite("$<.now()")
-	return s
+	return i
 }
 
 func (*Performance) SetResourceTimingBufferSize(maxSize uint) {
@@ -18790,7 +18779,7 @@ func (*Performance) GetTiming() (timing *PerformanceTiming) {
 type PerformanceEntry struct {
 }
 
-func (*PerformanceEntry) GetDuration() (duration string) {
+func (*PerformanceEntry) GetDuration() (duration int) {
 	js.Rewrite("$<.duration")
 	return duration
 }
@@ -18805,7 +18794,7 @@ func (*PerformanceEntry) GetName() (name string) {
 	return name
 }
 
-func (*PerformanceEntry) GetStartTime() (startTime string) {
+func (*PerformanceEntry) GetStartTime() (startTime int) {
 	js.Rewrite("$<.startTime")
 	return startTime
 }
@@ -18840,67 +18829,67 @@ type PerformanceNavigationTiming struct {
 	*PerformanceEntry
 }
 
-func (*PerformanceNavigationTiming) GetConnectEnd() (connectEnd string) {
+func (*PerformanceNavigationTiming) GetConnectEnd() (connectEnd int) {
 	js.Rewrite("$<.connectEnd")
 	return connectEnd
 }
 
-func (*PerformanceNavigationTiming) GetConnectStart() (connectStart string) {
+func (*PerformanceNavigationTiming) GetConnectStart() (connectStart int) {
 	js.Rewrite("$<.connectStart")
 	return connectStart
 }
 
-func (*PerformanceNavigationTiming) GetDomainLookupEnd() (domainLookupEnd string) {
+func (*PerformanceNavigationTiming) GetDomainLookupEnd() (domainLookupEnd int) {
 	js.Rewrite("$<.domainLookupEnd")
 	return domainLookupEnd
 }
 
-func (*PerformanceNavigationTiming) GetDomainLookupStart() (domainLookupStart string) {
+func (*PerformanceNavigationTiming) GetDomainLookupStart() (domainLookupStart int) {
 	js.Rewrite("$<.domainLookupStart")
 	return domainLookupStart
 }
 
-func (*PerformanceNavigationTiming) GetDomComplete() (domComplete string) {
+func (*PerformanceNavigationTiming) GetDomComplete() (domComplete int) {
 	js.Rewrite("$<.domComplete")
 	return domComplete
 }
 
-func (*PerformanceNavigationTiming) GetDomContentLoadedEventEnd() (domContentLoadedEventEnd string) {
+func (*PerformanceNavigationTiming) GetDomContentLoadedEventEnd() (domContentLoadedEventEnd int) {
 	js.Rewrite("$<.domContentLoadedEventEnd")
 	return domContentLoadedEventEnd
 }
 
-func (*PerformanceNavigationTiming) GetDomContentLoadedEventStart() (domContentLoadedEventStart string) {
+func (*PerformanceNavigationTiming) GetDomContentLoadedEventStart() (domContentLoadedEventStart int) {
 	js.Rewrite("$<.domContentLoadedEventStart")
 	return domContentLoadedEventStart
 }
 
-func (*PerformanceNavigationTiming) GetDomInteractive() (domInteractive string) {
+func (*PerformanceNavigationTiming) GetDomInteractive() (domInteractive int) {
 	js.Rewrite("$<.domInteractive")
 	return domInteractive
 }
 
-func (*PerformanceNavigationTiming) GetDomLoading() (domLoading string) {
+func (*PerformanceNavigationTiming) GetDomLoading() (domLoading int) {
 	js.Rewrite("$<.domLoading")
 	return domLoading
 }
 
-func (*PerformanceNavigationTiming) GetFetchStart() (fetchStart string) {
+func (*PerformanceNavigationTiming) GetFetchStart() (fetchStart int) {
 	js.Rewrite("$<.fetchStart")
 	return fetchStart
 }
 
-func (*PerformanceNavigationTiming) GetLoadEventEnd() (loadEventEnd string) {
+func (*PerformanceNavigationTiming) GetLoadEventEnd() (loadEventEnd int) {
 	js.Rewrite("$<.loadEventEnd")
 	return loadEventEnd
 }
 
-func (*PerformanceNavigationTiming) GetLoadEventStart() (loadEventStart string) {
+func (*PerformanceNavigationTiming) GetLoadEventStart() (loadEventStart int) {
 	js.Rewrite("$<.loadEventStart")
 	return loadEventStart
 }
 
-func (*PerformanceNavigationTiming) GetNavigationStart() (navigationStart string) {
+func (*PerformanceNavigationTiming) GetNavigationStart() (navigationStart int) {
 	js.Rewrite("$<.navigationStart")
 	return navigationStart
 }
@@ -18910,27 +18899,27 @@ func (*PerformanceNavigationTiming) GetRedirectCount() (redirectCount uint8) {
 	return redirectCount
 }
 
-func (*PerformanceNavigationTiming) GetRedirectEnd() (redirectEnd string) {
+func (*PerformanceNavigationTiming) GetRedirectEnd() (redirectEnd int) {
 	js.Rewrite("$<.redirectEnd")
 	return redirectEnd
 }
 
-func (*PerformanceNavigationTiming) GetRedirectStart() (redirectStart string) {
+func (*PerformanceNavigationTiming) GetRedirectStart() (redirectStart int) {
 	js.Rewrite("$<.redirectStart")
 	return redirectStart
 }
 
-func (*PerformanceNavigationTiming) GetRequestStart() (requestStart string) {
+func (*PerformanceNavigationTiming) GetRequestStart() (requestStart int) {
 	js.Rewrite("$<.requestStart")
 	return requestStart
 }
 
-func (*PerformanceNavigationTiming) GetResponseEnd() (responseEnd string) {
+func (*PerformanceNavigationTiming) GetResponseEnd() (responseEnd int) {
 	js.Rewrite("$<.responseEnd")
 	return responseEnd
 }
 
-func (*PerformanceNavigationTiming) GetResponseStart() (responseStart string) {
+func (*PerformanceNavigationTiming) GetResponseStart() (responseStart int) {
 	js.Rewrite("$<.responseStart")
 	return responseStart
 }
@@ -18940,12 +18929,12 @@ func (*PerformanceNavigationTiming) GetType() (kind *NavigationType) {
 	return kind
 }
 
-func (*PerformanceNavigationTiming) GetUnloadEventEnd() (unloadEventEnd string) {
+func (*PerformanceNavigationTiming) GetUnloadEventEnd() (unloadEventEnd int) {
 	js.Rewrite("$<.unloadEventEnd")
 	return unloadEventEnd
 }
 
-func (*PerformanceNavigationTiming) GetUnloadEventStart() (unloadEventStart string) {
+func (*PerformanceNavigationTiming) GetUnloadEventStart() (unloadEventStart int) {
 	js.Rewrite("$<.unloadEventStart")
 	return unloadEventStart
 }
@@ -18954,27 +18943,27 @@ type PerformanceResourceTiming struct {
 	*PerformanceEntry
 }
 
-func (*PerformanceResourceTiming) GetConnectEnd() (connectEnd string) {
+func (*PerformanceResourceTiming) GetConnectEnd() (connectEnd int) {
 	js.Rewrite("$<.connectEnd")
 	return connectEnd
 }
 
-func (*PerformanceResourceTiming) GetConnectStart() (connectStart string) {
+func (*PerformanceResourceTiming) GetConnectStart() (connectStart int) {
 	js.Rewrite("$<.connectStart")
 	return connectStart
 }
 
-func (*PerformanceResourceTiming) GetDomainLookupEnd() (domainLookupEnd string) {
+func (*PerformanceResourceTiming) GetDomainLookupEnd() (domainLookupEnd int) {
 	js.Rewrite("$<.domainLookupEnd")
 	return domainLookupEnd
 }
 
-func (*PerformanceResourceTiming) GetDomainLookupStart() (domainLookupStart string) {
+func (*PerformanceResourceTiming) GetDomainLookupStart() (domainLookupStart int) {
 	js.Rewrite("$<.domainLookupStart")
 	return domainLookupStart
 }
 
-func (*PerformanceResourceTiming) GetFetchStart() (fetchStart string) {
+func (*PerformanceResourceTiming) GetFetchStart() (fetchStart int) {
 	js.Rewrite("$<.fetchStart")
 	return fetchStart
 }
@@ -18984,27 +18973,27 @@ func (*PerformanceResourceTiming) GetInitiatorType() (initiatorType string) {
 	return initiatorType
 }
 
-func (*PerformanceResourceTiming) GetRedirectEnd() (redirectEnd string) {
+func (*PerformanceResourceTiming) GetRedirectEnd() (redirectEnd int) {
 	js.Rewrite("$<.redirectEnd")
 	return redirectEnd
 }
 
-func (*PerformanceResourceTiming) GetRedirectStart() (redirectStart string) {
+func (*PerformanceResourceTiming) GetRedirectStart() (redirectStart int) {
 	js.Rewrite("$<.redirectStart")
 	return redirectStart
 }
 
-func (*PerformanceResourceTiming) GetRequestStart() (requestStart string) {
+func (*PerformanceResourceTiming) GetRequestStart() (requestStart int) {
 	js.Rewrite("$<.requestStart")
 	return requestStart
 }
 
-func (*PerformanceResourceTiming) GetResponseEnd() (responseEnd string) {
+func (*PerformanceResourceTiming) GetResponseEnd() (responseEnd int) {
 	js.Rewrite("$<.responseEnd")
 	return responseEnd
 }
 
-func (*PerformanceResourceTiming) GetResponseStart() (responseStart string) {
+func (*PerformanceResourceTiming) GetResponseStart() (responseStart int) {
 	js.Rewrite("$<.responseStart")
 	return responseStart
 }
@@ -19125,7 +19114,7 @@ func (*PerformanceTiming) GetUnloadEventStart() (unloadEventStart uint64) {
 type PerfWidgetExternal struct {
 }
 
-func (*PerfWidgetExternal) AddEventListener(eventType string, callback *Function) {
+func (*PerfWidgetExternal) AddEventListener(eventType string, callback func()) {
 	js.Rewrite("$<.addEventListener($1, $2)", eventType, callback)
 }
 
@@ -19159,7 +19148,7 @@ func (*PerfWidgetExternal) GetRecentPaintRequests(last uint64) (i interface{}) {
 	return i
 }
 
-func (*PerfWidgetExternal) RemoveEventListener(eventType string, callback *Function) {
+func (*PerfWidgetExternal) RemoveEventListener(eventType string, callback func()) {
 	js.Rewrite("$<.removeEventListener($1, $2)", eventType, callback)
 }
 
@@ -19327,11 +19316,6 @@ func (*PointerEvent) InitPointerEvent(typeArg string, canBubbleArg bool, cancela
 	js.Rewrite("$<.initPointerEvent($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27)", typeArg, canBubbleArg, cancelableArg, viewArg, detailArg, screenXArg, screenYArg, clientXArg, clientYArg, ctrlKeyArg, altKeyArg, shiftKeyArg, metaKeyArg, buttonArg, relatedTargetArg, offsetXArg, offsetYArg, widthArg, heightArg, pressure, rotation, tiltX, tiltY, pointerIdArg, pointerType, hwTimestampArg, isPrimary)
 }
 
-func (*PointerEvent) GetCurrentPoint() (currentPoint interface{}) {
-	js.Rewrite("$<.currentPoint")
-	return currentPoint
-}
-
 func (*PointerEvent) GetHeight() (height int) {
 	js.Rewrite("$<.height")
 	return height
@@ -19340,11 +19324,6 @@ func (*PointerEvent) GetHeight() (height int) {
 func (*PointerEvent) GetHwTimestamp() (hwTimestamp uint64) {
 	js.Rewrite("$<.hwTimestamp")
 	return hwTimestamp
-}
-
-func (*PointerEvent) GetIntermediatePoints() (intermediatePoints interface{}) {
-	js.Rewrite("$<.intermediatePoints")
-	return intermediatePoints
 }
 
 func (*PointerEvent) GetIsPrimary() (isPrimary bool) {
@@ -19408,7 +19387,7 @@ func (*Position) GetCoords() (coords *Coordinates) {
 	return coords
 }
 
-func (*Position) GetTimestamp() (timestamp *DOMTimeStamp) {
+func (*Position) GetTimestamp() (timestamp int) {
 	js.Rewrite("$<.timestamp")
 	return timestamp
 }
@@ -20104,8 +20083,8 @@ type RTCPeerConnection struct {
 	*EventTarget
 }
 
-func (*RTCPeerConnection) AddIceCandidate(candidate *RTCIceCandidate, VoidFunction func(), RTCPeerConnectionErrorCallback func(err *DOMError)) {
-	js.Rewrite("await $<.addIceCandidate($1, $2, $3)", candidate, VoidFunction, RTCPeerConnectionErrorCallback)
+func (*RTCPeerConnection) AddIceCandidate(candidate *RTCIceCandidate, successCallback func(), failureCallback func(err *DOMError)) {
+	js.Rewrite("await $<.addIceCandidate($1, $2, $3)", candidate, successCallback, failureCallback)
 }
 
 func (*RTCPeerConnection) AddStream(stream *MediaStream) {
@@ -20116,13 +20095,13 @@ func (*RTCPeerConnection) Close() {
 	js.Rewrite("$<.close()")
 }
 
-func (*RTCPeerConnection) CreateAnswer(RTCSessionDescriptionCallback func(sdp *RTCSessionDescription), RTCPeerConnectionErrorCallback func(err *DOMError)) (r *RTCSessionDescription) {
-	js.Rewrite("await $<.createAnswer($1, $2)", RTCSessionDescriptionCallback, RTCPeerConnectionErrorCallback)
+func (*RTCPeerConnection) CreateAnswer(successCallback func(sdp *RTCSessionDescription), failureCallback func(err *DOMError)) (r *RTCSessionDescription) {
+	js.Rewrite("await $<.createAnswer($1, $2)", successCallback, failureCallback)
 	return r
 }
 
-func (*RTCPeerConnection) CreateOffer(RTCSessionDescriptionCallback func(sdp *RTCSessionDescription), RTCPeerConnectionErrorCallback func(err *DOMError), options *RTCOfferOptions) (r *RTCSessionDescription) {
-	js.Rewrite("await $<.createOffer($1, $2, $3)", RTCSessionDescriptionCallback, RTCPeerConnectionErrorCallback, options)
+func (*RTCPeerConnection) CreateOffer(successCallback func(sdp *RTCSessionDescription), failureCallback func(err *DOMError), options *RTCOfferOptions) (r *RTCSessionDescription) {
+	js.Rewrite("await $<.createOffer($1, $2, $3)", successCallback, failureCallback, options)
 	return r
 }
 
@@ -20141,8 +20120,8 @@ func (*RTCPeerConnection) GetRemoteStreams() (m []*MediaStream) {
 	return m
 }
 
-func (*RTCPeerConnection) GetStats(selector *MediaStreamTrack, RTCStatsCallback func(report *RTCStatsReport), RTCPeerConnectionErrorCallback func(err *DOMError)) (r *RTCStatsReport) {
-	js.Rewrite("await $<.getStats($1, $2, $3)", selector, RTCStatsCallback, RTCPeerConnectionErrorCallback)
+func (*RTCPeerConnection) GetStats(selector *MediaStreamTrack, successCallback func(report *RTCStatsReport), failureCallback func(err *DOMError)) (r *RTCStatsReport) {
+	js.Rewrite("await $<.getStats($1, $2, $3)", selector, successCallback, failureCallback)
 	return r
 }
 
@@ -20155,12 +20134,12 @@ func (*RTCPeerConnection) RemoveStream(stream *MediaStream) {
 	js.Rewrite("$<.removeStream($1)", stream)
 }
 
-func (*RTCPeerConnection) SetLocalDescription(description *RTCSessionDescription, VoidFunction func(), RTCPeerConnectionErrorCallback func(err *DOMError)) {
-	js.Rewrite("await $<.setLocalDescription($1, $2, $3)", description, VoidFunction, RTCPeerConnectionErrorCallback)
+func (*RTCPeerConnection) SetLocalDescription(description *RTCSessionDescription, successCallback func(), failureCallback func(err *DOMError)) {
+	js.Rewrite("await $<.setLocalDescription($1, $2, $3)", description, successCallback, failureCallback)
 }
 
-func (*RTCPeerConnection) SetRemoteDescription(description *RTCSessionDescription, VoidFunction func(), RTCPeerConnectionErrorCallback func(err *DOMError)) {
-	js.Rewrite("await $<.setRemoteDescription($1, $2, $3)", description, VoidFunction, RTCPeerConnectionErrorCallback)
+func (*RTCPeerConnection) SetRemoteDescription(description *RTCSessionDescription, successCallback func(), failureCallback func(err *DOMError)) {
+	js.Rewrite("await $<.setRemoteDescription($1, $2, $3)", description, successCallback, failureCallback)
 }
 
 func (*RTCPeerConnection) GetCanTrickleIceCandidates() (canTrickleIceCandidates bool) {
@@ -20734,7 +20713,7 @@ type ServiceWorker struct {
 	*AbstractWorker
 }
 
-func (*ServiceWorker) PostMessage(message interface{}, transfer []*Transferable) {
+func (*ServiceWorker) PostMessage(message interface{}, transfer []interface{}) {
 	js.Rewrite("$<.postMessage($1, $2)", message, transfer)
 }
 
@@ -25329,7 +25308,7 @@ func (*VideoPlaybackQuality) GetCorruptedVideoFrames() (corruptedVideoFrames uin
 	return corruptedVideoFrames
 }
 
-func (*VideoPlaybackQuality) GetCreationTime() (creationTime string) {
+func (*VideoPlaybackQuality) GetCreationTime() (creationTime int) {
 	js.Rewrite("$<.creationTime")
 	return creationTime
 }
@@ -26031,7 +26010,7 @@ func (*WebGLRenderingContext) Uniform1i(location *WebGLUniformLocation, x int) {
 	js.Rewrite("$<.uniform1i($1, $2)", location, x)
 }
 
-func (*WebGLRenderingContext) Uniform1iv(location *WebGLUniformLocation, v *Int32Array) {
+func (*WebGLRenderingContext) Uniform1iv(location *WebGLUniformLocation, v []int32) {
 	js.Rewrite("$<.uniform1iv($1, $2)", location, v)
 }
 
@@ -26047,7 +26026,7 @@ func (*WebGLRenderingContext) Uniform2i(location *WebGLUniformLocation, x int, y
 	js.Rewrite("$<.uniform2i($1, $2, $3)", location, x, y)
 }
 
-func (*WebGLRenderingContext) Uniform2iv(location *WebGLUniformLocation, v *Int32Array) {
+func (*WebGLRenderingContext) Uniform2iv(location *WebGLUniformLocation, v []int32) {
 	js.Rewrite("$<.uniform2iv($1, $2)", location, v)
 }
 
@@ -26063,7 +26042,7 @@ func (*WebGLRenderingContext) Uniform3i(location *WebGLUniformLocation, x int, y
 	js.Rewrite("$<.uniform3i($1, $2, $3, $4)", location, x, y, z)
 }
 
-func (*WebGLRenderingContext) Uniform3iv(location *WebGLUniformLocation, v *Int32Array) {
+func (*WebGLRenderingContext) Uniform3iv(location *WebGLUniformLocation, v []int32) {
 	js.Rewrite("$<.uniform3iv($1, $2)", location, v)
 }
 
@@ -26079,7 +26058,7 @@ func (*WebGLRenderingContext) Uniform4i(location *WebGLUniformLocation, x int, y
 	js.Rewrite("$<.uniform4i($1, $2, $3, $4, $5)", location, x, y, z, w)
 }
 
-func (*WebGLRenderingContext) Uniform4iv(location *WebGLUniformLocation, v *Int32Array) {
+func (*WebGLRenderingContext) Uniform4iv(location *WebGLUniformLocation, v []int32) {
 	js.Rewrite("$<.uniform4iv($1, $2)", location, v)
 }
 
@@ -26449,7 +26428,7 @@ func (*WebKitDirectoryEntry) CreateReader() (w *WebKitDirectoryReader) {
 type WebKitDirectoryReader struct {
 }
 
-func (*WebKitDirectoryReader) ReadEntries(successCallback *WebKitEntriesCallback, errorCallback *WebKitErrorCallback) {
+func (*WebKitDirectoryReader) ReadEntries(successCallback func(entries []*WebKitEntry), errorCallback func(err *DOMError)) {
 	js.Rewrite("$<.readEntries($1, $2)", successCallback, errorCallback)
 }
 
@@ -26485,7 +26464,7 @@ type WebKitFileEntry struct {
 	*WebKitEntry
 }
 
-func (*WebKitFileEntry) File(successCallback *WebKitFileCallback, errorCallback *WebKitErrorCallback) {
+func (*WebKitFileEntry) File(successCallback func(file *File), errorCallback func(err *DOMError)) {
 	js.Rewrite("$<.file($1, $2)", successCallback, errorCallback)
 }
 
@@ -26738,7 +26717,7 @@ func (*Window) Open(url string, target string, features string, replace bool) (w
 	return w
 }
 
-func (*Window) PostMessage(message interface{}, targetOrigin string, transfer []*Transferable) {
+func (*Window) PostMessage(message interface{}, targetOrigin string, transfer []interface{}) {
 	js.Rewrite("$<.postMessage($1, $2, $3)", message, targetOrigin, transfer)
 }
 
@@ -26755,8 +26734,8 @@ func (*Window) ReleaseEvents() {
 	js.Rewrite("$<.releaseEvents()")
 }
 
-func (*Window) RequestAnimationFrame(FrameRequestCallback func(time string)) (i int) {
-	js.Rewrite("$<.requestAnimationFrame($1)", FrameRequestCallback)
+func (*Window) RequestAnimationFrame(callback func(time int)) (i int) {
+	js.Rewrite("$<.requestAnimationFrame($1)", callback)
 	return i
 }
 
@@ -26798,8 +26777,8 @@ func (*Window) WebkitConvertPointFromPageToNode(node *Node, pt *WebKitPoint) (w 
 	return w
 }
 
-func (*Window) WebkitRequestAnimationFrame(FrameRequestCallback func(time string)) (i int) {
-	js.Rewrite("$<.webkitRequestAnimationFrame($1)", FrameRequestCallback)
+func (*Window) WebkitRequestAnimationFrame(callback func(time int)) (i int) {
+	js.Rewrite("$<.webkitRequestAnimationFrame($1)", callback)
 	return i
 }
 
@@ -27902,7 +27881,7 @@ type Worker struct {
 	*AbstractWorker
 }
 
-func (*Worker) PostMessage(message interface{}, transfer []*Transferable) {
+func (*Worker) PostMessage(message interface{}, transfer []interface{}) {
 	js.Rewrite("$<.postMessage($1, $2)", message, transfer)
 }
 
@@ -28589,7 +28568,7 @@ func (*MSNavigatorDoNotTrack) StoreWebWideTrackingException(args *StoreException
 type NavigatorBeacon struct {
 }
 
-func (*NavigatorBeacon) SendBeacon(url string, data *BodyInit) (b bool) {
+func (*NavigatorBeacon) SendBeacon(url string, data interface{}) (b bool) {
 	js.Rewrite("$<.sendBeacon($1, $2)", url, data)
 	return b
 }
@@ -28675,8 +28654,8 @@ type NavigatorStorageUtils struct {
 type NavigatorUserMedia struct {
 }
 
-func (*NavigatorUserMedia) GetUserMedia(constraints *MediaStreamConstraints, NavigatorUserMediaSuccessCallback func(stream *MediaStream), NavigatorUserMediaErrorCallback func(err *MediaStreamError)) {
-	js.Rewrite("$<.getUserMedia($1, $2, $3)", constraints, NavigatorUserMediaSuccessCallback, NavigatorUserMediaErrorCallback)
+func (*NavigatorUserMedia) GetUserMedia(constraints *MediaStreamConstraints, successCallback func(stream *MediaStream), errorCallback func(err *MediaStreamError)) {
+	js.Rewrite("$<.getUserMedia($1, $2, $3)", constraints, successCallback, errorCallback)
 }
 
 func (*NavigatorUserMedia) GetMediaDevices() (mediaDevices *MediaDevices) {

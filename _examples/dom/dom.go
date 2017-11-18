@@ -1,8 +1,14 @@
 package main
 
-import "github.com/matthewmueller/golly/dom"
+import (
+	"github.com/matthewmueller/golly/dom"
+)
 
 func main() {
-	w := &dom.
-		w
+	w := &dom.Window{}
+	w.AddEventListener("click", func(evt *dom.Event) {
+		t := evt.GetType()
+		println(t)
+	}, false)
+	w.Alert("amazing!!!!!!")
 }

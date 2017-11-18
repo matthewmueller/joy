@@ -23,24 +23,30 @@ var resequence = regexp.MustCompile(`sequence<([\w<>]+)>`)
 var repromise = regexp.MustCompile(`Promise<([\w<>]+)>`)
 
 var typemap = map[string]string{
-	"DOMString":           "string",
-	"USVString":           "string",
-	"IDBKeyPath":          "string",
-	"DOMHighResTimeStamp": "string",
-	"AAGUID":              "string",
+	"DOMString":        "string",
+	"USVString":        "string",
+	"IDBKeyPath":       "string",
+	"AAGUID":           "string",
+	"EndOfStreamError": "string",
+	"ReadyState":       "string",
 
-	"boolean": "bool",
-	"bool":    "bool",
-	"Boolean": "bool",
+	"boolean":                "bool",
+	"bool":                   "bool",
+	"Boolean":                "bool",
+	"MSAttestationStatement": "bool",
 
 	"unsigned long":      "uint",
 	"unsigned long long": "uint64",
 	"unsigned short":     "uint8",
 	"Uint8Array":         "[]uint8",
+	"Uint8ClampedArray":  "[]uint8",
 
-	"short":     "int8",
-	"long":      "int",
-	"long long": "int64",
+	"short":               "int8",
+	"long":                "int",
+	"long long":           "int64",
+	"DOMTimeStamp":        "int",
+	"DOMHighResTimeStamp": "int",
+	"Int32Array":          "[]int32",
 
 	"float":               "float32",
 	"double":              "float32",
@@ -50,24 +56,29 @@ var typemap = map[string]string{
 
 	"void": "void",
 
-	"object":      "interface{}",
-	"any":         "interface{}",
-	"Dictionary":  "interface{}",
-	"payloadType": "interface{}",
-	"Entry":       "interface{}",
+	"object":       "interface{}",
+	"any":          "interface{}",
+	"Dictionary":   "interface{}",
+	"payloadType":  "interface{}",
+	"Entry":        "interface{}",
+	"Transferable": "interface{}",
+	"BodyInit":     "interface{}",
 
 	"ArrayBuffer":     "[]byte",
 	"ArrayBufferView": "[]byte",
 	"BufferSource":    "[]byte",
-	"octet":           "[8]byte",
+	"octet":           "byte",
 
 	"EventHandler": "EventHandler",
 
 	"RequestInfo": "*Request",
 
 	"function": "func()",
+	"Function": "func()",
 
 	"Date": "time.Time",
+
+	"WebKitEntry[]": "[]*WebKitEntry",
 }
 
 type vartype struct {
@@ -203,19 +214,17 @@ func (m *Method) Generate(idx *index, recv *Interface) (string, error) {
 	data.Name = m.Name
 
 	for _, param := range m.Params {
-		// Handle event listener
-		// TODO: this is defined in <callback-interfaces>
-		if param.Type == "EventListener" {
-			event := idx.Interfaces["Event"]
-
-			t, e := Type(idx, event.Name)
+		// handle callback interfaces
+		if idx.CallbackInterfaces[param.Type] != nil {
+			fn := idx.CallbackInterfaces[param.Type]
+			t, e := fn.Generate(idx)
 			if e != nil {
 				return "", e
 			}
 
 			data.Params = append(data.Params, vartype{
 				Var:  name(param.Name),
-				Type: "func (e " + t + ")",
+				Type: t,
 			})
 			continue
 		}
@@ -229,7 +238,7 @@ func (m *Method) Generate(idx *index, recv *Interface) (string, error) {
 			}
 
 			data.Params = append(data.Params, vartype{
-				Var:  name(fn.Name),
+				Var:  name(param.Name),
 				Type: t,
 			})
 			continue
@@ -386,16 +395,31 @@ func (p *Property) Generate(idx *index, recv *Interface) (string, error) {
 		}
 	}
 
-	getter, e := generate("property_getter/"+p.Name, data, `
-	func ({{ .Recv }}) Get{{ capitalize .Name }}() ({{ .Result.Var }} {{ .Result.Type }}) {
-		js.Rewrite("$<.{{ .Name }}")
-		return {{ .Result.Var }}
+	// only one known instance of this (property that returns a Promise that returns undefined)
+	// so we'll just special case this for now
+	async := isAsync(p.Type)
+	if async && data.Result.Type == "void" {
+		getter, e := generate("property_getter/"+p.Name, data, `
+			func ({{ .Recv }}) Get{{ capitalize .Name }}() {
+				js.Rewrite("await $<.{{ .Name }}")
+			}
+		`)
+		if e != nil {
+			return "", e
+		}
+		result = append(result, getter)
+	} else {
+		getter, e := generate("property_getter/"+p.Name, data, `
+		func ({{ .Recv }}) Get{{ capitalize .Name }}() ({{ .Result.Var }} {{ .Result.Type }}) {
+			js.Rewrite("$<.{{ .Name }}")
+			return {{ .Result.Var }}
+		}
+		`)
+		if e != nil {
+			return "", e
+		}
+		result = append(result, getter)
 	}
-	`)
-	if e != nil {
-		return "", e
-	}
-	result = append(result, getter)
 
 	if !p.ReadOnly {
 		setter, e := generate("property_setter/"+p.Name, data, `
@@ -438,6 +462,55 @@ type AnonymousContentAttributes struct {
 	ValueSyntax string `xml:"value-syntax,attr"`
 }
 
+// CallbackInterface struct
+type CallbackInterface struct {
+	Name    string    `xml:"name,attr"`
+	Extends string    `xml:"extends,attr"`
+	Methods []*Method `xml:"methods>method"`
+}
+
+type callbackInterfaceData struct {
+	Name    string
+	Extends string
+	Params  []string
+	Result  string
+}
+
+// Generate the type
+func (i *CallbackInterface) Generate(idx *index) (string, error) {
+	data := callbackInterfaceData{}
+	data.Name = i.Name
+
+	if i.Extends != "" && i.Extends != "Object" {
+		data.Extends = pointer(i.Extends)
+	}
+
+	if len(i.Methods) != 1 {
+		return "", fmt.Errorf("callback_interface: expected %s to only have 1 method, but it has %d methods", i.Name, len(i.Methods))
+	}
+
+	method := i.Methods[0]
+	for _, param := range method.Params {
+		p, e := param.Generate(idx)
+		if e != nil {
+			return "", e
+		}
+		data.Params = append(data.Params, p)
+	}
+
+	t, e := Type(idx, method.Type)
+	if e != nil {
+		return "", e
+	}
+	data.Result = t
+
+	if t == "void" {
+		return generate("callback_interface/"+i.Name, data, `func ({{ join .Params }})`)
+	}
+
+	return generate("callback_interface/"+i.Name, data, `func ({{ join .Params }}) ({{ .Result }})`)
+}
+
 // Interface struct
 type Interface struct {
 	Name                       string                        `xml:"name,attr"`
@@ -453,16 +526,6 @@ type Interface struct {
 	NamedConstructor           NamedConstructor              `xml:"named-constructor"`
 	Events                     []*Event                      `xml:"events>event"`
 	AnonymousContentAttributes []*AnonymousContentAttributes `xml:"anonymous-content-attributes>parsedattribute"`
-}
-
-// Package fn
-func (i *Interface) Package() string {
-	return lowercase(i.Name)
-}
-
-// Type as a string
-func (i *Interface) Type() string {
-	return i.Name
 }
 
 type interfaceData struct {
@@ -632,14 +695,14 @@ type Typedef struct {
 
 // DOM struct
 type DOM struct {
-	WebIDL             xml.Name            `xml:"webidl-xml"`
-	CallbackFunctions  []*CallbackFunction `xml:"callback-functions>callback-function"`
-	CallbackInterfaces []*Interface        `xml:"callback-interfaces>interface"`
-	Dictionaries       []*Dictionary       `xml:"dictionaries>dictionary"`
-	Enums              []*Enum             `xml:"enums>enum"`
-	Interfaces         []*Interface        `xml:"interfaces>interface"`
-	MixinInterfaces    []*Interface        `xml:"mixin-interfaces>interface"`
-	TypeDefs           []*Typedef          `xml:"typedefs>typedef"`
+	WebIDL             xml.Name             `xml:"webidl-xml"`
+	CallbackFunctions  []*CallbackFunction  `xml:"callback-functions>callback-function"`
+	CallbackInterfaces []*CallbackInterface `xml:"callback-interfaces>interface"`
+	Dictionaries       []*Dictionary        `xml:"dictionaries>dictionary"`
+	Enums              []*Enum              `xml:"enums>enum"`
+	Interfaces         []*Interface         `xml:"interfaces>interface"`
+	MixinInterfaces    []*Interface         `xml:"mixin-interfaces>interface"`
+	TypeDefs           []*Typedef           `xml:"typedefs>typedef"`
 }
 
 type addedType struct {
@@ -667,7 +730,7 @@ type addedType struct {
 
 type index struct {
 	CallbackFunctions  map[string]*CallbackFunction
-	CallbackInterfaces map[string]*Interface
+	CallbackInterfaces map[string]*CallbackInterface
 	Dictionaries       map[string]*Dictionary
 	Enums              map[string]*Enum
 	Interfaces         map[string]*Interface
@@ -708,7 +771,7 @@ func main() {
 	// 1. index
 	idx := &index{
 		CallbackFunctions:  map[string]*CallbackFunction{},
-		CallbackInterfaces: map[string]*Interface{},
+		CallbackInterfaces: map[string]*CallbackInterface{},
 		Dictionaries:       map[string]*Dictionary{},
 		Enums:              map[string]*Enum{},
 		Interfaces:         map[string]*Interface{},
@@ -938,7 +1001,29 @@ func findEvent(idx *index, i *Interface, name string) *Event {
 
 // manual adjustments
 func adjust(idx *index) *index {
-	// var iface *Interface
+	var iface *Interface
+
+	// Remove some Pointer event properties that
+	// conflict with methods of the same name
+	// and aren't in the spec
+	iface = idx.Interfaces["MSPointerEvent"]
+	for i, prop := range iface.Properties {
+		if prop.Name == "currentPoint" {
+			iface.Properties[i] = nil
+		}
+		if prop.Name == "intermediatePoints" {
+			iface.Properties[i] = nil
+		}
+	}
+	iface = idx.Interfaces["PointerEvent"]
+	for i, prop := range iface.Properties {
+		if prop.Name == "currentPoint" {
+			iface.Properties[i] = nil
+		}
+		if prop.Name == "intermediatePoints" {
+			iface.Properties[i] = nil
+		}
+	}
 
 	// AudioBufferSourceNode has wrong event-handler ref
 	// iface = idx.Interfaces["AudioBufferSourceNode"]

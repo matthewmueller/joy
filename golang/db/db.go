@@ -131,8 +131,9 @@ func (db *DB) typeSpec(info *loader.PackageInfo, gn *ast.GenDecl, n *ast.TypeSpe
 		}
 
 		return nil
+		// case *ast
 	default:
-		return fmt.Errorf("unhandled %T", n.Type)
+		return fmt.Errorf("unhandled typeSpec: %T", n.Type)
 	}
 }
 
