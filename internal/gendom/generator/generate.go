@@ -2,74 +2,105 @@ package generator
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
+	"path"
 	"strings"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/internal/gen"
+	"github.com/tj/go/semaphore"
 )
 
 // Generate the DOM
 func Generate(src string) (files []gen.File, err error) {
-	dom, err := parse(src)
-	if err != nil {
-		return files, err
+	dom, e := parse(src)
+	if e != nil {
+		return files, e
 	}
 
 	idx := newIndex(dom)
 
-	// 2. generate
-	var stmts []string
-
 	// generate our enums
 	// TODO: actually generate enums
 	for _, enum := range dom.Enums {
-		str, e := enum.Generate(idx)
+		src, e := enum.Generate(idx)
 		if e != nil {
 			return files, e
 		}
-		stmts = append(stmts, str)
+
+		name := gen.Lowercase(enum.Name)
+		files = append(files, gen.File{
+			Name:   path.Join(name, name+".go"),
+			Source: "package " + name + "\n\n" + src,
+		})
 	}
 
 	// generate our dictionaries
 	for _, dict := range dom.Dictionaries {
-		str, e := dict.Generate(idx)
+		src, e := dict.Generate(idx)
 		if e != nil {
 			return files, e
 		}
-		stmts = append(stmts, str)
-	}
 
-	// generate our interfaces
-	for _, iface := range dom.Interfaces {
-		str, e := iface.Generate(idx, nil)
-		if e != nil {
-			return files, e
-		}
-		stmts = append(stmts, str)
+		name := gen.Lowercase(dict.Name)
+		files = append(files, gen.File{
+			Name:   path.Join(name, name+".go"),
+			Source: "package " + name + "\n\n" + src,
+		})
 	}
 
 	// generate our mixin interfaces
 	for _, iface := range dom.MixinInterfaces {
-		str, e := iface.Generate(idx, nil)
+		src, e := iface.Generate(idx, nil)
 		if e != nil {
 			return files, e
 		}
-		stmts = append(stmts, str)
+
+		name := gen.Lowercase(iface.Name)
+		files = append(files, gen.File{
+			Name:   path.Join(name, name+".go"),
+			Source: "package " + name + "\n\n" + src,
+		})
 	}
 
-	result := "package dom\n\n" + strings.Join(stmts, "\n")
-
-	output, e := gen.Format(result)
-	if e != nil {
-		if e := ioutil.WriteFile("generated.go", []byte(result), os.ModePerm); e != nil {
+	// generate our interfaces
+	for _, iface := range dom.Interfaces {
+		src, e := iface.Generate(idx, nil)
+		if e != nil {
 			return files, e
 		}
-		return files, e
-	}
-	_ = output
 
-	return files, nil
+		name := gen.Lowercase(iface.Name)
+
+		files = append(files, gen.File{
+			Name:   path.Join(name, name+".go"),
+			Source: "package " + name + "\n\n" + src,
+		})
+	}
+
+	filemap := map[string]bool{}
+
+	sem := semaphore.New(5)
+	for index, file := range files {
+		if filemap[file.Name] {
+			panic(file.Name + ": already exists")
+		}
+		filemap[file.Name] = true
+
+		i := index
+		f := file
+		sem.Run(func() {
+			output, e := gen.Format(f.Source)
+			if e != nil {
+				log.WithError(e).WithField("name", f.Name).Errorf("format error: %s\n", f.Source)
+				err = e
+			}
+			f.Source = output
+			files[i] = f
+		})
+	}
+	sem.Wait()
+
+	return files, err
 }
 
 // Generate enums
@@ -124,17 +155,19 @@ func (i *Interface) Generate(idx *index, implementor *Interface) (string, error)
 	data := interfaceData{}
 	data.Name = i.Name
 
+	pkgname := gen.Lowercase(i.Name)
+
 	recv := i
 	if implementor != nil {
 		recv = implementor
 	}
 
 	if i.Extends != "" && i.Extends != "Object" {
-		data.Extends = gen.Pointer(i.Extends)
+		data.Extends = gen.Pointer(findPackage(idx, pkgname, i.Extends))
 	}
 
 	for _, imp := range i.Implements {
-		data.Implements = append(data.Implements, gen.Pointer(imp))
+		data.Implements = append(data.Implements, gen.Pointer(findPackage(idx, pkgname, imp)))
 	}
 
 	for _, method := range i.Methods {
@@ -193,11 +226,13 @@ func (m *Method) Generate(idx *index, recv *Interface) (string, error) {
 	data.Recv = gen.Pointer(recv.Name)
 	data.Name = m.Name
 
+	pkgname := gen.Lowercase(recv.Name)
+
 	for _, param := range m.Params {
 		// handle callback interfaces
 		if idx.CallbackInterfaces[param.Type] != nil {
 			fn := idx.CallbackInterfaces[param.Type]
-			t, e := fn.Generate(idx)
+			t, e := fn.Generate(idx, recv)
 			if e != nil {
 				return "", e
 			}
@@ -212,7 +247,7 @@ func (m *Method) Generate(idx *index, recv *Interface) (string, error) {
 		// handle callback functions
 		if idx.CallbackFunctions[param.Type] != nil {
 			fn := idx.CallbackFunctions[param.Type]
-			t, e := fn.Generate(idx)
+			t, e := fn.Generate(idx, recv)
 			if e != nil {
 				return "", e
 			}
@@ -224,7 +259,7 @@ func (m *Method) Generate(idx *index, recv *Interface) (string, error) {
 			continue
 		}
 
-		t, e := coerce(idx, param.Type)
+		t, e := coerce(idx, pkgname, param.Type)
 		if e != nil {
 			return "", e
 		}
@@ -235,7 +270,7 @@ func (m *Method) Generate(idx *index, recv *Interface) (string, error) {
 		})
 	}
 
-	t, e := coerce(idx, m.Type)
+	t, e := coerce(idx, pkgname, m.Type)
 	if e != nil {
 		return "", e
 	}
@@ -284,11 +319,12 @@ type paramData struct {
 }
 
 // Generate fn
-func (p *Param) Generate(idx *index) (string, error) {
+func (p *Param) Generate(idx *index, recv *Interface) (string, error) {
 	data := paramData{}
 	data.Name = gen.Name(p.Name)
+	pkgname := gen.Lowercase(recv.Name)
 
-	t, e := coerce(idx, p.Type)
+	t, e := coerce(idx, pkgname, p.Type)
 	if e != nil {
 		return "", e
 	}
@@ -311,6 +347,8 @@ func (p *Property) Generate(idx *index, recv *Interface) (string, error) {
 	data.Recv = gen.Pointer(recv.Name)
 	data.Name = p.Name
 
+	pkgname := gen.Lowercase(recv.Name)
+
 	if p.Type == "EventHandler" {
 		n := "e"
 		event := idx.Interfaces["Event"]
@@ -324,7 +362,7 @@ func (p *Property) Generate(idx *index, recv *Interface) (string, error) {
 			return "", fmt.Errorf("%s.%s: couldn't find event name: %s", recv.Name, p.Name, p.EventHandler)
 		}
 
-		t, e := coerce(idx, event.Name)
+		t, e := coerce(idx, pkgname, event.Name)
 		if e != nil {
 			return "", e
 		}
@@ -335,7 +373,7 @@ func (p *Property) Generate(idx *index, recv *Interface) (string, error) {
 		}
 	} else if idx.CallbackFunctions[p.Type] != nil {
 		fn := idx.CallbackFunctions[p.Type]
-		t, e := fn.Generate(idx)
+		t, e := fn.Generate(idx, recv)
 		if e != nil {
 			return "", e
 		}
@@ -345,7 +383,7 @@ func (p *Property) Generate(idx *index, recv *Interface) (string, error) {
 			Type: t,
 		}
 	} else {
-		t, e := coerce(idx, p.Type)
+		t, e := coerce(idx, pkgname, p.Type)
 		if e != nil {
 			return "", e
 		}
@@ -404,12 +442,14 @@ type callbackInterfaceData struct {
 }
 
 // Generate the type
-func (i *CallbackInterface) Generate(idx *index) (string, error) {
+func (i *CallbackInterface) Generate(idx *index, recv *Interface) (string, error) {
 	data := callbackInterfaceData{}
 	data.Name = i.Name
 
+	pkgname := gen.Lowercase(recv.Name)
+
 	if i.Extends != "" && i.Extends != "Object" {
-		data.Extends = gen.Pointer(i.Extends)
+		data.Extends = gen.Pointer(findPackage(idx, pkgname, i.Extends))
 	}
 
 	if len(i.Methods) != 1 {
@@ -418,14 +458,14 @@ func (i *CallbackInterface) Generate(idx *index) (string, error) {
 
 	method := i.Methods[0]
 	for _, param := range method.Params {
-		p, e := param.Generate(idx)
+		p, e := param.Generate(idx, recv)
 		if e != nil {
 			return "", e
 		}
 		data.Params = append(data.Params, p)
 	}
 
-	t, e := coerce(idx, method.Type)
+	t, e := coerce(idx, pkgname, method.Type)
 	if e != nil {
 		return "", e
 	}
@@ -448,7 +488,7 @@ func (m *Member) Generate(idx *index) (string, error) {
 	data := memberData{}
 	data.Name = gen.Name(m.Name)
 
-	t, e := coerce(idx, m.Type)
+	t, e := coerce(idx, "dom", m.Type)
 	if e != nil {
 		return "", e
 	}
@@ -469,18 +509,20 @@ type callbackFunctionData struct {
 }
 
 // Generate fn
-func (c *CallbackFunction) Generate(idx *index) (string, error) {
+func (c *CallbackFunction) Generate(idx *index, recv *Interface) (string, error) {
 	data := callbackFunctionData{}
 
+	pkgname := gen.Lowercase(recv.Name)
+
 	for _, param := range c.Params {
-		p, e := param.Generate(idx)
+		p, e := param.Generate(idx, recv)
 		if e != nil {
 			return "", e
 		}
 		data.Params = append(data.Params, p)
 	}
 
-	t, e := coerce(idx, c.Type)
+	t, e := coerce(idx, pkgname, c.Type)
 	if e != nil {
 		return "", e
 	}

@@ -49,7 +49,7 @@ var overrides = map[string]string{
 
 	"EventHandler": "EventHandler",
 
-	"RequestInfo": "*Request",
+	"RequestInfo": "*request.Request",
 
 	"function": "func()",
 	"Function": "func()",

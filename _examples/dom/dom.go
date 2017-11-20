@@ -1,23 +1,26 @@
 package main
 
 import (
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/dom"
-	"github.com/matthewmueller/golly/dom/internal/tester"
+	"github.com/matthewmueller/golly/dom/window"
 )
 
 func main() {
-	w := &dom.Window{}
+	w := window.New()
 	w.AddEventListener("click", func(evt *dom.Event) {
 		t := evt.GetType()
 		println(t)
 	}, false)
 	w.Alert("amazing!!!!!!")
+
+	a := w.GetDocument().QuerySelector("a")
+	hostname := a.(dom.HTMLAnchorElement).GetHostname()
+	println(hostname)
 }
 
-func test() {
-	result := dom.Test()
-	r := tester.Tester
-	log.Infof("result %s", result)
-	log.Infof("result %s", r)
-}
+// func test() {
+// 	result := dom.Test()
+// 	r := tester.Tester
+// 	log.Infof("result %s", result)
+// 	log.Infof("result %s", r)
+// }

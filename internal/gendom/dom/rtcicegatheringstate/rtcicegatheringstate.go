@@ -1,0 +1,3 @@
+package rtcicegatheringstate
+
+type RTCIceGatheringState string

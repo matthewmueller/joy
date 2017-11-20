@@ -31,3 +31,11 @@ func Generate(name string, data interface{}, tpl string) (string, error) {
 
 	return string(b.Bytes()), nil
 }
+
+// IsBuiltin checks if the name is builtin
+func IsBuiltin(name string) bool {
+	if builtins[name] == "" {
+		return false
+	}
+	return true
+}

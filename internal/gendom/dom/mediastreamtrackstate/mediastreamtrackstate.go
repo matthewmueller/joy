@@ -1,0 +1,3 @@
+package mediastreamtrackstate
+
+type MediaStreamTrackState string

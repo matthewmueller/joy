@@ -78,6 +78,7 @@ type VideoFacingModeEnum string
 type VisibilityState string
 type XMLHttpRequestResponseType string
 
+// js:"h,omit"
 type Account struct {
 	displayName   string
 	id            string
@@ -86,10 +87,12 @@ type Account struct {
 	rpDisplayName string
 }
 
+// js:"h,omit"
 type Algorithm struct {
 	name *string
 }
 
+// js:"h,omit"
 type AnimationEventInit struct {
 	*EventInit
 
@@ -97,6 +100,7 @@ type AnimationEventInit struct {
 	elapsedTime   *float32
 }
 
+// js:"h,omit"
 type AssertionOptions struct {
 	allowList      []*ScopedCredentialDescriptor
 	extensions     *WebAuthnExtensions
@@ -104,6 +108,7 @@ type AssertionOptions struct {
 	timeoutSeconds *uint
 }
 
+// js:"h,omit"
 type CacheQueryOptions struct {
 	cacheName    *string
 	ignoreMethod *bool
@@ -111,6 +116,7 @@ type CacheQueryOptions struct {
 	ignoreVary   *bool
 }
 
+// js:"h,omit"
 type ClientData struct {
 	challenge    string
 	extensions   *WebAuthnExtensions
@@ -120,6 +126,7 @@ type ClientData struct {
 	tokenBinding *string
 }
 
+// js:"h,omit"
 type CloseEventInit struct {
 	*EventInit
 
@@ -128,28 +135,33 @@ type CloseEventInit struct {
 	wasClean *bool
 }
 
+// js:"h,omit"
 type CompositionEventInit struct {
 	*UIEventInit
 
 	data *string
 }
 
+// js:"h,omit"
 type ConfirmSiteSpecificExceptionsInformation struct {
 	*ExceptionInformation
 
 	arrayOfDomainStrings []string
 }
 
+// js:"h,omit"
 type ConstrainBooleanParameters struct {
 	exact *bool
 	ideal *bool
 }
 
+// js:"h,omit"
 type ConstrainDOMStringParameters struct {
 	exact interface{}
 	ideal interface{}
 }
 
+// js:"h,omit"
 type ConstrainDoubleRange struct {
 	*DoubleRange
 
@@ -157,6 +169,7 @@ type ConstrainDoubleRange struct {
 	ideal *float32
 }
 
+// js:"h,omit"
 type ConstrainLongRange struct {
 	*LongRange
 
@@ -164,29 +177,34 @@ type ConstrainLongRange struct {
 	ideal *int
 }
 
+// js:"h,omit"
 type ConstrainVideoFacingModeParameters struct {
 	exact interface{}
 	ideal interface{}
 }
 
+// js:"h,omit"
 type CustomEventInit struct {
 	*EventInit
 
 	detail interface{}
 }
 
+// js:"h,omit"
 type DeviceAccelerationDict struct {
 	x *float32
 	y *float32
 	z *float32
 }
 
+// js:"h,omit"
 type DeviceLightEventInit struct {
 	*EventInit
 
 	value *float32
 }
 
+// js:"h,omit"
 type DeviceMotionEventInit struct {
 	*EventInit
 
@@ -196,6 +214,7 @@ type DeviceMotionEventInit struct {
 	rotationRate                 *DeviceRotationRateDict
 }
 
+// js:"h,omit"
 type DeviceOrientationEventInit struct {
 	*EventInit
 
@@ -205,12 +224,14 @@ type DeviceOrientationEventInit struct {
 	gamma    *float32
 }
 
+// js:"h,omit"
 type DeviceRotationRateDict struct {
 	alpha *float32
 	beta  *float32
 	gamma *float32
 }
 
+// js:"h,omit"
 type DOMRectInit struct {
 	height *float32
 	width  *float32
@@ -218,11 +239,13 @@ type DOMRectInit struct {
 	y      *float32
 }
 
+// js:"h,omit"
 type DoubleRange struct {
 	max *float32
 	min *float32
 }
 
+// js:"h,omit"
 type ErrorEventInit struct {
 	*EventInit
 
@@ -233,11 +256,13 @@ type ErrorEventInit struct {
 	message  *string
 }
 
+// js:"h,omit"
 type EventInit struct {
 	bubbles    *bool
 	cancelable *bool
 }
 
+// js:"h,omit"
 type EventModifierInit struct {
 	*UIEventInit
 
@@ -258,16 +283,19 @@ type EventModifierInit struct {
 	shiftKey           *bool
 }
 
+// js:"h,omit"
 type ExceptionInformation struct {
 	domain *string
 }
 
+// js:"h,omit"
 type FocusEventInit struct {
 	*UIEventInit
 
 	relatedTarget *EventTarget
 }
 
+// js:"h,omit"
 type FocusNavigationEventInit struct {
 	*EventInit
 
@@ -278,6 +306,7 @@ type FocusNavigationEventInit struct {
 	originWidth      *float32
 }
 
+// js:"h,omit"
 type FocusNavigationOrigin struct {
 	originHeight *float32
 	originLeft   *float32
@@ -285,16 +314,19 @@ type FocusNavigationOrigin struct {
 	originWidth  *float32
 }
 
+// js:"h,omit"
 type GamepadEventInit struct {
 	*EventInit
 
 	gamepad *Gamepad
 }
 
+// js:"h,omit"
 type GetNotificationOptions struct {
 	tag *string
 }
 
+// js:"h,omit"
 type HashChangeEventInit struct {
 	*EventInit
 
@@ -302,14 +334,17 @@ type HashChangeEventInit struct {
 	oldURL *string
 }
 
+// js:"h,omit"
 type IDBIndexParameters struct {
 	unique *bool
 }
 
+// js:"h,omit"
 type IDBObjectStoreParameters struct {
 	keyPath *string
 }
 
+// js:"h,omit"
 type IntersectionObserverEntryInit struct {
 	boundingClientRect *DOMRectInit
 	intersectionRect   *DOMRectInit
@@ -318,16 +353,19 @@ type IntersectionObserverEntryInit struct {
 	time               int
 }
 
+// js:"h,omit"
 type IntersectionObserverInit struct {
 	root       *Element
 	rootMargin *string
 	threshold  interface{}
 }
 
+// js:"h,omit"
 type KeyAlgorithm struct {
 	name *string
 }
 
+// js:"h,omit"
 type KeyboardEventInit struct {
 	*EventModifierInit
 
@@ -336,11 +374,13 @@ type KeyboardEventInit struct {
 	repeat   *bool
 }
 
+// js:"h,omit"
 type LongRange struct {
 	max *int
 	min *int
 }
 
+// js:"h,omit"
 type MediaEncryptedEventInit struct {
 	*EventInit
 
@@ -348,6 +388,7 @@ type MediaEncryptedEventInit struct {
 	initDataType *string
 }
 
+// js:"h,omit"
 type MediaKeyMessageEventInit struct {
 	*EventInit
 
@@ -355,6 +396,7 @@ type MediaKeyMessageEventInit struct {
 	messageType *MediaKeyMessageType
 }
 
+// js:"h,omit"
 type MediaKeySystemConfiguration struct {
 	audioCapabilities     []*MediaKeySystemMediaCapability
 	distinctiveIdentifier *MediaKeysRequirement
@@ -363,34 +405,40 @@ type MediaKeySystemConfiguration struct {
 	videoCapabilities     []*MediaKeySystemMediaCapability
 }
 
+// js:"h,omit"
 type MediaKeySystemMediaCapability struct {
 	contentType *string
 	robustness  *string
 }
 
+// js:"h,omit"
 type MediaStreamConstraints struct {
 	audio interface{}
 	video interface{}
 }
 
+// js:"h,omit"
 type MediaStreamErrorEventInit struct {
 	*EventInit
 
 	err *MediaStreamError
 }
 
+// js:"h,omit"
 type MediaStreamEventInit struct {
 	*EventInit
 
 	stream *MediaStream
 }
 
+// js:"h,omit"
 type MediaStreamTrackEventInit struct {
 	*EventInit
 
 	track *MediaStreamTrack
 }
 
+// js:"h,omit"
 type MediaTrackCapabilities struct {
 	aspectRatio      interface{}
 	deviceId         *string
@@ -405,12 +453,14 @@ type MediaTrackCapabilities struct {
 	width            interface{}
 }
 
+// js:"h,omit"
 type MediaTrackConstraints struct {
 	*MediaTrackConstraintSet
 
 	advanced []*MediaTrackConstraintSet
 }
 
+// js:"h,omit"
 type MediaTrackConstraintSet struct {
 	aspectRatio     interface{}
 	deviceId        interface{}
@@ -425,6 +475,7 @@ type MediaTrackConstraintSet struct {
 	width           interface{}
 }
 
+// js:"h,omit"
 type MediaTrackSettings struct {
 	aspectRatio      *float32
 	deviceId         *string
@@ -439,6 +490,7 @@ type MediaTrackSettings struct {
 	width            *int
 }
 
+// js:"h,omit"
 type MediaTrackSupportedConstraints struct {
 	aspectRatio      *bool
 	deviceId         *bool
@@ -453,6 +505,7 @@ type MediaTrackSupportedConstraints struct {
 	width            *bool
 }
 
+// js:"h,omit"
 type MessageEventInit struct {
 	*EventInit
 
@@ -462,6 +515,7 @@ type MessageEventInit struct {
 	source *Window
 }
 
+// js:"h,omit"
 type MouseEventInit struct {
 	*EventModifierInit
 
@@ -474,6 +528,7 @@ type MouseEventInit struct {
 	screenY       *int
 }
 
+// js:"h,omit"
 type MSAccountInfo struct {
 	accountImageUri *string
 	accountName     *string
@@ -482,6 +537,7 @@ type MSAccountInfo struct {
 	userId          *string
 }
 
+// js:"h,omit"
 type MSAudioLocalClientEvent struct {
 	*MSLocalClientEventBase
 
@@ -503,6 +559,7 @@ type MSAudioLocalClientEvent struct {
 	networkSendQualityEventRatio          *float32
 }
 
+// js:"h,omit"
 type MSAudioRecvPayload struct {
 	*MSPayloadBase
 
@@ -527,6 +584,7 @@ type MSAudioRecvPayload struct {
 	signal                    *MSAudioRecvSignal
 }
 
+// js:"h,omit"
 type MSAudioRecvSignal struct {
 	initialSignalLevelRMS     *float32
 	recvNoiseLevelCh1         *int
@@ -536,6 +594,7 @@ type MSAudioRecvSignal struct {
 	renderSignalLevel         *float32
 }
 
+// js:"h,omit"
 type MSAudioSendPayload struct {
 	*MSPayloadBase
 
@@ -545,36 +604,43 @@ type MSAudioSendPayload struct {
 	signal          *MSAudioSendSignal
 }
 
+// js:"h,omit"
 type MSAudioSendSignal struct {
 	noiseLevel         *int
 	sendNoiseLevelCh1  *int
 	sendSignalLevelCh1 *int
 }
 
+// js:"h,omit"
 type MSConnectivity struct {
 	iceType         *MSIceType
 	iceWarningFlags *MSIceWarningFlags
 	relayAddress    *MSRelayAddress
 }
 
+// js:"h,omit"
 type MSCredentialFilter struct {
 	accept []*MSCredentialSpec
 }
 
+// js:"h,omit"
 type MSCredentialParameters struct {
 	kind *MSCredentialType
 }
 
+// js:"h,omit"
 type MSCredentialSpec struct {
 	id   *string
 	kind *MSCredentialType
 }
 
+// js:"h,omit"
 type MSDelay struct {
 	roundTrip    *uint
 	roundTripMax *uint
 }
 
+// js:"h,omit"
 type MSDescription struct {
 	*RTCStats
 
@@ -587,6 +653,7 @@ type MSDescription struct {
 	transport            *RTCIceProtocol
 }
 
+// js:"h,omit"
 type MSFIDOCredentialParameters struct {
 	*MSCredentialParameters
 
@@ -594,6 +661,7 @@ type MSFIDOCredentialParameters struct {
 	authenticators []string
 }
 
+// js:"h,omit"
 type MSIceWarningFlags struct {
 	allocationMessageIntegrityFailed *bool
 	alternateServerReceived          *bool
@@ -619,18 +687,21 @@ type MSIceWarningFlags struct {
 	useCandidateChecksFailed         *bool
 }
 
+// js:"h,omit"
 type MSIPAddressInfo struct {
 	ipAddr                  *string
 	manufacturerMacAddrMask *string
 	port                    *uint8
 }
 
+// js:"h,omit"
 type MSJitter struct {
 	interArrival    *uint
 	interArrivalMax *uint
 	interArrivalSD  *float32
 }
 
+// js:"h,omit"
 type MSLocalClientEventBase struct {
 	*RTCStats
 
@@ -638,6 +709,7 @@ type MSLocalClientEventBase struct {
 	networkReceiveQualityEventRatio *float32
 }
 
+// js:"h,omit"
 type MSNetwork struct {
 	*RTCStats
 
@@ -647,12 +719,14 @@ type MSNetwork struct {
 	utilization *MSUtilization
 }
 
+// js:"h,omit"
 type MSNetworkConnectivityInfo struct {
 	linkspeed                *uint
 	networkConnectionDetails *string
 	vpn                      *bool
 }
 
+// js:"h,omit"
 type MSNetworkInterfaceType struct {
 	interfaceTypeEthernet *bool
 	interfaceTypePPP      *bool
@@ -661,37 +735,44 @@ type MSNetworkInterfaceType struct {
 	interfaceTypeWWAN     *bool
 }
 
+// js:"h,omit"
 type MSOutboundNetwork struct {
 	*MSNetwork
 
 	appliedBandwidthLimit *uint
 }
 
+// js:"h,omit"
 type MSPacketLoss struct {
 	lossRate    *float32
 	lossRateMax *float32
 }
 
+// js:"h,omit"
 type MSPayloadBase struct {
 	*RTCStats
 
 	payloadDescription *string
 }
 
+// js:"h,omit"
 type MSPortRange struct {
 	max *uint8
 	min *uint8
 }
 
+// js:"h,omit"
 type MSRelayAddress struct {
 	port         *uint8
 	relayAddress *string
 }
 
+// js:"h,omit"
 type MSSignatureParameters struct {
 	userPrompt *string
 }
 
+// js:"h,omit"
 type MSTransportDiagnosticsStats struct {
 	*RTCStats
 
@@ -725,6 +806,7 @@ type MSTransportDiagnosticsStats struct {
 	stunVer                *uint
 }
 
+// js:"h,omit"
 type MSUtilization struct {
 	bandwidthEstimation       *uint64
 	bandwidthEstimationAvg    *uint64
@@ -734,6 +816,7 @@ type MSUtilization struct {
 	packets                   *uint64
 }
 
+// js:"h,omit"
 type MSVideoPayload struct {
 	*MSPayloadBase
 
@@ -745,6 +828,7 @@ type MSVideoPayload struct {
 	videoPacketLossRate *float32
 }
 
+// js:"h,omit"
 type MSVideoRecvPayload struct {
 	*MSVideoPayload
 
@@ -772,6 +856,7 @@ type MSVideoRecvPayload struct {
 	videoResolutions                                     *MSVideoResolutionDistribution
 }
 
+// js:"h,omit"
 type MSVideoResolutionDistribution struct {
 	cifQuality   *uint
 	h1080Quality *uint
@@ -781,6 +866,7 @@ type MSVideoResolutionDistribution struct {
 	vgaQuality   *uint
 }
 
+// js:"h,omit"
 type MSVideoSendPayload struct {
 	*MSVideoPayload
 
@@ -792,6 +878,7 @@ type MSVideoSendPayload struct {
 	sendVideoStreamsMax  *uint
 }
 
+// js:"h,omit"
 type MsZoomToOptions struct {
 	animate     *string
 	contentX    *int
@@ -801,6 +888,7 @@ type MsZoomToOptions struct {
 	viewportY   *string
 }
 
+// js:"h,omit"
 type MutationObserverInit struct {
 	attributeFilter       []string
 	attributeOldValue     *bool
@@ -811,6 +899,7 @@ type MutationObserverInit struct {
 	subtree               *bool
 }
 
+// js:"h,omit"
 type NotificationOptions struct {
 	body *string
 	dir  *NotificationDirection
@@ -819,16 +908,19 @@ type NotificationOptions struct {
 	tag  *string
 }
 
+// js:"h,omit"
 type ObjectURLOptions struct {
 	oneTimeOnly *bool
 }
 
+// js:"h,omit"
 type PaymentCurrencyAmount struct {
 	currency       string
 	currencySystem *string
 	value          string
 }
 
+// js:"h,omit"
 type PaymentDetails struct {
 	displayItems    []*PaymentItem
 	err             *string
@@ -837,6 +929,7 @@ type PaymentDetails struct {
 	total           *PaymentItem
 }
 
+// js:"h,omit"
 type PaymentDetailsModifier struct {
 	additionalDisplayItems []*PaymentItem
 	data                   interface{}
@@ -844,17 +937,20 @@ type PaymentDetailsModifier struct {
 	total                  *PaymentItem
 }
 
+// js:"h,omit"
 type PaymentItem struct {
 	amount  *PaymentCurrencyAmount
 	label   string
 	pending *bool
 }
 
+// js:"h,omit"
 type PaymentMethodData struct {
 	data             interface{}
 	supportedMethods []string
 }
 
+// js:"h,omit"
 type PaymentOptions struct {
 	requestPayerEmail *bool
 	requestPayerName  *bool
@@ -863,10 +959,12 @@ type PaymentOptions struct {
 	shippingType      *string
 }
 
+// js:"h,omit"
 type PaymentRequestUpdateEventInit struct {
 	*EventInit
 }
 
+// js:"h,omit"
 type PaymentShippingOption struct {
 	amount   *PaymentCurrencyAmount
 	id       string
@@ -874,10 +972,12 @@ type PaymentShippingOption struct {
 	selected *bool
 }
 
+// js:"h,omit"
 type PeriodicWaveConstraints struct {
 	disableNormalization *bool
 }
 
+// js:"h,omit"
 type PointerEventInit struct {
 	*MouseEventInit
 
@@ -891,18 +991,21 @@ type PointerEventInit struct {
 	width       *int
 }
 
+// js:"h,omit"
 type PopStateEventInit struct {
 	*EventInit
 
 	state interface{}
 }
 
+// js:"h,omit"
 type PositionOptions struct {
 	enableHighAccuracy *bool
 	maximumAge         *int
 	timeout            *int
 }
 
+// js:"h,omit"
 type ProgressEventInit struct {
 	*EventInit
 
@@ -911,15 +1014,18 @@ type ProgressEventInit struct {
 	total            *uint64
 }
 
+// js:"h,omit"
 type PushSubscriptionOptionsInit struct {
 	applicationServerKey []byte
 	userVisibleOnly      *bool
 }
 
+// js:"h,omit"
 type RegistrationOptions struct {
 	scope *string
 }
 
+// js:"h,omit"
 type RequestInit struct {
 	body           interface{}
 	cache          *RequestCache
@@ -935,12 +1041,14 @@ type RequestInit struct {
 	window         interface{}
 }
 
+// js:"h,omit"
 type ResponseInit struct {
 	headers    interface{}
 	status     *uint8
 	statusText *string
 }
 
+// js:"h,omit"
 type RTCConfiguration struct {
 	bundlePolicy       *RTCBundlePolicy
 	iceServers         []*RTCIceServer
@@ -948,22 +1056,26 @@ type RTCConfiguration struct {
 	peerIdentity       *string
 }
 
+// js:"h,omit"
 type RTCDtlsFingerprint struct {
 	algorithm *string
 	value     *string
 }
 
+// js:"h,omit"
 type RTCDtlsParameters struct {
 	fingerprints []*RTCDtlsFingerprint
 	role         *RTCDtlsRole
 }
 
+// js:"h,omit"
 type RTCDTMFToneChangeEventInit struct {
 	*EventInit
 
 	tone *string
 }
 
+// js:"h,omit"
 type RTCIceCandidateAttributes struct {
 	*RTCStats
 
@@ -975,9 +1087,11 @@ type RTCIceCandidateAttributes struct {
 	transport        *string
 }
 
+// js:"h,omit"
 type RTCIceCandidateComplete struct {
 }
 
+// js:"h,omit"
 type RTCIceCandidateDictionary struct {
 	foundation       *string
 	ip               *string
@@ -991,17 +1105,20 @@ type RTCIceCandidateDictionary struct {
 	kind             *RTCIceCandidateType
 }
 
+// js:"h,omit"
 type RTCIceCandidateInit struct {
 	candidate     *string
 	sdpMid        *string
 	sdpMLineIndex *uint8
 }
 
+// js:"h,omit"
 type RTCIceCandidatePair struct {
 	local  *RTCIceCandidateDictionary
 	remote *RTCIceCandidateDictionary
 }
 
+// js:"h,omit"
 type RTCIceCandidatePairStats struct {
 	*RTCStats
 
@@ -1020,24 +1137,28 @@ type RTCIceCandidatePairStats struct {
 	writable                 *bool
 }
 
+// js:"h,omit"
 type RTCIceGatherOptions struct {
 	gatherPolicy *RTCIceGatherPolicy
 	iceservers   []*RTCIceServer
 	portRange    *MSPortRange
 }
 
+// js:"h,omit"
 type RTCIceParameters struct {
 	iceLite          *bool
 	password         *string
 	usernameFragment *string
 }
 
+// js:"h,omit"
 type RTCIceServer struct {
 	credential *string
 	urls       interface{}
 	username   *string
 }
 
+// js:"h,omit"
 type RTCInboundRTPStreamStats struct {
 	*RTCRTPStreamStats
 
@@ -1048,6 +1169,7 @@ type RTCInboundRTPStreamStats struct {
 	packetsReceived *uint
 }
 
+// js:"h,omit"
 type RTCMediaStreamTrackStats struct {
 	*RTCStats
 
@@ -1067,6 +1189,7 @@ type RTCMediaStreamTrackStats struct {
 	trackIdentifier           *string
 }
 
+// js:"h,omit"
 type RTCOfferOptions struct {
 	iceRestart             *bool
 	offerToReceiveAudio    *int
@@ -1074,6 +1197,7 @@ type RTCOfferOptions struct {
 	voiceActivityDetection *bool
 }
 
+// js:"h,omit"
 type RTCOutboundRTPStreamStats struct {
 	*RTCRTPStreamStats
 
@@ -1083,17 +1207,20 @@ type RTCOutboundRTPStreamStats struct {
 	targetBitrate *float32
 }
 
+// js:"h,omit"
 type RTCPeerConnectionIceEventInit struct {
 	*EventInit
 
 	candidate *RTCIceCandidate
 }
 
+// js:"h,omit"
 type RTCRtcpFeedback struct {
 	parameter *string
 	kind      *string
 }
 
+// js:"h,omit"
 type RTCRtcpParameters struct {
 	cname       *string
 	mux         *bool
@@ -1101,12 +1228,14 @@ type RTCRtcpParameters struct {
 	ssrc        *uint
 }
 
+// js:"h,omit"
 type RTCRtpCapabilities struct {
 	codecs           []*RTCRtpCodecCapability
 	fecMechanisms    []string
 	headerExtensions []*RTCRtpHeaderExtension
 }
 
+// js:"h,omit"
 type RTCRtpCodecCapability struct {
 	clockRate             *uint
 	kind                  *string
@@ -1123,6 +1252,7 @@ type RTCRtpCodecCapability struct {
 	svcMultiStreamSupport *bool
 }
 
+// js:"h,omit"
 type RTCRtpCodecParameters struct {
 	clockRate    *uint
 	maxptime     *uint
@@ -1134,12 +1264,14 @@ type RTCRtpCodecParameters struct {
 	rtcpFeedback []*RTCRtcpFeedback
 }
 
+// js:"h,omit"
 type RTCRtpContributingSource struct {
 	audioLevel *byte
 	csrc       *uint
 	timestamp  *int
 }
 
+// js:"h,omit"
 type RTCRtpEncodingParameters struct {
 	active                *bool
 	codecPayloadType      *byte
@@ -1157,11 +1289,13 @@ type RTCRtpEncodingParameters struct {
 	ssrcRange             *RTCSsrcRange
 }
 
+// js:"h,omit"
 type RTCRtpFecParameters struct {
 	mechanism *string
 	ssrc      *uint
 }
 
+// js:"h,omit"
 type RTCRtpHeaderExtension struct {
 	kind             *string
 	preferredEncrypt *bool
@@ -1169,12 +1303,14 @@ type RTCRtpHeaderExtension struct {
 	uri              *string
 }
 
+// js:"h,omit"
 type RTCRtpHeaderExtensionParameters struct {
 	encrypt *bool
 	id      *uint8
 	uri     *string
 }
 
+// js:"h,omit"
 type RTCRtpParameters struct {
 	codecs                []*RTCRtpCodecParameters
 	degradationPreference *RTCDegradationPreference
@@ -1184,10 +1320,12 @@ type RTCRtpParameters struct {
 	rtcp                  *RTCRtcpParameters
 }
 
+// js:"h,omit"
 type RTCRtpRtxParameters struct {
 	ssrc *uint
 }
 
+// js:"h,omit"
 type RTCRTPStreamStats struct {
 	*RTCStats
 
@@ -1203,17 +1341,20 @@ type RTCRTPStreamStats struct {
 	transportId      *string
 }
 
+// js:"h,omit"
 type RTCRtpUnhandled struct {
 	muxId       *string
 	payloadType *byte
 	ssrc        *uint
 }
 
+// js:"h,omit"
 type RTCSessionDescriptionInit struct {
 	sdp  *string
 	kind *RTCSdpType
 }
 
+// js:"h,omit"
 type RTCSrtpKeyParam struct {
 	keyMethod *string
 	keySalt   *string
@@ -1222,6 +1363,7 @@ type RTCSrtpKeyParam struct {
 	mkiValue  *uint8
 }
 
+// js:"h,omit"
 type RTCSrtpSdesParameters struct {
 	cryptoSuite   *string
 	keyParams     []*RTCSrtpKeyParam
@@ -1229,11 +1371,13 @@ type RTCSrtpSdesParameters struct {
 	tag           *uint8
 }
 
+// js:"h,omit"
 type RTCSsrcRange struct {
 	max *uint
 	min *uint
 }
 
+// js:"h,omit"
 type RTCStats struct {
 	id        *string
 	msType    *MSStatsType
@@ -1241,9 +1385,11 @@ type RTCStats struct {
 	kind      *RTCStatsType
 }
 
+// js:"h,omit"
 type RTCStatsReport struct {
 }
 
+// js:"h,omit"
 type RTCTransportStats struct {
 	*RTCStats
 
@@ -1256,12 +1402,14 @@ type RTCTransportStats struct {
 	selectedCandidatePairId *string
 }
 
+// js:"h,omit"
 type ScopedCredentialDescriptor struct {
 	id         []byte
 	transports []*Transport
 	kind       *ScopedCredentialType
 }
 
+// js:"h,omit"
 type ScopedCredentialOptions struct {
 	excludeList    []*ScopedCredentialDescriptor
 	extensions     *WebAuthnExtensions
@@ -1269,11 +1417,13 @@ type ScopedCredentialOptions struct {
 	timeoutSeconds *uint
 }
 
+// js:"h,omit"
 type ScopedCredentialParameters struct {
 	algorithm interface{}
 	kind      *ScopedCredentialType
 }
 
+// js:"h,omit"
 type ServiceWorkerMessageEventInit struct {
 	*EventInit
 
@@ -1284,6 +1434,7 @@ type ServiceWorkerMessageEventInit struct {
 	source      interface{}
 }
 
+// js:"h,omit"
 type SpeechSynthesisEventInit struct {
 	*EventInit
 
@@ -1293,6 +1444,7 @@ type SpeechSynthesisEventInit struct {
 	utterance   *SpeechSynthesisUtterance
 }
 
+// js:"h,omit"
 type StoreExceptionsInformation struct {
 	*ExceptionInformation
 
@@ -1301,18 +1453,21 @@ type StoreExceptionsInformation struct {
 	siteName          *string
 }
 
+// js:"h,omit"
 type StoreSiteSpecificExceptionsInformation struct {
 	*StoreExceptionsInformation
 
 	arrayOfDomainStrings []string
 }
 
+// js:"h,omit"
 type TrackEventInit struct {
 	*EventInit
 
 	track interface{}
 }
 
+// js:"h,omit"
 type TransitionEventInit struct {
 	*EventInit
 
@@ -1320,6 +1475,7 @@ type TransitionEventInit struct {
 	propertyName *string
 }
 
+// js:"h,omit"
 type UIEventInit struct {
 	*EventInit
 
@@ -1327,9 +1483,11 @@ type UIEventInit struct {
 	view   *Window
 }
 
+// js:"h,omit"
 type WebAuthnExtensions struct {
 }
 
+// js:"h,omit"
 type WebGLContextAttributes struct {
 	alpha                 *bool
 	antialias             *bool
@@ -1339,12 +1497,14 @@ type WebGLContextAttributes struct {
 	stencil               *bool
 }
 
+// js:"h,omit"
 type WebGLContextEventInit struct {
 	*EventInit
 
 	statusMessage *string
 }
 
+// js:"h,omit"
 type WheelEventInit struct {
 	*MouseEventInit
 
@@ -1354,6 +1514,7 @@ type WheelEventInit struct {
 	deltaZ    *float32
 }
 
+// js:"h,omit"
 type AnalyserNode struct {
 	*AudioNode
 }
@@ -1415,6 +1576,7 @@ func (*AnalyserNode) SetSmoothingTimeConstant(smoothingTimeConstant float32) {
 	js.Rewrite("$<.smoothingTimeConstant = $1", smoothingTimeConstant)
 }
 
+// js:"h,omit"
 type ANGLE_instanced_arrays struct {
 }
 
@@ -1430,6 +1592,7 @@ func (*ANGLE_instanced_arrays) VertexAttribDivisorANGLE(index uint, divisor uint
 	js.Rewrite("$<.vertexAttribDivisorANGLE($1, $2)", index, divisor)
 }
 
+// js:"h,omit"
 type AnimationEvent struct {
 	*Event
 }
@@ -1448,6 +1611,7 @@ func (*AnimationEvent) GetElapsedTime() (elapsedTime float32) {
 	return elapsedTime
 }
 
+// js:"h,omit"
 type ApplicationCache struct {
 	*EventTarget
 }
@@ -1541,6 +1705,7 @@ func (*ApplicationCache) GetStatus() (status uint8) {
 	return status
 }
 
+// js:"h,omit"
 type Attr struct {
 	*Node
 }
@@ -1574,6 +1739,7 @@ func (*Attr) SetValue(value string) {
 	js.Rewrite("$<.value = $1", value)
 }
 
+// js:"h,omit"
 type AudioBuffer struct {
 }
 
@@ -1610,6 +1776,7 @@ func (*AudioBuffer) GetSampleRate() (sampleRate float32) {
 	return sampleRate
 }
 
+// js:"h,omit"
 type AudioBufferSourceNode struct {
 	*AudioNode
 }
@@ -1677,6 +1844,7 @@ func (*AudioBufferSourceNode) GetPlaybackRate() (playbackRate *AudioParam) {
 	return playbackRate
 }
 
+// js:"h,omit"
 type AudioContext struct {
 	*EventTarget
 }
@@ -1827,6 +1995,7 @@ func (*AudioContext) GetState() (state *AudioContextState) {
 	return state
 }
 
+// js:"h,omit"
 type AudioDestinationNode struct {
 	*AudioNode
 }
@@ -1836,6 +2005,7 @@ func (*AudioDestinationNode) GetMaxChannelCount() (maxChannelCount uint) {
 	return maxChannelCount
 }
 
+// js:"h,omit"
 type AudioListener struct {
 }
 
@@ -1869,6 +2039,7 @@ func (*AudioListener) SetSpeedOfSound(speedOfSound float32) {
 	js.Rewrite("$<.speedOfSound = $1", speedOfSound)
 }
 
+// js:"h,omit"
 type AudioNode struct {
 	*EventTarget
 }
@@ -1924,6 +2095,7 @@ func (*AudioNode) GetNumberOfOutputs() (numberOfOutputs uint) {
 	return numberOfOutputs
 }
 
+// js:"h,omit"
 type AudioParam struct {
 }
 
@@ -1971,6 +2143,7 @@ func (*AudioParam) SetValue(value float32) {
 	js.Rewrite("$<.value = $1", value)
 }
 
+// js:"h,omit"
 type AudioProcessingEvent struct {
 	*Event
 }
@@ -1990,6 +2163,7 @@ func (*AudioProcessingEvent) GetPlaybackTime() (playbackTime float32) {
 	return playbackTime
 }
 
+// js:"h,omit"
 type AudioTrack struct {
 }
 
@@ -2035,6 +2209,7 @@ func (*AudioTrack) GetSourceBuffer() (sourceBuffer *SourceBuffer) {
 	return sourceBuffer
 }
 
+// js:"h,omit"
 type AudioTrackList struct {
 	*EventTarget
 }
@@ -2081,6 +2256,7 @@ func (*AudioTrackList) SetOnremovetrack(removetrack *TrackEvent) {
 	js.Rewrite("$<.onremovetrack = $1", removetrack)
 }
 
+// js:"h,omit"
 type BarProp struct {
 }
 
@@ -2089,6 +2265,7 @@ func (*BarProp) GetVisible() (visible bool) {
 	return visible
 }
 
+// js:"h,omit"
 type BeforeUnloadEvent struct {
 	*Event
 }
@@ -2102,6 +2279,7 @@ func (*BeforeUnloadEvent) SetReturnValue(returnValue string) {
 	js.Rewrite("$<.returnValue = $1", returnValue)
 }
 
+// js:"h,omit"
 type BiquadFilterNode struct {
 	*AudioNode
 }
@@ -2139,6 +2317,7 @@ func (*BiquadFilterNode) SetType(kind *BiquadFilterType) {
 	js.Rewrite("$<.type = $1", kind)
 }
 
+// js:"h,omit"
 type Blob struct {
 }
 
@@ -2166,6 +2345,7 @@ func (*Blob) GetType() (kind string) {
 	return kind
 }
 
+// js:"h,omit"
 type Cache struct {
 }
 
@@ -2201,6 +2381,7 @@ func (*Cache) Put(request *Request, response *Response) {
 	js.Rewrite("await $<.put($1, $2)", request, response)
 }
 
+// js:"h,omit"
 type CacheStorage struct {
 }
 
@@ -2229,6 +2410,7 @@ func (*CacheStorage) Open(cacheName string) (c *Cache) {
 	return c
 }
 
+// js:"h,omit"
 type CanvasGradient struct {
 }
 
@@ -2236,9 +2418,11 @@ func (*CanvasGradient) AddColorStop(offset float32, color string) {
 	js.Rewrite("$<.addColorStop($1, $2)", offset, color)
 }
 
+// js:"h,omit"
 type CanvasPattern struct {
 }
 
+// js:"h,omit"
 type CanvasRenderingContext2D struct {
 	*CanvasPathMethods
 }
@@ -2530,18 +2714,22 @@ func (*CanvasRenderingContext2D) SetTextBaseline(textBaseline string) {
 	js.Rewrite("$<.textBaseline = $1", textBaseline)
 }
 
+// js:"h,omit"
 type CDATASection struct {
 	*Text
 }
 
+// js:"h,omit"
 type ChannelMergerNode struct {
 	*AudioNode
 }
 
+// js:"h,omit"
 type ChannelSplitterNode struct {
 	*AudioNode
 }
 
+// js:"h,omit"
 type CharacterData struct {
 	*Node
 	*ChildNode
@@ -2582,6 +2770,7 @@ func (*CharacterData) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type ClientRect struct {
 }
 
@@ -2631,6 +2820,7 @@ func (*ClientRect) GetWidth() (width float32) {
 	return width
 }
 
+// js:"h,omit"
 type ClientRectList struct {
 }
 
@@ -2644,6 +2834,7 @@ func (*ClientRectList) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type ClipboardEvent struct {
 	*Event
 }
@@ -2653,6 +2844,7 @@ func (*ClipboardEvent) GetClipboardData() (clipboardData *DataTransfer) {
 	return clipboardData
 }
 
+// js:"h,omit"
 type CloseEvent struct {
 	*Event
 }
@@ -2676,6 +2868,7 @@ func (*CloseEvent) GetWasClean() (wasClean bool) {
 	return wasClean
 }
 
+// js:"h,omit"
 type Comment struct {
 	*CharacterData
 }
@@ -2689,6 +2882,7 @@ func (*Comment) SetText(text string) {
 	js.Rewrite("$<.text = $1", text)
 }
 
+// js:"h,omit"
 type CompositionEvent struct {
 	*UIEvent
 }
@@ -2707,6 +2901,7 @@ func (*CompositionEvent) GetLocale() (locale string) {
 	return locale
 }
 
+// js:"h,omit"
 type Console struct {
 }
 
@@ -2799,6 +2994,7 @@ func (*Console) Warn(message string, optionalParams interface{}) {
 	js.Rewrite("$<.warn($1, $2)", message, optionalParams)
 }
 
+// js:"h,omit"
 type ConvolverNode struct {
 	*AudioNode
 }
@@ -2821,6 +3017,7 @@ func (*ConvolverNode) SetNormalize(normalize bool) {
 	js.Rewrite("$<.normalize = $1", normalize)
 }
 
+// js:"h,omit"
 type Coordinates struct {
 }
 
@@ -2859,6 +3056,7 @@ func (*Coordinates) GetSpeed() (speed float32) {
 	return speed
 }
 
+// js:"h,omit"
 type Crypto struct {
 	*RandomSource
 }
@@ -2868,6 +3066,7 @@ func (*Crypto) GetSubtle() (subtle *SubtleCrypto) {
 	return subtle
 }
 
+// js:"h,omit"
 type CryptoKey struct {
 }
 
@@ -2891,6 +3090,7 @@ func (*CryptoKey) GetUsages() (usages []string) {
 	return usages
 }
 
+// js:"h,omit"
 type CryptoKeyPair struct {
 }
 
@@ -2912,6 +3112,7 @@ func (*CryptoKeyPair) SetPublicKey(publicKey *CryptoKey) {
 	js.Rewrite("$<.publicKey = $1", publicKey)
 }
 
+// js:"h,omit"
 type CSS struct {
 }
 
@@ -2920,6 +3121,7 @@ func (*CSS) Supports(property string, value string) (b bool) {
 	return b
 }
 
+// js:"h,omit"
 type CSSConditionRule struct {
 	*CSSGroupingRule
 }
@@ -2933,6 +3135,7 @@ func (*CSSConditionRule) SetConditionText(conditionText string) {
 	js.Rewrite("$<.conditionText = $1", conditionText)
 }
 
+// js:"h,omit"
 type CSSFontFaceRule struct {
 	*CSSRule
 }
@@ -2942,6 +3145,7 @@ func (*CSSFontFaceRule) GetStyle() (style *CSSStyleDeclaration) {
 	return style
 }
 
+// js:"h,omit"
 type CSSGroupingRule struct {
 	*CSSRule
 }
@@ -2960,6 +3164,7 @@ func (*CSSGroupingRule) GetCSSRules() (cssRules *CSSRuleList) {
 	return cssRules
 }
 
+// js:"h,omit"
 type CSSImportRule struct {
 	*CSSRule
 }
@@ -2979,6 +3184,7 @@ func (*CSSImportRule) GetStyleSheet() (styleSheet *CSSStyleSheet) {
 	return styleSheet
 }
 
+// js:"h,omit"
 type CSSKeyframeRule struct {
 	*CSSRule
 }
@@ -2997,6 +3203,7 @@ func (*CSSKeyframeRule) GetStyle() (style *CSSStyleDeclaration) {
 	return style
 }
 
+// js:"h,omit"
 type CSSKeyframesRule struct {
 	*CSSRule
 }
@@ -3028,6 +3235,7 @@ func (*CSSKeyframesRule) SetName(name string) {
 	js.Rewrite("$<.name = $1", name)
 }
 
+// js:"h,omit"
 type CSSMediaRule struct {
 	*CSSConditionRule
 }
@@ -3037,6 +3245,7 @@ func (*CSSMediaRule) GetMedia() (media *MediaList) {
 	return media
 }
 
+// js:"h,omit"
 type CSSNamespaceRule struct {
 	*CSSRule
 }
@@ -3051,6 +3260,7 @@ func (*CSSNamespaceRule) GetPrefix() (prefix string) {
 	return prefix
 }
 
+// js:"h,omit"
 type CSSPageRule struct {
 	*CSSRule
 }
@@ -3079,6 +3289,7 @@ func (*CSSPageRule) GetStyle() (style *CSSStyleDeclaration) {
 	return style
 }
 
+// js:"h,omit"
 type CSSRule struct {
 }
 
@@ -3106,6 +3317,7 @@ func (*CSSRule) GetType() (kind uint8) {
 	return kind
 }
 
+// js:"h,omit"
 type CSSRuleList struct {
 }
 
@@ -3119,6 +3331,7 @@ func (*CSSRuleList) GetLength() (length int) {
 	return length
 }
 
+// js:"h,omit"
 type CSSStyleDeclaration struct {
 }
 
@@ -6243,6 +6456,7 @@ func (*CSSStyleDeclaration) SetZoom(zoom string) {
 	js.Rewrite("$<.zoom = $1", zoom)
 }
 
+// js:"h,omit"
 type CSSStyleRule struct {
 	*CSSRule
 }
@@ -6266,6 +6480,7 @@ func (*CSSStyleRule) GetStyle() (style *CSSStyleDeclaration) {
 	return style
 }
 
+// js:"h,omit"
 type CSSStyleSheet struct {
 	*StyleSheet
 }
@@ -6361,10 +6576,12 @@ func (*CSSStyleSheet) GetRules() (rules *CSSRuleList) {
 	return rules
 }
 
+// js:"h,omit"
 type CSSSupportsRule struct {
 	*CSSConditionRule
 }
 
+// js:"h,omit"
 type CustomEvent struct {
 	*Event
 }
@@ -6378,6 +6595,7 @@ func (*CustomEvent) GetDetail() (detail interface{}) {
 	return detail
 }
 
+// js:"h,omit"
 type DataCue struct {
 	*TextTrackCue
 }
@@ -6391,6 +6609,7 @@ func (*DataCue) SetData(data []byte) {
 	js.Rewrite("$<.data = $1", data)
 }
 
+// js:"h,omit"
 type DataTransfer struct {
 }
 
@@ -6442,6 +6661,7 @@ func (*DataTransfer) GetTypes() (types *DOMStringList) {
 	return types
 }
 
+// js:"h,omit"
 type DataTransferItem struct {
 }
 
@@ -6469,6 +6689,7 @@ func (*DataTransferItem) GetType() (kind string) {
 	return kind
 }
 
+// js:"h,omit"
 type DataTransferItemList struct {
 }
 
@@ -6495,6 +6716,7 @@ func (*DataTransferItemList) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type DeferredPermissionRequest struct {
 }
 
@@ -6521,6 +6743,7 @@ func (*DeferredPermissionRequest) GetURI() (uri string) {
 	return uri
 }
 
+// js:"h,omit"
 type DelayNode struct {
 	*AudioNode
 }
@@ -6530,6 +6753,7 @@ func (*DelayNode) GetDelayTime() (delayTime *AudioParam) {
 	return delayTime
 }
 
+// js:"h,omit"
 type DeviceAcceleration struct {
 }
 
@@ -6548,6 +6772,7 @@ func (*DeviceAcceleration) GetZ() (z float32) {
 	return z
 }
 
+// js:"h,omit"
 type DeviceLightEvent struct {
 	*Event
 }
@@ -6557,6 +6782,7 @@ func (*DeviceLightEvent) GetValue() (value float32) {
 	return value
 }
 
+// js:"h,omit"
 type DeviceMotionEvent struct {
 	*Event
 }
@@ -6585,6 +6811,7 @@ func (*DeviceMotionEvent) GetRotationRate() (rotationRate *DeviceRotationRate) {
 	return rotationRate
 }
 
+// js:"h,omit"
 type DeviceOrientationEvent struct {
 	*Event
 }
@@ -6613,6 +6840,7 @@ func (*DeviceOrientationEvent) GetGamma() (gamma float32) {
 	return gamma
 }
 
+// js:"h,omit"
 type DeviceRotationRate struct {
 }
 
@@ -6631,10 +6859,11 @@ func (*DeviceRotationRate) GetGamma() (gamma float32) {
 	return gamma
 }
 
+// js:"h,omit"
 type Document struct {
 	*Node
 	*GlobalEventHandlers
-	*NodeSelector
+	NodeSelector
 	*DocumentEvent
 }
 
@@ -8007,11 +8236,13 @@ func (*Document) SetXMLVersion(xmlVersion string) {
 	js.Rewrite("$<.xmlVersion = $1", xmlVersion)
 }
 
+// js:"h,omit"
 type DocumentFragment struct {
 	*Node
-	*NodeSelector
+	NodeSelector
 }
 
+// js:"h,omit"
 type DocumentType struct {
 	*Node
 	*ChildNode
@@ -8047,6 +8278,7 @@ func (*DocumentType) GetSystemID() (systemId string) {
 	return systemId
 }
 
+// js:"h,omit"
 type DOMError struct {
 }
 
@@ -8060,6 +8292,7 @@ func (*DOMError) GetName() (name string) {
 	return name
 }
 
+// js:"h,omit"
 type DOMException struct {
 }
 
@@ -8083,6 +8316,7 @@ func (*DOMException) GetName() (name string) {
 	return name
 }
 
+// js:"h,omit"
 type DOMImplementation struct {
 }
 
@@ -8106,6 +8340,7 @@ func (*DOMImplementation) HasFeature() (b bool) {
 	return b
 }
 
+// js:"h,omit"
 type DOMParser struct {
 }
 
@@ -8114,6 +8349,7 @@ func (*DOMParser) ParseFromString(source string, mimeType string) (d *Document) 
 	return d
 }
 
+// js:"h,omit"
 type DOMSettableTokenList struct {
 	*DOMTokenList
 }
@@ -8127,6 +8363,7 @@ func (*DOMSettableTokenList) SetValue(value string) {
 	js.Rewrite("$<.value = $1", value)
 }
 
+// js:"h,omit"
 type DOMStringList struct {
 }
 
@@ -8145,9 +8382,11 @@ func (*DOMStringList) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type DOMStringMap struct {
 }
 
+// js:"h,omit"
 type DOMTokenList struct {
 }
 
@@ -8184,6 +8423,7 @@ func (*DOMTokenList) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type DragEvent struct {
 	*MouseEvent
 }
@@ -8201,6 +8441,7 @@ func (*DragEvent) GetDataTransfer() (dataTransfer *DataTransfer) {
 	return dataTransfer
 }
 
+// js:"h,omit"
 type DynamicsCompressorNode struct {
 	*AudioNode
 }
@@ -8235,11 +8476,12 @@ func (*DynamicsCompressorNode) GetThreshold() (threshold *AudioParam) {
 	return threshold
 }
 
+// js:"h,omit"
 type Element struct {
 	*Node
 	*GlobalEventHandlers
 	*ElementTraversal
-	*NodeSelector
+	NodeSelector
 	*ChildNode
 }
 
@@ -8736,6 +8978,7 @@ func (*Element) GetTagName() (tagName string) {
 	return tagName
 }
 
+// js:"h,omit"
 type ErrorEvent struct {
 	*Event
 }
@@ -8769,6 +9012,7 @@ func (*ErrorEvent) GetMessage() (message string) {
 	return message
 }
 
+// js:"h,omit"
 type Event struct {
 }
 
@@ -8856,6 +9100,7 @@ func (*Event) GetType() (kind string) {
 	return kind
 }
 
+// js:"h,omit"
 type EventTarget struct {
 }
 
@@ -8872,12 +9117,15 @@ func (*EventTarget) RemoveEventListener(kind string, listener func(evt *Event), 
 	js.Rewrite("$<.removeEventListener($1, $2, $3)", kind, listener, useCapture)
 }
 
+// js:"h,omit"
 type EXT_frag_depth struct {
 }
 
+// js:"h,omit"
 type EXT_texture_filter_anisotropic struct {
 }
 
+// js:"h,omit"
 type ExtensionScriptApis struct {
 }
 
@@ -8912,9 +9160,11 @@ func (*ExtensionScriptApis) RegisterGenericPersistentCallbackHandler(callbackHan
 	js.Rewrite("$<.registerGenericPersistentCallbackHandler($1)", callbackHandler)
 }
 
+// js:"h,omit"
 type External struct {
 }
 
+// js:"h,omit"
 type File struct {
 	*Blob
 }
@@ -8934,6 +9184,7 @@ func (*File) GetWebkitRelativePath() (webkitRelativePath string) {
 	return webkitRelativePath
 }
 
+// js:"h,omit"
 type FileList struct {
 }
 
@@ -8947,6 +9198,7 @@ func (*FileList) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type FileReader struct {
 	*EventTarget
 	*MSBaseReader
@@ -8973,6 +9225,7 @@ func (*FileReader) GetError() (err *DOMError) {
 	return err
 }
 
+// js:"h,omit"
 type FocusEvent struct {
 	*UIEvent
 }
@@ -8986,6 +9239,7 @@ func (*FocusEvent) GetRelatedTarget() (relatedTarget *EventTarget) {
 	return relatedTarget
 }
 
+// js:"h,omit"
 type FocusNavigationEvent struct {
 	*Event
 }
@@ -9019,6 +9273,7 @@ func (*FocusNavigationEvent) GetOriginWidth() (originWidth float32) {
 	return originWidth
 }
 
+// js:"h,omit"
 type FormData struct {
 }
 
@@ -9026,6 +9281,7 @@ func (*FormData) Append(name interface{}, value interface{}, blobName string) {
 	js.Rewrite("$<.append($1, $2, $3)", name, value, blobName)
 }
 
+// js:"h,omit"
 type GainNode struct {
 	*AudioNode
 }
@@ -9035,6 +9291,7 @@ func (*GainNode) GetGain() (gain *AudioParam) {
 	return gain
 }
 
+// js:"h,omit"
 type Gamepad struct {
 }
 
@@ -9073,6 +9330,7 @@ func (*Gamepad) GetTimestamp() (timestamp int) {
 	return timestamp
 }
 
+// js:"h,omit"
 type GamepadButton struct {
 }
 
@@ -9086,6 +9344,7 @@ func (*GamepadButton) GetValue() (value float32) {
 	return value
 }
 
+// js:"h,omit"
 type GamepadEvent struct {
 	*Event
 }
@@ -9095,6 +9354,7 @@ func (*GamepadEvent) GetGamepad() (gamepad *Gamepad) {
 	return gamepad
 }
 
+// js:"h,omit"
 type Geolocation struct {
 }
 
@@ -9111,6 +9371,7 @@ func (*Geolocation) WatchPosition(successCallback func(position *Position), erro
 	return i
 }
 
+// js:"h,omit"
 type HashChangeEvent struct {
 	*Event
 }
@@ -9125,6 +9386,7 @@ func (*HashChangeEvent) GetOldURL() (oldURL string) {
 	return oldURL
 }
 
+// js:"h,omit"
 type Headers struct {
 }
 
@@ -9154,6 +9416,7 @@ func (*Headers) Set(name string, value string) {
 	js.Rewrite("$<.set($1, $2)", name, value)
 }
 
+// js:"h,omit"
 type History struct {
 }
 
@@ -9187,6 +9450,7 @@ func (*History) GetState() (state interface{}) {
 	return state
 }
 
+// js:"h,omit"
 type HTMLAllCollection struct {
 }
 
@@ -9205,6 +9469,7 @@ func (*HTMLAllCollection) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type HTMLAnchorElement struct {
 	*HTMLElement
 }
@@ -9418,6 +9683,7 @@ func (*HTMLAnchorElement) SetUrn(urn string) {
 	js.Rewrite("$<.urn = $1", urn)
 }
 
+// js:"h,omit"
 type HTMLAppletElement struct {
 	*HTMLElement
 }
@@ -9608,6 +9874,7 @@ func (*HTMLAppletElement) SetWidth(width int) {
 	js.Rewrite("$<.width = $1", width)
 }
 
+// js:"h,omit"
 type HTMLAreaElement struct {
 	*HTMLElement
 }
@@ -9752,14 +10019,17 @@ func (*HTMLAreaElement) SetTarget(target string) {
 	js.Rewrite("$<.target = $1", target)
 }
 
+// js:"h,omit"
 type HTMLAreasCollection struct {
 	*HTMLCollection
 }
 
+// js:"h,omit"
 type HTMLAudioElement struct {
 	*HTMLMediaElement
 }
 
+// js:"h,omit"
 type HTMLBaseElement struct {
 	*HTMLElement
 }
@@ -9782,6 +10052,7 @@ func (*HTMLBaseElement) SetTarget(target string) {
 	js.Rewrite("$<.target = $1", target)
 }
 
+// js:"h,omit"
 type HTMLBaseFontElement struct {
 	*HTMLElement
 	*DOML2DeprecatedColorProperty
@@ -9805,6 +10076,7 @@ func (*HTMLBaseFontElement) SetSize(size int) {
 	js.Rewrite("$<.size = $1", size)
 }
 
+// js:"h,omit"
 type HTMLBodyElement struct {
 	*HTMLElement
 }
@@ -10052,6 +10324,7 @@ func (*HTMLBodyElement) SetVLink(vLink interface{}) {
 	js.Rewrite("$<.vLink = $1", vLink)
 }
 
+// js:"h,omit"
 type HTMLBRElement struct {
 	*HTMLElement
 }
@@ -10065,6 +10338,7 @@ func (*HTMLBRElement) SetClear(clear string) {
 	js.Rewrite("$<.clear = $1", clear)
 }
 
+// js:"h,omit"
 type HTMLButtonElement struct {
 	*HTMLElement
 }
@@ -10197,6 +10471,7 @@ func (*HTMLButtonElement) GetWillValidate() (willValidate bool) {
 	return willValidate
 }
 
+// js:"h,omit"
 type HTMLCanvasElement struct {
 	*HTMLElement
 }
@@ -10234,6 +10509,7 @@ func (*HTMLCanvasElement) SetWidth(width uint) {
 	js.Rewrite("$<.width = $1", width)
 }
 
+// js:"h,omit"
 type HTMLCollection struct {
 }
 
@@ -10252,6 +10528,7 @@ func (*HTMLCollection) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type HTMLDataElement struct {
 	*HTMLElement
 }
@@ -10265,6 +10542,7 @@ func (*HTMLDataElement) SetValue(value string) {
 	js.Rewrite("$<.value = $1", value)
 }
 
+// js:"h,omit"
 type HTMLDataListElement struct {
 	*HTMLElement
 }
@@ -10274,6 +10552,7 @@ func (*HTMLDataListElement) GetOptions() (options *HTMLCollection) {
 	return options
 }
 
+// js:"h,omit"
 type HTMLDirectoryElement struct {
 	*HTMLElement
 }
@@ -10287,6 +10566,7 @@ func (*HTMLDirectoryElement) SetCompact(compact bool) {
 	js.Rewrite("$<.compact = $1", compact)
 }
 
+// js:"h,omit"
 type HTMLDivElement struct {
 	*HTMLElement
 }
@@ -10309,6 +10589,7 @@ func (*HTMLDivElement) SetNoWrap(noWrap bool) {
 	js.Rewrite("$<.noWrap = $1", noWrap)
 }
 
+// js:"h,omit"
 type HTMLDListElement struct {
 	*HTMLElement
 }
@@ -10322,10 +10603,12 @@ func (*HTMLDListElement) SetCompact(compact bool) {
 	js.Rewrite("$<.compact = $1", compact)
 }
 
+// js:"h,omit"
 type HTMLDocument struct {
 	*Document
 }
 
+// js:"h,omit"
 type HTMLElement struct {
 	*Element
 }
@@ -11130,6 +11413,7 @@ func (*HTMLElement) SetTitle(title string) {
 	js.Rewrite("$<.title = $1", title)
 }
 
+// js:"h,omit"
 type HTMLEmbedElement struct {
 	*HTMLElement
 	*GetSVGDocument
@@ -11236,6 +11520,7 @@ func (*HTMLEmbedElement) SetWidth(width string) {
 	js.Rewrite("$<.width = $1", width)
 }
 
+// js:"h,omit"
 type HTMLFieldSetElement struct {
 	*HTMLElement
 }
@@ -11296,6 +11581,7 @@ func (*HTMLFieldSetElement) GetWillValidate() (willValidate bool) {
 	return willValidate
 }
 
+// js:"h,omit"
 type HTMLFontElement struct {
 	*HTMLElement
 	*DOML2DeprecatedColorProperty
@@ -11311,6 +11597,7 @@ func (*HTMLFontElement) SetFace(face string) {
 	js.Rewrite("$<.face = $1", face)
 }
 
+// js:"h,omit"
 type HTMLFormControlsCollection struct {
 	*HTMLCollection
 }
@@ -11320,6 +11607,7 @@ func (*HTMLFormControlsCollection) NamedItem(name string) (i interface{}) {
 	return i
 }
 
+// js:"h,omit"
 type HTMLFormElement struct {
 	*HTMLElement
 }
@@ -11438,6 +11726,7 @@ func (*HTMLFormElement) SetTarget(target string) {
 	js.Rewrite("$<.target = $1", target)
 }
 
+// js:"h,omit"
 type HTMLFrameElement struct {
 	*HTMLElement
 	*GetSVGDocument
@@ -11579,6 +11868,7 @@ func (*HTMLFrameElement) SetWidth(width interface{}) {
 	js.Rewrite("$<.width = $1", width)
 }
 
+// js:"h,omit"
 type HTMLFrameSetElement struct {
 	*HTMLElement
 }
@@ -11817,6 +12107,7 @@ func (*HTMLFrameSetElement) SetRows(rows string) {
 	js.Rewrite("$<.rows = $1", rows)
 }
 
+// js:"h,omit"
 type HTMLHeadElement struct {
 	*HTMLElement
 }
@@ -11830,6 +12121,7 @@ func (*HTMLHeadElement) SetProfile(profile string) {
 	js.Rewrite("$<.profile = $1", profile)
 }
 
+// js:"h,omit"
 type HTMLHeadingElement struct {
 	*HTMLElement
 }
@@ -11843,6 +12135,7 @@ func (*HTMLHeadingElement) SetAlign(align string) {
 	js.Rewrite("$<.align = $1", align)
 }
 
+// js:"h,omit"
 type HTMLHRElement struct {
 	*HTMLElement
 	*DOML2DeprecatedColorProperty
@@ -11876,6 +12169,7 @@ func (*HTMLHRElement) SetWidth(width int) {
 	js.Rewrite("$<.width = $1", width)
 }
 
+// js:"h,omit"
 type HTMLHtmlElement struct {
 	*HTMLElement
 }
@@ -11889,6 +12183,7 @@ func (*HTMLHtmlElement) SetVersion(version string) {
 	js.Rewrite("$<.version = $1", version)
 }
 
+// js:"h,omit"
 type HTMLIFrameElement struct {
 	*HTMLElement
 	*GetSVGDocument
@@ -12071,6 +12366,7 @@ func (*HTMLIFrameElement) SetWidth(width string) {
 	js.Rewrite("$<.width = $1", width)
 }
 
+// js:"h,omit"
 type HTMLImageElement struct {
 	*HTMLElement
 }
@@ -12286,6 +12582,7 @@ func (*HTMLImageElement) GetY() (y int) {
 	return y
 }
 
+// js:"h,omit"
 type HTMLInputElement struct {
 	*HTMLElement
 }
@@ -12728,6 +13025,7 @@ func (*HTMLInputElement) GetWillValidate() (willValidate bool) {
 	return willValidate
 }
 
+// js:"h,omit"
 type HTMLLabelElement struct {
 	*HTMLElement
 }
@@ -12746,6 +13044,7 @@ func (*HTMLLabelElement) SetHTMLFor(htmlFor string) {
 	js.Rewrite("$<.htmlFor = $1", htmlFor)
 }
 
+// js:"h,omit"
 type HTMLLegendElement struct {
 	*HTMLElement
 }
@@ -12764,6 +13063,7 @@ func (*HTMLLegendElement) GetForm() (form *HTMLFormElement) {
 	return form
 }
 
+// js:"h,omit"
 type HTMLLIElement struct {
 	*HTMLElement
 }
@@ -12786,6 +13086,7 @@ func (*HTMLLIElement) SetValue(value int) {
 	js.Rewrite("$<.value = $1", value)
 }
 
+// js:"h,omit"
 type HTMLLinkElement struct {
 	*HTMLElement
 	*LinkStyle
@@ -12872,6 +13173,7 @@ func (*HTMLLinkElement) SetType(kind string) {
 	js.Rewrite("$<.type = $1", kind)
 }
 
+// js:"h,omit"
 type HTMLMapElement struct {
 	*HTMLElement
 }
@@ -12890,6 +13192,7 @@ func (*HTMLMapElement) SetName(name string) {
 	js.Rewrite("$<.name = $1", name)
 }
 
+// js:"h,omit"
 type HTMLMarqueeElement struct {
 	*HTMLElement
 }
@@ -13028,6 +13331,7 @@ func (*HTMLMarqueeElement) SetWidth(width string) {
 	js.Rewrite("$<.width = $1", width)
 }
 
+// js:"h,omit"
 type HTMLMediaElement struct {
 	*HTMLElement
 }
@@ -13358,6 +13662,7 @@ func (*HTMLMediaElement) SetVolume(volume float32) {
 	js.Rewrite("$<.volume = $1", volume)
 }
 
+// js:"h,omit"
 type HTMLMenuElement struct {
 	*HTMLElement
 }
@@ -13380,6 +13685,7 @@ func (*HTMLMenuElement) SetType(kind string) {
 	js.Rewrite("$<.type = $1", kind)
 }
 
+// js:"h,omit"
 type HTMLMetaElement struct {
 	*HTMLElement
 }
@@ -13438,6 +13744,7 @@ func (*HTMLMetaElement) SetURL(url string) {
 	js.Rewrite("$<.url = $1", url)
 }
 
+// js:"h,omit"
 type HTMLMeterElement struct {
 	*HTMLElement
 }
@@ -13496,6 +13803,7 @@ func (*HTMLMeterElement) SetValue(value float32) {
 	js.Rewrite("$<.value = $1", value)
 }
 
+// js:"h,omit"
 type HTMLModElement struct {
 	*HTMLElement
 }
@@ -13518,6 +13826,7 @@ func (*HTMLModElement) SetDateTime(dateTime string) {
 	js.Rewrite("$<.dateTime = $1", dateTime)
 }
 
+// js:"h,omit"
 type HTMLObjectElement struct {
 	*HTMLElement
 	*GetSVGDocument
@@ -13761,6 +14070,7 @@ func (*HTMLObjectElement) GetWillValidate() (willValidate bool) {
 	return willValidate
 }
 
+// js:"h,omit"
 type HTMLOListElement struct {
 	*HTMLElement
 }
@@ -13792,6 +14102,7 @@ func (*HTMLOListElement) SetType(kind string) {
 	js.Rewrite("$<.type = $1", kind)
 }
 
+// js:"h,omit"
 type HTMLOptGroupElement struct {
 	*HTMLElement
 }
@@ -13856,6 +14167,7 @@ func (*HTMLOptGroupElement) SetValue(value string) {
 	js.Rewrite("$<.value = $1", value)
 }
 
+// js:"h,omit"
 type HTMLOptionElement struct {
 	*HTMLElement
 }
@@ -13924,6 +14236,7 @@ func (*HTMLOptionElement) SetValue(value string) {
 	js.Rewrite("$<.value = $1", value)
 }
 
+// js:"h,omit"
 type HTMLOptionsCollection struct {
 	*HTMLCollection
 }
@@ -13954,6 +14267,7 @@ func (*HTMLOptionsCollection) SetSelectedIndex(selectedIndex int) {
 	js.Rewrite("$<.selectedIndex = $1", selectedIndex)
 }
 
+// js:"h,omit"
 type HTMLOutputElement struct {
 	*HTMLElement
 }
@@ -14029,6 +14343,7 @@ func (*HTMLOutputElement) GetWillValidate() (willValidate bool) {
 	return willValidate
 }
 
+// js:"h,omit"
 type HTMLParagraphElement struct {
 	*HTMLElement
 }
@@ -14051,6 +14366,7 @@ func (*HTMLParagraphElement) SetClear(clear string) {
 	js.Rewrite("$<.clear = $1", clear)
 }
 
+// js:"h,omit"
 type HTMLParamElement struct {
 	*HTMLElement
 }
@@ -14091,10 +14407,12 @@ func (*HTMLParamElement) SetValueType(valueType string) {
 	js.Rewrite("$<.valueType = $1", valueType)
 }
 
+// js:"h,omit"
 type HTMLPictureElement struct {
 	*HTMLElement
 }
 
+// js:"h,omit"
 type HTMLPreElement struct {
 	*HTMLElement
 }
@@ -14108,6 +14426,7 @@ func (*HTMLPreElement) SetWidth(width int) {
 	js.Rewrite("$<.width = $1", width)
 }
 
+// js:"h,omit"
 type HTMLProgressElement struct {
 	*HTMLElement
 }
@@ -14140,6 +14459,7 @@ func (*HTMLProgressElement) SetValue(value float32) {
 	js.Rewrite("$<.value = $1", value)
 }
 
+// js:"h,omit"
 type HTMLQuoteElement struct {
 	*HTMLElement
 }
@@ -14153,6 +14473,7 @@ func (*HTMLQuoteElement) SetCite(cite string) {
 	js.Rewrite("$<.cite = $1", cite)
 }
 
+// js:"h,omit"
 type HTMLScriptElement struct {
 	*HTMLElement
 }
@@ -14238,6 +14559,7 @@ func (*HTMLScriptElement) SetType(kind string) {
 	js.Rewrite("$<.type = $1", kind)
 }
 
+// js:"h,omit"
 type HTMLSelectElement struct {
 	*HTMLElement
 }
@@ -14385,6 +14707,7 @@ func (*HTMLSelectElement) GetWillValidate() (willValidate bool) {
 	return willValidate
 }
 
+// js:"h,omit"
 type HTMLSourceElement struct {
 	*HTMLElement
 }
@@ -14443,10 +14766,12 @@ func (*HTMLSourceElement) SetType(kind string) {
 	js.Rewrite("$<.type = $1", kind)
 }
 
+// js:"h,omit"
 type HTMLSpanElement struct {
 	*HTMLElement
 }
 
+// js:"h,omit"
 type HTMLStyleElement struct {
 	*HTMLElement
 	*LinkStyle
@@ -14479,6 +14804,7 @@ func (*HTMLStyleElement) SetType(kind string) {
 	js.Rewrite("$<.type = $1", kind)
 }
 
+// js:"h,omit"
 type HTMLTableCaptionElement struct {
 	*HTMLElement
 }
@@ -14501,6 +14827,7 @@ func (*HTMLTableCaptionElement) SetVAlign(vAlign string) {
 	js.Rewrite("$<.vAlign = $1", vAlign)
 }
 
+// js:"h,omit"
 type HTMLTableCellElement struct {
 	*HTMLElement
 	*HTMLTableAlignment
@@ -14610,6 +14937,7 @@ func (*HTMLTableCellElement) SetWidth(width string) {
 	js.Rewrite("$<.width = $1", width)
 }
 
+// js:"h,omit"
 type HTMLTableColElement struct {
 	*HTMLElement
 	*HTMLTableAlignment
@@ -14642,10 +14970,12 @@ func (*HTMLTableColElement) SetWidth(width interface{}) {
 	js.Rewrite("$<.width = $1", width)
 }
 
+// js:"h,omit"
 type HTMLTableDataCellElement struct {
 	*HTMLTableCellElement
 }
 
+// js:"h,omit"
 type HTMLTableElement struct {
 	*HTMLElement
 }
@@ -14836,6 +15166,7 @@ func (*HTMLTableElement) SetWidth(width string) {
 	js.Rewrite("$<.width = $1", width)
 }
 
+// js:"h,omit"
 type HTMLTableHeaderCellElement struct {
 	*HTMLTableCellElement
 }
@@ -14849,6 +15180,7 @@ func (*HTMLTableHeaderCellElement) SetScope(scope string) {
 	js.Rewrite("$<.scope = $1", scope)
 }
 
+// js:"h,omit"
 type HTMLTableRowElement struct {
 	*HTMLElement
 	*HTMLTableAlignment
@@ -14905,6 +15237,7 @@ func (*HTMLTableRowElement) GetSectionRowIndex() (sectionRowIndex int) {
 	return sectionRowIndex
 }
 
+// js:"h,omit"
 type HTMLTableSectionElement struct {
 	*HTMLElement
 	*HTMLTableAlignment
@@ -14933,6 +15266,7 @@ func (*HTMLTableSectionElement) GetRows() (rows *HTMLCollection) {
 	return rows
 }
 
+// js:"h,omit"
 type HTMLTemplateElement struct {
 	*HTMLElement
 }
@@ -14942,6 +15276,7 @@ func (*HTMLTemplateElement) GetContent() (content *DocumentFragment) {
 	return content
 }
 
+// js:"h,omit"
 type HTMLTextAreaElement struct {
 	*HTMLElement
 }
@@ -15123,6 +15458,7 @@ func (*HTMLTextAreaElement) SetWrap(wrap string) {
 	js.Rewrite("$<.wrap = $1", wrap)
 }
 
+// js:"h,omit"
 type HTMLTimeElement struct {
 	*HTMLElement
 }
@@ -15136,6 +15472,7 @@ func (*HTMLTimeElement) SetDateTime(dateTime string) {
 	js.Rewrite("$<.dateTime = $1", dateTime)
 }
 
+// js:"h,omit"
 type HTMLTitleElement struct {
 	*HTMLElement
 }
@@ -15149,6 +15486,7 @@ func (*HTMLTitleElement) SetText(text string) {
 	js.Rewrite("$<.text = $1", text)
 }
 
+// js:"h,omit"
 type HTMLTrackElement struct {
 	*HTMLElement
 }
@@ -15208,6 +15546,7 @@ func (*HTMLTrackElement) GetTrack() (track *TextTrack) {
 	return track
 }
 
+// js:"h,omit"
 type HTMLUListElement struct {
 	*HTMLElement
 }
@@ -15230,10 +15569,12 @@ func (*HTMLUListElement) SetType(kind string) {
 	js.Rewrite("$<.type = $1", kind)
 }
 
+// js:"h,omit"
 type HTMLUnknownElement struct {
 	*HTMLElement
 }
 
+// js:"h,omit"
 type HTMLVideoElement struct {
 	*HTMLMediaElement
 }
@@ -15391,6 +15732,7 @@ func (*HTMLVideoElement) SetWidth(width uint) {
 	js.Rewrite("$<.width = $1", width)
 }
 
+// js:"h,omit"
 type IDBCursor struct {
 }
 
@@ -15432,6 +15774,7 @@ func (*IDBCursor) GetSource() (source interface{}) {
 	return source
 }
 
+// js:"h,omit"
 type IDBCursorWithValue struct {
 	*IDBCursor
 }
@@ -15441,6 +15784,7 @@ func (*IDBCursorWithValue) GetValue() (value interface{}) {
 	return value
 }
 
+// js:"h,omit"
 type IDBDatabase struct {
 	*EventTarget
 }
@@ -15496,6 +15840,7 @@ func (*IDBDatabase) GetVersion() (version uint64) {
 	return version
 }
 
+// js:"h,omit"
 type IDBFactory struct {
 }
 
@@ -15514,6 +15859,7 @@ func (*IDBFactory) Open(name string, version uint64) (i *IDBOpenDBRequest) {
 	return i
 }
 
+// js:"h,omit"
 type IDBIndex struct {
 }
 
@@ -15562,6 +15908,7 @@ func (*IDBIndex) GetUnique() (unique bool) {
 	return unique
 }
 
+// js:"h,omit"
 type IDBKeyRange struct {
 }
 
@@ -15605,6 +15952,7 @@ func (*IDBKeyRange) GetUpperOpen() (upperOpen bool) {
 	return upperOpen
 }
 
+// js:"h,omit"
 type IDBObjectStore struct {
 }
 
@@ -15677,6 +16025,7 @@ func (*IDBObjectStore) GetTransaction() (transaction *IDBTransaction) {
 	return transaction
 }
 
+// js:"h,omit"
 type IDBOpenDBRequest struct {
 	*IDBRequest
 }
@@ -15699,6 +16048,7 @@ func (*IDBOpenDBRequest) SetOnupgradeneeded(upgradeneeded *IDBVersionChangeEvent
 	js.Rewrite("$<.onupgradeneeded = $1", upgradeneeded)
 }
 
+// js:"h,omit"
 type IDBRequest struct {
 	*EventTarget
 }
@@ -15746,6 +16096,7 @@ func (*IDBRequest) GetTransaction() (transaction *IDBTransaction) {
 	return transaction
 }
 
+// js:"h,omit"
 type IDBTransaction struct {
 	*EventTarget
 }
@@ -15801,6 +16152,7 @@ func (*IDBTransaction) SetOnerror(err *Event) {
 	js.Rewrite("$<.onerror = $1", err)
 }
 
+// js:"h,omit"
 type IDBVersionChangeEvent struct {
 	*Event
 }
@@ -15815,6 +16167,7 @@ func (*IDBVersionChangeEvent) GetOldVersion() (oldVersion uint64) {
 	return oldVersion
 }
 
+// js:"h,omit"
 type IIRFilterNode struct {
 	*AudioNode
 }
@@ -15823,6 +16176,7 @@ func (*IIRFilterNode) GetFrequencyResponse(frequencyHz []float32, magResponse []
 	js.Rewrite("$<.getFrequencyResponse($1, $2, $3)", frequencyHz, magResponse, phaseResponse)
 }
 
+// js:"h,omit"
 type ImageData struct {
 }
 
@@ -15841,6 +16195,7 @@ func (*ImageData) GetWidth() (width uint) {
 	return width
 }
 
+// js:"h,omit"
 type IntersectionObserver struct {
 }
 
@@ -15876,6 +16231,7 @@ func (*IntersectionObserver) GetThresholds() (thresholds []float32) {
 	return thresholds
 }
 
+// js:"h,omit"
 type IntersectionObserverEntry struct {
 }
 
@@ -15909,6 +16265,7 @@ func (*IntersectionObserverEntry) GetTime() (time int) {
 	return time
 }
 
+// js:"h,omit"
 type KeyboardEvent struct {
 	*UIEvent
 }
@@ -15982,6 +16339,7 @@ func (*KeyboardEvent) GetWhich() (which int8) {
 	return which
 }
 
+// js:"h,omit"
 type ListeningStateChangedEvent struct {
 	*Event
 }
@@ -15996,6 +16354,7 @@ func (*ListeningStateChangedEvent) GetState() (state *ListeningState) {
 	return state
 }
 
+// js:"h,omit"
 type Location struct {
 }
 
@@ -16093,6 +16452,7 @@ func (*Location) SetSearch(search string) {
 	js.Rewrite("$<.search = $1", search)
 }
 
+// js:"h,omit"
 type LongRunningScriptDetectedEvent struct {
 	*Event
 }
@@ -16111,6 +16471,7 @@ func (*LongRunningScriptDetectedEvent) SetStopPageScriptExecution(stopPageScript
 	js.Rewrite("$<.stopPageScriptExecution = $1", stopPageScriptExecution)
 }
 
+// js:"h,omit"
 type MediaDeviceInfo struct {
 }
 
@@ -16134,6 +16495,7 @@ func (*MediaDeviceInfo) GetLabel() (label string) {
 	return label
 }
 
+// js:"h,omit"
 type MediaDevices struct {
 	*EventTarget
 }
@@ -16162,10 +16524,12 @@ func (*MediaDevices) SetOndevicechange(devicechange *Event) {
 	js.Rewrite("$<.ondevicechange = $1", devicechange)
 }
 
+// js:"h,omit"
 type MediaElementAudioSourceNode struct {
 	*AudioNode
 }
 
+// js:"h,omit"
 type MediaEncryptedEvent struct {
 	*Event
 }
@@ -16180,6 +16544,7 @@ func (*MediaEncryptedEvent) GetInitDataType() (initDataType string) {
 	return initDataType
 }
 
+// js:"h,omit"
 type MediaError struct {
 }
 
@@ -16193,6 +16558,7 @@ func (*MediaError) GetMsExtendedCode() (msExtendedCode int) {
 	return msExtendedCode
 }
 
+// js:"h,omit"
 type MediaKeyMessageEvent struct {
 	*Event
 }
@@ -16207,6 +16573,7 @@ func (*MediaKeyMessageEvent) GetMessageType() (messageType *MediaKeyMessageType)
 	return messageType
 }
 
+// js:"h,omit"
 type MediaKeys struct {
 }
 
@@ -16219,6 +16586,7 @@ func (*MediaKeys) SetServerCertificate(serverCertificate []byte) {
 	js.Rewrite("await $<.setServerCertificate($1)", serverCertificate)
 }
 
+// js:"h,omit"
 type MediaKeySession struct {
 	*EventTarget
 }
@@ -16263,6 +16631,7 @@ func (*MediaKeySession) GetSessionID() (sessionId string) {
 	return sessionId
 }
 
+// js:"h,omit"
 type MediaKeyStatusMap struct {
 }
 
@@ -16285,6 +16654,7 @@ func (*MediaKeyStatusMap) GetSize() (size uint) {
 	return size
 }
 
+// js:"h,omit"
 type MediaKeySystemAccess struct {
 }
 
@@ -16303,6 +16673,7 @@ func (*MediaKeySystemAccess) GetKeySystem() (keySystem string) {
 	return keySystem
 }
 
+// js:"h,omit"
 type MediaList struct {
 }
 
@@ -16338,6 +16709,7 @@ func (*MediaList) SetMediaText(mediaText string) {
 	js.Rewrite("$<.mediaText = $1", mediaText)
 }
 
+// js:"h,omit"
 type MediaQueryList struct {
 }
 
@@ -16359,6 +16731,7 @@ func (*MediaQueryList) GetMedia() (media string) {
 	return media
 }
 
+// js:"h,omit"
 type MediaSource struct {
 	*EventTarget
 }
@@ -16405,6 +16778,7 @@ func (*MediaSource) GetSourceBuffers() (sourceBuffers *SourceBufferList) {
 	return sourceBuffers
 }
 
+// js:"h,omit"
 type MediaStream struct {
 	*EventTarget
 }
@@ -16492,10 +16866,12 @@ func (*MediaStream) SetOnremovetrack(removetrack *MediaStreamTrackEvent) {
 	js.Rewrite("$<.onremovetrack = $1", removetrack)
 }
 
+// js:"h,omit"
 type MediaStreamAudioSourceNode struct {
 	*AudioNode
 }
 
+// js:"h,omit"
 type MediaStreamError struct {
 }
 
@@ -16514,6 +16890,7 @@ func (*MediaStreamError) GetName() (name string) {
 	return name
 }
 
+// js:"h,omit"
 type MediaStreamErrorEvent struct {
 	*Event
 }
@@ -16523,6 +16900,7 @@ func (*MediaStreamErrorEvent) GetError() (err *MediaStreamError) {
 	return err
 }
 
+// js:"h,omit"
 type MediaStreamEvent struct {
 	*Event
 }
@@ -16532,6 +16910,7 @@ func (*MediaStreamEvent) GetStream() (stream *MediaStream) {
 	return stream
 }
 
+// js:"h,omit"
 type MediaStreamTrack struct {
 	*EventTarget
 }
@@ -16644,6 +17023,7 @@ func (*MediaStreamTrack) GetRemote() (remote bool) {
 	return remote
 }
 
+// js:"h,omit"
 type MediaStreamTrackEvent struct {
 	*Event
 }
@@ -16653,6 +17033,7 @@ func (*MediaStreamTrackEvent) GetTrack() (track *MediaStreamTrack) {
 	return track
 }
 
+// js:"h,omit"
 type MessageChannel struct {
 }
 
@@ -16666,6 +17047,7 @@ func (*MessageChannel) GetPort2() (port2 *MessagePort) {
 	return port2
 }
 
+// js:"h,omit"
 type MessageEvent struct {
 	*Event
 }
@@ -16694,6 +17076,7 @@ func (*MessageEvent) GetSource() (source *Window) {
 	return source
 }
 
+// js:"h,omit"
 type MessagePort struct {
 	*EventTarget
 }
@@ -16719,6 +17102,7 @@ func (*MessagePort) SetOnmessage(message *MessageEvent) {
 	js.Rewrite("$<.onmessage = $1", message)
 }
 
+// js:"h,omit"
 type MimeType struct {
 }
 
@@ -16742,6 +17126,7 @@ func (*MimeType) GetType() (kind string) {
 	return kind
 }
 
+// js:"h,omit"
 type MimeTypeArray struct {
 }
 
@@ -16760,6 +17145,7 @@ func (*MimeTypeArray) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type MouseEvent struct {
 	*UIEvent
 }
@@ -16893,6 +17279,7 @@ func (*MouseEvent) GetY() (y int) {
 	return y
 }
 
+// js:"h,omit"
 type MSApp struct {
 }
 
@@ -16967,6 +17354,7 @@ func (*MSApp) TerminateApp(exceptionObject interface{}) {
 	js.Rewrite("$<.terminateApp($1)", exceptionObject)
 }
 
+// js:"h,omit"
 type MSAppAsyncOperation struct {
 	*EventTarget
 }
@@ -17008,6 +17396,7 @@ func (*MSAppAsyncOperation) GetResult() (result interface{}) {
 	return result
 }
 
+// js:"h,omit"
 type MSAssertion struct {
 }
 
@@ -17021,6 +17410,7 @@ func (*MSAssertion) GetType() (kind *MSCredentialType) {
 	return kind
 }
 
+// js:"h,omit"
 type MSBlobBuilder struct {
 }
 
@@ -17033,6 +17423,7 @@ func (*MSBlobBuilder) GetBlob(contentType string) (b *Blob) {
 	return b
 }
 
+// js:"h,omit"
 type MSCredentials struct {
 }
 
@@ -17046,6 +17437,7 @@ func (*MSCredentials) MakeCredential(accountInfo *MSAccountInfo, params []*MSCre
 	return m
 }
 
+// js:"h,omit"
 type MSFIDOCredentialAssertion struct {
 	*MSAssertion
 }
@@ -17070,6 +17462,7 @@ func (*MSFIDOCredentialAssertion) GetTransportHints() (transportHints []*MSTrans
 	return transportHints
 }
 
+// js:"h,omit"
 type MSFIDOSignature struct {
 }
 
@@ -17088,6 +17481,7 @@ func (*MSFIDOSignature) GetSignature() (signature string) {
 	return signature
 }
 
+// js:"h,omit"
 type MSFIDOSignatureAssertion struct {
 	*MSAssertion
 }
@@ -17097,6 +17491,7 @@ func (*MSFIDOSignatureAssertion) GetSignature() (signature *MSFIDOSignature) {
 	return signature
 }
 
+// js:"h,omit"
 type MSGesture struct {
 }
 
@@ -17117,6 +17512,7 @@ func (*MSGesture) SetTarget(target *Element) {
 	js.Rewrite("$<.target = $1", target)
 }
 
+// js:"h,omit"
 type MSGestureEvent struct {
 	*UIEvent
 }
@@ -17210,6 +17606,7 @@ func (*MSGestureEvent) GetVelocityY() (velocityY float32) {
 	return velocityY
 }
 
+// js:"h,omit"
 type MSGraphicsTrust struct {
 }
 
@@ -17223,6 +17620,7 @@ func (*MSGraphicsTrust) GetStatus() (status string) {
 	return status
 }
 
+// js:"h,omit"
 type MSHTMLWebViewElement struct {
 	*HTMLElement
 }
@@ -17349,6 +17747,7 @@ func (*MSHTMLWebViewElement) SetWidth(width uint) {
 	js.Rewrite("$<.width = $1", width)
 }
 
+// js:"h,omit"
 type MSInputMethodContext struct {
 	*EventTarget
 }
@@ -17415,6 +17814,7 @@ func (*MSInputMethodContext) GetTarget() (target *HTMLElement) {
 	return target
 }
 
+// js:"h,omit"
 type MSManipulationEvent struct {
 	*UIEvent
 }
@@ -17443,6 +17843,7 @@ func (*MSManipulationEvent) GetLastState() (lastState int) {
 	return lastState
 }
 
+// js:"h,omit"
 type MSMediaKeyError struct {
 }
 
@@ -17456,6 +17857,7 @@ func (*MSMediaKeyError) GetSystemCode() (systemCode uint) {
 	return systemCode
 }
 
+// js:"h,omit"
 type MSMediaKeyMessageEvent struct {
 	*Event
 }
@@ -17470,6 +17872,7 @@ func (*MSMediaKeyMessageEvent) GetMessage() (message []uint8) {
 	return message
 }
 
+// js:"h,omit"
 type MSMediaKeyNeededEvent struct {
 	*Event
 }
@@ -17479,6 +17882,7 @@ func (*MSMediaKeyNeededEvent) GetInitData() (initData []uint8) {
 	return initData
 }
 
+// js:"h,omit"
 type MSMediaKeys struct {
 }
 
@@ -17502,6 +17906,7 @@ func (*MSMediaKeys) GetKeySystem() (keySystem string) {
 	return keySystem
 }
 
+// js:"h,omit"
 type MSMediaKeySession struct {
 	*EventTarget
 }
@@ -17529,6 +17934,7 @@ func (*MSMediaKeySession) GetSessionID() (sessionId string) {
 	return sessionId
 }
 
+// js:"h,omit"
 type MSPointerEvent struct {
 	*MouseEvent
 }
@@ -17595,6 +18001,7 @@ func (*MSPointerEvent) GetWidth() (width int) {
 	return width
 }
 
+// js:"h,omit"
 type MSRangeCollection struct {
 }
 
@@ -17608,6 +18015,7 @@ func (*MSRangeCollection) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type MSSiteModeEvent struct {
 	*Event
 }
@@ -17622,6 +18030,7 @@ func (*MSSiteModeEvent) GetButtonID() (buttonID int) {
 	return buttonID
 }
 
+// js:"h,omit"
 type MSStream struct {
 }
 
@@ -17639,6 +18048,7 @@ func (*MSStream) GetType() (kind string) {
 	return kind
 }
 
+// js:"h,omit"
 type MSStreamReader struct {
 	*EventTarget
 	*MSBaseReader
@@ -17669,6 +18079,7 @@ func (*MSStreamReader) GetError() (err *DOMError) {
 	return err
 }
 
+// js:"h,omit"
 type MSWebViewAsyncOperation struct {
 	*EventTarget
 }
@@ -17720,6 +18131,7 @@ func (*MSWebViewAsyncOperation) GetType() (kind uint8) {
 	return kind
 }
 
+// js:"h,omit"
 type MSWebViewSettings struct {
 }
 
@@ -17741,6 +18153,7 @@ func (*MSWebViewSettings) SetIsJavaScriptEnabled(isJavaScriptEnabled bool) {
 	js.Rewrite("$<.isJavaScriptEnabled = $1", isJavaScriptEnabled)
 }
 
+// js:"h,omit"
 type MutationEvent struct {
 	*Event
 }
@@ -17774,6 +18187,7 @@ func (*MutationEvent) GetRelatedNode() (relatedNode *Node) {
 	return relatedNode
 }
 
+// js:"h,omit"
 type MutationObserver struct {
 }
 
@@ -17790,6 +18204,7 @@ func (*MutationObserver) TakeRecords() (m []*MutationRecord) {
 	return m
 }
 
+// js:"h,omit"
 type MutationRecord struct {
 }
 
@@ -17838,6 +18253,7 @@ func (*MutationRecord) GetType() (kind string) {
 	return kind
 }
 
+// js:"h,omit"
 type NamedNodeMap struct {
 }
 
@@ -17881,6 +18297,7 @@ func (*NamedNodeMap) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type NavigationCompletedEvent struct {
 	*NavigationEvent
 }
@@ -17895,6 +18312,7 @@ func (*NavigationCompletedEvent) GetWebErrorStatus() (webErrorStatus uint64) {
 	return webErrorStatus
 }
 
+// js:"h,omit"
 type NavigationEvent struct {
 	*Event
 }
@@ -17904,6 +18322,7 @@ func (*NavigationEvent) GetURI() (uri string) {
 	return uri
 }
 
+// js:"h,omit"
 type NavigationEventWithReferrer struct {
 	*NavigationEvent
 }
@@ -17913,6 +18332,7 @@ func (*NavigationEventWithReferrer) GetReferer() (referer string) {
 	return referer
 }
 
+// js:"h,omit"
 type Navigator struct {
 	*NavigatorID
 	*NavigatorOnLine
@@ -18014,6 +18434,7 @@ func (*Navigator) GetWebdriver() (webdriver bool) {
 	return webdriver
 }
 
+// js:"h,omit"
 type Node struct {
 	*EventTarget
 }
@@ -18180,6 +18601,7 @@ func (*Node) SetTextContent(textContent string) {
 	js.Rewrite("$<.textContent = $1", textContent)
 }
 
+// js:"h,omit"
 type NodeFilter struct {
 }
 
@@ -18188,6 +18610,7 @@ func (*NodeFilter) AcceptNode(n *Node) (i int8) {
 	return i
 }
 
+// js:"h,omit"
 type NodeIterator struct {
 }
 
@@ -18225,6 +18648,7 @@ func (*NodeIterator) GetWhatToShow() (whatToShow uint) {
 	return whatToShow
 }
 
+// js:"h,omit"
 type NodeList struct {
 }
 
@@ -18238,6 +18662,7 @@ func (*NodeList) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type Notification struct {
 	*EventTarget
 }
@@ -18322,24 +18747,31 @@ func (*Notification) GetTitle() (title string) {
 	return title
 }
 
+// js:"h,omit"
 type OES_element_index_uint struct {
 }
 
+// js:"h,omit"
 type OES_standard_derivatives struct {
 }
 
+// js:"h,omit"
 type OES_texture_float struct {
 }
 
+// js:"h,omit"
 type OES_texture_float_linear struct {
 }
 
+// js:"h,omit"
 type OES_texture_half_float struct {
 }
 
+// js:"h,omit"
 type OES_texture_half_float_linear struct {
 }
 
+// js:"h,omit"
 type OfflineAudioCompletionEvent struct {
 	*Event
 }
@@ -18349,6 +18781,7 @@ func (*OfflineAudioCompletionEvent) GetRenderedBuffer() (renderedBuffer *AudioBu
 	return renderedBuffer
 }
 
+// js:"h,omit"
 type OfflineAudioContext struct {
 	*AudioContext
 }
@@ -18376,6 +18809,7 @@ func (*OfflineAudioContext) SetOncomplete(complete *OfflineAudioCompletionEvent)
 	js.Rewrite("$<.oncomplete = $1", complete)
 }
 
+// js:"h,omit"
 type OscillatorNode struct {
 	*AudioNode
 }
@@ -18420,6 +18854,7 @@ func (*OscillatorNode) SetType(kind *OscillatorType) {
 	js.Rewrite("$<.type = $1", kind)
 }
 
+// js:"h,omit"
 type OverflowEvent struct {
 	*UIEvent
 }
@@ -18439,6 +18874,7 @@ func (*OverflowEvent) GetVerticalOverflow() (verticalOverflow bool) {
 	return verticalOverflow
 }
 
+// js:"h,omit"
 type PageTransitionEvent struct {
 	*Event
 }
@@ -18448,6 +18884,7 @@ func (*PageTransitionEvent) GetPersisted() (persisted bool) {
 	return persisted
 }
 
+// js:"h,omit"
 type PannerNode struct {
 	*AudioNode
 }
@@ -18536,10 +18973,12 @@ func (*PannerNode) SetRolloffFactor(rolloffFactor float32) {
 	js.Rewrite("$<.rolloffFactor = $1", rolloffFactor)
 }
 
+// js:"h,omit"
 type Path2D struct {
 	*CanvasPathMethods
 }
 
+// js:"h,omit"
 type PaymentAddress struct {
 }
 
@@ -18603,6 +19042,7 @@ func (*PaymentAddress) GetSortingCode() (sortingCode string) {
 	return sortingCode
 }
 
+// js:"h,omit"
 type PaymentRequest struct {
 	*EventTarget
 }
@@ -18649,6 +19089,7 @@ func (*PaymentRequest) GetShippingType() (shippingType *PaymentShippingType) {
 	return shippingType
 }
 
+// js:"h,omit"
 type PaymentRequestUpdateEvent struct {
 	*Event
 }
@@ -18657,6 +19098,7 @@ func (*PaymentRequestUpdateEvent) UpdateWith(d *PaymentDetails) {
 	js.Rewrite("$<.updateWith($1)", d)
 }
 
+// js:"h,omit"
 type PaymentResponse struct {
 }
 
@@ -18704,6 +19146,7 @@ func (*PaymentResponse) GetShippingOption() (shippingOption string) {
 	return shippingOption
 }
 
+// js:"h,omit"
 type Performance struct {
 }
 
@@ -18776,6 +19219,7 @@ func (*Performance) GetTiming() (timing *PerformanceTiming) {
 	return timing
 }
 
+// js:"h,omit"
 type PerformanceEntry struct {
 }
 
@@ -18799,14 +19243,17 @@ func (*PerformanceEntry) GetStartTime() (startTime int) {
 	return startTime
 }
 
+// js:"h,omit"
 type PerformanceMark struct {
 	*PerformanceEntry
 }
 
+// js:"h,omit"
 type PerformanceMeasure struct {
 	*PerformanceEntry
 }
 
+// js:"h,omit"
 type PerformanceNavigation struct {
 }
 
@@ -18825,6 +19272,7 @@ func (*PerformanceNavigation) GetType() (kind uint) {
 	return kind
 }
 
+// js:"h,omit"
 type PerformanceNavigationTiming struct {
 	*PerformanceEntry
 }
@@ -18939,6 +19387,7 @@ func (*PerformanceNavigationTiming) GetUnloadEventStart() (unloadEventStart int)
 	return unloadEventStart
 }
 
+// js:"h,omit"
 type PerformanceResourceTiming struct {
 	*PerformanceEntry
 }
@@ -18998,6 +19447,7 @@ func (*PerformanceResourceTiming) GetResponseStart() (responseStart int) {
 	return responseStart
 }
 
+// js:"h,omit"
 type PerformanceTiming struct {
 }
 
@@ -19111,6 +19561,7 @@ func (*PerformanceTiming) GetUnloadEventStart() (unloadEventStart uint64) {
 	return unloadEventStart
 }
 
+// js:"h,omit"
 type PerfWidgetExternal struct {
 }
 
@@ -19215,9 +19666,11 @@ func (*PerfWidgetExternal) GetPerformanceCounterFrequency() (performanceCounterF
 	return performanceCounterFrequency
 }
 
+// js:"h,omit"
 type PeriodicWave struct {
 }
 
+// js:"h,omit"
 type PermissionRequest struct {
 	*DeferredPermissionRequest
 }
@@ -19231,6 +19684,7 @@ func (*PermissionRequest) GetState() (state *MSWebViewPermissionState) {
 	return state
 }
 
+// js:"h,omit"
 type PermissionRequestedEvent struct {
 	*Event
 }
@@ -19240,6 +19694,7 @@ func (*PermissionRequestedEvent) GetPermissionRequest() (permissionRequest *Perm
 	return permissionRequest
 }
 
+// js:"h,omit"
 type Plugin struct {
 }
 
@@ -19278,6 +19733,7 @@ func (*Plugin) GetVersion() (version string) {
 	return version
 }
 
+// js:"h,omit"
 type PluginArray struct {
 }
 
@@ -19300,6 +19756,7 @@ func (*PluginArray) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type PointerEvent struct {
 	*MouseEvent
 }
@@ -19366,6 +19823,7 @@ func (*PointerEvent) GetWidth() (width int) {
 	return width
 }
 
+// js:"h,omit"
 type PopStateEvent struct {
 	*Event
 }
@@ -19379,6 +19837,7 @@ func (*PopStateEvent) GetState() (state interface{}) {
 	return state
 }
 
+// js:"h,omit"
 type Position struct {
 }
 
@@ -19392,6 +19851,7 @@ func (*Position) GetTimestamp() (timestamp int) {
 	return timestamp
 }
 
+// js:"h,omit"
 type PositionError struct {
 }
 
@@ -19410,6 +19870,7 @@ func (*PositionError) GetMessage() (message string) {
 	return message
 }
 
+// js:"h,omit"
 type ProcessingInstruction struct {
 	*CharacterData
 }
@@ -19419,6 +19880,7 @@ func (*ProcessingInstruction) GetTarget() (target string) {
 	return target
 }
 
+// js:"h,omit"
 type ProgressEvent struct {
 	*Event
 }
@@ -19442,6 +19904,7 @@ func (*ProgressEvent) GetTotal() (total uint64) {
 	return total
 }
 
+// js:"h,omit"
 type PushManager struct {
 }
 
@@ -19460,6 +19923,7 @@ func (*PushManager) Subscribe(options *PushSubscriptionOptionsInit) (p *PushSubs
 	return p
 }
 
+// js:"h,omit"
 type PushSubscription struct {
 }
 
@@ -19488,6 +19952,7 @@ func (*PushSubscription) GetOptions() (options *PushSubscriptionOptions) {
 	return options
 }
 
+// js:"h,omit"
 type PushSubscriptionOptions struct {
 }
 
@@ -19501,6 +19966,7 @@ func (*PushSubscriptionOptions) GetUserVisibleOnly() (userVisibleOnly bool) {
 	return userVisibleOnly
 }
 
+// js:"h,omit"
 type Range struct {
 }
 
@@ -19631,6 +20097,7 @@ func (*Range) GetStartOffset() (startOffset int) {
 	return startOffset
 }
 
+// js:"h,omit"
 type ReadableStream struct {
 }
 
@@ -19648,6 +20115,7 @@ func (*ReadableStream) GetLocked() (locked bool) {
 	return locked
 }
 
+// js:"h,omit"
 type ReadableStreamReader struct {
 }
 
@@ -19664,6 +20132,7 @@ func (*ReadableStreamReader) ReleaseLock() {
 	js.Rewrite("$<.releaseLock()")
 }
 
+// js:"h,omit"
 type Request struct {
 	*Body
 }
@@ -19738,6 +20207,7 @@ func (*Request) GetURL() (url string) {
 	return url
 }
 
+// js:"h,omit"
 type Response struct {
 	*Body
 }
@@ -19782,6 +20252,7 @@ func (*Response) GetURL() (url string) {
 	return url
 }
 
+// js:"h,omit"
 type RTCDtlsTransport struct {
 	*RTCStatsProvider
 }
@@ -19837,6 +20308,7 @@ func (*RTCDtlsTransport) GetTransport() (transport *RTCIceTransport) {
 	return transport
 }
 
+// js:"h,omit"
 type RTCDtlsTransportStateChangedEvent struct {
 	*Event
 }
@@ -19846,6 +20318,7 @@ func (*RTCDtlsTransportStateChangedEvent) GetState() (state *RTCDtlsTransportSta
 	return state
 }
 
+// js:"h,omit"
 type RTCDtmfSender struct {
 	*EventTarget
 }
@@ -19888,6 +20361,7 @@ func (*RTCDtmfSender) GetToneBuffer() (toneBuffer string) {
 	return toneBuffer
 }
 
+// js:"h,omit"
 type RTCDTMFToneChangeEvent struct {
 	*Event
 }
@@ -19897,6 +20371,7 @@ func (*RTCDTMFToneChangeEvent) GetTone() (tone string) {
 	return tone
 }
 
+// js:"h,omit"
 type RTCIceCandidate struct {
 }
 
@@ -19932,6 +20407,7 @@ func (*RTCIceCandidate) SetSdpMLineIndex(sdpMLineIndex uint8) {
 	js.Rewrite("$<.sdpMLineIndex = $1", sdpMLineIndex)
 }
 
+// js:"h,omit"
 type RTCIceCandidatePairChangedEvent struct {
 	*Event
 }
@@ -19941,6 +20417,7 @@ func (*RTCIceCandidatePairChangedEvent) GetPair() (pair *RTCIceCandidatePair) {
 	return pair
 }
 
+// js:"h,omit"
 type RTCIceGatherer struct {
 	*RTCStatsProvider
 }
@@ -19983,6 +20460,7 @@ func (*RTCIceGatherer) SetOnlocalcandidate(localcandidate *RTCIceGathererEvent) 
 	js.Rewrite("$<.onlocalcandidate = $1", localcandidate)
 }
 
+// js:"h,omit"
 type RTCIceGathererEvent struct {
 	*Event
 }
@@ -19992,6 +20470,7 @@ func (*RTCIceGathererEvent) GetCandidate() (candidate interface{}) {
 	return candidate
 }
 
+// js:"h,omit"
 type RTCIceTransport struct {
 	*RTCStatsProvider
 }
@@ -20070,6 +20549,7 @@ func (*RTCIceTransport) GetState() (state *RTCIceTransportState) {
 	return state
 }
 
+// js:"h,omit"
 type RTCIceTransportStateChangedEvent struct {
 	*Event
 }
@@ -20079,6 +20559,7 @@ func (*RTCIceTransportStateChangedEvent) GetState() (state *RTCIceTransportState
 	return state
 }
 
+// js:"h,omit"
 type RTCPeerConnection struct {
 	*EventTarget
 }
@@ -20235,6 +20716,7 @@ func (*RTCPeerConnection) GetSignalingState() (signalingState *RTCSignalingState
 	return signalingState
 }
 
+// js:"h,omit"
 type RTCPeerConnectionIceEvent struct {
 	*Event
 }
@@ -20244,6 +20726,7 @@ func (*RTCPeerConnectionIceEvent) GetCandidate() (candidate *RTCIceCandidate) {
 	return candidate
 }
 
+// js:"h,omit"
 type RTCRtpReceiver struct {
 	*RTCStatsProvider
 }
@@ -20298,6 +20781,7 @@ func (*RTCRtpReceiver) GetTransport() (transport interface{}) {
 	return transport
 }
 
+// js:"h,omit"
 type RTCRtpSender struct {
 	*RTCStatsProvider
 }
@@ -20356,6 +20840,7 @@ func (*RTCRtpSender) GetTransport() (transport interface{}) {
 	return transport
 }
 
+// js:"h,omit"
 type RTCSessionDescription struct {
 }
 
@@ -20382,6 +20867,7 @@ func (*RTCSessionDescription) SetType(kind *RTCSdpType) {
 	js.Rewrite("$<.type = $1", kind)
 }
 
+// js:"h,omit"
 type RTCSrtpSdesTransport struct {
 	*EventTarget
 }
@@ -20405,6 +20891,7 @@ func (*RTCSrtpSdesTransport) GetTransport() (transport *RTCIceTransport) {
 	return transport
 }
 
+// js:"h,omit"
 type RTCSsrcConflictEvent struct {
 	*Event
 }
@@ -20414,6 +20901,7 @@ func (*RTCSsrcConflictEvent) GetSsrc() (ssrc uint) {
 	return ssrc
 }
 
+// js:"h,omit"
 type RTCStatsProvider struct {
 	*EventTarget
 }
@@ -20428,6 +20916,7 @@ func (*RTCStatsProvider) MsGetStats() (r *RTCStatsReport) {
 	return r
 }
 
+// js:"h,omit"
 type ScopedCredential struct {
 }
 
@@ -20441,6 +20930,7 @@ func (*ScopedCredential) GetType() (kind *ScopedCredentialType) {
 	return kind
 }
 
+// js:"h,omit"
 type ScopedCredentialInfo struct {
 }
 
@@ -20454,6 +20944,7 @@ func (*ScopedCredentialInfo) GetPublicKey() (publicKey *CryptoKey) {
 	return publicKey
 }
 
+// js:"h,omit"
 type Screen struct {
 	*EventTarget
 }
@@ -20555,6 +21046,7 @@ func (*Screen) GetWidth() (width uint) {
 	return width
 }
 
+// js:"h,omit"
 type ScriptNotifyEvent struct {
 	*Event
 }
@@ -20569,6 +21061,7 @@ func (*ScriptNotifyEvent) GetValue() (value string) {
 	return value
 }
 
+// js:"h,omit"
 type ScriptProcessorNode struct {
 	*AudioNode
 }
@@ -20587,6 +21080,7 @@ func (*ScriptProcessorNode) SetOnaudioprocess(audioprocess *AudioProcessingEvent
 	js.Rewrite("$<.onaudioprocess = $1", audioprocess)
 }
 
+// js:"h,omit"
 type Selection struct {
 }
 
@@ -20708,6 +21202,7 @@ func (*Selection) GetType() (kind string) {
 	return kind
 }
 
+// js:"h,omit"
 type ServiceWorker struct {
 	*EventTarget
 	*AbstractWorker
@@ -20736,6 +21231,7 @@ func (*ServiceWorker) GetState() (state *ServiceWorkerState) {
 	return state
 }
 
+// js:"h,omit"
 type ServiceWorkerContainer struct {
 	*EventTarget
 }
@@ -20783,6 +21279,7 @@ func (*ServiceWorkerContainer) GetReady() (ready *ServiceWorkerRegistration) {
 	return ready
 }
 
+// js:"h,omit"
 type ServiceWorkerMessageEvent struct {
 	*Event
 }
@@ -20812,6 +21309,7 @@ func (*ServiceWorkerMessageEvent) GetSource() (source interface{}) {
 	return source
 }
 
+// js:"h,omit"
 type ServiceWorkerRegistration struct {
 	*EventTarget
 }
@@ -20873,6 +21371,7 @@ func (*ServiceWorkerRegistration) GetWaiting() (waiting *ServiceWorker) {
 	return waiting
 }
 
+// js:"h,omit"
 type SourceBuffer struct {
 	*EventTarget
 }
@@ -20949,6 +21448,7 @@ func (*SourceBuffer) GetVideoTracks() (videoTracks *VideoTrackList) {
 	return videoTracks
 }
 
+// js:"h,omit"
 type SourceBufferList struct {
 	*EventTarget
 }
@@ -20963,6 +21463,7 @@ func (*SourceBufferList) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type SpeechSynthesis struct {
 	*EventTarget
 }
@@ -21012,6 +21513,7 @@ func (*SpeechSynthesis) GetSpeaking() (speaking bool) {
 	return speaking
 }
 
+// js:"h,omit"
 type SpeechSynthesisEvent struct {
 	*Event
 }
@@ -21036,6 +21538,7 @@ func (*SpeechSynthesisEvent) GetUtterance() (utterance *SpeechSynthesisUtterance
 	return utterance
 }
 
+// js:"h,omit"
 type SpeechSynthesisUtterance struct {
 	*EventTarget
 }
@@ -21157,6 +21660,7 @@ func (*SpeechSynthesisUtterance) SetVolume(volume float32) {
 	js.Rewrite("$<.volume = $1", volume)
 }
 
+// js:"h,omit"
 type SpeechSynthesisVoice struct {
 }
 
@@ -21185,6 +21689,7 @@ func (*SpeechSynthesisVoice) GetVoiceURI() (voiceURI string) {
 	return voiceURI
 }
 
+// js:"h,omit"
 type StereoPannerNode struct {
 	*AudioNode
 }
@@ -21194,6 +21699,7 @@ func (*StereoPannerNode) GetPan() (pan *AudioParam) {
 	return pan
 }
 
+// js:"h,omit"
 type Storage struct {
 }
 
@@ -21224,6 +21730,7 @@ func (*Storage) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type StorageEvent struct {
 	*Event
 }
@@ -21257,6 +21764,7 @@ func (*StorageEvent) GetURL() (url string) {
 	return url
 }
 
+// js:"h,omit"
 type StyleMedia struct {
 }
 
@@ -21270,6 +21778,7 @@ func (*StyleMedia) GetType() (kind string) {
 	return kind
 }
 
+// js:"h,omit"
 type StyleSheet struct {
 }
 
@@ -21312,6 +21821,7 @@ func (*StyleSheet) GetType() (kind string) {
 	return kind
 }
 
+// js:"h,omit"
 type StyleSheetList struct {
 }
 
@@ -21325,6 +21835,7 @@ func (*StyleSheetList) GetLength() (length int) {
 	return length
 }
 
+// js:"h,omit"
 type StyleSheetPageList struct {
 }
 
@@ -21338,6 +21849,7 @@ func (*StyleSheetPageList) GetLength() (length int) {
 	return length
 }
 
+// js:"h,omit"
 type SubtleCrypto struct {
 }
 
@@ -21401,6 +21913,7 @@ func (*SubtleCrypto) WrapKey(format string, key *CryptoKey, wrappingKey *CryptoK
 	return i
 }
 
+// js:"h,omit"
 type SVGAElement struct {
 	*SVGGraphicsElement
 	*SVGURIReference
@@ -21411,6 +21924,7 @@ func (*SVGAElement) GetTarget() (target *SVGAnimatedString) {
 	return target
 }
 
+// js:"h,omit"
 type SVGAngle struct {
 }
 
@@ -21454,6 +21968,7 @@ func (*SVGAngle) SetValueInSpecifiedUnits(valueInSpecifiedUnits float32) {
 	js.Rewrite("$<.valueInSpecifiedUnits = $1", valueInSpecifiedUnits)
 }
 
+// js:"h,omit"
 type SVGAnimatedAngle struct {
 }
 
@@ -21467,6 +21982,7 @@ func (*SVGAnimatedAngle) GetBaseVal() (baseVal *SVGAngle) {
 	return baseVal
 }
 
+// js:"h,omit"
 type SVGAnimatedBoolean struct {
 }
 
@@ -21484,6 +22000,7 @@ func (*SVGAnimatedBoolean) SetBaseVal(baseVal bool) {
 	js.Rewrite("$<.baseVal = $1", baseVal)
 }
 
+// js:"h,omit"
 type SVGAnimatedEnumeration struct {
 }
 
@@ -21501,6 +22018,7 @@ func (*SVGAnimatedEnumeration) SetBaseVal(baseVal uint8) {
 	js.Rewrite("$<.baseVal = $1", baseVal)
 }
 
+// js:"h,omit"
 type SVGAnimatedInteger struct {
 }
 
@@ -21518,6 +22036,7 @@ func (*SVGAnimatedInteger) SetBaseVal(baseVal int) {
 	js.Rewrite("$<.baseVal = $1", baseVal)
 }
 
+// js:"h,omit"
 type SVGAnimatedLength struct {
 }
 
@@ -21531,6 +22050,7 @@ func (*SVGAnimatedLength) GetBaseVal() (baseVal *SVGLength) {
 	return baseVal
 }
 
+// js:"h,omit"
 type SVGAnimatedLengthList struct {
 }
 
@@ -21544,6 +22064,7 @@ func (*SVGAnimatedLengthList) GetBaseVal() (baseVal *SVGLengthList) {
 	return baseVal
 }
 
+// js:"h,omit"
 type SVGAnimatedNumber struct {
 }
 
@@ -21561,6 +22082,7 @@ func (*SVGAnimatedNumber) SetBaseVal(baseVal float32) {
 	js.Rewrite("$<.baseVal = $1", baseVal)
 }
 
+// js:"h,omit"
 type SVGAnimatedNumberList struct {
 }
 
@@ -21574,6 +22096,7 @@ func (*SVGAnimatedNumberList) GetBaseVal() (baseVal *SVGNumberList) {
 	return baseVal
 }
 
+// js:"h,omit"
 type SVGAnimatedPreserveAspectRatio struct {
 }
 
@@ -21587,6 +22110,7 @@ func (*SVGAnimatedPreserveAspectRatio) GetBaseVal() (baseVal *SVGPreserveAspectR
 	return baseVal
 }
 
+// js:"h,omit"
 type SVGAnimatedRect struct {
 }
 
@@ -21600,6 +22124,7 @@ func (*SVGAnimatedRect) GetBaseVal() (baseVal *SVGRect) {
 	return baseVal
 }
 
+// js:"h,omit"
 type SVGAnimatedString struct {
 }
 
@@ -21617,6 +22142,7 @@ func (*SVGAnimatedString) SetBaseVal(baseVal string) {
 	js.Rewrite("$<.baseVal = $1", baseVal)
 }
 
+// js:"h,omit"
 type SVGAnimatedTransformList struct {
 }
 
@@ -21630,6 +22156,7 @@ func (*SVGAnimatedTransformList) GetBaseVal() (baseVal *SVGTransformList) {
 	return baseVal
 }
 
+// js:"h,omit"
 type SVGCircleElement struct {
 	*SVGGraphicsElement
 }
@@ -21649,6 +22176,7 @@ func (*SVGCircleElement) GetR() (r *SVGAnimatedLength) {
 	return r
 }
 
+// js:"h,omit"
 type SVGClipPathElement struct {
 	*SVGGraphicsElement
 	*SVGUnitTypes
@@ -21659,6 +22187,7 @@ func (*SVGClipPathElement) GetClipPathUnits() (clipPathUnits *SVGAnimatedEnumera
 	return clipPathUnits
 }
 
+// js:"h,omit"
 type SVGComponentTransferFunctionElement struct {
 	*SVGElement
 }
@@ -21698,14 +22227,17 @@ func (*SVGComponentTransferFunctionElement) GetType() (kind *SVGAnimatedEnumerat
 	return kind
 }
 
+// js:"h,omit"
 type SVGDefsElement struct {
 	*SVGGraphicsElement
 }
 
+// js:"h,omit"
 type SVGDescElement struct {
 	*SVGElement
 }
 
+// js:"h,omit"
 type SVGElement struct {
 	*Element
 }
@@ -21829,6 +22361,7 @@ func (*SVGElement) SetXmlbase(xmlbase string) {
 	js.Rewrite("$<.xmlbase = $1", xmlbase)
 }
 
+// js:"h,omit"
 type SVGElementInstance struct {
 	*EventTarget
 }
@@ -21873,6 +22406,7 @@ func (*SVGElementInstance) GetPreviousSibling() (previousSibling *SVGElementInst
 	return previousSibling
 }
 
+// js:"h,omit"
 type SVGElementInstanceList struct {
 }
 
@@ -21886,6 +22420,7 @@ func (*SVGElementInstanceList) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type SVGEllipseElement struct {
 	*SVGGraphicsElement
 }
@@ -21910,6 +22445,7 @@ func (*SVGEllipseElement) GetRy() (ry *SVGAnimatedLength) {
 	return ry
 }
 
+// js:"h,omit"
 type SVGFEBlendElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -21930,6 +22466,7 @@ func (*SVGFEBlendElement) GetMode() (mode *SVGAnimatedEnumeration) {
 	return mode
 }
 
+// js:"h,omit"
 type SVGFEColorMatrixElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -21950,6 +22487,7 @@ func (*SVGFEColorMatrixElement) GetValues() (values *SVGAnimatedNumberList) {
 	return values
 }
 
+// js:"h,omit"
 type SVGFEComponentTransferElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -21960,6 +22498,7 @@ func (*SVGFEComponentTransferElement) GetIn1() (in1 *SVGAnimatedString) {
 	return in1
 }
 
+// js:"h,omit"
 type SVGFECompositeElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -22000,6 +22539,7 @@ func (*SVGFECompositeElement) GetOperator() (operator *SVGAnimatedEnumeration) {
 	return operator
 }
 
+// js:"h,omit"
 type SVGFEConvolveMatrixElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -22065,6 +22605,7 @@ func (*SVGFEConvolveMatrixElement) GetTargetY() (targetY *SVGAnimatedInteger) {
 	return targetY
 }
 
+// js:"h,omit"
 type SVGFEDiffuseLightingElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -22095,6 +22636,7 @@ func (*SVGFEDiffuseLightingElement) GetSurfaceScale() (surfaceScale *SVGAnimated
 	return surfaceScale
 }
 
+// js:"h,omit"
 type SVGFEDisplacementMapElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -22125,6 +22667,7 @@ func (*SVGFEDisplacementMapElement) GetYChannelSelector() (yChannelSelector *SVG
 	return yChannelSelector
 }
 
+// js:"h,omit"
 type SVGFEDistantLightElement struct {
 	*SVGElement
 }
@@ -22139,27 +22682,33 @@ func (*SVGFEDistantLightElement) GetElevation() (elevation *SVGAnimatedNumber) {
 	return elevation
 }
 
+// js:"h,omit"
 type SVGFEFloodElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
 }
 
+// js:"h,omit"
 type SVGFEFuncAElement struct {
 	*SVGComponentTransferFunctionElement
 }
 
+// js:"h,omit"
 type SVGFEFuncBElement struct {
 	*SVGComponentTransferFunctionElement
 }
 
+// js:"h,omit"
 type SVGFEFuncGElement struct {
 	*SVGComponentTransferFunctionElement
 }
 
+// js:"h,omit"
 type SVGFEFuncRElement struct {
 	*SVGComponentTransferFunctionElement
 }
 
+// js:"h,omit"
 type SVGFEGaussianBlurElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -22184,6 +22733,7 @@ func (*SVGFEGaussianBlurElement) GetStdDeviationY() (stdDeviationY *SVGAnimatedN
 	return stdDeviationY
 }
 
+// js:"h,omit"
 type SVGFEImageElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -22195,11 +22745,13 @@ func (*SVGFEImageElement) GetPreserveAspectRatio() (preserveAspectRatio *SVGAnim
 	return preserveAspectRatio
 }
 
+// js:"h,omit"
 type SVGFEMergeElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
 }
 
+// js:"h,omit"
 type SVGFEMergeNodeElement struct {
 	*SVGElement
 }
@@ -22209,6 +22761,7 @@ func (*SVGFEMergeNodeElement) GetIn1() (in1 *SVGAnimatedString) {
 	return in1
 }
 
+// js:"h,omit"
 type SVGFEMorphologyElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -22234,6 +22787,7 @@ func (*SVGFEMorphologyElement) GetRadiusY() (radiusY *SVGAnimatedNumber) {
 	return radiusY
 }
 
+// js:"h,omit"
 type SVGFEOffsetElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -22254,6 +22808,7 @@ func (*SVGFEOffsetElement) GetIn1() (in1 *SVGAnimatedString) {
 	return in1
 }
 
+// js:"h,omit"
 type SVGFEPointLightElement struct {
 	*SVGElement
 }
@@ -22273,6 +22828,7 @@ func (*SVGFEPointLightElement) GetZ() (z *SVGAnimatedNumber) {
 	return z
 }
 
+// js:"h,omit"
 type SVGFESpecularLightingElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -22308,6 +22864,7 @@ func (*SVGFESpecularLightingElement) GetSurfaceScale() (surfaceScale *SVGAnimate
 	return surfaceScale
 }
 
+// js:"h,omit"
 type SVGFESpotLightElement struct {
 	*SVGElement
 }
@@ -22352,6 +22909,7 @@ func (*SVGFESpotLightElement) GetZ() (z *SVGAnimatedNumber) {
 	return z
 }
 
+// js:"h,omit"
 type SVGFETileElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -22362,6 +22920,7 @@ func (*SVGFETileElement) GetIn1() (in1 *SVGAnimatedString) {
 	return in1
 }
 
+// js:"h,omit"
 type SVGFETurbulenceElement struct {
 	*SVGElement
 	*SVGFilterPrimitiveStandardAttributes
@@ -22397,6 +22956,7 @@ func (*SVGFETurbulenceElement) GetType() (kind *SVGAnimatedEnumeration) {
 	return kind
 }
 
+// js:"h,omit"
 type SVGFilterElement struct {
 	*SVGElement
 	*SVGUnitTypes
@@ -22447,6 +23007,7 @@ func (*SVGFilterElement) GetY() (y *SVGAnimatedLength) {
 	return y
 }
 
+// js:"h,omit"
 type SVGForeignObjectElement struct {
 	*SVGGraphicsElement
 }
@@ -22471,10 +23032,12 @@ func (*SVGForeignObjectElement) GetY() (y *SVGAnimatedLength) {
 	return y
 }
 
+// js:"h,omit"
 type SVGGElement struct {
 	*SVGGraphicsElement
 }
 
+// js:"h,omit"
 type SVGGradientElement struct {
 	*SVGElement
 	*SVGUnitTypes
@@ -22496,6 +23059,7 @@ func (*SVGGradientElement) GetSpreadMethod() (spreadMethod *SVGAnimatedEnumerati
 	return spreadMethod
 }
 
+// js:"h,omit"
 type SVGGraphicsElement struct {
 	*SVGElement
 	*SVGTests
@@ -22536,6 +23100,7 @@ func (*SVGGraphicsElement) GetTransform() (transform *SVGAnimatedTransformList) 
 	return transform
 }
 
+// js:"h,omit"
 type SVGImageElement struct {
 	*SVGGraphicsElement
 	*SVGURIReference
@@ -22566,6 +23131,7 @@ func (*SVGImageElement) GetY() (y *SVGAnimatedLength) {
 	return y
 }
 
+// js:"h,omit"
 type SVGLength struct {
 }
 
@@ -22609,6 +23175,7 @@ func (*SVGLength) SetValueInSpecifiedUnits(valueInSpecifiedUnits float32) {
 	js.Rewrite("$<.valueInSpecifiedUnits = $1", valueInSpecifiedUnits)
 }
 
+// js:"h,omit"
 type SVGLengthList struct {
 }
 
@@ -22651,6 +23218,7 @@ func (*SVGLengthList) GetNumberOfItems() (numberOfItems uint) {
 	return numberOfItems
 }
 
+// js:"h,omit"
 type SVGLinearGradientElement struct {
 	*SVGGradientElement
 }
@@ -22675,6 +23243,7 @@ func (*SVGLinearGradientElement) GetY2() (y2 *SVGAnimatedLength) {
 	return y2
 }
 
+// js:"h,omit"
 type SVGLineElement struct {
 	*SVGGraphicsElement
 }
@@ -22699,6 +23268,7 @@ func (*SVGLineElement) GetY2() (y2 *SVGAnimatedLength) {
 	return y2
 }
 
+// js:"h,omit"
 type SVGMarkerElement struct {
 	*SVGElement
 	*SVGFitToViewBox
@@ -22747,6 +23317,7 @@ func (*SVGMarkerElement) GetRefY() (refY *SVGAnimatedLength) {
 	return refY
 }
 
+// js:"h,omit"
 type SVGMaskElement struct {
 	*SVGElement
 	*SVGTests
@@ -22783,6 +23354,7 @@ func (*SVGMaskElement) GetY() (y *SVGAnimatedLength) {
 	return y
 }
 
+// js:"h,omit"
 type SVGMatrix struct {
 }
 
@@ -22895,10 +23467,12 @@ func (*SVGMatrix) SetF(f float32) {
 	js.Rewrite("$<.f = $1", f)
 }
 
+// js:"h,omit"
 type SVGMetadataElement struct {
 	*SVGElement
 }
 
+// js:"h,omit"
 type SVGNumber struct {
 }
 
@@ -22911,6 +23485,7 @@ func (*SVGNumber) SetValue(value float32) {
 	js.Rewrite("$<.value = $1", value)
 }
 
+// js:"h,omit"
 type SVGNumberList struct {
 }
 
@@ -22953,6 +23528,7 @@ func (*SVGNumberList) GetNumberOfItems() (numberOfItems uint) {
 	return numberOfItems
 }
 
+// js:"h,omit"
 type SVGPathElement struct {
 	*SVGGraphicsElement
 }
@@ -23072,6 +23648,7 @@ func (*SVGPathElement) GetPathSegList() (pathSegList *SVGPathSegList) {
 	return pathSegList
 }
 
+// js:"h,omit"
 type SVGPathSeg struct {
 }
 
@@ -23085,6 +23662,7 @@ func (*SVGPathSeg) GetPathSegTypeAsLetter() (pathSegTypeAsLetter string) {
 	return pathSegTypeAsLetter
 }
 
+// js:"h,omit"
 type SVGPathSegArcAbs struct {
 	*SVGPathSeg
 }
@@ -23152,6 +23730,7 @@ func (*SVGPathSegArcAbs) SetY(y float32) {
 	js.Rewrite("$<.y = $1", y)
 }
 
+// js:"h,omit"
 type SVGPathSegArcRel struct {
 	*SVGPathSeg
 }
@@ -23219,10 +23798,12 @@ func (*SVGPathSegArcRel) SetY(y float32) {
 	js.Rewrite("$<.y = $1", y)
 }
 
+// js:"h,omit"
 type SVGPathSegClosePath struct {
 	*SVGPathSeg
 }
 
+// js:"h,omit"
 type SVGPathSegCurvetoCubicAbs struct {
 	*SVGPathSeg
 }
@@ -23281,6 +23862,7 @@ func (*SVGPathSegCurvetoCubicAbs) SetY2(y2 float32) {
 	js.Rewrite("$<.y2 = $1", y2)
 }
 
+// js:"h,omit"
 type SVGPathSegCurvetoCubicRel struct {
 	*SVGPathSeg
 }
@@ -23339,6 +23921,7 @@ func (*SVGPathSegCurvetoCubicRel) SetY2(y2 float32) {
 	js.Rewrite("$<.y2 = $1", y2)
 }
 
+// js:"h,omit"
 type SVGPathSegCurvetoCubicSmoothAbs struct {
 	*SVGPathSeg
 }
@@ -23379,6 +23962,7 @@ func (*SVGPathSegCurvetoCubicSmoothAbs) SetY2(y2 float32) {
 	js.Rewrite("$<.y2 = $1", y2)
 }
 
+// js:"h,omit"
 type SVGPathSegCurvetoCubicSmoothRel struct {
 	*SVGPathSeg
 }
@@ -23419,6 +24003,7 @@ func (*SVGPathSegCurvetoCubicSmoothRel) SetY2(y2 float32) {
 	js.Rewrite("$<.y2 = $1", y2)
 }
 
+// js:"h,omit"
 type SVGPathSegCurvetoQuadraticAbs struct {
 	*SVGPathSeg
 }
@@ -23459,6 +24044,7 @@ func (*SVGPathSegCurvetoQuadraticAbs) SetY1(y1 float32) {
 	js.Rewrite("$<.y1 = $1", y1)
 }
 
+// js:"h,omit"
 type SVGPathSegCurvetoQuadraticRel struct {
 	*SVGPathSeg
 }
@@ -23499,6 +24085,7 @@ func (*SVGPathSegCurvetoQuadraticRel) SetY1(y1 float32) {
 	js.Rewrite("$<.y1 = $1", y1)
 }
 
+// js:"h,omit"
 type SVGPathSegCurvetoQuadraticSmoothAbs struct {
 	*SVGPathSeg
 }
@@ -23521,6 +24108,7 @@ func (*SVGPathSegCurvetoQuadraticSmoothAbs) SetY(y float32) {
 	js.Rewrite("$<.y = $1", y)
 }
 
+// js:"h,omit"
 type SVGPathSegCurvetoQuadraticSmoothRel struct {
 	*SVGPathSeg
 }
@@ -23543,6 +24131,7 @@ func (*SVGPathSegCurvetoQuadraticSmoothRel) SetY(y float32) {
 	js.Rewrite("$<.y = $1", y)
 }
 
+// js:"h,omit"
 type SVGPathSegLinetoAbs struct {
 	*SVGPathSeg
 }
@@ -23565,6 +24154,7 @@ func (*SVGPathSegLinetoAbs) SetY(y float32) {
 	js.Rewrite("$<.y = $1", y)
 }
 
+// js:"h,omit"
 type SVGPathSegLinetoHorizontalAbs struct {
 	*SVGPathSeg
 }
@@ -23578,6 +24168,7 @@ func (*SVGPathSegLinetoHorizontalAbs) SetX(x float32) {
 	js.Rewrite("$<.x = $1", x)
 }
 
+// js:"h,omit"
 type SVGPathSegLinetoHorizontalRel struct {
 	*SVGPathSeg
 }
@@ -23591,6 +24182,7 @@ func (*SVGPathSegLinetoHorizontalRel) SetX(x float32) {
 	js.Rewrite("$<.x = $1", x)
 }
 
+// js:"h,omit"
 type SVGPathSegLinetoRel struct {
 	*SVGPathSeg
 }
@@ -23613,6 +24205,7 @@ func (*SVGPathSegLinetoRel) SetY(y float32) {
 	js.Rewrite("$<.y = $1", y)
 }
 
+// js:"h,omit"
 type SVGPathSegLinetoVerticalAbs struct {
 	*SVGPathSeg
 }
@@ -23626,6 +24219,7 @@ func (*SVGPathSegLinetoVerticalAbs) SetY(y float32) {
 	js.Rewrite("$<.y = $1", y)
 }
 
+// js:"h,omit"
 type SVGPathSegLinetoVerticalRel struct {
 	*SVGPathSeg
 }
@@ -23639,6 +24233,7 @@ func (*SVGPathSegLinetoVerticalRel) SetY(y float32) {
 	js.Rewrite("$<.y = $1", y)
 }
 
+// js:"h,omit"
 type SVGPathSegList struct {
 }
 
@@ -23681,6 +24276,7 @@ func (*SVGPathSegList) GetNumberOfItems() (numberOfItems uint) {
 	return numberOfItems
 }
 
+// js:"h,omit"
 type SVGPathSegMovetoAbs struct {
 	*SVGPathSeg
 }
@@ -23703,6 +24299,7 @@ func (*SVGPathSegMovetoAbs) SetY(y float32) {
 	js.Rewrite("$<.y = $1", y)
 }
 
+// js:"h,omit"
 type SVGPathSegMovetoRel struct {
 	*SVGPathSeg
 }
@@ -23725,6 +24322,7 @@ func (*SVGPathSegMovetoRel) SetY(y float32) {
 	js.Rewrite("$<.y = $1", y)
 }
 
+// js:"h,omit"
 type SVGPatternElement struct {
 	*SVGElement
 	*SVGTests
@@ -23768,6 +24366,7 @@ func (*SVGPatternElement) GetY() (y *SVGAnimatedLength) {
 	return y
 }
 
+// js:"h,omit"
 type SVGPoint struct {
 }
 
@@ -23794,6 +24393,7 @@ func (*SVGPoint) SetY(y float32) {
 	js.Rewrite("$<.y = $1", y)
 }
 
+// js:"h,omit"
 type SVGPointList struct {
 }
 
@@ -23836,16 +24436,19 @@ func (*SVGPointList) GetNumberOfItems() (numberOfItems uint) {
 	return numberOfItems
 }
 
+// js:"h,omit"
 type SVGPolygonElement struct {
 	*SVGGraphicsElement
 	*SVGAnimatedPoints
 }
 
+// js:"h,omit"
 type SVGPolylineElement struct {
 	*SVGGraphicsElement
 	*SVGAnimatedPoints
 }
 
+// js:"h,omit"
 type SVGPreserveAspectRatio struct {
 }
 
@@ -23867,6 +24470,7 @@ func (*SVGPreserveAspectRatio) SetMeetOrSlice(meetOrSlice uint8) {
 	js.Rewrite("$<.meetOrSlice = $1", meetOrSlice)
 }
 
+// js:"h,omit"
 type SVGRadialGradientElement struct {
 	*SVGGradientElement
 }
@@ -23896,6 +24500,7 @@ func (*SVGRadialGradientElement) GetR() (r *SVGAnimatedLength) {
 	return r
 }
 
+// js:"h,omit"
 type SVGRect struct {
 }
 
@@ -23935,6 +24540,7 @@ func (*SVGRect) SetY(y float32) {
 	js.Rewrite("$<.y = $1", y)
 }
 
+// js:"h,omit"
 type SVGRectElement struct {
 	*SVGGraphicsElement
 }
@@ -23969,6 +24575,7 @@ func (*SVGRectElement) GetY() (y *SVGAnimatedLength) {
 	return y
 }
 
+// js:"h,omit"
 type SVGScriptElement struct {
 	*SVGElement
 	*SVGURIReference
@@ -23983,6 +24590,7 @@ func (*SVGScriptElement) SetType(kind string) {
 	js.Rewrite("$<.type = $1", kind)
 }
 
+// js:"h,omit"
 type SVGStopElement struct {
 	*SVGElement
 }
@@ -23992,6 +24600,7 @@ func (*SVGStopElement) GetOffset() (offset *SVGAnimatedNumber) {
 	return offset
 }
 
+// js:"h,omit"
 type SVGStringList struct {
 }
 
@@ -24034,6 +24643,7 @@ func (*SVGStringList) GetNumberOfItems() (numberOfItems uint) {
 	return numberOfItems
 }
 
+// js:"h,omit"
 type SVGStyleElement struct {
 	*SVGElement
 }
@@ -24074,6 +24684,7 @@ func (*SVGStyleElement) SetType(kind string) {
 	js.Rewrite("$<.type = $1", kind)
 }
 
+// js:"h,omit"
 type SVGSVGElement struct {
 	*SVGGraphicsElement
 	*DocumentEvent
@@ -24320,15 +24931,18 @@ func (*SVGSVGElement) GetY() (y *SVGAnimatedLength) {
 	return y
 }
 
+// js:"h,omit"
 type SVGSwitchElement struct {
 	*SVGGraphicsElement
 }
 
+// js:"h,omit"
 type SVGSymbolElement struct {
 	*SVGElement
 	*SVGFitToViewBox
 }
 
+// js:"h,omit"
 type SVGTextContentElement struct {
 	*SVGGraphicsElement
 }
@@ -24387,10 +25001,12 @@ func (*SVGTextContentElement) GetTextLength() (textLength *SVGAnimatedLength) {
 	return textLength
 }
 
+// js:"h,omit"
 type SVGTextElement struct {
 	*SVGTextPositioningElement
 }
 
+// js:"h,omit"
 type SVGTextPathElement struct {
 	*SVGTextContentElement
 	*SVGURIReference
@@ -24411,6 +25027,7 @@ func (*SVGTextPathElement) GetStartOffset() (startOffset *SVGAnimatedLength) {
 	return startOffset
 }
 
+// js:"h,omit"
 type SVGTextPositioningElement struct {
 	*SVGTextContentElement
 }
@@ -24440,10 +25057,12 @@ func (*SVGTextPositioningElement) GetY() (y *SVGAnimatedLengthList) {
 	return y
 }
 
+// js:"h,omit"
 type SVGTitleElement struct {
 	*SVGElement
 }
 
+// js:"h,omit"
 type SVGTransform struct {
 }
 
@@ -24486,6 +25105,7 @@ func (*SVGTransform) GetType() (kind uint8) {
 	return kind
 }
 
+// js:"h,omit"
 type SVGTransformList struct {
 }
 
@@ -24538,13 +25158,16 @@ func (*SVGTransformList) GetNumberOfItems() (numberOfItems uint) {
 	return numberOfItems
 }
 
+// js:"h,omit"
 type SVGTSpanElement struct {
 	*SVGTextPositioningElement
 }
 
+// js:"h,omit"
 type SVGUnitTypes struct {
 }
 
+// js:"h,omit"
 type SVGUseElement struct {
 	*SVGGraphicsElement
 	*SVGURIReference
@@ -24580,6 +25203,7 @@ func (*SVGUseElement) GetY() (y *SVGAnimatedLength) {
 	return y
 }
 
+// js:"h,omit"
 type SVGViewElement struct {
 	*SVGElement
 	*SVGZoomAndPan
@@ -24591,6 +25215,7 @@ func (*SVGViewElement) GetViewTarget() (viewTarget *SVGStringList) {
 	return viewTarget
 }
 
+// js:"h,omit"
 type SVGZoomAndPan struct {
 }
 
@@ -24599,6 +25224,7 @@ func (*SVGZoomAndPan) GetZoomAndPan() (zoomAndPan uint8) {
 	return zoomAndPan
 }
 
+// js:"h,omit"
 type SVGZoomEvent struct {
 	*UIEvent
 }
@@ -24628,6 +25254,7 @@ func (*SVGZoomEvent) GetZoomRectScreen() (zoomRectScreen *SVGRect) {
 	return zoomRectScreen
 }
 
+// js:"h,omit"
 type SyncManager struct {
 }
 
@@ -24640,6 +25267,7 @@ func (*SyncManager) Register(tag string) {
 	js.Rewrite("await $<.register($1)", tag)
 }
 
+// js:"h,omit"
 type Text struct {
 	*CharacterData
 }
@@ -24654,6 +25282,7 @@ func (*Text) GetWholeText() (wholeText string) {
 	return wholeText
 }
 
+// js:"h,omit"
 type TextEvent struct {
 	*UIEvent
 }
@@ -24677,6 +25306,7 @@ func (*TextEvent) GetLocale() (locale string) {
 	return locale
 }
 
+// js:"h,omit"
 type TextMetrics struct {
 }
 
@@ -24685,6 +25315,7 @@ func (*TextMetrics) GetWidth() (width float32) {
 	return width
 }
 
+// js:"h,omit"
 type TextTrack struct {
 	*EventTarget
 }
@@ -24768,6 +25399,7 @@ func (*TextTrack) GetReadyState() (readyState uint8) {
 	return readyState
 }
 
+// js:"h,omit"
 type TextTrackCue struct {
 	*EventTarget
 }
@@ -24845,6 +25477,7 @@ func (*TextTrackCue) GetTrack() (track *TextTrack) {
 	return track
 }
 
+// js:"h,omit"
 type TextTrackCueList struct {
 }
 
@@ -24863,6 +25496,7 @@ func (*TextTrackCueList) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type TextTrackList struct {
 	*EventTarget
 }
@@ -24886,6 +25520,7 @@ func (*TextTrackList) SetOnaddtrack(addtrack *TrackEvent) {
 	js.Rewrite("$<.onaddtrack = $1", addtrack)
 }
 
+// js:"h,omit"
 type TimeRanges struct {
 }
 
@@ -24904,6 +25539,7 @@ func (*TimeRanges) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type Touch struct {
 }
 
@@ -24947,6 +25583,7 @@ func (*Touch) GetTarget() (target *EventTarget) {
 	return target
 }
 
+// js:"h,omit"
 type TouchEvent struct {
 	*UIEvent
 }
@@ -25001,6 +25638,7 @@ func (*TouchEvent) GetWhich() (which uint8) {
 	return which
 }
 
+// js:"h,omit"
 type TouchList struct {
 }
 
@@ -25014,6 +25652,7 @@ func (*TouchList) GetLength() (length uint) {
 	return length
 }
 
+// js:"h,omit"
 type TrackEvent struct {
 	*Event
 }
@@ -25023,6 +25662,7 @@ func (*TrackEvent) GetTrack() (track interface{}) {
 	return track
 }
 
+// js:"h,omit"
 type TransitionEvent struct {
 	*Event
 }
@@ -25041,6 +25681,7 @@ func (*TransitionEvent) GetPropertyName() (propertyName string) {
 	return propertyName
 }
 
+// js:"h,omit"
 type TreeWalker struct {
 }
 
@@ -25108,6 +25749,7 @@ func (*TreeWalker) GetWhatToShow() (whatToShow uint) {
 	return whatToShow
 }
 
+// js:"h,omit"
 type UIEvent struct {
 	*Event
 }
@@ -25126,6 +25768,7 @@ func (*UIEvent) GetView() (view *Window) {
 	return view
 }
 
+// js:"h,omit"
 type UnviewableContentIdentifiedEvent struct {
 	*NavigationEventWithReferrer
 }
@@ -25135,6 +25778,7 @@ func (*UnviewableContentIdentifiedEvent) GetMediaType() (mediaType string) {
 	return mediaType
 }
 
+// js:"h,omit"
 type URL struct {
 }
 
@@ -25247,6 +25891,7 @@ func (*URL) SetUsername(username string) {
 	js.Rewrite("$<.username = $1", username)
 }
 
+// js:"h,omit"
 type ValidityState struct {
 }
 
@@ -25300,6 +25945,7 @@ func (*ValidityState) GetValueMissing() (valueMissing bool) {
 	return valueMissing
 }
 
+// js:"h,omit"
 type VideoPlaybackQuality struct {
 }
 
@@ -25328,6 +25974,7 @@ func (*VideoPlaybackQuality) GetTotalVideoFrames() (totalVideoFrames uint) {
 	return totalVideoFrames
 }
 
+// js:"h,omit"
 type VideoTrack struct {
 }
 
@@ -25373,6 +26020,7 @@ func (*VideoTrack) GetSourceBuffer() (sourceBuffer *SourceBuffer) {
 	return sourceBuffer
 }
 
+// js:"h,omit"
 type VideoTrackList struct {
 	*EventTarget
 }
@@ -25424,6 +26072,7 @@ func (*VideoTrackList) GetSelectedIndex() (selectedIndex int) {
 	return selectedIndex
 }
 
+// js:"h,omit"
 type WaveShaperNode struct {
 	*AudioNode
 }
@@ -25446,6 +26095,7 @@ func (*WaveShaperNode) SetOversample(oversample *OverSampleType) {
 	js.Rewrite("$<.oversample = $1", oversample)
 }
 
+// js:"h,omit"
 type WebAuthentication struct {
 }
 
@@ -25459,6 +26109,7 @@ func (*WebAuthentication) MakeCredential(accountInformation *Account, cryptoPara
 	return s
 }
 
+// js:"h,omit"
 type WebAuthnAssertion struct {
 }
 
@@ -25482,15 +26133,19 @@ func (*WebAuthnAssertion) GetSignature() (signature []byte) {
 	return signature
 }
 
+// js:"h,omit"
 type WEBGL_compressed_texture_s3tc struct {
 }
 
+// js:"h,omit"
 type WEBGL_debug_renderer_info struct {
 }
 
+// js:"h,omit"
 type WEBGL_depth_texture struct {
 }
 
+// js:"h,omit"
 type WebGLActiveInfo struct {
 }
 
@@ -25509,10 +26164,12 @@ func (*WebGLActiveInfo) GetType() (kind uint) {
 	return kind
 }
 
+// js:"h,omit"
 type WebGLBuffer struct {
 	*WebGLObject
 }
 
+// js:"h,omit"
 type WebGLContextEvent struct {
 	*Event
 }
@@ -25522,21 +26179,26 @@ func (*WebGLContextEvent) GetStatusMessage() (statusMessage string) {
 	return statusMessage
 }
 
+// js:"h,omit"
 type WebGLFramebuffer struct {
 	*WebGLObject
 }
 
+// js:"h,omit"
 type WebGLObject struct {
 }
 
+// js:"h,omit"
 type WebGLProgram struct {
 	*WebGLObject
 }
 
+// js:"h,omit"
 type WebGLRenderbuffer struct {
 	*WebGLObject
 }
 
+// js:"h,omit"
 type WebGLRenderingContext struct {
 }
 
@@ -26137,10 +26799,12 @@ func (*WebGLRenderingContext) GetDrawingBufferWidth() (drawingBufferWidth int) {
 	return drawingBufferWidth
 }
 
+// js:"h,omit"
 type WebGLShader struct {
 	*WebGLObject
 }
 
+// js:"h,omit"
 type WebGLShaderPrecisionFormat struct {
 }
 
@@ -26159,13 +26823,16 @@ func (*WebGLShaderPrecisionFormat) GetRangeMin() (rangeMin int) {
 	return rangeMin
 }
 
+// js:"h,omit"
 type WebGLTexture struct {
 	*WebGLObject
 }
 
+// js:"h,omit"
 type WebGLUniformLocation struct {
 }
 
+// js:"h,omit"
 type WebKitCSSMatrix struct {
 }
 
@@ -26416,6 +27083,7 @@ func (*WebKitCSSMatrix) SetM44(m44 float32) {
 	js.Rewrite("$<.m44 = $1", m44)
 }
 
+// js:"h,omit"
 type WebKitDirectoryEntry struct {
 	*WebKitEntry
 }
@@ -26425,6 +27093,7 @@ func (*WebKitDirectoryEntry) CreateReader() (w *WebKitDirectoryReader) {
 	return w
 }
 
+// js:"h,omit"
 type WebKitDirectoryReader struct {
 }
 
@@ -26432,6 +27101,7 @@ func (*WebKitDirectoryReader) ReadEntries(successCallback func(entries []*WebKit
 	js.Rewrite("$<.readEntries($1, $2)", successCallback, errorCallback)
 }
 
+// js:"h,omit"
 type WebKitEntry struct {
 }
 
@@ -26460,6 +27130,7 @@ func (*WebKitEntry) GetName() (name string) {
 	return name
 }
 
+// js:"h,omit"
 type WebKitFileEntry struct {
 	*WebKitEntry
 }
@@ -26468,6 +27139,7 @@ func (*WebKitFileEntry) File(successCallback func(file *File), errorCallback fun
 	js.Rewrite("$<.file($1, $2)", successCallback, errorCallback)
 }
 
+// js:"h,omit"
 type WebKitFileSystem struct {
 }
 
@@ -26481,6 +27153,7 @@ func (*WebKitFileSystem) GetRoot() (root *WebKitDirectoryEntry) {
 	return root
 }
 
+// js:"h,omit"
 type WebKitPoint struct {
 }
 
@@ -26502,10 +27175,12 @@ func (*WebKitPoint) SetY(y float32) {
 	js.Rewrite("$<.y = $1", y)
 }
 
+// js:"h,omit"
 type webkitRTCPeerConnection struct {
 	*RTCPeerConnection
 }
 
+// js:"h,omit"
 type WebSocket struct {
 	*EventTarget
 }
@@ -26588,6 +27263,7 @@ func (*WebSocket) GetURL() (url string) {
 	return url
 }
 
+// js:"h,omit"
 type WheelEvent struct {
 	*MouseEvent
 }
@@ -26635,6 +27311,7 @@ func (*WheelEvent) GetWheelDeltaY() (wheelDeltaY int) {
 	return wheelDeltaY
 }
 
+// js:"h,omit"
 type Window struct {
 	*EventTarget
 	*WindowTimers
@@ -27876,6 +28553,7 @@ func (*Window) GetWindow() (window *Window) {
 	return window
 }
 
+// js:"h,omit"
 type Worker struct {
 	*EventTarget
 	*AbstractWorker
@@ -27898,10 +28576,12 @@ func (*Worker) SetOnmessage(message *MessageEvent) {
 	js.Rewrite("$<.onmessage = $1", message)
 }
 
+// js:"h,omit"
 type XMLDocument struct {
 	*Document
 }
 
+// js:"h,omit"
 type XMLHttpRequest struct {
 	*EventTarget
 	*XMLHttpRequestEventTarget
@@ -28027,11 +28707,13 @@ func (*XMLHttpRequest) SetWithCredentials(withCredentials bool) {
 	js.Rewrite("$<.withCredentials = $1", withCredentials)
 }
 
+// js:"h,omit"
 type XMLHttpRequestUpload struct {
 	*EventTarget
 	*XMLHttpRequestEventTarget
 }
 
+// js:"h,omit"
 type XMLSerializer struct {
 }
 
@@ -28040,6 +28722,7 @@ func (*XMLSerializer) SerializeToString(target *Node) (s string) {
 	return s
 }
 
+// js:"h,omit"
 type XPathEvaluator struct {
 }
 
@@ -28058,6 +28741,7 @@ func (*XPathEvaluator) Evaluate(expression string, contextNode *Node, resolver *
 	return x
 }
 
+// js:"h,omit"
 type XPathExpression struct {
 }
 
@@ -28066,6 +28750,7 @@ func (*XPathExpression) Evaluate(contextNode *Node, kind uint8, result *XPathRes
 	return x
 }
 
+// js:"h,omit"
 type XPathNSResolver struct {
 }
 
@@ -28074,6 +28759,7 @@ func (*XPathNSResolver) LookupNamespaceURI(prefix string) (s string) {
 	return s
 }
 
+// js:"h,omit"
 type XPathResult struct {
 }
 
@@ -28122,6 +28808,7 @@ func (*XPathResult) GetStringValue() (stringValue string) {
 	return stringValue
 }
 
+// js:"h,omit"
 type XSLTProcessor struct {
 }
 
@@ -28160,6 +28847,7 @@ func (*XSLTProcessor) TransformToFragment(source *Node, document *Document) (d *
 	return d
 }
 
+// js:"h,omit"
 type AbstractWorker struct {
 }
 
@@ -28172,6 +28860,7 @@ func (*AbstractWorker) SetOnerror(e *Event) {
 	js.Rewrite("$<.onerror = $1", e)
 }
 
+// js:"h,omit"
 type Body struct {
 }
 
@@ -28200,6 +28889,7 @@ func (*Body) GetBodyUsed() (bodyUsed bool) {
 	return bodyUsed
 }
 
+// js:"h,omit"
 type CanvasPathMethods struct {
 }
 
@@ -28239,6 +28929,7 @@ func (*CanvasPathMethods) Rect(x float32, y float32, w float32, h float32) {
 	js.Rewrite("$<.rect($1, $2, $3, $4)", x, y, w, h)
 }
 
+// js:"h,omit"
 type ChildNode struct {
 }
 
@@ -28246,6 +28937,7 @@ func (*ChildNode) Remove() {
 	js.Rewrite("$<.remove()")
 }
 
+// js:"h,omit"
 type DocumentEvent struct {
 }
 
@@ -28254,6 +28946,7 @@ func (*DocumentEvent) CreateEvent(eventInterface string) (e *Event) {
 	return e
 }
 
+// js:"h,omit"
 type DOML2DeprecatedColorProperty struct {
 }
 
@@ -28266,6 +28959,7 @@ func (*DOML2DeprecatedColorProperty) SetColor(color string) {
 	js.Rewrite("$<.color = $1", color)
 }
 
+// js:"h,omit"
 type DOML2DeprecatedSizeProperty struct {
 }
 
@@ -28278,6 +28972,7 @@ func (*DOML2DeprecatedSizeProperty) SetSize(size int) {
 	js.Rewrite("$<.size = $1", size)
 }
 
+// js:"h,omit"
 type ElementTraversal struct {
 }
 
@@ -28306,6 +29001,7 @@ func (*ElementTraversal) GetPreviousElementSibling() (previousElementSibling *El
 	return previousElementSibling
 }
 
+// js:"h,omit"
 type GetSVGDocument struct {
 }
 
@@ -28314,6 +29010,7 @@ func (*GetSVGDocument) GetSVGDocument() (d *Document) {
 	return d
 }
 
+// js:"h,omit"
 type GlobalEventHandlers struct {
 }
 
@@ -28398,6 +29095,7 @@ func (*GlobalEventHandlers) SetOnwheel(e *Event) {
 	js.Rewrite("$<.onwheel = $1", e)
 }
 
+// js:"h,omit"
 type GlobalFetch struct {
 }
 
@@ -28406,6 +29104,7 @@ func (*GlobalFetch) Fetch(input *Request, init *RequestInit) (r *Response) {
 	return r
 }
 
+// js:"h,omit"
 type HTMLTableAlignment struct {
 }
 
@@ -28436,6 +29135,7 @@ func (*HTMLTableAlignment) SetVAlign(vAlign string) {
 	js.Rewrite("$<.vAlign = $1", vAlign)
 }
 
+// js:"h,omit"
 type IDBEnvironment struct {
 }
 
@@ -28444,6 +29144,7 @@ func (*IDBEnvironment) GetIndexedDB() (indexedDB *IDBFactory) {
 	return indexedDB
 }
 
+// js:"h,omit"
 type LinkStyle struct {
 }
 
@@ -28452,6 +29153,7 @@ func (*LinkStyle) GetSheet() (sheet *StyleSheet) {
 	return sheet
 }
 
+// js:"h,omit"
 type MSBaseReader struct {
 }
 
@@ -28523,6 +29225,7 @@ func (*MSBaseReader) GetResult() (result interface{}) {
 	return result
 }
 
+// js:"h,omit"
 type MSFileSaver struct {
 }
 
@@ -28536,6 +29239,7 @@ func (*MSFileSaver) MsSaveOrOpenBlob(blob interface{}, defaultName string) (b bo
 	return b
 }
 
+// js:"h,omit"
 type MSNavigatorDoNotTrack struct {
 }
 
@@ -28565,6 +29269,7 @@ func (*MSNavigatorDoNotTrack) StoreWebWideTrackingException(args *StoreException
 	js.Rewrite("$<.storeWebWideTrackingException($1)", args)
 }
 
+// js:"h,omit"
 type NavigatorBeacon struct {
 }
 
@@ -28573,6 +29278,7 @@ func (*NavigatorBeacon) SendBeacon(url string, data interface{}) (b bool) {
 	return b
 }
 
+// js:"h,omit"
 type NavigatorConcurrentHardware struct {
 }
 
@@ -28581,9 +29287,11 @@ func (*NavigatorConcurrentHardware) GetHardwareConcurrency() (hardwareConcurrenc
 	return hardwareConcurrency
 }
 
+// js:"h,omit"
 type NavigatorContentUtils struct {
 }
 
+// js:"h,omit"
 type NavigatorGeolocation struct {
 }
 
@@ -28592,6 +29300,7 @@ func (*NavigatorGeolocation) GetGeolocation() (geolocation *Geolocation) {
 	return geolocation
 }
 
+// js:"h,omit"
 type NavigatorID struct {
 }
 
@@ -28640,6 +29349,7 @@ func (*NavigatorID) GetVendorSub() (vendorSub string) {
 	return vendorSub
 }
 
+// js:"h,omit"
 type NavigatorOnLine struct {
 }
 
@@ -28648,9 +29358,11 @@ func (*NavigatorOnLine) GetOnLine() (onLine bool) {
 	return onLine
 }
 
+// js:"h,omit"
 type NavigatorStorageUtils struct {
 }
 
+// js:"h,omit"
 type NavigatorUserMedia struct {
 }
 
@@ -28663,19 +29375,25 @@ func (*NavigatorUserMedia) GetMediaDevices() (mediaDevices *MediaDevices) {
 	return mediaDevices
 }
 
-type NodeSelector struct {
+// js:"h,omit"
+type NodeSelector interface {
+	// js:"querySelector"
+	QuerySelector(selector string) (e *Element)
+	// js:"querySelectorAll"
+	QuerySelectorAll(selectors string) (n *NodeList)
 }
 
-func (*NodeSelector) QuerySelector(selectors string) (e *Element) {
-	js.Rewrite("$<.querySelector($1)", selectors)
-	return e
-}
+// func (*NodeSelector) QuerySelector(selectors string) (e *Element) {
+// 	js.Rewrite("$<.querySelector($1)", selectors)
+// 	return e
+// }
 
-func (*NodeSelector) QuerySelectorAll(selectors string) (n *NodeList) {
-	js.Rewrite("$<.querySelectorAll($1)", selectors)
-	return n
-}
+// func (*NodeSelector) QuerySelectorAll(selectors string) (n *NodeList) {
+// 	js.Rewrite("$<.querySelectorAll($1)", selectors)
+// 	return n
+// }
 
+// js:"h,omit"
 type RandomSource struct {
 }
 
@@ -28684,6 +29402,7 @@ func (*RandomSource) GetRandomValues(array []byte) (b []byte) {
 	return b
 }
 
+// js:"h,omit"
 type SVGAnimatedPoints struct {
 }
 
@@ -28697,6 +29416,7 @@ func (*SVGAnimatedPoints) GetPoints() (points *SVGPointList) {
 	return points
 }
 
+// js:"h,omit"
 type SVGFilterPrimitiveStandardAttributes struct {
 }
 
@@ -28725,6 +29445,7 @@ func (*SVGFilterPrimitiveStandardAttributes) GetY() (y *SVGAnimatedLength) {
 	return y
 }
 
+// js:"h,omit"
 type SVGFitToViewBox struct {
 }
 
@@ -28738,6 +29459,7 @@ func (*SVGFitToViewBox) GetViewBox() (viewBox *SVGAnimatedRect) {
 	return viewBox
 }
 
+// js:"h,omit"
 type SVGTests struct {
 }
 
@@ -28761,6 +29483,7 @@ func (*SVGTests) GetSystemLanguage() (systemLanguage *SVGStringList) {
 	return systemLanguage
 }
 
+// js:"h,omit"
 type SVGURIReference struct {
 }
 
@@ -28769,6 +29492,7 @@ func (*SVGURIReference) GetHref() (href *SVGAnimatedString) {
 	return href
 }
 
+// js:"h,omit"
 type WindowBase64 struct {
 }
 
@@ -28782,6 +29506,7 @@ func (*WindowBase64) Btoa(rawString string) (s string) {
 	return s
 }
 
+// js:"h,omit"
 type WindowConsole struct {
 }
 
@@ -28790,6 +29515,7 @@ func (*WindowConsole) GetConsole() (console *Console) {
 	return console
 }
 
+// js:"h,omit"
 type WindowLocalStorage struct {
 }
 
@@ -28798,6 +29524,7 @@ func (*WindowLocalStorage) GetLocalStorage() (localStorage *Storage) {
 	return localStorage
 }
 
+// js:"h,omit"
 type WindowSessionStorage struct {
 }
 
@@ -28806,6 +29533,7 @@ func (*WindowSessionStorage) GetSessionStorage() (sessionStorage *Storage) {
 	return sessionStorage
 }
 
+// js:"h,omit"
 type WindowTimers struct {
 	*WindowTimersExtension
 }
@@ -28828,6 +29556,7 @@ func (*WindowTimers) SetTimeout(handler interface{}, timeout interface{}, args i
 	return i
 }
 
+// js:"h,omit"
 type WindowTimersExtension struct {
 }
 
@@ -28840,6 +29569,7 @@ func (*WindowTimersExtension) SetImmediate(expression interface{}, args interfac
 	return i
 }
 
+// js:"h,omit"
 type XMLHttpRequestEventTarget struct {
 }
 
