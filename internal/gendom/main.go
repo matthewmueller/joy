@@ -15,7 +15,7 @@ import (
 func main() {
 	log.SetHandler(text.New(os.Stderr))
 
-	dom := path.Join("..", "dom", "browser.webidl.xml")
+	dom := path.Join("inputs", "browser.webidl.xml")
 	src, err := ioutil.ReadFile(dom)
 	if err != nil {
 		log.WithError(err).Fatalf("error reading file")
