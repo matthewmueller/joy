@@ -9,12 +9,11 @@ import (
 var _ Method = (*method)(nil)
 
 // NewMethod creates a new method
-func NewMethod(index index.Index, data *raw.Method, receiver def.Definition, comment string) Method {
+func NewMethod(index index.Index, data *raw.Method, receiver def.Definition) Method {
 	return &method{
-		index:   index,
-		data:    data,
-		comment: comment,
-		recv:    receiver,
+		index: index,
+		data:  data,
+		recv:  receiver,
 	}
 }
 
@@ -33,7 +32,7 @@ type method struct {
 }
 
 func (d *method) ID() string {
-	return ""
+	return d.recv.Name() + " " + d.data.Name
 }
 
 func (d *method) Name() string {

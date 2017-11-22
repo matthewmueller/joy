@@ -9,12 +9,11 @@ import (
 var _ Property = (*prop)(nil)
 
 // NewProperty creates a new property
-func NewProperty(index index.Index, data *raw.Method, receiver def.Definition, comment string) Property {
-	return &method{
-		index:   index,
-		data:    data,
-		comment: comment,
-		recv:    receiver,
+func NewProperty(index index.Index, data *raw.Property, receiver def.Definition) Property {
+	return &prop{
+		index: index,
+		data:  data,
+		recv:  receiver,
 	}
 }
 
@@ -25,7 +24,7 @@ type Property interface {
 
 // prop struct
 type prop struct {
-	data *raw.Method
+	data *raw.Property
 
 	index   index.Index
 	comment string
@@ -33,7 +32,7 @@ type prop struct {
 }
 
 func (d *prop) ID() string {
-	return ""
+	return d.recv.Name() + " " + d.data.Name
 }
 
 func (d *prop) Name() string {

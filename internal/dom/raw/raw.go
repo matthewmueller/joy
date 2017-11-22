@@ -25,6 +25,8 @@ type Method struct {
 	Setter                   bool    `xml:"setter,attr"`
 	DoNotCheckDomainSecurity bool    `xml:"do-not-check-domain-security,attr"`
 	Params                   []Param `xml:"param"`
+
+	Comment string
 }
 
 // Constant struct
@@ -90,6 +92,8 @@ type Property struct {
 	PropertyDescriptorNotConfigurable bool   `xml:"property-descriptor-not-configurable,attr"`
 	DoNotCheckDomainSecurity          bool   `xml:"do-not-check-domain-security,attr"`
 	Unforgeable                       bool   `xml:"unforgeable,attr"`
+
+	Comment string
 }
 
 // Param struct

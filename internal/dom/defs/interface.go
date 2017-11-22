@@ -24,6 +24,8 @@ func NewInterface(index index.Index, data *raw.Interface) Interface {
 // Interface interface
 type Interface interface {
 	ImplementedBy() ([]def.Definition, error)
+	Properties() []def.Definition
+	Methods() []def.Definition
 
 	def.Definition
 }
@@ -79,6 +81,20 @@ func (d *iface) ImplementedBy() (imps []def.Definition, err error) {
 	return imps, nil
 }
 
+func (d *iface) Methods() (methods []def.Definition) {
+	for _, method := range d.data.Methods {
+		methods = append(methods, NewMethod(d.index, method, d))
+	}
+	return methods
+}
+
+func (d *iface) Properties() (props []def.Definition) {
+	for _, prop := range d.data.Properties {
+		props = append(props, NewProperty(d.index, prop, d))
+	}
+	return props
+}
+
 // Parents fn
 func (d *iface) Parents() (parents []def.Definition, err error) {
 	if d.data.Extends != "" && d.data.Extends != "Object" {
@@ -99,11 +115,6 @@ func (d *iface) Parents() (parents []def.Definition, err error) {
 
 	return parents, nil
 }
-
-// // Ancestors fn
-// func (d *iface) Ancestors() []def.Definition {
-// 	return nil
-// }
 
 // Children fn
 func (d *iface) Children() (defs []def.Definition, err error) {
@@ -204,6 +215,7 @@ func (d *iface) Generate() (string, error) {
 	name := d.data.Name
 	data := interfaceData{}
 	data.Name = name
+
 	// pkgname := gen.Lowercase(d.InterfaceName)
 
 	imps, err := d.ImplementedBy()

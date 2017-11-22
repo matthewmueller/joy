@@ -6,18 +6,18 @@ import (
 	"github.com/matthewmueller/golly/internal/dom/raw"
 )
 
-var _ Typedef = (*typedef)(nil)
+var _ TypeDef = (*typedef)(nil)
 
-// NewTypedef fn
-func NewTypedef(index index.Index, data *raw.Method) Typedef {
-	return &method{
+// NewTypeDef fn
+func NewTypeDef(index index.Index, data *raw.TypeDef) TypeDef {
+	return &typedef{
 		index: index,
 		data:  data,
 	}
 }
 
-// Typedef interface
-type Typedef interface {
+// TypeDef interface
+type TypeDef interface {
 	def.Definition
 }
 

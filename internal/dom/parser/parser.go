@@ -5,8 +5,10 @@ import (
 	"encoding/xml"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/matthewmueller/golly/internal/dom/def"
+	"github.com/matthewmueller/golly/internal/dom/defs"
 	"github.com/matthewmueller/golly/internal/dom/index"
 	"github.com/matthewmueller/golly/internal/dom/raw"
 	"github.com/pkg/errors"
@@ -81,75 +83,77 @@ func Parse(api string, doc string) ([]def.Definition, error) {
 		if doc == nil {
 			continue
 		}
+
+		for _, m := range iface.Methods {
+			if i, isset := methodmap[name+" "+m.Name]; isset {
+				m.Comment = strings.Trim(doc.Members.Methods[i].Comment, "/* \r\n\t/")
+			}
+		}
+
+		for _, m := range iface.Properties {
+			if i, isset := propmap[name+" "+m.Name]; isset {
+				m.Comment = strings.Trim(doc.Members.Properties[i].Comment, "/* \r\n\t/")
+			}
+		}
 	}
-
-	// 	for _, m := range iface.Methods {
-	// 		if i, isset := methodmap[name+" "+m.Name]; isset {
-	// 			m.Comment = doc.Members.Methods[i].Comment
-	// 		}
-	// 	}
-
-	// 	for _, m := range iface.Properties {
-	// 		if i, isset := propmap[name+" "+m.Name]; isset {
-	// 			m.Comment = doc.Members.Properties[i].Comment
-	// 		}
-	// 	}
-	// }
 
 	idx := index.Index{}
 
 	// add to the index
-	// for _, d := range a.CallbackFunctions {
+	for _, d := range a.CallbackFunctions {
+		def := defs.NewCallback(idx, d)
+		if idx[def.ID()] != nil {
+			return nil, fmt.Errorf("def already exists: %s", def.ID())
+		}
+		idx[def.ID()] = def
+	}
 
-	// 	if idx[d.ID()] != nil {
-	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
-	// 	}
-	// 	d.Index = idx
-	// 	idx[d.ID()] = d
-	// }
-	// for _, d := range a.CallbackInterfaces {
-	// 	if idx[d.ID()] != nil {
-	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
-	// 	}
-	// 	d.Index = idx
-	// 	idx[d.ID()] = d
-	// }
-	// for _, d := range a.Dictionaries {
-	// 	if idx[d.ID()] != nil {
-	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
-	// 	}
-	// 	d.Index = idx
-	// 	idx[d.ID()] = d
-	// }
-	// for _, d := range a.Enums {
-	// 	if idx[d.ID()] != nil {
-	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
-	// 	}
-	// 	d.Index = idx
-	// 	idx[d.ID()] = d
-	// }
-	// for _, d := range a.Interfaces {
-	// 	if idx[d.ID()] != nil {
-	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
-	// 	}
-	// 	d.Index = idx
-	// 	idx[d.ID()] = d
-	// }
+	for _, d := range a.CallbackInterfaces {
+		def := defs.NewCallbackInterface(idx, d)
+		if idx[def.ID()] != nil {
+			return nil, fmt.Errorf("def already exists: %s", def.ID())
+		}
+		idx[def.ID()] = def
+	}
 
-	// for _, d := range a.MixinInterfaces {
-	// 	if idx[d.ID()] != nil {
-	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
-	// 	}
-	// 	d.Index = idx
-	// 	idx[d.ID()] = d
-	// }
-	// for _, d := range a.TypeDefs {
-	// 	if idx[d.ID()] != nil {
-	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
-	// 	}
-	// 	d.Index = idx
-	// 	idx[d.ID()] = d
-	// }
+	for _, d := range a.Dictionaries {
+		def := defs.NewDictionary(idx, d)
+		if idx[def.ID()] != nil {
+			return nil, fmt.Errorf("def already exists: %s", def.ID())
+		}
+		idx[def.ID()] = def
+	}
+
+	for _, d := range a.Enums {
+		def := defs.NewEnum(idx, d)
+		if idx[def.ID()] != nil {
+			return nil, fmt.Errorf("def already exists: %s", def.ID())
+		}
+		idx[def.ID()] = def
+	}
+
+	for _, d := range a.TypeDefs {
+		def := defs.NewTypeDef(idx, d)
+		if idx[def.ID()] != nil {
+			return nil, fmt.Errorf("def already exists: %s", def.ID())
+		}
+	}
+
+	for _, d := range a.Interfaces {
+		def := defs.NewInterface(idx, d)
+		if idx[def.ID()] != nil {
+			return nil, fmt.Errorf("def already exists: %s", def.ID())
+		}
+		idx[def.ID()] = def
+	}
+
+	for _, d := range a.MixinInterfaces {
+		def := defs.NewInterface(idx, d)
+		if idx[def.ID()] != nil {
+			return nil, fmt.Errorf("def already exists: %s", def.ID())
+		}
+		idx[def.ID()] = def
+	}
 
 	return sortDefs(idx), nil
 }
