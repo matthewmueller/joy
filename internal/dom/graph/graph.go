@@ -38,10 +38,53 @@ func (g *Graph) Edge(parent Node, child Node) {
 	g.edges[parent.ID()][child.ID()] = true
 }
 
-// Toposort sorts topologically
-func (g *Graph) Toposort(node Node) (sorted []string) {
+// ToposortBy sorts topologically
+func (g *Graph) ToposortBy(node Node) (sorted []string) {
 	sorted = g.dfs(node, nil)
 	return sorted
+}
+
+// Toposort sorts topologically
+func (g *Graph) Toposort() (sorted []string, hasCycles bool) {
+	reversed := g.reverse()
+	var roots []string
+	for _, node := range reversed.nodes {
+		if len(reversed.edges[node.ID()]) == 0 {
+			roots = append(roots, node.ID())
+		}
+	}
+
+	clone := g.Clone()
+	for len(roots) > 0 {
+		root := roots[0]
+		roots = roots[1:]
+		sorted = append(sorted, root)
+		for child := range clone.edges[root] {
+			delete(clone.edges[root], child)
+			if len(clone.edges[root]) == 0 {
+				sorted = append(sorted, child)
+			}
+		}
+	}
+
+	for parent := range clone.edges {
+		if len(clone.edges[parent]) > 0 {
+			return sorted, true
+		}
+	}
+
+	return sorted, false
+}
+
+// Clone the graph
+func (g *Graph) Clone() *Graph {
+	clone := New()
+	for parent, children := range g.edges {
+		for child := range children {
+			clone.Edge(g.nodes[parent], g.nodes[child])
+		}
+	}
+	return clone
 }
 
 // Cliques gets the circular subgraphs
@@ -115,32 +158,15 @@ func (g *Graph) Cliques() (cliques [][]Node) {
 
 // reverse the edge direction of our graph
 func (g *Graph) reverse() *Graph {
-	edges := map[string]map[string]bool{}
+	clone := New()
+
 	for parent, children := range g.edges {
 		for child := range children {
-			if edges[child] == nil {
-				edges[child] = map[string]bool{}
-			}
-			edges[child][parent] = true
+			clone.Edge(g.nodes[child], g.nodes[parent])
 		}
 	}
 
-	// for parent, children := range g.edges {
-	// 	for child := range children {
-	// 		log.Infof("edges %s -> %s", parent, child)
-	// 	}
-	// }
-	// log.Infof("reversed")
-	// for parent, children := range edges {
-	// 	for child := range children {
-	// 		log.Infof("edges %s -> %s", parent, child)
-	// 	}
-	// }
-
-	return &Graph{
-		nodes: g.nodes,
-		edges: edges,
-	}
+	return clone
 }
 
 func (g *Graph) dfs(node Node, visited map[string]bool) (order []string) {

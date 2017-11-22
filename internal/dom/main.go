@@ -8,16 +8,24 @@ import (
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/graph"
 	"github.com/matthewmueller/golly/internal/dom/parser"
-	"github.com/pkg/errors"
 )
 
 var browserAPIURL = "https://rawgit.com/Microsoft/TSJS-lib-generator/master/inputfiles/browser.webidl.xml"
 var browserDocsURL = "https://rawgit.com/Microsoft/TSJS-lib-generator/master/inputfiles/comments.json"
 
-//
-// var packages = map[string][]string {
-// 	"dom":
-// }
+// manually selected package names for the cliques
+var cliques = map[string]string{
+	"IntersectionObserver": "intersectionobserver",
+	"MutationObserver":     "mutationobserver",
+	"MimeType":             "mimetype",
+	"Window":               "window",
+	"MediaQueryList":       "mediaquery",
+	"IDBDatabase":          "idb",
+	"VideoTrack":           "avtrack",
+	"TextTrack":            "texttrack",
+	"MSHTMLWebViewElement": "mswebviewelement",
+	"SVGUseElement":        "svguseelement",
+}
 
 func generate() error {
 	xml, err := curl.XML(browserAPIURL)
@@ -36,90 +44,23 @@ func generate() error {
 	}
 
 	g := graph.New()
-	visited := map[string]bool{}
-	queue := []def.Definition{}
-	// start with enums
-
-	queue = append(queue,
-		definitions["Attr"],
-		definitions["CharacterData"],
-		definitions["ChildNode"],
-		definitions["Comment"],
-		definitions["CustomEvent"],
-		definitions["Document"],
-		definitions["DocumentFragment"],
-		definitions["DocumentType"],
-		definitions["DOMError"],
-		definitions["DOMException"],
-		definitions["DOMImplementation"],
-		definitions["DOMSettableTokenList"],
-		definitions["DOMStringList"],
-		definitions["DOMTokenList"],
-		definitions["Element"],
-		definitions["Event"],
-		definitions["EventTarget"],
-		definitions["HTMLCollection"],
-		definitions["MutationObserver"],
-		definitions["MutationRecord"],
-		definitions["NamedNodeMap"],
-		definitions["Node"],
-		definitions["NodeFilter"],
-		definitions["NodeIterator"],
-		definitions["NodeList"],
-		definitions["ProcessingInstruction"],
-		definitions["Selection"],
-		definitions["Range"],
-		definitions["Text"],
-		definitions["TimeRanges"],
-		definitions["TreeWalker"],
-		definitions["URL"],
-		definitions["Window"],
-		definitions["Worker"],
-		definitions["XMLDocument"],
-	)
-
-	for _, def := range queue {
-		visited[def.ID()] = true
-	}
-
-	for len(queue) > 0 {
-		// dequeue
-		d := queue[0]
-		queue = queue[1:]
-
-		deps, err := d.Dependencies()
+	for _, parent := range definitions {
+		deps, err := parent.Dependencies()
 		if err != nil {
-			return errors.Wrap(err, "deps")
+			return err
 		}
-		deps = unique(deps)
-
-		// add the dependencies to the graph
-		for _, dep := range deps {
-			g.Edge(d, dep)
-
-			// queue up any dependency that hasn't
-			// already been visited
-			if !visited[dep.ID()] {
-				queue = append(queue, dep)
-				visited[d.ID()] = true
-			}
+		for _, child := range deps {
+			g.Edge(parent, child)
 		}
 	}
-
-	// def := definitions["Element"]
-	// deps, err := def.Dependencies()
-	// if err != nil {
-	// 	return errors.Wrap(err, "error getting deps")
-	// }
-	// for _, dep := range deps {
-	// 	log.Infof(dep.Name())
-	// }
 
 	cliques := g.Cliques()
 	for _, clique := range cliques {
-		log.Infof("clique len(%d)", len(clique))
-		for _, def := range clique {
-			log.Infof("def=%s", def.ID())
+		if len(clique) > 1 {
+			log.Infof("clique len(%d)", len(clique))
+			for _, def := range clique {
+				log.Infof("def=%s", def.ID())
+			}
 		}
 	}
 
