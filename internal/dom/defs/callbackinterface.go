@@ -54,7 +54,7 @@ func (d *cbiface) Kind() string {
 // }
 
 // Children fn
-func (d *cbiface) Children() (defs []def.Definition, err error) {
+func (d *cbiface) Dependencies() (defs []def.Definition, err error) {
 	for _, method := range d.data.Methods {
 		for _, param := range method.Params {
 			if def := d.index.Find(param.Type); def != nil {

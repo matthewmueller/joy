@@ -52,8 +52,8 @@ func (d *typedef) Kind() string {
 // 	return nil
 // }
 
-// Children fn
-func (d *typedef) Children() (defs []def.Definition, err error) {
+// Dependencies fn
+func (d *typedef) Dependencies() (defs []def.Definition, err error) {
 	if def := d.index.Find(d.data.Type); def != nil {
 		defs = append(defs, def)
 	}

@@ -16,7 +16,7 @@ func NewDictionary(index index.Index, data *raw.Dictionary) Dictionary {
 	}
 }
 
-// Callback interface
+// Dictionary interface
 type Dictionary interface {
 	def.Definition
 }
@@ -54,7 +54,7 @@ func (d *dict) Kind() string {
 // }
 
 // Children fn
-func (d *dict) Children() (defs []def.Definition, err error) {
+func (d *dict) Dependencies() (defs []def.Definition, err error) {
 	for _, member := range d.data.Members {
 		if def := d.index.Find(member.Type); def != nil {
 			defs = append(defs, def)

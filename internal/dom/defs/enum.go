@@ -54,7 +54,7 @@ func (d *enum) Kind() string {
 // }
 
 // Children fn
-func (d *enum) Children() (defs []def.Definition, err error) {
+func (d *enum) Dependencies() (defs []def.Definition, err error) {
 	return defs, nil
 }
 

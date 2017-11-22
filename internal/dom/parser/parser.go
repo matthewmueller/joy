@@ -43,7 +43,7 @@ type docs struct {
 }
 
 // Parse the data
-func Parse(api string, doc string) ([]def.Definition, error) {
+func Parse(api string, doc string) (map[string]def.Definition, error) {
 	var a apis
 	if e := xml.Unmarshal([]byte(api), &a); e != nil {
 		return nil, errors.Wrap(e, "error parsing xml")
@@ -155,7 +155,7 @@ func Parse(api string, doc string) ([]def.Definition, error) {
 		idx[def.ID()] = def
 	}
 
-	return sortDefs(idx), nil
+	return idx, nil
 }
 
 func sortDefs(m map[string]def.Definition) (sorted []def.Definition) {

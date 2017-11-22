@@ -26,6 +26,7 @@ type Interface interface {
 	ImplementedBy() ([]def.Definition, error)
 	Properties() []def.Definition
 	Methods() []def.Definition
+	FindEvent(name string) (def.Definition, error)
 
 	def.Definition
 }
@@ -116,8 +117,16 @@ func (d *iface) Parents() (parents []def.Definition, err error) {
 	return parents, nil
 }
 
-// Children fn
-func (d *iface) Children() (defs []def.Definition, err error) {
+// Dependencies fn
+func (d *iface) Dependencies() (defs []def.Definition, err error) {
+	// imps, err := d.ImplementedBy()
+	// if err != nil {
+	// 	return defs, err
+	// }
+	// if len(imps) > 0 {
+	// 	return defs, nil
+	// }
+
 	if d.data.Constructor != nil {
 		for _, param := range d.data.Constructor.Params {
 			if def := d.index.Find(param.Type); def != nil {
@@ -134,65 +143,29 @@ func (d *iface) Children() (defs []def.Definition, err error) {
 		}
 	}
 
-	for _, method := range d.data.Methods {
-		for _, param := range method.Params {
-			if def := d.index.Find(param.Type); def != nil {
-				defs = append(defs, def)
-			}
+	for _, method := range d.Methods() {
+		deps, err := method.Dependencies()
+		if err != nil {
+			return defs, errors.Wrap(err, "method deps")
 		}
-		if def := d.index.Find(method.Type); def != nil {
-			defs = append(defs, def)
-		}
+		defs = append(defs, deps...)
 	}
 
-	for _, prop := range d.data.Properties {
-		if prop.Type == "EventHandler" {
-			def, err := d.findEvent(prop.EventHandler)
-			if err != nil {
-				return defs, err
-			} else if def != nil {
-				defs = append(defs, def)
-			}
-			continue
+	for _, prop := range d.Properties() {
+		deps, err := prop.Dependencies()
+		if err != nil {
+			return defs, errors.Wrap(err, "method deps")
 		}
-
-		if def := d.index.Find(prop.Type); def != nil {
-			defs = append(defs, def)
-		}
+		defs = append(defs, deps...)
 	}
 
-	for _, event := range d.data.Events {
-		if def := d.index.Find(event.Type); def != nil {
-			defs = append(defs, def)
-		}
-	}
+	// for _, event := range d.data.Events {
+	// 	if def := d.index.Find(event.Type); def != nil {
+	// 		defs = append(defs, def)
+	// 	}
+	// }
 
 	return defs, nil
-}
-
-// find the event, traversing up if necessary
-func (d *iface) findEvent(name string) (def.Definition, error) {
-	for _, event := range d.data.Events {
-		if event.Name == name {
-			if e, isset := d.index[event.Type]; isset {
-				return e, nil
-			}
-		}
-	}
-
-	parents, err := d.Parents()
-	if err != nil {
-		return nil, err
-	}
-
-	for _, parent := range parents {
-		if t, ok := parent.(*iface); ok {
-			return t.findEvent(name)
-		}
-	}
-
-	// return the default event
-	return d.index["Event"], nil
 }
 
 type interfaceData struct {
@@ -224,8 +197,15 @@ func (d *iface) Generate() (string, error) {
 	}
 
 	if len(imps) > 0 {
-
 		log.Infof("implemented=%s", d.Name())
+	}
+
+	parents, err := d.Parents()
+	if err != nil {
+		return "", err
+	}
+	for _, def := range parents {
+		log.Infof("name=%s d=%s", d.Name(), def.ID())
 	}
 
 	// for _, method := range d.Methods {
@@ -288,4 +268,29 @@ func (d *iface) Generate() (string, error) {
 	// {{ . }}
 	// {{- end }}
 	// `)
+}
+
+// find the event, traversing up if necessary
+func (d *iface) FindEvent(name string) (def.Definition, error) {
+	for _, event := range d.data.Events {
+		if event.Name == name {
+			if e, isset := d.index[event.Type]; isset {
+				return e, nil
+			}
+		}
+	}
+
+	parents, err := d.Parents()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, parent := range parents {
+		if t, ok := parent.(*iface); ok {
+			return t.FindEvent(name)
+		}
+	}
+
+	// return the default event
+	return d.index["Event"], nil
 }

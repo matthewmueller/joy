@@ -9,7 +9,7 @@ import (
 var _ Method = (*method)(nil)
 
 // NewMethod creates a new method
-func NewMethod(index index.Index, data *raw.Method, receiver def.Definition) Method {
+func NewMethod(index index.Index, data *raw.Method, receiver Interface) Method {
 	return &method{
 		index: index,
 		data:  data,
@@ -28,7 +28,7 @@ type method struct {
 
 	index   index.Index
 	comment string
-	recv    def.Definition
+	recv    Interface
 }
 
 func (d *method) ID() string {
@@ -47,8 +47,16 @@ func (d *method) Generate() (string, error) {
 	return "", nil
 }
 
-// Children fn
-func (d *method) Children() (defs []def.Definition, e error) {
+// Dependencies fn
+func (d *method) Dependencies() (defs []def.Definition, e error) {
+	for _, param := range d.data.Params {
+		if def := d.index.Find(param.Type); def != nil {
+			defs = append(defs, def)
+		}
+	}
+	if def := d.index.Find(d.data.Type); def != nil {
+		defs = append(defs, def)
+	}
 	return defs, nil
 }
 
