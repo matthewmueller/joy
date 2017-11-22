@@ -64,26 +64,6 @@ func (d *cb) GetFile() string {
 	return d.file
 }
 
-// // Parents cb
-// func (d *Dictionary) Parents() []def.Definition {
-// 	return nil
-// }
-
-// // Ancestors cb
-// func (d *Dictionary) Ancestors() []def.Definition {
-// 	return nil
-// }
-
-// Children cb
-// func (d *cb) Children() (defs []def.Definition, err error) {
-// 	for _, param := range d.data.Params {
-// 		if def := d.index.Find(param.Type); def != nil {
-// 			defs = append(defs, def)
-// 		}
-// 	}
-// 	return defs, nil
-// }
-
 func (d *cb) Dependencies() (defs []def.Definition, err error) {
 	for _, param := range d.data.Params {
 		if def := d.index.Find(param.Type); def != nil {

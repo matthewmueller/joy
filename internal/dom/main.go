@@ -94,22 +94,17 @@ func generate(dir string) error {
 	}
 
 	for id, def := range definitions {
-		// if id != "window" {
-		// 	continue
-		// }
-
-		log.Infof("package %s", id)
-
 		code, err := def.Generate()
 		if err != nil {
 			return errors.Wrapf(err, "error generating %s", id)
 		}
 
-		if err := os.MkdirAll(path.Join(dir, def.GetPackage()), 0755); err != nil {
+		pkgpath := path.Join(dir, def.GetPackage())
+		if err := os.MkdirAll(pkgpath, 0755); err != nil {
 			return errors.Wrapf(err, "error mkdir")
 		}
 
-		if err := ioutil.WriteFile(def.GetFile()+".go", []byte(code), 0644); err != nil {
+		if err := ioutil.WriteFile(path.Join(pkgpath, def.GetFile()+".go"), []byte(code), 0644); err != nil {
 			return errors.Wrapf(err, "error writefile")
 		}
 	}

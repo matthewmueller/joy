@@ -64,7 +64,6 @@ func (d *enum) GetFile() string {
 	return d.file
 }
 
-
 // // Parents fn
 // func (d *Enum) Parents() []def.Definition {
 // 	return nil
@@ -82,5 +81,17 @@ func (d *enum) Dependencies() (defs []def.Definition, err error) {
 
 // Generate fn
 func (d *enum) Generate() (string, error) {
-	return gen.Generate("enum/"+d.data.Name, d.data, `type {{ .Name }} string`)
+	data := struct {
+		Package string
+		Name    string
+	}{
+		Package: d.pkg,
+		Name:    d.data.Name,
+	}
+
+	return gen.Generate("enum/"+d.data.Name, data, `
+		package {{ .Package }}
+
+		type {{ .Name }} string
+	`)
 }

@@ -79,11 +79,6 @@ func (d *dict) Parents() (parents []def.Definition, err error) {
 	return parents, nil
 }
 
-// // Ancestors fn
-// func (d *dict) Ancestors() []def.Definition {
-// 	return nil
-// }
-
 // Children fn
 func (d *dict) Dependencies() (defs []def.Definition, err error) {
 	for _, member := range d.data.Members {
@@ -97,11 +92,13 @@ func (d *dict) Dependencies() (defs []def.Definition, err error) {
 // Generate fn
 func (d *dict) Generate() (string, error) {
 	data := struct {
+		Package string
 		Name    string
 		Embeds  []string
 		Members []string
 	}{
-		Name: gen.Capitalize(d.data.Name),
+		Package: d.pkg,
+		Name:    gen.Capitalize(d.data.Name),
 	}
 
 	// Handle embeds
@@ -122,6 +119,8 @@ func (d *dict) Generate() (string, error) {
 	}
 
 	return gen.Generate("dictionary/"+d.data.Name, data, `
+		package {{ .Package }}
+
 		type {{ .Name }} struct {
 			{{ range .Embeds }}
 			{{ . }}

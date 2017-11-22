@@ -76,7 +76,6 @@ func (d *iface) GetFile() string {
 	return d.file
 }
 
-
 // ImplementedBy fn
 // TODO: fix, this is really inefficient
 func (d *iface) ImplementedBy() (imps []def.Definition, err error) {
@@ -192,12 +191,14 @@ func (d *iface) Dependencies() (defs []def.Definition, err error) {
 // Generate fn
 func (d *iface) Generate() (string, error) {
 	data := struct {
+		Package    string
 		Name       string
 		Embeds     []string
 		Methods    []string
 		Properties []string
 	}{
-		Name: gen.Capitalize(d.data.Name),
+		Package: d.pkg,
+		Name:    gen.Capitalize(d.data.Name),
 	}
 
 	imps, err := d.ImplementedBy()
@@ -208,6 +209,8 @@ func (d *iface) Generate() (string, error) {
 	if len(imps) > 0 {
 		log.Infof("use interface=%s", d.Name())
 		return gen.Generate("interface/"+d.data.Name, data, `
+		package {{ .Package }}
+
 		type {{ .Name }} interface {
 
 		}
@@ -242,6 +245,8 @@ func (d *iface) Generate() (string, error) {
 	}
 
 	return gen.Generate("interface/"+d.data.Name, data, `
+		package {{ .Package }}
+		
 		type {{ .Name }} struct {
 			{{- range .Embeds }}
 			{{ . }}

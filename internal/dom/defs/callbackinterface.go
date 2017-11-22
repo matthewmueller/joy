@@ -66,16 +66,6 @@ func (d *cbiface) GetFile() string {
 	return d.file
 }
 
-// // Parents fn
-// func (d *Dictionary) Parents() []def.Definition {
-// 	return nil
-// }
-
-// // Ancestors fn
-// func (d *Dictionary) Ancestors() []def.Definition {
-// 	return nil
-// }
-
 // Children fn
 func (d *cbiface) Dependencies() (defs []def.Definition, err error) {
 	for _, method := range d.data.Methods {

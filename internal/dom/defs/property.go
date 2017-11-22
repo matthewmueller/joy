@@ -67,7 +67,6 @@ func (d *prop) GetFile() string {
 	return d.file
 }
 
-
 // Dependencies fn
 func (d *prop) Dependencies() (defs []def.Definition, err error) {
 	if d.data.Type == "EventHandler" {
