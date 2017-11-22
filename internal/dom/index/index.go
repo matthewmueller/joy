@@ -43,7 +43,7 @@ var overrides = map[string]string{
 	"UnrestrictedDouble":  "float32",
 	"Float32Array":        "[]float32",
 
-	"void": "void",
+	"void": "",
 
 	"object":       "interface{}",
 	"any":          "interface{}",
@@ -74,13 +74,13 @@ var resequence = regexp.MustCompile(`sequence<([\w<>]+)>`)
 var repromise = regexp.MustCompile(`Promise<([\w<>]+)>`)
 
 // Coerce the type
-func (i Index) Coerce(kind string) string {
+func (i Index) Coerce(kind string) (string, error) {
 	kind = strings.TrimSpace(kind)
 	isSlice := false
 
 	// TODO: handle unions better
 	if strings.Contains(kind, " or ") {
-		return "interface{}"
+		return "interface{}", nil
 	}
 
 	matches := repromise.FindStringSubmatch(kind)
@@ -94,16 +94,16 @@ func (i Index) Coerce(kind string) string {
 		kind = matches[1]
 	}
 
-	if overrides[kind] == "" {
-		kind = gen.Pointer(kind)
-	} else {
+	if _, isset := overrides[kind]; isset {
 		kind = overrides[kind]
+	} else {
+		kind = gen.Pointer(kind)
 	}
 
 	if isSlice {
-		return "[]" + kind
+		return "[]" + kind, nil
 	}
-	return kind
+	return kind, nil
 }
 
 // Find a definition by it's type

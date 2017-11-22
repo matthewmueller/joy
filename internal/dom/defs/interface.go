@@ -34,6 +34,8 @@ type Interface interface {
 // iface struct
 type iface struct {
 	data *raw.Interface
+	pkg  string
+	file string
 
 	index         index.Index
 	implementedBy []def.Definition
@@ -55,6 +57,25 @@ func (d *iface) Name() string {
 func (d *iface) Kind() string {
 	return "INTERFACE"
 }
+
+func (d *iface) Type() (string, error) {
+	return d.index.Coerce(d.data.Name)
+}
+
+func (d *iface) SetPackage(pkg string) {
+	d.pkg = pkg
+}
+func (d *iface) GetPackage() string {
+	return d.pkg
+}
+
+func (d *iface) SetFile(file string) {
+	d.file = file
+}
+func (d *iface) GetFile() string {
+	return d.file
+}
+
 
 // ImplementedBy fn
 // TODO: fix, this is really inefficient
@@ -168,106 +189,73 @@ func (d *iface) Dependencies() (defs []def.Definition, err error) {
 	return defs, nil
 }
 
-type interfaceData struct {
-	Name       string
-	Extends    string
-	Implements []string
-	Methods    []string
-	Properties []string
-}
-
-type methodData struct {
-	Recv   string
-	Name   string
-	Params []gen.Vartype
-	Result gen.Vartype
-}
-
 // Generate fn
 func (d *iface) Generate() (string, error) {
-	name := d.data.Name
-	data := interfaceData{}
-	data.Name = name
-
-	// pkgname := gen.Lowercase(d.InterfaceName)
+	data := struct {
+		Name       string
+		Embeds     []string
+		Methods    []string
+		Properties []string
+	}{
+		Name: gen.Capitalize(d.data.Name),
+	}
 
 	imps, err := d.ImplementedBy()
 	if err != nil {
 		return "", errors.Wrap(err, "implemented by")
 	}
-
+	// ignore for now
 	if len(imps) > 0 {
-		log.Infof("implemented=%s", d.Name())
+		log.Infof("use interface=%s", d.Name())
+		return gen.Generate("interface/"+d.data.Name, data, `
+		type {{ .Name }} interface {
+
+		}
+		`)
 	}
 
+	// Handle embeds
 	parents, err := d.Parents()
 	if err != nil {
-		return "", err
+		return "", errors.Wrapf(err, "error getting parents")
 	}
-	for _, def := range parents {
-		log.Infof("name=%s d=%s", d.Name(), def.ID())
+	for _, parent := range parents {
+		data.Embeds = append(data.Embeds, parent.Name())
 	}
 
-	// for _, method := range d.Methods {
-	// 	m, e := method.Generate()
-	// }
+	// handle methods
+	for _, method := range d.Methods() {
+		m, err := method.Generate()
+		if err != nil {
+			return "", errors.Wrapf(err, "error generating method")
+		}
+		data.Methods = append(data.Methods, m)
+	}
 
-	return "", nil
+	// handle properties
+	for _, property := range d.Properties() {
+		m, err := property.Generate()
+		if err != nil {
+			return "", errors.Wrapf(err, "error generating property")
+		}
+		data.Properties = append(data.Properties, m)
+	}
 
-	// 	recv := i
-	// 	if implementor != nil {
-	// 		recv = implementor
-	// 	}
+	return gen.Generate("interface/"+d.data.Name, data, `
+		type {{ .Name }} struct {
+			{{- range .Embeds }}
+			{{ . }}
+			{{- end }}
+		}
 
-	// 	if d.Extends != "" && d.Extends != "Object" {
-	// 		data.Extends = gen.Pointer(findPackage(idx, pkgname, d.Extends))
-	// 	}
+		{{ range .Methods -}}
+		{{ . }}
+		{{- end }}
 
-	// 	for _, imp := range d.Implements {
-	// 		data.Implements = append(data.Implements, gen.Pointer(findPackage(idx, pkgname, imp)))
-	// 	}
-
-	// 	for _, method := range d.Methods {
-	// 		if method == nil {
-	// 			continue
-	// 		}
-
-	// 		m, e := method.Generate(idx, recv)
-	// 		if e != nil {
-	// 			return "", e
-	// 		}
-	// 		data.Methods = append(data.Methods, m)
-	// 	}
-
-	// 	for _, property := range d.Properties {
-	// 		if property == nil {
-	// 			continue
-	// 		}
-
-	// 		m, e := property.Generate(idx, recv)
-	// 		if e != nil {
-	// 			return "", e
-	// 		}
-	// 		data.Properties = append(data.Properties, m)
-	// 	}
-
-	// 	return gen.Generate("interface/"+d.Name, data, `
-	// type {{ .Name }} struct {
-	// 	{{ .Extends }}
-
-	// 	{{- range .Implements }}
-	// 	{{ . }}
-	// 	{{- end }}
-	// }
-
-	// {{ range .Methods -}}
-	// {{ . }}
-	// {{- end }}
-
-	// {{ range .Properties -}}
-	// {{ . }}
-	// {{- end }}
-	// `)
+		{{ range .Properties -}}
+		{{ . }}
+		{{- end }}
+	`)
 }
 
 // find the event, traversing up if necessary

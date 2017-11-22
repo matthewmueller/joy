@@ -238,7 +238,7 @@ func (m *Method) Generate(idx *index, recv *Interface) (string, error) {
 			}
 
 			data.Params = append(data.Params, gen.Vartype{
-				Var:  gen.Name(param.Name),
+				Var:  gen.Identifier(param.Name),
 				Type: t,
 			})
 			continue
@@ -253,7 +253,7 @@ func (m *Method) Generate(idx *index, recv *Interface) (string, error) {
 			}
 
 			data.Params = append(data.Params, gen.Vartype{
-				Var:  gen.Name(param.Name),
+				Var:  gen.Identifier(param.Name),
 				Type: t,
 			})
 			continue
@@ -265,7 +265,7 @@ func (m *Method) Generate(idx *index, recv *Interface) (string, error) {
 		}
 
 		data.Params = append(data.Params, gen.Vartype{
-			Var:  gen.Name(param.Name),
+			Var:  gen.Identifier(param.Name),
 			Type: t,
 		})
 	}
@@ -321,7 +321,7 @@ type paramData struct {
 // Generate fn
 func (p *Param) Generate(idx *index, recv *Interface) (string, error) {
 	data := paramData{}
-	data.Name = gen.Name(p.Name)
+	data.Name = gen.Identifier(p.Name)
 	pkgname := gen.Lowercase(recv.Name)
 
 	t, e := coerce(idx, pkgname, p.Type)
@@ -368,7 +368,7 @@ func (p *Property) Generate(idx *index, recv *Interface) (string, error) {
 		}
 
 		data.Result = gen.Vartype{
-			Var:  gen.Name(n),
+			Var:  gen.Identifier(n),
 			Type: t,
 		}
 	} else if idx.CallbackFunctions[p.Type] != nil {
@@ -379,7 +379,7 @@ func (p *Property) Generate(idx *index, recv *Interface) (string, error) {
 		}
 
 		data.Result = gen.Vartype{
-			Var:  gen.Name(fn.Name),
+			Var:  gen.Identifier(fn.Name),
 			Type: t,
 		}
 	} else {
@@ -388,7 +388,7 @@ func (p *Property) Generate(idx *index, recv *Interface) (string, error) {
 			return "", e
 		}
 		data.Result = gen.Vartype{
-			Var:  gen.Name(p.Name),
+			Var:  gen.Identifier(p.Name),
 			Type: t,
 		}
 	}
@@ -486,7 +486,7 @@ type memberData struct {
 // Generate fn
 func (m *Member) Generate(idx *index) (string, error) {
 	data := memberData{}
-	data.Name = gen.Name(m.Name)
+	data.Name = gen.Identifier(m.Name)
 
 	t, e := coerce(idx, "dom", m.Type)
 	if e != nil {

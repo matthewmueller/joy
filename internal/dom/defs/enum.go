@@ -4,6 +4,7 @@ import (
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/index"
 	"github.com/matthewmueller/golly/internal/dom/raw"
+	"github.com/matthewmueller/golly/internal/gen"
 )
 
 var _ Enum = (*enum)(nil)
@@ -24,6 +25,8 @@ type Enum interface {
 // Enum struct
 type enum struct {
 	data *raw.Enum
+	pkg  string
+	file string
 
 	index index.Index
 }
@@ -43,6 +46,25 @@ func (d *enum) Kind() string {
 	return "ENUM"
 }
 
+func (d *enum) Type() (string, error) {
+	return d.index.Coerce(d.data.Name)
+}
+
+func (d *enum) SetPackage(pkg string) {
+	d.pkg = pkg
+}
+func (d *enum) GetPackage() string {
+	return d.pkg
+}
+
+func (d *enum) SetFile(file string) {
+	d.file = file
+}
+func (d *enum) GetFile() string {
+	return d.file
+}
+
+
 // // Parents fn
 // func (d *Enum) Parents() []def.Definition {
 // 	return nil
@@ -60,6 +82,5 @@ func (d *enum) Dependencies() (defs []def.Definition, err error) {
 
 // Generate fn
 func (d *enum) Generate() (string, error) {
-	// gen.Generate()
-	return "", nil
+	return gen.Generate("enum/"+d.data.Name, d.data, `type {{ .Name }} string`)
 }

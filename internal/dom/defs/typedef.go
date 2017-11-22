@@ -23,6 +23,8 @@ type TypeDef interface {
 
 type typedef struct {
 	data *raw.TypeDef
+	pkg  string
+	file string
 
 	index index.Index
 }
@@ -40,6 +42,24 @@ func (d *typedef) Name() string {
 // Kind fn
 func (d *typedef) Kind() string {
 	return "TYPEDEF"
+}
+
+func (d *typedef) Type() (string, error) {
+	return d.index.Coerce(d.data.NewType)
+}
+
+func (d *typedef) SetPackage(pkg string) {
+	d.pkg = pkg
+}
+func (d *typedef) GetPackage() string {
+	return d.pkg
+}
+
+func (d *typedef) SetFile(file string) {
+	d.file = file
+}
+func (d *typedef) GetFile() string {
+	return d.file
 }
 
 // // Parents fn

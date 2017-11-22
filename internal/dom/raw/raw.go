@@ -112,15 +112,18 @@ type Enum struct {
 
 // Dictionary struct
 type Dictionary struct {
-	Name    string `xml:"name,attr"`
-	Extends string `xml:"extends,attr"`
-	Members []struct {
-		Name     string `xml:"name,attr"`
-		Type     string `xml:"type,attr,omitempty"`
-		Required bool   `xml:"required,attr,omitempty"`
-		Default  string `xml:"default,attr,omitempty"`
-		Nullable bool   `xml:"nullable,attr,omitempty"`
-	} `xml:"members>member"`
+	Name    string    `xml:"name,attr"`
+	Extends string    `xml:"extends,attr"`
+	Members []*Member `xml:"members>member"`
+}
+
+// Member struct
+type Member struct {
+	Name     string `xml:"name,attr"`
+	Type     string `xml:"type,attr,omitempty"`
+	Required bool   `xml:"required,attr,omitempty"`
+	Default  string `xml:"default,attr,omitempty"`
+	Nullable bool   `xml:"nullable,attr,omitempty"`
 }
 
 // TypeDef struct

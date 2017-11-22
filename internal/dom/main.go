@@ -3,18 +3,25 @@
 package main
 
 import (
+	"io/ioutil"
+	"os"
+	"path"
+
 	"github.com/apex/log"
+	"github.com/apex/log/handlers/text"
 	"github.com/matthewmueller/golly/internal/dom/curl"
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/graph"
 	"github.com/matthewmueller/golly/internal/dom/parser"
+	"github.com/matthewmueller/golly/internal/gen"
+	"github.com/pkg/errors"
 )
 
 var browserAPIURL = "https://rawgit.com/Microsoft/TSJS-lib-generator/master/inputfiles/browser.webidl.xml"
 var browserDocsURL = "https://rawgit.com/Microsoft/TSJS-lib-generator/master/inputfiles/comments.json"
 
 // manually selected package names for the cliques
-var cliques = map[string]string{
+var cliqueNames = map[string]string{
 	"IntersectionObserver": "intersectionobserver",
 	"MutationObserver":     "mutationobserver",
 	"MimeType":             "mimetype",
@@ -27,7 +34,7 @@ var cliques = map[string]string{
 	"SVGUseElement":        "svguseelement",
 }
 
-func generate() error {
+func generate(dir string) error {
 	xml, err := curl.XML(browserAPIURL)
 	if err != nil {
 		return err
@@ -54,49 +61,58 @@ func generate() error {
 		}
 	}
 
+	// generate the packages
 	cliques := g.Cliques()
 	for _, clique := range cliques {
-		if len(clique) > 1 {
-			log.Infof("clique len(%d)", len(clique))
-			for _, def := range clique {
-				log.Infof("def=%s", def.ID())
+		if len(clique) == 1 {
+			name := clique[0].ID()
+			pkgname := gen.Lowercase(name)
+			def := definitions[name]
+			def.SetPackage(pkgname)
+			def.SetFile(pkgname)
+			continue
+		}
+
+		pkgname := ""
+		for _, def := range clique {
+			if cliqueNames[def.ID()] != "" {
+				pkgname = cliqueNames[def.ID()]
+				break
 			}
+		}
+		if pkgname == "" {
+			return errors.New("clique name is not defined")
+		}
+
+		for _, def := range clique {
+			name := def.ID()
+			filename := gen.Lowercase(name)
+			def := definitions[name]
+			def.SetPackage(pkgname)
+			def.SetFile(filename)
 		}
 	}
 
-	// for _, d := range definitions {
-	// 	if t.
-	// 	if t, ok := d.(defs.Interface); ok {
-	// 		if t.Name() != "Window" {
-	// 			continue
-	// 		}
+	for id, def := range definitions {
+		// if id != "window" {
+		// 	continue
+		// }
 
-	// 		queue = append(queue, t)
-	// 		visited[t.ID()] = true
+		log.Infof("package %s", id)
 
-	// 		// imps, e := t.ImplementedBy()
-	// 		// if e != nil {
-	// 		// 	return e
-	// 		// }
-	// 		// if len(imps) > 0 {
-	// 		// 	fmt.Println("implements=%s", t.Name())
-	// 		// }
-	// 		str, err := t.Generate()
-	// 		if err != nil {
-	// 			return errors.Wrap(err, "error generating")
-	// 		}
-	// 		fmt.Println(str)
-	// 	}
-	// 	// children, err := d.Children()
-	// 	// if err != nil {
-	// 	// 	return err
-	// 	// }
-	// 	// _ = children
-	// 	// log.Infof("got children %d", )
-	// }
+		code, err := def.Generate()
+		if err != nil {
+			return errors.Wrapf(err, "error generating %s", id)
+		}
 
-	// attr := idx["Attr"]
-	// log.Infof("attr %+v", attr.Children())
+		if err := os.MkdirAll(path.Join(dir, def.GetPackage()), 0755); err != nil {
+			return errors.Wrapf(err, "error mkdir")
+		}
+
+		if err := ioutil.WriteFile(def.GetFile()+".go", []byte(code), 0644); err != nil {
+			return errors.Wrapf(err, "error writefile")
+		}
+	}
 
 	return nil
 }
@@ -116,7 +132,14 @@ func unique(defs []def.Definition) []def.Definition {
 }
 
 func main() {
-	if e := generate(); e != nil {
+	log.SetHandler(text.New(os.Stderr))
+
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.WithError(err).Fatalf("error getting cwd")
+	}
+
+	if e := generate(path.Join(pwd, "dom2")); e != nil {
 		log.WithError(e).Fatalf("error generating")
 	}
 }

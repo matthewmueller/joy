@@ -13,8 +13,9 @@ type File struct {
 
 // Vartype struct
 type Vartype struct {
-	Var  string
-	Type string
+	Var      string
+	Type     string
+	Optional bool
 }
 
 // Generate function
