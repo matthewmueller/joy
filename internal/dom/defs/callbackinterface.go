@@ -3,31 +3,43 @@ package defs
 import (
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/index"
+	"github.com/matthewmueller/golly/internal/dom/raw"
 )
 
-var _ def.Definition = (*CallbackInterface)(nil)
+var _ CallbackInterface = (*cbiface)(nil)
 
-// CallbackInterface struct
-type CallbackInterface struct {
-	CallbackInterfaceName string   `xml:"name,attr"`
-	Extends               string   `xml:"extends,attr"`
-	Methods               []Method `xml:"methods>method"`
+// NewCallbackInterface create a callback
+func NewCallbackInterface(index index.Index, data *raw.CallbackInterface) CallbackInterface {
+	return &cbiface{
+		data:  data,
+		index: index,
+	}
+}
 
-	Index index.Index
+// CallbackInterface interface
+type CallbackInterface interface {
+	def.Definition
+}
+
+// cbiface struct
+type cbiface struct {
+	data *raw.CallbackInterface
+
+	index index.Index
 }
 
 // ID fn
-func (d *CallbackInterface) ID() string {
-	return d.CallbackInterfaceName
+func (d *cbiface) ID() string {
+	return d.data.Name
 }
 
 // Name fn
-func (d *CallbackInterface) Name() string {
-	return d.CallbackInterfaceName
+func (d *cbiface) Name() string {
+	return d.data.Name
 }
 
 // Kind fn
-func (d *CallbackInterface) Kind() string {
+func (d *cbiface) Kind() string {
 	return "CALLBACK_INTERFACE"
 }
 
@@ -42,6 +54,21 @@ func (d *CallbackInterface) Kind() string {
 // }
 
 // Children fn
-func (d *CallbackInterface) Children() (defs []def.Definition, err error) {
+func (d *cbiface) Children() (defs []def.Definition, err error) {
+	for _, method := range d.data.Methods {
+		for _, param := range method.Params {
+			if def := d.index.Find(param.Type); def != nil {
+				defs = append(defs, def)
+			}
+		}
+		if def := d.index.Find(method.Type); def != nil {
+			defs = append(defs, def)
+		}
+	}
 	return defs, nil
+}
+
+// Generate fn
+func (d *cbiface) Generate() (string, error) {
+	return "", nil
 }

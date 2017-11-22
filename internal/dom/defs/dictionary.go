@@ -3,51 +3,67 @@ package defs
 import (
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/index"
+	"github.com/matthewmueller/golly/internal/dom/raw"
 )
 
-var _ def.Definition = (*Dictionary)(nil)
+var _ Dictionary = (*dict)(nil)
 
-// Dictionary struct
-type Dictionary struct {
-	DictionaryName string `xml:"name,attr"`
-	Extends        string `xml:"extends,attr"`
-	Members        []struct {
-		Name     string `xml:"name,attr"`
-		Type     string `xml:"type,attr,omitempty"`
-		Required bool   `xml:"required,attr,omitempty"`
-		Default  string `xml:"default,attr,omitempty"`
-		Nullable bool   `xml:"nullable,attr,omitempty"`
-	} `xml:"members>member"`
+// NewDictionary create a callback
+func NewDictionary(index index.Index, data *raw.Dictionary) Dictionary {
+	return &dict{
+		data:  data,
+		index: index,
+	}
+}
 
-	Index index.Index
+// Callback interface
+type Dictionary interface {
+	def.Definition
+}
+
+// dict struct
+type dict struct {
+	data *raw.Dictionary
+
+	index index.Index
 }
 
 // ID fn
-func (d *Dictionary) ID() string {
-	return d.DictionaryName
+func (d *dict) ID() string {
+	return d.data.Name
 }
 
 // Name fn
-func (d *Dictionary) Name() string {
-	return d.DictionaryName
+func (d *dict) Name() string {
+	return d.data.Name
 }
 
 // Kind fn
-func (d *Dictionary) Kind() string {
+func (d *dict) Kind() string {
 	return "DICTIONARY"
 }
 
 // // Parents fn
-// func (d *Dictionary) Parents() []def.Definition {
+// func (d *dict) Parents() []def.Definition {
 // 	return nil
 // }
 
 // // Ancestors fn
-// func (d *Dictionary) Ancestors() []def.Definition {
+// func (d *dict) Ancestors() []def.Definition {
 // 	return nil
 // }
 
 // Children fn
-func (d *Dictionary) Children() (defs []def.Definition, err error) {
+func (d *dict) Children() (defs []def.Definition, err error) {
+	for _, member := range d.data.Members {
+		if def := d.index.Find(member.Type); def != nil {
+			defs = append(defs, def)
+		}
+	}
 	return defs, nil
+}
+
+// Generate fn
+func (d *dict) Generate() (string, error) {
+	return "", nil
 }

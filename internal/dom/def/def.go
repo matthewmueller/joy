@@ -5,7 +5,6 @@ type Definition interface {
 	ID() string
 	Name() string
 	Kind() string
-	// Parents() []Definition
-	// Ancestors() []Definition
+	Generate() (string, error)
 	Children() ([]Definition, error)
 }

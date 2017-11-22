@@ -7,20 +7,20 @@ import (
 	"sort"
 
 	"github.com/matthewmueller/golly/internal/dom/def"
-	"github.com/matthewmueller/golly/internal/dom/defs"
 	"github.com/matthewmueller/golly/internal/dom/index"
+	"github.com/matthewmueller/golly/internal/dom/raw"
 	"github.com/pkg/errors"
 )
 
 // apis struct
 type apis struct {
-	CallbackFunctions  []*defs.Callback          `xml:"callback-functions>callback-function"`
-	CallbackInterfaces []*defs.CallbackInterface `xml:"callback-interfaces>interface"`
-	Dictionaries       []*defs.Dictionary        `xml:"dictionaries>dictionary"`
-	Enums              []*defs.Enum              `xml:"enums>enum"`
-	Interfaces         []*defs.Interface         `xml:"interfaces>interface"`
-	MixinInterfaces    []*defs.Interface         `xml:"mixin-interfaces>interface"`
-	TypeDefs           []*defs.TypeDef           `xml:"typedefs>typedef"`
+	CallbackFunctions  []*raw.Callback          `xml:"callback-functions>callback-function"`
+	CallbackInterfaces []*raw.CallbackInterface `xml:"callback-interfaces>interface"`
+	Dictionaries       []*raw.Dictionary        `xml:"dictionaries>dictionary"`
+	Enums              []*raw.Enum              `xml:"enums>enum"`
+	Interfaces         []*raw.Interface         `xml:"interfaces>interface"`
+	MixinInterfaces    []*raw.Interface         `xml:"mixin-interfaces>interface"`
+	TypeDefs           []*raw.TypeDef           `xml:"typedefs>typedef"`
 }
 
 // docs
@@ -52,9 +52,9 @@ func Parse(api string, doc string) ([]def.Definition, error) {
 		return nil, errors.Wrap(e, "error parsing json")
 	}
 
-	docmap := map[string]int{}
 	methodmap := map[string]int{}
 	propmap := map[string]int{}
+	docmap := map[string]int{}
 	for i, iface := range d.Interfaces {
 		if _, isset := docmap[iface.Name]; isset {
 			return nil, fmt.Errorf("duplicate doc %s", iface.Name)
@@ -71,7 +71,7 @@ func Parse(api string, doc string) ([]def.Definition, error) {
 
 	// add in the documentation if it's present
 	for _, iface := range a.Interfaces {
-		name := iface.InterfaceName
+		name := iface.Name
 
 		docidx, isset := docmap[name]
 		if !isset {
@@ -81,51 +81,75 @@ func Parse(api string, doc string) ([]def.Definition, error) {
 		if doc == nil {
 			continue
 		}
-
-		for _, m := range iface.Methods {
-			if i, isset := methodmap[name+" "+m.Name]; isset {
-				m.Comment = doc.Members.Methods[i].Comment
-			}
-		}
-
-		for _, m := range iface.Properties {
-			if i, isset := propmap[name+" "+m.Name]; isset {
-				m.Comment = doc.Members.Properties[i].Comment
-			}
-		}
 	}
+
+	// 	for _, m := range iface.Methods {
+	// 		if i, isset := methodmap[name+" "+m.Name]; isset {
+	// 			m.Comment = doc.Members.Methods[i].Comment
+	// 		}
+	// 	}
+
+	// 	for _, m := range iface.Properties {
+	// 		if i, isset := propmap[name+" "+m.Name]; isset {
+	// 			m.Comment = doc.Members.Properties[i].Comment
+	// 		}
+	// 	}
+	// }
 
 	idx := index.Index{}
 
 	// add to the index
-	for _, d := range a.CallbackFunctions {
-		d.Index = idx
-		idx[d.ID()] = d
-	}
-	for _, d := range a.CallbackInterfaces {
-		d.Index = idx
-		idx[d.ID()] = d
-	}
-	for _, d := range a.Dictionaries {
-		d.Index = idx
-		idx[d.ID()] = d
-	}
-	for _, d := range a.Enums {
-		d.Index = idx
-		idx[d.ID()] = d
-	}
-	for _, d := range a.Interfaces {
-		d.Index = idx
-		idx[d.ID()] = d
-	}
-	for _, d := range a.MixinInterfaces {
-		d.Index = idx
-		idx[d.ID()] = d
-	}
-	for _, d := range a.TypeDefs {
-		d.Index = idx
-		idx[d.ID()] = d
-	}
+	// for _, d := range a.CallbackFunctions {
+
+	// 	if idx[d.ID()] != nil {
+	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
+	// 	}
+	// 	d.Index = idx
+	// 	idx[d.ID()] = d
+	// }
+	// for _, d := range a.CallbackInterfaces {
+	// 	if idx[d.ID()] != nil {
+	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
+	// 	}
+	// 	d.Index = idx
+	// 	idx[d.ID()] = d
+	// }
+	// for _, d := range a.Dictionaries {
+	// 	if idx[d.ID()] != nil {
+	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
+	// 	}
+	// 	d.Index = idx
+	// 	idx[d.ID()] = d
+	// }
+	// for _, d := range a.Enums {
+	// 	if idx[d.ID()] != nil {
+	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
+	// 	}
+	// 	d.Index = idx
+	// 	idx[d.ID()] = d
+	// }
+	// for _, d := range a.Interfaces {
+	// 	if idx[d.ID()] != nil {
+	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
+	// 	}
+	// 	d.Index = idx
+	// 	idx[d.ID()] = d
+	// }
+
+	// for _, d := range a.MixinInterfaces {
+	// 	if idx[d.ID()] != nil {
+	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
+	// 	}
+	// 	d.Index = idx
+	// 	idx[d.ID()] = d
+	// }
+	// for _, d := range a.TypeDefs {
+	// 	if idx[d.ID()] != nil {
+	// 		return nil, fmt.Errorf("def already exists: %s", d.ID())
+	// 	}
+	// 	d.Index = idx
+	// 	idx[d.ID()] = d
+	// }
 
 	return sortDefs(idx), nil
 }

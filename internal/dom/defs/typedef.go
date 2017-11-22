@@ -3,30 +3,42 @@ package defs
 import (
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/index"
+	"github.com/matthewmueller/golly/internal/dom/raw"
 )
 
-var _ def.Definition = (*TypeDef)(nil)
+var _ Typedef = (*typedef)(nil)
 
-// TypeDef struct
-type TypeDef struct {
-	NewType string `xml:"new-type,attr"`
-	Type    string `xml:"type,attr"`
+// NewTypedef fn
+func NewTypedef(index index.Index, data *raw.Method) Typedef {
+	return &method{
+		index: index,
+		data:  data,
+	}
+}
 
-	Index index.Index
+// Typedef interface
+type Typedef interface {
+	def.Definition
+}
+
+type typedef struct {
+	data *raw.TypeDef
+
+	index index.Index
 }
 
 // ID fn
-func (d *TypeDef) ID() string {
-	return d.NewType
+func (d *typedef) ID() string {
+	return d.data.NewType
 }
 
 // Name fn
-func (d *TypeDef) Name() string {
-	return d.NewType
+func (d *typedef) Name() string {
+	return d.data.NewType
 }
 
 // Kind fn
-func (d *TypeDef) Kind() string {
+func (d *typedef) Kind() string {
 	return "TYPEDEF"
 }
 
@@ -41,6 +53,13 @@ func (d *TypeDef) Kind() string {
 // }
 
 // Children fn
-func (d *TypeDef) Children() (defs []def.Definition, err error) {
+func (d *typedef) Children() (defs []def.Definition, err error) {
+	if def := d.index.Find(d.data.Type); def != nil {
+		defs = append(defs, def)
+	}
 	return defs, nil
+}
+
+func (d *typedef) Generate() (string, error) {
+	return "", nil
 }

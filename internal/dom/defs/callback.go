@@ -3,46 +3,66 @@ package defs
 import (
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/index"
+	"github.com/matthewmueller/golly/internal/dom/raw"
 )
 
-var _ def.Definition = (*Callback)(nil)
+var _ Callback = (*cb)(nil)
 
-// Callback struct
-type Callback struct {
-	CallbackName string  `xml:"name,attr"`
-	Callback     bool    `xml:"callback,attr,omitempty"`
-	Type         string  `xml:"type,attr"`
-	Params       []Param `xml:"param"`
-
-	Index index.Index
+// NewCallback create a callback
+func NewCallback(index index.Index, data *raw.Callback) Callback {
+	return &cb{
+		data:  data,
+		index: index,
+	}
 }
 
-// ID fn
-func (d *Callback) ID() string {
-	return d.CallbackName
+// Callback interface
+type Callback interface {
+	def.Definition
 }
 
-// Name fn
-func (d *Callback) Name() string {
-	return d.CallbackName
+// cb struct
+type cb struct {
+	data *raw.Callback
+
+	index index.Index
 }
 
-// Kind fn
-func (d *Callback) Kind() string {
+// ID cb
+func (d *cb) ID() string {
+	return d.data.Name
+}
+
+// Name cb
+func (d *cb) Name() string {
+	return d.data.Name
+}
+
+// Kind cb
+func (d *cb) Kind() string {
 	return "CALLBACK"
 }
 
-// // Parents fn
+// // Parents cb
 // func (d *Dictionary) Parents() []def.Definition {
 // 	return nil
 // }
 
-// // Ancestors fn
+// // Ancestors cb
 // func (d *Dictionary) Ancestors() []def.Definition {
 // 	return nil
 // }
 
-// Children fn
-func (d *Callback) Children() (defs []def.Definition, err error) {
+// Children cb
+func (d *cb) Children() (defs []def.Definition, err error) {
+	for _, param := range d.data.Params {
+		if def := d.index.Find(param.Type); def != nil {
+			defs = append(defs, def)
+		}
+	}
 	return defs, nil
+}
+
+func (d *cb) Generate() (string, error) {
+	return "", nil
 }

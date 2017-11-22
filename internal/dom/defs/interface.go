@@ -3,60 +3,96 @@ package defs
 import (
 	"fmt"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/index"
+	"github.com/matthewmueller/golly/internal/dom/raw"
+	"github.com/matthewmueller/golly/internal/gen"
+	"github.com/pkg/errors"
 )
 
-var _ def.Definition = (*Interface)(nil)
+var _ Interface = (*iface)(nil)
 
-// Interface struct
-type Interface struct {
-	InterfaceName              string                        `xml:"name,attr"`
-	Extends                    string                        `xml:"extends,attr"`
-	Implements                 []string                      `xml:"implements,omitempty"`
-	NoInterfaceObject          bool                          `xml:"no-interface-object,attr"`
-	Element                    []*Element                    `xml:"element"`
-	Methods                    []*Method                     `xml:"methods>method"`
-	AnonymousMethods           []*Method                     `xml:"anonymous-methods>method"`
-	Properties                 []*Property                   `xml:"properties>property"`
-	Constants                  []*Constant                   `xml:"constants>constant"`
-	Constructor                *Constructor                  `xml:"constructor,omitempty"`
-	NamedConstructor           *NamedConstructor             `xml:"named-constructor"`
-	Events                     []*Event                      `xml:"events>event"`
-	AnonymousContentAttributes []*AnonymousContentAttributes `xml:"anonymous-content-attributes>parsedattribute"`
-
-	Index index.Index
+// NewInterface creates an interface
+func NewInterface(index index.Index, data *raw.Interface) Interface {
+	return &iface{
+		data:  data,
+		index: index,
+	}
 }
 
-// ID fnw
-func (d *Interface) ID() string {
-	return d.InterfaceName
+// Interface interface
+type Interface interface {
+	ImplementedBy() ([]def.Definition, error)
+
+	def.Definition
+}
+
+// iface struct
+type iface struct {
+	data *raw.Interface
+
+	index         index.Index
+	implementedBy []def.Definition
+	methods       []def.Definition
+	properties    []def.Definition
+}
+
+// ID fn
+func (d *iface) ID() string {
+	return d.data.Name
 }
 
 // Name fn
-func (d *Interface) Name() string {
-	return d.InterfaceName
+func (d *iface) Name() string {
+	return d.data.Name
 }
 
 // Kind fn
-func (d *Interface) Kind() string {
+func (d *iface) Kind() string {
 	return "INTERFACE"
 }
 
+// ImplementedBy fn
+// TODO: fix, this is really inefficient
+func (d *iface) ImplementedBy() (imps []def.Definition, err error) {
+	if d.implementedBy != nil {
+		return d.implementedBy, nil
+	}
+
+	for _, def := range d.index {
+		if t, ok := def.(*iface); ok {
+			parents, err := t.Parents()
+			if err != nil {
+				return imps, err
+			}
+
+			for _, p := range parents {
+				if p.ID() == d.ID() {
+					imps = append(imps, t)
+				}
+			}
+		}
+	}
+
+	d.implementedBy = imps
+	return imps, nil
+}
+
 // Parents fn
-func (d *Interface) Parents() (parents []def.Definition, err error) {
-	if d.Extends != "" && d.Extends != "Object" {
-		parent, isset := d.Index[d.Extends]
+func (d *iface) Parents() (parents []def.Definition, err error) {
+	if d.data.Extends != "" && d.data.Extends != "Object" {
+		parent, isset := d.index[d.data.Extends]
 		if !isset {
-			return parents, fmt.Errorf("extends doesn't exist %s on %s", d.Extends, d.InterfaceName)
+			return parents, fmt.Errorf("extends doesn't exist %s on %s", d.data.Extends, d.data.Name)
 		}
 		parents = append(parents, parent)
 	}
 
-	for _, imp := range d.Implements {
-		parent, isset := d.Index[imp]
+	for _, imp := range d.data.Implements {
+		parent, isset := d.index[imp]
 		if !isset {
-			return parents, fmt.Errorf("implements doesn't exist %s on %s", imp, d.InterfaceName)
+			return parents, fmt.Errorf("implements doesn't exist %s on %s", imp, d.data.Name)
 		}
 		parents = append(parents, parent)
 	}
@@ -65,40 +101,40 @@ func (d *Interface) Parents() (parents []def.Definition, err error) {
 }
 
 // // Ancestors fn
-// func (d *Interface) Ancestors() []def.Definition {
+// func (d *iface) Ancestors() []def.Definition {
 // 	return nil
 // }
 
 // Children fn
-func (d *Interface) Children() (defs []def.Definition, err error) {
-	if d.Constructor != nil {
-		for _, param := range d.Constructor.Params {
-			if def := d.Index.Find(param.Type); def != nil {
+func (d *iface) Children() (defs []def.Definition, err error) {
+	if d.data.Constructor != nil {
+		for _, param := range d.data.Constructor.Params {
+			if def := d.index.Find(param.Type); def != nil {
 				defs = append(defs, def)
 			}
 		}
 	}
 
-	if d.NamedConstructor != nil {
-		for _, param := range d.NamedConstructor.Params {
-			if def := d.Index.Find(param.Type); def != nil {
+	if d.data.NamedConstructor != nil {
+		for _, param := range d.data.NamedConstructor.Params {
+			if def := d.index.Find(param.Type); def != nil {
 				defs = append(defs, def)
 			}
 		}
 	}
 
-	for _, method := range d.Methods {
+	for _, method := range d.data.Methods {
 		for _, param := range method.Params {
-			if def := d.Index.Find(param.Type); def != nil {
+			if def := d.index.Find(param.Type); def != nil {
 				defs = append(defs, def)
 			}
 		}
-		if def := d.Index.Find(method.Type); def != nil {
+		if def := d.index.Find(method.Type); def != nil {
 			defs = append(defs, def)
 		}
 	}
 
-	for _, prop := range d.Properties {
+	for _, prop := range d.data.Properties {
 		if prop.Type == "EventHandler" {
 			def, err := d.findEvent(prop.EventHandler)
 			if err != nil {
@@ -109,13 +145,13 @@ func (d *Interface) Children() (defs []def.Definition, err error) {
 			continue
 		}
 
-		if def := d.Index.Find(prop.Type); def != nil {
+		if def := d.index.Find(prop.Type); def != nil {
 			defs = append(defs, def)
 		}
 	}
 
-	for _, event := range d.Events {
-		if def := d.Index.Find(event.Type); def != nil {
+	for _, event := range d.data.Events {
+		if def := d.index.Find(event.Type); def != nil {
 			defs = append(defs, def)
 		}
 	}
@@ -124,10 +160,10 @@ func (d *Interface) Children() (defs []def.Definition, err error) {
 }
 
 // find the event, traversing up if necessary
-func (d *Interface) findEvent(name string) (def.Definition, error) {
-	for _, event := range d.Events {
+func (d *iface) findEvent(name string) (def.Definition, error) {
+	for _, event := range d.data.Events {
 		if event.Name == name {
-			if e, isset := d.Index[event.Type]; isset {
+			if e, isset := d.index[event.Type]; isset {
 				return e, nil
 			}
 		}
@@ -139,98 +175,105 @@ func (d *Interface) findEvent(name string) (def.Definition, error) {
 	}
 
 	for _, parent := range parents {
-		if t, ok := parent.(*Interface); ok {
+		if t, ok := parent.(*iface); ok {
 			return t.findEvent(name)
 		}
 	}
 
 	// return the default event
-	return d.Index["Event"], nil
+	return d.index["Event"], nil
 }
 
-// Constant struct
-type Constant struct {
-	Name         string `xml:"name,attr"`
-	Type         string `xml:"type,attr"`
-	TypeOriginal string `xml:"type-original,attr"`
-	Value        string `xml:"value,attr"`
+type interfaceData struct {
+	Name       string
+	Extends    string
+	Implements []string
+	Methods    []string
+	Properties []string
 }
 
-// Constructor struct
-type Constructor struct {
-	Params []Param `xml:"param"`
+type methodData struct {
+	Recv   string
+	Name   string
+	Params []gen.Vartype
+	Result gen.Vartype
 }
 
-// NamedConstructor struct
-type NamedConstructor struct {
-	Name   string  `xml:"name,attr"`
-	Params []Param `xml:"param"`
-}
+// Generate fn
+func (d *iface) Generate() (string, error) {
+	name := d.data.Name
+	data := interfaceData{}
+	data.Name = name
+	// pkgname := gen.Lowercase(d.InterfaceName)
 
-// AnonymousContentAttributes struct
-type AnonymousContentAttributes struct {
-	Name        string `xml:"name,attr"`
-	EnumValues  string `xml:"enum-values,attr"`
-	ValueSyntax string `xml:"value-syntax,attr"`
-}
+	imps, err := d.ImplementedBy()
+	if err != nil {
+		return "", errors.Wrap(err, "implemented by")
+	}
 
-// Event struct
-type Event struct {
-	Name        string `xml:"name,attr"`
-	Bubbles     bool   `xml:"bubbles,attr"`
-	Cancelable  bool   `xml:"cancelable,attr"`
-	Tags        string `xml:"tags,attr"`
-	Dispatch    string `xml:"dispatch,attr"`
-	Follows     string `xml:"follows,attr"`
-	Precedes    string `xml:"precedes,attr"`
-	SkipsWindow bool   `xml:"skips-window,attr"`
-	Type        string `xml:"type,attr"`
-	Aliases     string `xml:"aliases,attr"`
-}
+	if len(imps) > 0 {
 
-// Element struct
-type Element struct {
-	Name            string `xml:"name,attr"`
-	HTMLSelfClosing bool   `xml:"html-self-closing,attr"`
-	Namespace       string `xml:"namespace,attr"`
-}
+		log.Infof("implemented=%s", d.Name())
+	}
 
-// Method struct
-type Method struct {
-	Name                     string  `xml:"name,attr"`
-	Type                     string  `xml:"type,attr"`
-	Creator                  bool    `xml:"creator,attr"`
-	Setter                   bool    `xml:"setter,attr"`
-	DoNotCheckDomainSecurity bool    `xml:"do-not-check-domain-security,attr"`
-	Params                   []Param `xml:"param"`
+	// for _, method := range d.Methods {
+	// 	m, e := method.Generate()
+	// }
 
-	Comment string
-}
+	return "", nil
 
-// Property struct
-type Property struct {
-	Name                              string `xml:"name,attr"`
-	Type                              string `xml:"type,attr"`
-	ReadOnly                          bool   `xml:"read-only,attr"`
-	ContentAttribute                  string `xml:"content-attribute,attr"`
-	ContentAttributeReflects          bool   `xml:"content-attribute-reflects,attr"`
-	ContentAttributeValueSyntax       string `xml:"content-attribute-value-syntax,attr"`
-	ContentAttributeEnumValues        string `xml:"content-attribute-enum-values,attr"`
-	EventHandler                      string `xml:"event-handler,attr"`
-	TreatNullAs                       string `xml:"treat-null-as,attr"`
-	Nullable                          bool   `xml:"nullable,attr"`
-	Replaceable                       bool   `xml:"replaceable,attr"`
-	PropertyDescriptorNotConfigurable bool   `xml:"property-descriptor-not-configurable,attr"`
-	DoNotCheckDomainSecurity          bool   `xml:"do-not-check-domain-security,attr"`
-	Unforgeable                       bool   `xml:"unforgeable,attr"`
+	// 	recv := i
+	// 	if implementor != nil {
+	// 		recv = implementor
+	// 	}
 
-	Comment string
-}
+	// 	if d.Extends != "" && d.Extends != "Object" {
+	// 		data.Extends = gen.Pointer(findPackage(idx, pkgname, d.Extends))
+	// 	}
 
-// Param struct
-type Param struct {
-	Name     string `xml:"name,attr"`
-	Type     string `xml:"type,attr,omitempty"`
-	Optional bool   `xml:"optional,attr,omitempty"`
-	Variadic bool   `xml:"variadic,attr,omitempty"`
+	// 	for _, imp := range d.Implements {
+	// 		data.Implements = append(data.Implements, gen.Pointer(findPackage(idx, pkgname, imp)))
+	// 	}
+
+	// 	for _, method := range d.Methods {
+	// 		if method == nil {
+	// 			continue
+	// 		}
+
+	// 		m, e := method.Generate(idx, recv)
+	// 		if e != nil {
+	// 			return "", e
+	// 		}
+	// 		data.Methods = append(data.Methods, m)
+	// 	}
+
+	// 	for _, property := range d.Properties {
+	// 		if property == nil {
+	// 			continue
+	// 		}
+
+	// 		m, e := property.Generate(idx, recv)
+	// 		if e != nil {
+	// 			return "", e
+	// 		}
+	// 		data.Properties = append(data.Properties, m)
+	// 	}
+
+	// 	return gen.Generate("interface/"+d.Name, data, `
+	// type {{ .Name }} struct {
+	// 	{{ .Extends }}
+
+	// 	{{- range .Implements }}
+	// 	{{ . }}
+	// 	{{- end }}
+	// }
+
+	// {{ range .Methods -}}
+	// {{ . }}
+	// {{- end }}
+
+	// {{ range .Properties -}}
+	// {{ . }}
+	// {{- end }}
+	// `)
 }

@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+
 	w := window.New()
 	w.AddEventListener("click", func(evt *dom.Event) {
 		t := evt.GetType()
