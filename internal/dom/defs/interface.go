@@ -312,6 +312,7 @@ func (d *iface) Generate() (string, error) {
 	}
 
 	if d.data.Constructor != nil {
+
 		// New()
 		if d.pkg == d.file {
 			data.Constructor.Name = "New"

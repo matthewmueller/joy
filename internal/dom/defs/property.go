@@ -197,7 +197,7 @@ func (d *prop) GenerateInterface() (string, error) {
 		Comment string
 	}{
 		Recv:    gen.Pointer(gen.Capitalize(d.recv.Name())),
-		Name:    gen.Capitalize(d.data.Name),
+		Name:    d.data.Name,
 		Comment: d.data.Comment,
 	}
 
@@ -249,6 +249,7 @@ func (d *prop) GenerateInterface() (string, error) {
 	} else {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
 		// {{ capitalize .Name }} prop {{ .Comment }}
+		// js:"{{ .Name }}"
 		{{ capitalize .Name }}() ({{ .Result.Var }} {{ .Result.Type }})
 		`)
 		if e != nil {

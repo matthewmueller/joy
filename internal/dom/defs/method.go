@@ -175,7 +175,7 @@ func (d *method) GenerateInterface() (string, error) {
 		Comment string
 	}{
 		Recv:    gen.Pointer(gen.Capitalize(d.recv.Name())),
-		Name:    gen.Capitalize(d.data.Name),
+		Name:    d.data.Name,
 		Comment: d.data.Comment,
 	}
 
@@ -204,12 +204,14 @@ func (d *method) GenerateInterface() (string, error) {
 	if t == "" {
 		return gen.Generate("method/"+d.data.Name, data, `
 			// {{ capitalize .Name }} {{ .Comment }}
+			// js:"{{ .Name }}"
 			{{ capitalize .Name }}({{ joinvt .Params }})
 		`)
 	}
 
 	return gen.Generate("method/"+d.data.Name, data, `
 		// {{ capitalize .Name }} {{ .Comment }}
+		// js:"{{ .Name }}"
 		{{ capitalize .Name }}({{ joinvt .Params }}) ({{ vt .Result }})
 	`)
 }

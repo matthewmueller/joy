@@ -18,11 +18,14 @@ import (
 
 func main() {
 	w := window.New()
-	doc := w.Document()
+	doc := w.Documents()
+	html := doc.DocumentElement()
+	w.Alert("hi")
+	println(w.DefaultStatus())
 	// s := Sub{}
 	// s.Go()
 
-	doc.AddEventListener("click", func(evt window.Event) {
+	html.AddEventListener("click", func(evt window.Event) {
 		evt.PreventDefault()
 		evt.StopImmediatePropagation()
 

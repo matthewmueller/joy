@@ -1,0 +1,19 @@
+package svgstopelement
+
+import (
+	"github.com/matthewmueller/golly/dom2/svganimatednumber"
+	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/js"
+)
+
+// SVGStopElement struct
+// js:"SVGStopElement,omit"
+type SVGStopElement struct {
+	window.SVGElement
+}
+
+// Offset prop
+func (*SVGStopElement) Offset() (offset *svganimatednumber.SVGAnimatedNumber) {
+	js.Rewrite("$<.offset")
+	return offset
+}
