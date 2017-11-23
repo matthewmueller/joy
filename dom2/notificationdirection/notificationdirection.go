@@ -1,0 +1,3 @@
+package notificationdirection
+
+type NotificationDirection string

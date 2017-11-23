@@ -1,0 +1,3 @@
+package rtcdegradationpreference
+
+type RTCDegradationPreference string

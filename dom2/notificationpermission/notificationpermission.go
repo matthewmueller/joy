@@ -1,0 +1,3 @@
+package notificationpermission
+
+type NotificationPermission string

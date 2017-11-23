@@ -1,0 +1,3 @@
+package mediakeysrequirement
+
+type MediaKeysRequirement string

@@ -1,0 +1,35 @@
+[
+  {
+    "type": "replace",
+    "data": {
+      "SVGElement": {
+        "properties": [
+          {
+            "name": "dataset",
+            "type": "DOMStringMap",
+            "readonly": true,
+            "comment": "A DOMString representing the value of the id attribute on the given element, or the empty string if id is not present."
+          },
+          {
+            "name": "xmlBase",
+            "type": "DOMString",
+            "readonly": true,
+            "comment": "A DOMString corresponding to the xml:base attribute on the given element."
+          },
+          {
+            "name": "ownerSVGElement",
+            "type": "SVGSVGElement",
+            "readonly": true,
+            "comment": "An SVGSVGElement referring to the nearest ancestor <svg> element. null if the given element is the outermost <svg> element."
+          },
+          {
+            "name": "viewportElement",
+            "type": "SVGElement",
+            "readonly": true,
+            "comment": "The SVGElement, which established the current viewport. Often, the nearest ancestor <svg> element. null if the given element is the outermost <svg> element."
+          }
+        ]
+      }
+    }
+  }
+]
