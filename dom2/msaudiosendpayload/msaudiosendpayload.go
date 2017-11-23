@@ -1,5 +1,10 @@
 package msaudiosendpayload
 
+import (
+	"github.com/matthewmueller/golly/dom2/msaudiosendsignal"
+	"github.com/matthewmueller/golly/dom2/mspayloadbase"
+)
+
 type MSAudioSendPayload struct {
 	*mspayloadbase.MSPayloadBase
 

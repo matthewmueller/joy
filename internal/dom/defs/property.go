@@ -24,6 +24,7 @@ func NewProperty(index index.Index, data *raw.Property, receiver Interface) Prop
 // Property interface
 type Property interface {
 	GenerateInterface() (string, error)
+	GenerateAs(recv Interface) (string, error)
 
 	def.Definition
 }
@@ -93,13 +94,21 @@ func (d *prop) Dependencies() (defs []def.Definition, err error) {
 }
 
 func (d *prop) Generate() (string, error) {
+	return d.generate(d.recv)
+}
+
+func (d *prop) GenerateAs(recv Interface) (string, error) {
+	return d.generate(recv)
+}
+
+func (d *prop) generate(recv Interface) (string, error) {
 	data := struct {
 		Recv    string
 		Name    string
 		Result  gen.Vartype
 		Comment string
 	}{
-		Recv:    gen.Pointer(d.recv.Name()),
+		Recv:    gen.Pointer(recv.Name()),
 		Name:    gen.Capitalize(d.data.Name),
 		Comment: d.data.Comment,
 	}
@@ -118,7 +127,6 @@ func (d *prop) Generate() (string, error) {
 		// event handlers are functions
 		// TODO: this seems fragile
 		t = "func(" + t + ")"
-
 		data.Result = gen.Vartype{
 			Var:      gen.Lowercase(d.data.Name),
 			Optional: d.data.Nullable,

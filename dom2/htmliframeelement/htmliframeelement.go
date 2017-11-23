@@ -1,6 +1,7 @@
 package htmliframeelement
 
 import (
+	"github.com/matthewmueller/golly/dom2/domsettabletokenlist"
 	"github.com/matthewmueller/golly/dom2/getsvgdocument"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"

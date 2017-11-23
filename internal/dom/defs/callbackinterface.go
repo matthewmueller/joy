@@ -124,7 +124,7 @@ func (d *cbiface) Generate() (string, error) {
 		Type: t,
 	}
 
-	if t == "void" {
+	if t == "" {
 		return gen.Generate("callback_interface/"+d.data.Name, data, `func ({{ joinvt .Params }})`)
 	}
 

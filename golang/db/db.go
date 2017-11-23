@@ -21,7 +21,9 @@ type DB struct {
 }
 
 // New fn
-func New(program *loader.Program) (*index.Index, error) {
+func New(program *loader.Program) (idx *index.Index, err error) {
+	defer log.Trace("index").Stop(&err)
+
 	db := &DB{
 		index: index.New(program),
 	}

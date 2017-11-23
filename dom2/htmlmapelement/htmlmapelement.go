@@ -1,6 +1,7 @@
 package htmlmapelement
 
 import (
+	"github.com/matthewmueller/golly/dom2/htmlareascollection"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )

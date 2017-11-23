@@ -1,6 +1,9 @@
 package paymentrequest
 
 import (
+	"github.com/matthewmueller/golly/dom2/paymentaddress"
+	"github.com/matthewmueller/golly/dom2/paymentresponse"
+	"github.com/matthewmueller/golly/dom2/paymentshippingtype"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )

@@ -1,5 +1,18 @@
 package htmlmediaelement
 
+import (
+	"github.com/matthewmueller/golly/dom2/avtrack"
+	"github.com/matthewmueller/golly/dom2/mediaencryptedevent"
+	"github.com/matthewmueller/golly/dom2/mediaerror"
+	"github.com/matthewmueller/golly/dom2/msgraphicstrust"
+	"github.com/matthewmueller/golly/dom2/msmediakeyneededevent"
+	"github.com/matthewmueller/golly/dom2/msmediakeys"
+	"github.com/matthewmueller/golly/dom2/texttrack"
+	"github.com/matthewmueller/golly/dom2/texttracklist"
+	"github.com/matthewmueller/golly/dom2/timeranges"
+	"github.com/matthewmueller/golly/dom2/window"
+)
+
 // js:"HTMLMediaElement,omit"
 type HTMLMediaElement interface {
 	window.HTMLElement

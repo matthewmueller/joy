@@ -3,6 +3,7 @@ package defs
 import (
 	"strings"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/index"
 	"github.com/matthewmueller/golly/internal/dom/raw"
@@ -24,6 +25,7 @@ func NewMethod(index index.Index, data *raw.Method, receiver Interface) Method {
 // Method interface
 type Method interface {
 	GenerateInterface() (string, error)
+	GenerateAs(recv Interface) (string, error)
 
 	def.Definition
 }
@@ -85,8 +87,15 @@ func (d *method) Dependencies() (defs []def.Definition, e error) {
 	return defs, nil
 }
 
-// Generate fn
 func (d *method) Generate() (string, error) {
+	return d.generate(d.recv)
+}
+
+func (d *method) GenerateAs(recv Interface) (string, error) {
+	return d.generate(recv)
+}
+
+func (d *method) generate(recv Interface) (string, error) {
 	data := struct {
 		Recv    string
 		Name    string
@@ -94,7 +103,7 @@ func (d *method) Generate() (string, error) {
 		Result  gen.Vartype
 		Comment string
 	}{
-		Recv:    gen.Pointer(d.recv.Name()),
+		Recv:    gen.Pointer(recv.Name()),
 		Name:    gen.Capitalize(d.data.Name),
 		Comment: d.data.Comment,
 	}
@@ -104,6 +113,7 @@ func (d *method) Generate() (string, error) {
 		if err != nil {
 			return "", errors.Wrapf(err, "error coercing param")
 		}
+
 		data.Params = append(data.Params, gen.Vartype{
 			Var:      gen.Identifier(param.Name),
 			Optional: param.Optional,
@@ -175,6 +185,11 @@ func (d *method) GenerateInterface() (string, error) {
 		if err != nil {
 			return "", errors.Wrapf(err, "error coercing param")
 		}
+
+		if param.Name == "listener" {
+			log.Infof("coercing=%s type=%s resolved=%s", param.Name, param.Type, t)
+		}
+
 		data.Params = append(data.Params, gen.Vartype{
 			Var:      gen.Identifier(param.Name),
 			Optional: param.Optional,

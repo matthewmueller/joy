@@ -1,6 +1,9 @@
 package texttrack
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"TextTrack,omit"
 type TextTrack struct {

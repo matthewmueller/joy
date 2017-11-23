@@ -1,6 +1,9 @@
 package unviewablecontentidentifiedevent
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/navigationeventwithreferrer"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"UnviewableContentIdentifiedEvent,omit"
 type UnviewableContentIdentifiedEvent struct {

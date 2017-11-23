@@ -3,6 +3,7 @@ package htmlinputelement
 import (
 	"time"
 
+	"github.com/matthewmueller/golly/dom2/filelist"
 	"github.com/matthewmueller/golly/dom2/htmlformelement"
 	"github.com/matthewmueller/golly/dom2/validitystate"
 	"github.com/matthewmueller/golly/dom2/window"

@@ -1,7 +1,18 @@
 package webglrenderingcontext
 
 import (
+	"github.com/matthewmueller/golly/dom2/htmlcanvaselement"
 	"github.com/matthewmueller/golly/dom2/imagedata"
+	"github.com/matthewmueller/golly/dom2/webglactiveinfo"
+	"github.com/matthewmueller/golly/dom2/webglbuffer"
+	"github.com/matthewmueller/golly/dom2/webglcontextattributes"
+	"github.com/matthewmueller/golly/dom2/webglframebuffer"
+	"github.com/matthewmueller/golly/dom2/webglprogram"
+	"github.com/matthewmueller/golly/dom2/webglrenderbuffer"
+	"github.com/matthewmueller/golly/dom2/webglshader"
+	"github.com/matthewmueller/golly/dom2/webglshaderprecisionformat"
+	"github.com/matthewmueller/golly/dom2/webgltexture"
+	"github.com/matthewmueller/golly/dom2/webgluniformlocation"
 	"github.com/matthewmueller/golly/js"
 )
 

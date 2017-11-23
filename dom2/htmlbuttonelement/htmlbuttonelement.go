@@ -2,6 +2,7 @@ package htmlbuttonelement
 
 import (
 	"github.com/matthewmueller/golly/dom2/htmlformelement"
+	"github.com/matthewmueller/golly/dom2/validitystate"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )

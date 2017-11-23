@@ -1,6 +1,9 @@
 package cryptokey
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/keyalgorithm"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"CryptoKey,omit"
 type CryptoKey struct {

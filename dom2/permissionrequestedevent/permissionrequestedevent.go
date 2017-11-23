@@ -1,6 +1,10 @@
 package permissionrequestedevent
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/permissionrequest"
+	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"PermissionRequestedEvent,omit"
 type PermissionRequestedEvent struct {

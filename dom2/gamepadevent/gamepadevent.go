@@ -1,6 +1,7 @@
 package gamepadevent
 
 import (
+	"github.com/matthewmueller/golly/dom2/gamepad"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )

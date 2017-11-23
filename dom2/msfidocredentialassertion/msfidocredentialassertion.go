@@ -2,6 +2,7 @@ package msfidocredentialassertion
 
 import (
 	"github.com/matthewmueller/golly/dom2/msassertion"
+	"github.com/matthewmueller/golly/dom2/mstransporttype"
 	"github.com/matthewmueller/golly/js"
 )
 

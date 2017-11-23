@@ -1,6 +1,9 @@
 package svgviewelement
 
 import (
+	"github.com/matthewmueller/golly/dom2/svgfittoviewbox"
+	"github.com/matthewmueller/golly/dom2/svgstringlist"
+	"github.com/matthewmueller/golly/dom2/svgzoomandpan"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )

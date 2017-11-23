@@ -1,6 +1,7 @@
 package mediakeymessageevent
 
 import (
+	"github.com/matthewmueller/golly/dom2/mediakeymessagetype"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )

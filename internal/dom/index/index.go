@@ -60,7 +60,7 @@ var overrides = map[string]string{
 
 	"EventHandler": "EventHandler",
 
-	"RequestInfo": "*Request",
+	"RequestInfo": "*request.Request",
 
 	"function": "func()",
 	"Function": "func()",
@@ -94,10 +94,6 @@ func (i Index) Coerce(pkgname, kind string) (string, error) {
 		kind = matches[1]
 	}
 
-	if _, isset := overrides[kind]; isset {
-		kind = overrides[kind]
-	}
-
 	def := i.Find(kind)
 	if def != nil {
 		t, err := def.Type(pkgname)
@@ -105,6 +101,10 @@ func (i Index) Coerce(pkgname, kind string) (string, error) {
 			return kind, errors.Wrapf(err, "error getting type")
 		}
 		kind = t
+	}
+
+	if _, isset := overrides[kind]; isset {
+		kind = overrides[kind]
 	}
 
 	if isSlice {

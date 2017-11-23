@@ -1,6 +1,7 @@
 package htmllinkelement
 
 import (
+	"github.com/matthewmueller/golly/dom2/linkstyle"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )

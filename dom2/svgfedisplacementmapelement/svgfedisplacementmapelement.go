@@ -1,7 +1,11 @@
 package svgfedisplacementmapelement
 
 import (
+	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
 	"github.com/matthewmueller/golly/dom2/svganimatednumber"
+	"github.com/matthewmueller/golly/dom2/svganimatedstring"
+	"github.com/matthewmueller/golly/dom2/svgfilterprimitivestandardattributes"
+	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 

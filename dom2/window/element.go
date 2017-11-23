@@ -1,5 +1,13 @@
 package window
 
+import (
+	"github.com/matthewmueller/golly/dom2/childnode"
+	"github.com/matthewmueller/golly/dom2/clientrect"
+	"github.com/matthewmueller/golly/dom2/clientrectlist"
+	"github.com/matthewmueller/golly/dom2/domtokenlist"
+	"github.com/matthewmueller/golly/dom2/mszoomtooptions"
+)
+
 // js:"Element,omit"
 type Element interface {
 	Node

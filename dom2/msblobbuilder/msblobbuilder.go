@@ -1,6 +1,9 @@
 package msblobbuilder
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/blob"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"MSBlobBuilder,omit"
 type MSBlobBuilder struct {

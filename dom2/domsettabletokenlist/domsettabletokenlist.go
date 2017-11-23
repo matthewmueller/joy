@@ -1,6 +1,9 @@
 package domsettabletokenlist
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/domtokenlist"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"DOMSettableTokenList,omit"
 type DOMSettableTokenList struct {

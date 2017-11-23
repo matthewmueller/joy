@@ -1,6 +1,18 @@
 package rtcicetransport
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/rtcicecandidatedictionary"
+	"github.com/matthewmueller/golly/dom2/rtcicecandidatepair"
+	"github.com/matthewmueller/golly/dom2/rtcicecandidatepairchangedevent"
+	"github.com/matthewmueller/golly/dom2/rtcicecomponent"
+	"github.com/matthewmueller/golly/dom2/rtcicegatherer"
+	"github.com/matthewmueller/golly/dom2/rtciceparameters"
+	"github.com/matthewmueller/golly/dom2/rtcicerole"
+	"github.com/matthewmueller/golly/dom2/rtcicetransportstate"
+	"github.com/matthewmueller/golly/dom2/rtcicetransportstatechangedevent"
+	"github.com/matthewmueller/golly/dom2/rtcstatsprovider"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"RTCIceTransport,omit"
 type RTCIceTransport struct {

@@ -1,5 +1,7 @@
 package msassertion
 
+import "github.com/matthewmueller/golly/dom2/mscredentialtype"
+
 // js:"MSAssertion,omit"
 type MSAssertion interface {
 

@@ -1,6 +1,13 @@
 package mstransportdiagnosticsstats
 
-import "github.com/matthewmueller/golly/dom2/rtcstats"
+import (
+	"github.com/matthewmueller/golly/dom2/msiceaddrtype"
+	"github.com/matthewmueller/golly/dom2/msicewarningflags"
+	"github.com/matthewmueller/golly/dom2/msnetworkinterfacetype"
+	"github.com/matthewmueller/golly/dom2/rtciceprotocol"
+	"github.com/matthewmueller/golly/dom2/rtcicerole"
+	"github.com/matthewmueller/golly/dom2/rtcstats"
+)
 
 type MSTransportDiagnosticsStats struct {
 	*rtcstats.RTCStats

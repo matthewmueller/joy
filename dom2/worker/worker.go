@@ -1,6 +1,9 @@
 package worker
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"Worker,omit"
 type Worker struct {

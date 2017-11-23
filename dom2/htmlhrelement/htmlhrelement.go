@@ -2,6 +2,7 @@ package htmlhrelement
 
 import (
 	"github.com/matthewmueller/golly/dom2/doml2deprecatedcolorproperty"
+	"github.com/matthewmueller/golly/dom2/doml2deprecatedsizeproperty"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )

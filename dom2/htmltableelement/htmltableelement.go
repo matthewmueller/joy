@@ -1,6 +1,8 @@
 package htmltableelement
 
 import (
+	"github.com/matthewmueller/golly/dom2/htmltablecaptionelement"
+	"github.com/matthewmueller/golly/dom2/htmltablesectionelement"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )

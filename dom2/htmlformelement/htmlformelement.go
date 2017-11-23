@@ -1,6 +1,7 @@
 package htmlformelement
 
 import (
+	"github.com/matthewmueller/golly/dom2/htmlformcontrolscollection"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )

@@ -1,6 +1,9 @@
 package rtcicecandidateattributes
 
-import "github.com/matthewmueller/golly/dom2/rtcstats"
+import (
+	"github.com/matthewmueller/golly/dom2/rtcstats"
+	"github.com/matthewmueller/golly/dom2/rtcstatsicecandidatetype"
+)
 
 type RTCIceCandidateAttributes struct {
 	*rtcstats.RTCStats

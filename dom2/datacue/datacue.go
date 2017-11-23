@@ -1,6 +1,9 @@
 package datacue
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/texttrack"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"DataCue,omit"
 type DataCue struct {

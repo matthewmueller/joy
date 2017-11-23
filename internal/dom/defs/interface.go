@@ -155,14 +155,6 @@ func (d *iface) Parents() (parents []def.Definition, err error) {
 		parents = append(parents, parent)
 	}
 
-	for _, imp := range d.data.Implements {
-		parent, isset := d.index[imp]
-		if !isset {
-			return parents, fmt.Errorf("implements doesn't exist %s on %s", imp, d.data.Name)
-		}
-		parents = append(parents, parent)
-	}
-
 	return parents, nil
 }
 
@@ -258,6 +250,35 @@ func (d *iface) Generate() (string, error) {
 			return "", errors.Wrapf(err, "parent type")
 		}
 		data.Embeds = append(data.Embeds, t)
+	}
+
+	// handle the implements too
+	for _, imp := range d.data.Implements {
+		def := d.index.Find(imp)
+		if def == nil {
+			return "", fmt.Errorf("implements missing %s", imp)
+		}
+
+		t, ok := def.(Interface)
+		if !ok {
+			return "", fmt.Errorf("implements not an interface %s", imp)
+		}
+
+		for _, method := range t.Methods() {
+			m, err := method.GenerateAs(d)
+			if err != nil {
+				return "", errors.Wrapf(err, "error generating method")
+			}
+			data.Methods = append(data.Methods, m)
+		}
+
+		for _, property := range t.Properties() {
+			m, err := property.GenerateAs(d)
+			if err != nil {
+				return "", errors.Wrapf(err, "error generating property")
+			}
+			data.Properties = append(data.Properties, m)
+		}
 	}
 
 	// handle methods

@@ -1,6 +1,7 @@
 package htmlobjectelement
 
 import (
+	"github.com/matthewmueller/golly/dom2/getsvgdocument"
 	"github.com/matthewmueller/golly/dom2/htmlformelement"
 	"github.com/matthewmueller/golly/dom2/validitystate"
 	"github.com/matthewmueller/golly/dom2/window"

@@ -1,7 +1,9 @@
 package window
 
 import (
-	"github.com/Azure/azure-sdk-for-go/management/location"
+	"github.com/matthewmueller/golly/dom2/htmlallcollection"
+	"github.com/matthewmueller/golly/dom2/location"
+	"github.com/matthewmueller/golly/dom2/visibilitystate"
 	"github.com/matthewmueller/golly/dom2/xpathnsresolver"
 )
 

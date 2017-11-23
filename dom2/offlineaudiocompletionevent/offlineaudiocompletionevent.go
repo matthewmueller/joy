@@ -1,6 +1,7 @@
 package offlineaudiocompletionevent
 
 import (
+	"github.com/matthewmueller/golly/dom2/audiobuffer"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )

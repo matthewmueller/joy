@@ -1,5 +1,7 @@
 package msvideopayload
 
+import "github.com/matthewmueller/golly/dom2/mspayloadbase"
+
 type MSVideoPayload struct {
 	*mspayloadbase.MSPayloadBase
 

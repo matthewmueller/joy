@@ -1,6 +1,9 @@
 package navigationcompletedevent
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/navigationevent"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"NavigationCompletedEvent,omit"
 type NavigationCompletedEvent struct {

@@ -1,6 +1,11 @@
 package rtcsrtpsdestransport
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/rtcicetransport"
+	"github.com/matthewmueller/golly/dom2/rtcsrtpsdesparameters"
+	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"RTCSrtpSdesTransport,omit"
 type RTCSrtpSdesTransport struct {

@@ -1,6 +1,7 @@
 package htmloutputelement
 
 import (
+	"github.com/matthewmueller/golly/dom2/domsettabletokenlist"
 	"github.com/matthewmueller/golly/dom2/htmlformelement"
 	"github.com/matthewmueller/golly/dom2/validitystate"
 	"github.com/matthewmueller/golly/dom2/window"

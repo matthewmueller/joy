@@ -16,7 +16,7 @@ import (
 // Load takes full paths to packages and loads them
 // e.g. $GOPATH/src/github.com/matthewmueller/golly/
 func Load(packages ...string) (program *loader.Program, err error) {
-	// defer log.Trace("load").Stop(&err)
+	defer log.Trace("load").Stop(&err)
 	var conf loader.Config
 
 	goSrc, err := util.GoSourcePath()

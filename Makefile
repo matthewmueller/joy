@@ -22,9 +22,16 @@ install:
 	@go install ./cmd/...
 .PHONY: install
 
-dom:
-	@go run internal/dom/main.go
+dom2:
+	# @go run internal/dom/main.go
 	# @go generate ./internal/gendom/main.go
-	# @go run cmd/golly/golly.go build ./_examples/dom
+	@go run cmd/golly/golly.go build ./_examples/dom2
+	# @go run _examples/dom/dom.go
+.PHONY: dom2
+
+dom:
+	# @go run internal/dom/main.go
+	# @go generate ./internal/gendom/main.go
+	@go run cmd/golly/golly.go build ./_examples/dom
 	# @go run _examples/dom/dom.go
 .PHONY: dom

@@ -1,5 +1,7 @@
 package msaudiolocalclientevent
 
+import "github.com/matthewmueller/golly/dom2/mslocalclienteventbase"
+
 type MSAudioLocalClientEvent struct {
 	*mslocalclienteventbase.MSLocalClientEventBase
 

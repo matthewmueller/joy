@@ -1,5 +1,10 @@
 package idbcursor
 
+import (
+	"github.com/matthewmueller/golly/dom2/idbcursordirection"
+	"github.com/matthewmueller/golly/dom2/window"
+)
+
 // js:"IDBCursor,omit"
 type IDBCursor interface {
 

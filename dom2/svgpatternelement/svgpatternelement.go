@@ -3,7 +3,9 @@ package svgpatternelement
 import (
 	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
 	"github.com/matthewmueller/golly/dom2/svganimatedlength"
+	"github.com/matthewmueller/golly/dom2/svganimatedtransformlist"
 	"github.com/matthewmueller/golly/dom2/svgfittoviewbox"
+	"github.com/matthewmueller/golly/dom2/svgtests"
 	"github.com/matthewmueller/golly/dom2/svgunittypes"
 	"github.com/matthewmueller/golly/dom2/svgurireference"
 	"github.com/matthewmueller/golly/dom2/window"

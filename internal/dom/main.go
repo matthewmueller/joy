@@ -103,29 +103,26 @@ func generate(dir string) error {
 		}
 	}
 
-	// sort so goimports finds dependencies
+	// accurate length
 	var defs []def.Definition
-	sorted, _ := g.Toposort()
-	for _, node := range sorted {
-		def := index[node.ID()]
-
+	for _, def := range index {
 		// only use these as these are our top-level files
 		switch def.Kind() {
 		case "ENUM", "DICTIONARY", "INTERFACE":
 			defs = append(defs, def)
 		}
 	}
-
 	l := len(defs)
+
+	// write first so we have all the files present
 	for i, def := range defs {
+		if !strings.Contains(def.GetPackage(), "cache") {
+			continue
+		}
+
 		code, err := def.Generate()
 		if err != nil {
 			return errors.Wrapf(err, "error generating %s", def.ID())
-		}
-
-		formatted, err := gen.Format(code)
-		if err != nil {
-			return errors.Wrapf(err, "error formatting %s received\n%s", def.ID(), code)
 		}
 
 		pkgpath := path.Join(dir, def.GetPackage())
@@ -133,11 +130,37 @@ func generate(dir string) error {
 			return errors.Wrapf(err, "error mkdir")
 		}
 
-		if err := ioutil.WriteFile(path.Join(pkgpath, def.GetFile()+".go"), []byte(formatted), 0644); err != nil {
+		if err := ioutil.WriteFile(path.Join(pkgpath, def.GetFile()+".go"), []byte(code), 0644); err != nil {
 			return errors.Wrapf(err, "error writefile")
 		}
 
-		log.Infof("generated %s (%d/%d)", def.ID(), i, l)
+		log.Debugf("generated %s (%d/%d)", def.ID(), i, l)
+	}
+
+	// format and link all the packages up
+	for i, def := range defs {
+		if !strings.Contains(def.GetPackage(), "cache") {
+			continue
+		}
+
+		filepath := path.Join(dir, def.GetPackage(), def.GetFile()+".go")
+
+		buf, err := ioutil.ReadFile(filepath)
+		if err != nil {
+			return errors.Wrapf(err, "error reading file")
+		}
+
+		code, err := gen.Format(string(buf))
+		if err != nil {
+			return errors.Wrapf(err, "error formatting")
+		}
+
+		// overwrite
+		if err := ioutil.WriteFile(filepath, []byte(code), 0644); err != nil {
+			return errors.Wrapf(err, "error writefile")
+		}
+
+		log.Debugf("formatted %s (%d/%d)", def.ID(), i, l)
 	}
 
 	return nil
@@ -165,9 +188,9 @@ func main() {
 		log.WithError(err).Fatalf("error getting cwd")
 	}
 
-	if err := os.RemoveAll(path.Join(pwd, "dom2")); err != nil {
-		log.WithError(err).Fatalf("removing dom")
-	}
+	// if err := os.RemoveAll(path.Join(pwd, "dom2")); err != nil {
+	// 	log.WithError(err).Fatalf("removing dom")
+	// }
 
 	if e := generate(path.Join(pwd, "dom2")); e != nil {
 		log.WithError(e).Fatalf("error generating")

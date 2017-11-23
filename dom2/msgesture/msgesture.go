@@ -1,6 +1,9 @@
 package msgesture
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"MSGesture,omit"
 type MSGesture struct {

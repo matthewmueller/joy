@@ -1,6 +1,9 @@
 package svganimatednumberlist
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/svgnumberlist"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"SVGAnimatedNumberList,omit"
 type SVGAnimatedNumberList struct {

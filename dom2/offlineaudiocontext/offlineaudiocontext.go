@@ -1,6 +1,11 @@
 package offlineaudiocontext
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/audiobuffer"
+	"github.com/matthewmueller/golly/dom2/audionode"
+	"github.com/matthewmueller/golly/dom2/offlineaudiocompletionevent"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"OfflineAudioContext,omit"
 type OfflineAudioContext struct {

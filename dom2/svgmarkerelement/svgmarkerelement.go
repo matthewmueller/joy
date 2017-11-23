@@ -1,6 +1,8 @@
 package svgmarkerelement
 
 import (
+	"github.com/matthewmueller/golly/dom2/svgangle"
+	"github.com/matthewmueller/golly/dom2/svganimatedangle"
 	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
 	"github.com/matthewmueller/golly/dom2/svganimatedlength"
 	"github.com/matthewmueller/golly/dom2/svgfittoviewbox"
