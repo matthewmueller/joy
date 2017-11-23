@@ -1,9 +1,9 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/svganimatedtransformlist"
-	"github.com/matthewmueller/golly/dom2/svgmatrix"
-	"github.com/matthewmueller/golly/dom2/svgrect"
+	"github.com/matthewmueller/golly/dom/svganimatedtransformlist"
+	"github.com/matthewmueller/golly/dom/svgmatrix"
+	"github.com/matthewmueller/golly/dom/svgrect"
 )
 
 // js:"SVGGraphicsElement,omit"

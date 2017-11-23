@@ -1,6 +1,6 @@
 package svgfefuncgelement
 
-import "github.com/matthewmueller/golly/dom2/svgcomponenttransferfunctionelement"
+import "github.com/matthewmueller/golly/dom/svgcomponenttransferfunctionelement"
 
 // SVGFEFuncGElement struct
 // js:"SVGFEFuncGElement,omit"

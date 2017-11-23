@@ -1,7 +1,7 @@
 package mimetypearray
 
 import (
-	"github.com/matthewmueller/golly/dom2/mimetype"
+	"github.com/matthewmueller/golly/dom/mimetype"
 	"github.com/matthewmueller/golly/js"
 )
 

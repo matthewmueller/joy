@@ -1,9 +1,9 @@
 package rtcdtmfsender
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcdtmftonechangeevent"
-	"github.com/matthewmueller/golly/dom2/rtcrtpsender"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/rtcdtmftonechangeevent"
+	"github.com/matthewmueller/golly/dom/rtcrtpsender"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

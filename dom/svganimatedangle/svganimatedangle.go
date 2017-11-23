@@ -1,7 +1,7 @@
 package svganimatedangle
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgangle"
+	"github.com/matthewmueller/golly/dom/svgangle"
 	"github.com/matthewmueller/golly/js"
 )
 

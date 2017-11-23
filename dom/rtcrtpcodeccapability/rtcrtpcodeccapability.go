@@ -1,6 +1,6 @@
 package rtcrtpcodeccapability
 
-import "github.com/matthewmueller/golly/dom2/rtcrtcpfeedback"
+import "github.com/matthewmueller/golly/dom/rtcrtcpfeedback"
 
 type RTCRtpCodecCapability struct {
 	clockRate             *uint

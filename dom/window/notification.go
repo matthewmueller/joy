@@ -1,9 +1,9 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/notificationdirection"
-	"github.com/matthewmueller/golly/dom2/notificationoptions"
-	"github.com/matthewmueller/golly/dom2/notificationpermission"
+	"github.com/matthewmueller/golly/dom/notificationdirection"
+	"github.com/matthewmueller/golly/dom/notificationoptions"
+	"github.com/matthewmueller/golly/dom/notificationpermission"
 	"github.com/matthewmueller/golly/js"
 )
 

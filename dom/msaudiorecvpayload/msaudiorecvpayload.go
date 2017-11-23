@@ -1,8 +1,8 @@
 package msaudiorecvpayload
 
 import (
-	"github.com/matthewmueller/golly/dom2/msaudiorecvsignal"
-	"github.com/matthewmueller/golly/dom2/mspayloadbase"
+	"github.com/matthewmueller/golly/dom/msaudiorecvsignal"
+	"github.com/matthewmueller/golly/dom/mspayloadbase"
 )
 
 type MSAudioRecvPayload struct {

@@ -1,8 +1,8 @@
 package audionode
 
 import (
-	"github.com/matthewmueller/golly/dom2/audioparam"
-	"github.com/matthewmueller/golly/dom2/biquadfiltertype"
+	"github.com/matthewmueller/golly/dom/audioparam"
+	"github.com/matthewmueller/golly/dom/biquadfiltertype"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,7 +1,7 @@
 package svganimatedpoints
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgpointlist"
+	"github.com/matthewmueller/golly/dom/svgpointlist"
 	"github.com/matthewmueller/golly/js"
 )
 

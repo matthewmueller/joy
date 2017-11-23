@@ -1,7 +1,7 @@
 package windowlocalstorage
 
 import (
-	"github.com/matthewmueller/golly/dom2/storage"
+	"github.com/matthewmueller/golly/dom/storage"
 	"github.com/matthewmueller/golly/js"
 )
 

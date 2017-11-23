@@ -1,9 +1,9 @@
 package xmlhttprequest
 
 import (
-	"github.com/matthewmueller/golly/dom2/window"
-	"github.com/matthewmueller/golly/dom2/xmlhttprequestresponsetype"
-	"github.com/matthewmueller/golly/dom2/xmlhttprequestupload"
+	"github.com/matthewmueller/golly/dom/window"
+	"github.com/matthewmueller/golly/dom/xmlhttprequestresponsetype"
+	"github.com/matthewmueller/golly/dom/xmlhttprequestupload"
 	"github.com/matthewmueller/golly/js"
 )
 

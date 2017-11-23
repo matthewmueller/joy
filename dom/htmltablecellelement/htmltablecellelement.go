@@ -1,6 +1,6 @@
 package htmltablecellelement
 
-import "github.com/matthewmueller/golly/dom2/window"
+import "github.com/matthewmueller/golly/dom/window"
 
 // js:"HTMLTableCellElement,omit"
 type HTMLTableCellElement interface {

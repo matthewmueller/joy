@@ -1,8 +1,8 @@
 package errorevent
 
 import (
-	"github.com/matthewmueller/golly/dom2/erroreventinit"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/erroreventinit"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

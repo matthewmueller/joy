@@ -1,7 +1,7 @@
 package htmltableheadercellelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/htmltablecellelement"
+	"github.com/matthewmueller/golly/dom/htmltablecellelement"
 	"github.com/matthewmueller/golly/js"
 )
 

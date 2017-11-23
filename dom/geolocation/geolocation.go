@@ -1,9 +1,9 @@
 package geolocation
 
 import (
-	"github.com/matthewmueller/golly/dom2/position"
-	"github.com/matthewmueller/golly/dom2/positionerror"
-	"github.com/matthewmueller/golly/dom2/positionoptions"
+	"github.com/matthewmueller/golly/dom/position"
+	"github.com/matthewmueller/golly/dom/positionerror"
+	"github.com/matthewmueller/golly/dom/positionoptions"
 	"github.com/matthewmueller/golly/js"
 )
 

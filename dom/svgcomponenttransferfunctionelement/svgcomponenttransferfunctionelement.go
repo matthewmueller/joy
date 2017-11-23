@@ -1,10 +1,10 @@
 package svgcomponenttransferfunctionelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
-	"github.com/matthewmueller/golly/dom2/svganimatednumber"
-	"github.com/matthewmueller/golly/dom2/svganimatednumberlist"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/svganimatedenumeration"
+	"github.com/matthewmueller/golly/dom/svganimatednumber"
+	"github.com/matthewmueller/golly/dom/svganimatednumberlist"
+	"github.com/matthewmueller/golly/dom/window"
 )
 
 // js:"SVGComponentTransferFunctionElement,omit"

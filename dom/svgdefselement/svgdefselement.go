@@ -1,6 +1,6 @@
 package svgdefselement
 
-import "github.com/matthewmueller/golly/dom2/window"
+import "github.com/matthewmueller/golly/dom/window"
 
 // SVGDefsElement struct
 // js:"SVGDefsElement,omit"

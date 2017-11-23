@@ -1,6 +1,6 @@
 package svgswitchelement
 
-import "github.com/matthewmueller/golly/dom2/window"
+import "github.com/matthewmueller/golly/dom/window"
 
 // SVGSwitchElement struct
 // js:"SVGSwitchElement,omit"

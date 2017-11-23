@@ -1,9 +1,9 @@
 package rtcsrtpsdestransport
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcicetransport"
-	"github.com/matthewmueller/golly/dom2/rtcsrtpsdesparameters"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/rtcicetransport"
+	"github.com/matthewmueller/golly/dom/rtcsrtpsdesparameters"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

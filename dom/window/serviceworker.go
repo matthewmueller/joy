@@ -1,7 +1,7 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/serviceworkerstate"
+	"github.com/matthewmueller/golly/dom/serviceworkerstate"
 	"github.com/matthewmueller/golly/js"
 )
 

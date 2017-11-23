@@ -1,7 +1,7 @@
 package idbcursorwithvalue
 
 import (
-	"github.com/matthewmueller/golly/dom2/idbcursor"
+	"github.com/matthewmueller/golly/dom/idbcursor"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,8 +1,8 @@
 package cssimportrule
 
 import (
-	"github.com/matthewmueller/golly/dom2/medialist"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/medialist"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

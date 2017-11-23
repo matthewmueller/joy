@@ -1,7 +1,7 @@
 package performanceresourcetiming
 
 import (
-	"github.com/matthewmueller/golly/dom2/performanceentry"
+	"github.com/matthewmueller/golly/dom/performanceentry"
 	"github.com/matthewmueller/golly/js"
 )
 

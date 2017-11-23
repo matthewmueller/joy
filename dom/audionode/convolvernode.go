@@ -1,7 +1,7 @@
 package audionode
 
 import (
-	"github.com/matthewmueller/golly/dom2/audiobuffer"
+	"github.com/matthewmueller/golly/dom/audiobuffer"
 	"github.com/matthewmueller/golly/js"
 )
 

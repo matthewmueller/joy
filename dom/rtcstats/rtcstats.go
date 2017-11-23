@@ -1,8 +1,8 @@
 package rtcstats
 
 import (
-	"github.com/matthewmueller/golly/dom2/msstatstype"
-	"github.com/matthewmueller/golly/dom2/rtcstatstype"
+	"github.com/matthewmueller/golly/dom/msstatstype"
+	"github.com/matthewmueller/golly/dom/rtcstatstype"
 )
 
 type RTCStats struct {

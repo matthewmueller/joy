@@ -1,6 +1,6 @@
 package htmlaudioelement
 
-import "github.com/matthewmueller/golly/dom2/htmlmediaelement"
+import "github.com/matthewmueller/golly/dom/htmlmediaelement"
 
 // HTMLAudioElement struct
 // js:"HTMLAudioElement,omit"

@@ -1,13 +1,13 @@
 package audionode
 
 import (
-	"github.com/matthewmueller/golly/dom2/audiobuffer"
-	"github.com/matthewmueller/golly/dom2/audiocontextstate"
-	"github.com/matthewmueller/golly/dom2/audiolistener"
-	"github.com/matthewmueller/golly/dom2/htmlmediaelement"
-	"github.com/matthewmueller/golly/dom2/periodicwave"
-	"github.com/matthewmueller/golly/dom2/periodicwaveconstraints"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/audiobuffer"
+	"github.com/matthewmueller/golly/dom/audiocontextstate"
+	"github.com/matthewmueller/golly/dom/audiolistener"
+	"github.com/matthewmueller/golly/dom/htmlmediaelement"
+	"github.com/matthewmueller/golly/dom/periodicwave"
+	"github.com/matthewmueller/golly/dom/periodicwaveconstraints"
+	"github.com/matthewmueller/golly/dom/window"
 )
 
 // js:"AudioContext,omit"

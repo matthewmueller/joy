@@ -1,6 +1,6 @@
 package svgtspanelement
 
-import "github.com/matthewmueller/golly/dom2/svgtextpositioningelement"
+import "github.com/matthewmueller/golly/dom/svgtextpositioningelement"
 
 // SVGTSpanElement struct
 // js:"SVGTSpanElement,omit"

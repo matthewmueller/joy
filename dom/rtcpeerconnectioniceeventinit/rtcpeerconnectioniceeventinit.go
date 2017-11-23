@@ -1,8 +1,8 @@
 package rtcpeerconnectioniceeventinit
 
 import (
-	"github.com/matthewmueller/golly/dom2/eventinit"
-	"github.com/matthewmueller/golly/dom2/rtcicecandidate"
+	"github.com/matthewmueller/golly/dom/eventinit"
+	"github.com/matthewmueller/golly/dom/rtcicecandidate"
 )
 
 type RTCPeerConnectionIceEventInit struct {

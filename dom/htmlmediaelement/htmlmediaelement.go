@@ -1,16 +1,16 @@
 package htmlmediaelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/avtrack"
-	"github.com/matthewmueller/golly/dom2/mediaencryptedevent"
-	"github.com/matthewmueller/golly/dom2/mediaerror"
-	"github.com/matthewmueller/golly/dom2/msgraphicstrust"
-	"github.com/matthewmueller/golly/dom2/msmediakeyneededevent"
-	"github.com/matthewmueller/golly/dom2/msmediakeys"
-	"github.com/matthewmueller/golly/dom2/texttrack"
-	"github.com/matthewmueller/golly/dom2/texttracklist"
-	"github.com/matthewmueller/golly/dom2/timeranges"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/avtrack"
+	"github.com/matthewmueller/golly/dom/mediaencryptedevent"
+	"github.com/matthewmueller/golly/dom/mediaerror"
+	"github.com/matthewmueller/golly/dom/msgraphicstrust"
+	"github.com/matthewmueller/golly/dom/msmediakeyneededevent"
+	"github.com/matthewmueller/golly/dom/msmediakeys"
+	"github.com/matthewmueller/golly/dom/texttrack"
+	"github.com/matthewmueller/golly/dom/texttracklist"
+	"github.com/matthewmueller/golly/dom/timeranges"
+	"github.com/matthewmueller/golly/dom/window"
 )
 
 // js:"HTMLMediaElement,omit"

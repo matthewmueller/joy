@@ -1,7 +1,7 @@
 package svgurireference
 
 import (
-	"github.com/matthewmueller/golly/dom2/svganimatedstring"
+	"github.com/matthewmueller/golly/dom/svganimatedstring"
 	"github.com/matthewmueller/golly/js"
 )
 

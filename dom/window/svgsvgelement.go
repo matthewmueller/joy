@@ -1,16 +1,16 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgangle"
-	"github.com/matthewmueller/golly/dom2/svganimatedlength"
-	"github.com/matthewmueller/golly/dom2/svganimatedpreserveaspectratio"
-	"github.com/matthewmueller/golly/dom2/svganimatedrect"
-	"github.com/matthewmueller/golly/dom2/svglength"
-	"github.com/matthewmueller/golly/dom2/svgmatrix"
-	"github.com/matthewmueller/golly/dom2/svgnumber"
-	"github.com/matthewmueller/golly/dom2/svgpoint"
-	"github.com/matthewmueller/golly/dom2/svgrect"
-	"github.com/matthewmueller/golly/dom2/svgtransform"
+	"github.com/matthewmueller/golly/dom/svgangle"
+	"github.com/matthewmueller/golly/dom/svganimatedlength"
+	"github.com/matthewmueller/golly/dom/svganimatedpreserveaspectratio"
+	"github.com/matthewmueller/golly/dom/svganimatedrect"
+	"github.com/matthewmueller/golly/dom/svglength"
+	"github.com/matthewmueller/golly/dom/svgmatrix"
+	"github.com/matthewmueller/golly/dom/svgnumber"
+	"github.com/matthewmueller/golly/dom/svgpoint"
+	"github.com/matthewmueller/golly/dom/svgrect"
+	"github.com/matthewmueller/golly/dom/svgtransform"
 	"github.com/matthewmueller/golly/js"
 )
 

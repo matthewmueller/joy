@@ -1,6 +1,6 @@
 package htmlunknownelement
 
-import "github.com/matthewmueller/golly/dom2/window"
+import "github.com/matthewmueller/golly/dom/window"
 
 // HTMLUnknownElement struct
 // js:"HTMLUnknownElement,omit"

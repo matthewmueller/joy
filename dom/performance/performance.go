@@ -1,8 +1,8 @@
 package performance
 
 import (
-	"github.com/matthewmueller/golly/dom2/performancenavigation"
-	"github.com/matthewmueller/golly/dom2/performancetiming"
+	"github.com/matthewmueller/golly/dom/performancenavigation"
+	"github.com/matthewmueller/golly/dom/performancetiming"
 	"github.com/matthewmueller/golly/js"
 )
 

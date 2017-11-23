@@ -1,6 +1,6 @@
 package webglshader
 
-import "github.com/matthewmueller/golly/dom2/webglobject"
+import "github.com/matthewmueller/golly/dom/webglobject"
 
 // WebGLShader struct
 // js:"WebGLShader,omit"

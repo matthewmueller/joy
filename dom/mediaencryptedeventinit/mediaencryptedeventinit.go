@@ -1,6 +1,6 @@
 package mediaencryptedeventinit
 
-import "github.com/matthewmueller/golly/dom2/eventinit"
+import "github.com/matthewmueller/golly/dom/eventinit"
 
 type MediaEncryptedEventInit struct {
 	*eventinit.EventInit

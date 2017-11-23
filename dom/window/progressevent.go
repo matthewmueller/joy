@@ -1,7 +1,7 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/progresseventinit"
+	"github.com/matthewmueller/golly/dom/progresseventinit"
 	"github.com/matthewmueller/golly/js"
 )
 

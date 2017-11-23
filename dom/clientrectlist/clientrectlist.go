@@ -1,7 +1,7 @@
 package clientrectlist
 
 import (
-	"github.com/matthewmueller/golly/dom2/clientrect"
+	"github.com/matthewmueller/golly/dom/clientrect"
 	"github.com/matthewmueller/golly/js"
 )
 

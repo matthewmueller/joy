@@ -1,8 +1,8 @@
 package permissionrequestedevent
 
 import (
-	"github.com/matthewmueller/golly/dom2/permissionrequest"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/permissionrequest"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

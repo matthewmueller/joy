@@ -1,6 +1,6 @@
 package rtcdtmftonechangeeventinit
 
-import "github.com/matthewmueller/golly/dom2/eventinit"
+import "github.com/matthewmueller/golly/dom/eventinit"
 
 type RTCDTMFToneChangeEventInit struct {
 	*eventinit.EventInit

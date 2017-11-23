@@ -1,9 +1,9 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/mediadeviceinfo"
-	"github.com/matthewmueller/golly/dom2/mediastreamconstraints"
-	"github.com/matthewmueller/golly/dom2/mediatracksupportedconstraints"
+	"github.com/matthewmueller/golly/dom/mediadeviceinfo"
+	"github.com/matthewmueller/golly/dom/mediastreamconstraints"
+	"github.com/matthewmueller/golly/dom/mediatracksupportedconstraints"
 	"github.com/matthewmueller/golly/js"
 )
 

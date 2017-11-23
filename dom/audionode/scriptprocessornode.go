@@ -1,7 +1,7 @@
 package audionode
 
 import (
-	"github.com/matthewmueller/golly/dom2/audioprocessingevent"
+	"github.com/matthewmueller/golly/dom/audioprocessingevent"
 	"github.com/matthewmueller/golly/js"
 )
 

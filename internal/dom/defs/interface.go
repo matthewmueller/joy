@@ -236,8 +236,9 @@ func (d *iface) Generate() (string, error) {
 		Methods     []string
 		Properties  []string
 		Constructor struct {
-			Name   string
-			Params []gen.Vartype
+			Name    string
+			Params  []gen.Vartype
+			Rewrite string
 		}
 	}{
 		Package: d.pkg,
@@ -312,10 +313,14 @@ func (d *iface) Generate() (string, error) {
 	}
 
 	if d.data.Constructor != nil {
+		data.Constructor.Rewrite = d.data.Name
 
 		// New()
 		if d.pkg == d.file {
 			data.Constructor.Name = "New"
+			if d.file == "window" {
+				data.Constructor.Rewrite = "window"
+			}
 		} else {
 			data.Constructor.Name = "New" + gen.Capitalize(d.data.Name)
 		}
@@ -332,7 +337,6 @@ func (d *iface) Generate() (string, error) {
 				Type:     t,
 			})
 		}
-
 	}
 
 	return gen.Generate("interface/"+d.data.Name, data, `
@@ -341,7 +345,7 @@ func (d *iface) Generate() (string, error) {
 		{{ if .Constructor.Name -}}
 		// {{ .Constructor.Name }} fn
 		func {{ .Constructor.Name }}({{ joinvt .Constructor.Params }}) {{ .Type }} {
-			js.Rewrite("{{ .Name }}")
+			js.Rewrite("{{ .Constructor.Rewrite }}")
 			return &{{ capitalize .Name }}{}
 		}
 		{{- end }}

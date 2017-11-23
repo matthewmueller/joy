@@ -1,10 +1,10 @@
 package svgfeblendelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
-	"github.com/matthewmueller/golly/dom2/svganimatedlength"
-	"github.com/matthewmueller/golly/dom2/svganimatedstring"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/svganimatedenumeration"
+	"github.com/matthewmueller/golly/dom/svganimatedlength"
+	"github.com/matthewmueller/golly/dom/svganimatedstring"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

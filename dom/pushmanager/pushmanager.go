@@ -1,9 +1,9 @@
 package pushmanager
 
 import (
-	"github.com/matthewmueller/golly/dom2/pushpermissionstate"
-	"github.com/matthewmueller/golly/dom2/pushsubscription"
-	"github.com/matthewmueller/golly/dom2/pushsubscriptionoptionsinit"
+	"github.com/matthewmueller/golly/dom/pushpermissionstate"
+	"github.com/matthewmueller/golly/dom/pushsubscription"
+	"github.com/matthewmueller/golly/dom/pushsubscriptionoptionsinit"
 	"github.com/matthewmueller/golly/js"
 )
 

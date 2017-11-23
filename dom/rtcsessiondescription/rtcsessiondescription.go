@@ -1,8 +1,8 @@
 package rtcsessiondescription
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcsdptype"
-	"github.com/matthewmueller/golly/dom2/rtcsessiondescriptioninit"
+	"github.com/matthewmueller/golly/dom/rtcsdptype"
+	"github.com/matthewmueller/golly/dom/rtcsessiondescriptioninit"
 	"github.com/matthewmueller/golly/js"
 )
 

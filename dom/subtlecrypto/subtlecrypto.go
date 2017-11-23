@@ -1,7 +1,7 @@
 package subtlecrypto
 
 import (
-	"github.com/matthewmueller/golly/dom2/cryptokey"
+	"github.com/matthewmueller/golly/dom/cryptokey"
 	"github.com/matthewmueller/golly/js"
 )
 

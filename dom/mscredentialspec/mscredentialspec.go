@@ -1,6 +1,6 @@
 package mscredentialspec
 
-import "github.com/matthewmueller/golly/dom2/mscredentialtype"
+import "github.com/matthewmueller/golly/dom/mscredentialtype"
 
 type MSCredentialSpec struct {
 	id   *string

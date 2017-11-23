@@ -1,6 +1,6 @@
 package texttrack
 
-import "github.com/matthewmueller/golly/dom2/window"
+import "github.com/matthewmueller/golly/dom/window"
 
 // js:"TextTrackCue,omit"
 type TextTrackCue interface {

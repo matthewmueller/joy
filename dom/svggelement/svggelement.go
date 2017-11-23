@@ -1,6 +1,6 @@
 package svggelement
 
-import "github.com/matthewmueller/golly/dom2/window"
+import "github.com/matthewmueller/golly/dom/window"
 
 // SVGGElement struct
 // js:"SVGGElement,omit"

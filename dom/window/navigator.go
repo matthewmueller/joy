@@ -1,19 +1,19 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/confirmsitespecificexceptionsinformation"
-	"github.com/matthewmueller/golly/dom2/exceptioninformation"
-	"github.com/matthewmueller/golly/dom2/gamepad"
-	"github.com/matthewmueller/golly/dom2/gamepadinputemulationtype"
-	"github.com/matthewmueller/golly/dom2/geolocation"
-	"github.com/matthewmueller/golly/dom2/mediakeysystemconfiguration"
-	"github.com/matthewmueller/golly/dom2/mediastreamconstraints"
-	"github.com/matthewmueller/golly/dom2/mediastreamerror"
-	"github.com/matthewmueller/golly/dom2/mimetypearray"
-	"github.com/matthewmueller/golly/dom2/pluginarray"
-	"github.com/matthewmueller/golly/dom2/storeexceptionsinformation"
-	"github.com/matthewmueller/golly/dom2/storesitespecificexceptionsinformation"
-	"github.com/matthewmueller/golly/dom2/webauthentication"
+	"github.com/matthewmueller/golly/dom/confirmsitespecificexceptionsinformation"
+	"github.com/matthewmueller/golly/dom/exceptioninformation"
+	"github.com/matthewmueller/golly/dom/gamepad"
+	"github.com/matthewmueller/golly/dom/gamepadinputemulationtype"
+	"github.com/matthewmueller/golly/dom/geolocation"
+	"github.com/matthewmueller/golly/dom/mediakeysystemconfiguration"
+	"github.com/matthewmueller/golly/dom/mediastreamconstraints"
+	"github.com/matthewmueller/golly/dom/mediastreamerror"
+	"github.com/matthewmueller/golly/dom/mimetypearray"
+	"github.com/matthewmueller/golly/dom/pluginarray"
+	"github.com/matthewmueller/golly/dom/storeexceptionsinformation"
+	"github.com/matthewmueller/golly/dom/storesitespecificexceptionsinformation"
+	"github.com/matthewmueller/golly/dom/webauthentication"
 	"github.com/matthewmueller/golly/js"
 )
 

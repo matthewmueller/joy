@@ -1,6 +1,6 @@
 package performancemark
 
-import "github.com/matthewmueller/golly/dom2/performanceentry"
+import "github.com/matthewmueller/golly/dom/performanceentry"
 
 // PerformanceMark struct
 // js:"PerformanceMark,omit"

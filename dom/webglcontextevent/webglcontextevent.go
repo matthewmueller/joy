@@ -1,8 +1,8 @@
 package webglcontextevent
 
 import (
-	"github.com/matthewmueller/golly/dom2/webglcontexteventinit"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/webglcontexteventinit"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

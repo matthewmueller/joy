@@ -1,9 +1,9 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/domstringlist"
-	"github.com/matthewmueller/golly/dom2/idbobjectstoreparameters"
-	"github.com/matthewmueller/golly/dom2/idbtransactionmode"
+	"github.com/matthewmueller/golly/dom/domstringlist"
+	"github.com/matthewmueller/golly/dom/idbobjectstoreparameters"
+	"github.com/matthewmueller/golly/dom/idbtransactionmode"
 	"github.com/matthewmueller/golly/js"
 )
 

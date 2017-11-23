@@ -1,10 +1,10 @@
 package msnavigatordonottrack
 
 import (
-	"github.com/matthewmueller/golly/dom2/confirmsitespecificexceptionsinformation"
-	"github.com/matthewmueller/golly/dom2/exceptioninformation"
-	"github.com/matthewmueller/golly/dom2/storeexceptionsinformation"
-	"github.com/matthewmueller/golly/dom2/storesitespecificexceptionsinformation"
+	"github.com/matthewmueller/golly/dom/confirmsitespecificexceptionsinformation"
+	"github.com/matthewmueller/golly/dom/exceptioninformation"
+	"github.com/matthewmueller/golly/dom/storeexceptionsinformation"
+	"github.com/matthewmueller/golly/dom/storesitespecificexceptionsinformation"
 	"github.com/matthewmueller/golly/js"
 )
 

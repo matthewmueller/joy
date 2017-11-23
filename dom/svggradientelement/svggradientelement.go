@@ -1,9 +1,9 @@
 package svggradientelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
-	"github.com/matthewmueller/golly/dom2/svganimatedtransformlist"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/svganimatedenumeration"
+	"github.com/matthewmueller/golly/dom/svganimatedtransformlist"
+	"github.com/matthewmueller/golly/dom/window"
 )
 
 // js:"SVGGradientElement,omit"

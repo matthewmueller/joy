@@ -209,7 +209,7 @@ func main() {
 	// 	log.WithError(err).Fatalf("removing dom")
 	// }
 
-	if e := generate(path.Join(pwd, "dom2")); e != nil {
+	if e := generate(path.Join(pwd, "dom")); e != nil {
 		log.WithError(e).Fatalf("error generating")
 	}
 }

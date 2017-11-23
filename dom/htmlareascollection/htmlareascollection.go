@@ -1,6 +1,6 @@
 package htmlareascollection
 
-import "github.com/matthewmueller/golly/dom2/window"
+import "github.com/matthewmueller/golly/dom/window"
 
 // HTMLAreasCollection struct
 // js:"HTMLAreasCollection,omit"

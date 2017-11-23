@@ -1,6 +1,6 @@
 package mspayloadbase
 
-import "github.com/matthewmueller/golly/dom2/rtcstats"
+import "github.com/matthewmueller/golly/dom/rtcstats"
 
 type MSPayloadBase struct {
 	*rtcstats.RTCStats

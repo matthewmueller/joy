@@ -1,7 +1,7 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/deviceorientationeventinit"
+	"github.com/matthewmueller/golly/dom/deviceorientationeventinit"
 	"github.com/matthewmueller/golly/js"
 )
 

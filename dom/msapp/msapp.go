@@ -1,10 +1,10 @@
 package msapp
 
 import (
-	"github.com/matthewmueller/golly/dom2/blob"
-	"github.com/matthewmueller/golly/dom2/file"
-	"github.com/matthewmueller/golly/dom2/msappasyncoperation"
-	"github.com/matthewmueller/golly/dom2/msstream"
+	"github.com/matthewmueller/golly/dom/blob"
+	"github.com/matthewmueller/golly/dom/file"
+	"github.com/matthewmueller/golly/dom/msappasyncoperation"
+	"github.com/matthewmueller/golly/dom/msstream"
 	"github.com/matthewmueller/golly/js"
 )
 

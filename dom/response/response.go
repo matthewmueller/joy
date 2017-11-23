@@ -1,11 +1,11 @@
 package response
 
 import (
-	"github.com/matthewmueller/golly/dom2/blob"
-	"github.com/matthewmueller/golly/dom2/headers"
-	"github.com/matthewmueller/golly/dom2/readablestream"
-	"github.com/matthewmueller/golly/dom2/responseinit"
-	"github.com/matthewmueller/golly/dom2/responsetype"
+	"github.com/matthewmueller/golly/dom/blob"
+	"github.com/matthewmueller/golly/dom/headers"
+	"github.com/matthewmueller/golly/dom/readablestream"
+	"github.com/matthewmueller/golly/dom/responseinit"
+	"github.com/matthewmueller/golly/dom/responsetype"
 	"github.com/matthewmueller/golly/js"
 )
 

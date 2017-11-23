@@ -1,7 +1,7 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/registrationoptions"
+	"github.com/matthewmueller/golly/dom/registrationoptions"
 	"github.com/matthewmueller/golly/js"
 )
 

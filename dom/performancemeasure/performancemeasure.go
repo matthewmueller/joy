@@ -1,6 +1,6 @@
 package performancemeasure
 
-import "github.com/matthewmueller/golly/dom2/performanceentry"
+import "github.com/matthewmueller/golly/dom/performanceentry"
 
 // PerformanceMeasure struct
 // js:"PerformanceMeasure,omit"

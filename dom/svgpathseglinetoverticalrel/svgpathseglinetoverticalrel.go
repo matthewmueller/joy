@@ -1,7 +1,7 @@
 package svgpathseglinetoverticalrel
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgpathseg"
+	"github.com/matthewmueller/golly/dom/svgpathseg"
 	"github.com/matthewmueller/golly/js"
 )
 

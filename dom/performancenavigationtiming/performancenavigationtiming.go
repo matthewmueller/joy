@@ -1,8 +1,8 @@
 package performancenavigationtiming
 
 import (
-	"github.com/matthewmueller/golly/dom2/navigationtype"
-	"github.com/matthewmueller/golly/dom2/performanceentry"
+	"github.com/matthewmueller/golly/dom/navigationtype"
+	"github.com/matthewmueller/golly/dom/performanceentry"
 	"github.com/matthewmueller/golly/js"
 )
 

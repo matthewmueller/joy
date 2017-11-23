@@ -1,6 +1,6 @@
 package webglprogram
 
-import "github.com/matthewmueller/golly/dom2/webglobject"
+import "github.com/matthewmueller/golly/dom/webglobject"
 
 // WebGLProgram struct
 // js:"WebGLProgram,omit"

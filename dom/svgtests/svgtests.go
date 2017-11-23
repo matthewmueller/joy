@@ -1,7 +1,7 @@
 package svgtests
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgstringlist"
+	"github.com/matthewmueller/golly/dom/svgstringlist"
 	"github.com/matthewmueller/golly/js"
 )
 

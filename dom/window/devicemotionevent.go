@@ -1,11 +1,11 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/deviceacceleration"
-	"github.com/matthewmueller/golly/dom2/deviceaccelerationdict"
-	"github.com/matthewmueller/golly/dom2/devicemotioneventinit"
-	"github.com/matthewmueller/golly/dom2/devicerotationrate"
-	"github.com/matthewmueller/golly/dom2/devicerotationratedict"
+	"github.com/matthewmueller/golly/dom/deviceacceleration"
+	"github.com/matthewmueller/golly/dom/deviceaccelerationdict"
+	"github.com/matthewmueller/golly/dom/devicemotioneventinit"
+	"github.com/matthewmueller/golly/dom/devicerotationrate"
+	"github.com/matthewmueller/golly/dom/devicerotationratedict"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,11 +1,11 @@
 package requestinit
 
 import (
-	"github.com/matthewmueller/golly/dom2/referrerpolicy"
-	"github.com/matthewmueller/golly/dom2/requestcache"
-	"github.com/matthewmueller/golly/dom2/requestcredentials"
-	"github.com/matthewmueller/golly/dom2/requestmode"
-	"github.com/matthewmueller/golly/dom2/requestredirect"
+	"github.com/matthewmueller/golly/dom/referrerpolicy"
+	"github.com/matthewmueller/golly/dom/requestcache"
+	"github.com/matthewmueller/golly/dom/requestcredentials"
+	"github.com/matthewmueller/golly/dom/requestmode"
+	"github.com/matthewmueller/golly/dom/requestredirect"
 )
 
 type RequestInit struct {

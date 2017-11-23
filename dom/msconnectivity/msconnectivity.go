@@ -1,9 +1,9 @@
 package msconnectivity
 
 import (
-	"github.com/matthewmueller/golly/dom2/msicetype"
-	"github.com/matthewmueller/golly/dom2/msicewarningflags"
-	"github.com/matthewmueller/golly/dom2/msrelayaddress"
+	"github.com/matthewmueller/golly/dom/msicetype"
+	"github.com/matthewmueller/golly/dom/msicewarningflags"
+	"github.com/matthewmueller/golly/dom/msrelayaddress"
 )
 
 type MSConnectivity struct {

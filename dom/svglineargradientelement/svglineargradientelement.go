@@ -1,8 +1,8 @@
 package svglineargradientelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/svganimatedlength"
-	"github.com/matthewmueller/golly/dom2/svggradientelement"
+	"github.com/matthewmueller/golly/dom/svganimatedlength"
+	"github.com/matthewmueller/golly/dom/svggradientelement"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,9 +1,9 @@
 package cachestorage
 
 import (
-	"github.com/matthewmueller/golly/dom2/cache"
-	"github.com/matthewmueller/golly/dom2/cachequeryoptions"
-	"github.com/matthewmueller/golly/dom2/request"
+	"github.com/matthewmueller/golly/dom/cache"
+	"github.com/matthewmueller/golly/dom/cachequeryoptions"
+	"github.com/matthewmueller/golly/dom/request"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,7 +1,7 @@
 package mediadeviceinfo
 
 import (
-	"github.com/matthewmueller/golly/dom2/mediadevicekind"
+	"github.com/matthewmueller/golly/dom/mediadevicekind"
 	"github.com/matthewmueller/golly/js"
 )
 

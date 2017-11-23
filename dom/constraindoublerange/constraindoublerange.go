@@ -1,6 +1,6 @@
 package constraindoublerange
 
-import "github.com/matthewmueller/golly/dom2/doublerange"
+import "github.com/matthewmueller/golly/dom/doublerange"
 
 type ConstrainDoubleRange struct {
 	*doublerange.DoubleRange

@@ -1,9 +1,9 @@
 package rtcconfiguration
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcbundlepolicy"
-	"github.com/matthewmueller/golly/dom2/rtciceserver"
-	"github.com/matthewmueller/golly/dom2/rtcicetransportpolicy"
+	"github.com/matthewmueller/golly/dom/rtcbundlepolicy"
+	"github.com/matthewmueller/golly/dom/rtciceserver"
+	"github.com/matthewmueller/golly/dom/rtcicetransportpolicy"
 )
 
 type RTCConfiguration struct {

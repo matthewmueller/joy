@@ -1,8 +1,8 @@
 package mediastreamevent
 
 import (
-	"github.com/matthewmueller/golly/dom2/mediastreameventinit"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/mediastreameventinit"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

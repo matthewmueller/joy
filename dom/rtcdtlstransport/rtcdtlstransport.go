@@ -1,12 +1,12 @@
 package rtcdtlstransport
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcdtlsparameters"
-	"github.com/matthewmueller/golly/dom2/rtcdtlstransportstate"
-	"github.com/matthewmueller/golly/dom2/rtcdtlstransportstatechangedevent"
-	"github.com/matthewmueller/golly/dom2/rtcicetransport"
-	"github.com/matthewmueller/golly/dom2/rtcstatsprovider"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/rtcdtlsparameters"
+	"github.com/matthewmueller/golly/dom/rtcdtlstransportstate"
+	"github.com/matthewmueller/golly/dom/rtcdtlstransportstatechangedevent"
+	"github.com/matthewmueller/golly/dom/rtcicetransport"
+	"github.com/matthewmueller/golly/dom/rtcstatsprovider"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

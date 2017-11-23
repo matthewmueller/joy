@@ -1,9 +1,9 @@
 package intersectionobserverentry
 
 import (
-	"github.com/matthewmueller/golly/dom2/clientrect"
-	"github.com/matthewmueller/golly/dom2/intersectionobserverentryinit"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/clientrect"
+	"github.com/matthewmueller/golly/dom/intersectionobserverentryinit"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

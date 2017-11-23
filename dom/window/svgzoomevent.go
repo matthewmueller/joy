@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgpoint"
-	"github.com/matthewmueller/golly/dom2/svgrect"
+	"github.com/matthewmueller/golly/dom/svgpoint"
+	"github.com/matthewmueller/golly/dom/svgrect"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,8 +1,8 @@
 package rtcrtpcapabilities
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcrtpcodeccapability"
-	"github.com/matthewmueller/golly/dom2/rtcrtpheaderextension"
+	"github.com/matthewmueller/golly/dom/rtcrtpcodeccapability"
+	"github.com/matthewmueller/golly/dom/rtcrtpheaderextension"
 )
 
 type RTCRtpCapabilities struct {

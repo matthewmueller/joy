@@ -3,10 +3,10 @@ package htmlinputelement
 import (
 	"time"
 
-	"github.com/matthewmueller/golly/dom2/filelist"
-	"github.com/matthewmueller/golly/dom2/htmlformelement"
-	"github.com/matthewmueller/golly/dom2/validitystate"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/filelist"
+	"github.com/matthewmueller/golly/dom/htmlformelement"
+	"github.com/matthewmueller/golly/dom/validitystate"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,7 +1,7 @@
 package svgpoint
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgmatrix"
+	"github.com/matthewmueller/golly/dom/svgmatrix"
 	"github.com/matthewmueller/golly/js"
 )
 

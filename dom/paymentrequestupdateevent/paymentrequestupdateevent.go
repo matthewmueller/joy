@@ -1,9 +1,9 @@
 package paymentrequestupdateevent
 
 import (
-	"github.com/matthewmueller/golly/dom2/paymentdetails"
-	"github.com/matthewmueller/golly/dom2/paymentrequestupdateeventinit"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/paymentdetails"
+	"github.com/matthewmueller/golly/dom/paymentrequestupdateeventinit"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

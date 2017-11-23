@@ -1,8 +1,8 @@
 package permissionrequest
 
 import (
-	"github.com/matthewmueller/golly/dom2/deferredpermissionrequest"
-	"github.com/matthewmueller/golly/dom2/mswebviewpermissionstate"
+	"github.com/matthewmueller/golly/dom/deferredpermissionrequest"
+	"github.com/matthewmueller/golly/dom/mswebviewpermissionstate"
 	"github.com/matthewmueller/golly/js"
 )
 

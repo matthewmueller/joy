@@ -1,7 +1,7 @@
 package svganimatednumberlist
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgnumberlist"
+	"github.com/matthewmueller/golly/dom/svgnumberlist"
 	"github.com/matthewmueller/golly/js"
 )
 

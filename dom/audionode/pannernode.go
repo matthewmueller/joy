@@ -1,8 +1,8 @@
 package audionode
 
 import (
-	"github.com/matthewmueller/golly/dom2/distancemodeltype"
-	"github.com/matthewmueller/golly/dom2/panningmodeltype"
+	"github.com/matthewmueller/golly/dom/distancemodeltype"
+	"github.com/matthewmueller/golly/dom/panningmodeltype"
 	"github.com/matthewmueller/golly/js"
 )
 

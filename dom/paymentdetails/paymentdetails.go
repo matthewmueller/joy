@@ -1,9 +1,9 @@
 package paymentdetails
 
 import (
-	"github.com/matthewmueller/golly/dom2/paymentdetailsmodifier"
-	"github.com/matthewmueller/golly/dom2/paymentitem"
-	"github.com/matthewmueller/golly/dom2/paymentshippingoption"
+	"github.com/matthewmueller/golly/dom/paymentdetailsmodifier"
+	"github.com/matthewmueller/golly/dom/paymentitem"
+	"github.com/matthewmueller/golly/dom/paymentshippingoption"
 )
 
 type PaymentDetails struct {

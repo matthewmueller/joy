@@ -1,12 +1,12 @@
 package webauthentication
 
 import (
-	"github.com/matthewmueller/golly/dom2/account"
-	"github.com/matthewmueller/golly/dom2/assertionoptions"
-	"github.com/matthewmueller/golly/dom2/scopedcredentialinfo"
-	"github.com/matthewmueller/golly/dom2/scopedcredentialoptions"
-	"github.com/matthewmueller/golly/dom2/scopedcredentialparameters"
-	"github.com/matthewmueller/golly/dom2/webauthnassertion"
+	"github.com/matthewmueller/golly/dom/account"
+	"github.com/matthewmueller/golly/dom/assertionoptions"
+	"github.com/matthewmueller/golly/dom/scopedcredentialinfo"
+	"github.com/matthewmueller/golly/dom/scopedcredentialoptions"
+	"github.com/matthewmueller/golly/dom/scopedcredentialparameters"
+	"github.com/matthewmueller/golly/dom/webauthnassertion"
 	"github.com/matthewmueller/golly/js"
 )
 

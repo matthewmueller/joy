@@ -1,8 +1,8 @@
 package webkitrtcpeerconnection
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcconfiguration"
-	"github.com/matthewmueller/golly/dom2/rtcpeerconnection"
+	"github.com/matthewmueller/golly/dom/rtcconfiguration"
+	"github.com/matthewmueller/golly/dom/rtcpeerconnection"
 	"github.com/matthewmueller/golly/js"
 )
 

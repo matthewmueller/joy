@@ -1,6 +1,6 @@
 package paymentrequestupdateeventinit
 
-import "github.com/matthewmueller/golly/dom2/eventinit"
+import "github.com/matthewmueller/golly/dom/eventinit"
 
 type PaymentRequestUpdateEventInit struct {
 	*eventinit.EventInit

@@ -1,9 +1,9 @@
 package datatransfer
 
 import (
-	"github.com/matthewmueller/golly/dom2/datatransferitemlist"
-	"github.com/matthewmueller/golly/dom2/domstringlist"
-	"github.com/matthewmueller/golly/dom2/filelist"
+	"github.com/matthewmueller/golly/dom/datatransferitemlist"
+	"github.com/matthewmueller/golly/dom/domstringlist"
+	"github.com/matthewmueller/golly/dom/filelist"
 	"github.com/matthewmueller/golly/js"
 )
 

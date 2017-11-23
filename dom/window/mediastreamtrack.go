@@ -1,10 +1,10 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/mediastreamtrackstate"
-	"github.com/matthewmueller/golly/dom2/mediatrackcapabilities"
-	"github.com/matthewmueller/golly/dom2/mediatrackconstraints"
-	"github.com/matthewmueller/golly/dom2/mediatracksettings"
+	"github.com/matthewmueller/golly/dom/mediastreamtrackstate"
+	"github.com/matthewmueller/golly/dom/mediatrackcapabilities"
+	"github.com/matthewmueller/golly/dom/mediatrackconstraints"
+	"github.com/matthewmueller/golly/dom/mediatracksettings"
 	"github.com/matthewmueller/golly/js"
 )
 

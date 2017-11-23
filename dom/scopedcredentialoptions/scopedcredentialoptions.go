@@ -1,8 +1,8 @@
 package scopedcredentialoptions
 
 import (
-	"github.com/matthewmueller/golly/dom2/scopedcredentialdescriptor"
-	"github.com/matthewmueller/golly/dom2/webauthnextensions"
+	"github.com/matthewmueller/golly/dom/scopedcredentialdescriptor"
+	"github.com/matthewmueller/golly/dom/webauthnextensions"
 )
 
 type ScopedCredentialOptions struct {

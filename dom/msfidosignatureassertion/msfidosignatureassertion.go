@@ -1,8 +1,8 @@
 package msfidosignatureassertion
 
 import (
-	"github.com/matthewmueller/golly/dom2/msassertion"
-	"github.com/matthewmueller/golly/dom2/msfidosignature"
+	"github.com/matthewmueller/golly/dom/msassertion"
+	"github.com/matthewmueller/golly/dom/msfidosignature"
 	"github.com/matthewmueller/golly/js"
 )
 

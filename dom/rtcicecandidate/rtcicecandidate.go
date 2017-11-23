@@ -1,7 +1,7 @@
 package rtcicecandidate
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcicecandidateinit"
+	"github.com/matthewmueller/golly/dom/rtcicecandidateinit"
 	"github.com/matthewmueller/golly/js"
 )
 

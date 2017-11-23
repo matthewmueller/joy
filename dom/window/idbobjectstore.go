@@ -1,9 +1,9 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/domstringlist"
-	"github.com/matthewmueller/golly/dom2/idbcursordirection"
-	"github.com/matthewmueller/golly/dom2/idbindexparameters"
+	"github.com/matthewmueller/golly/dom/domstringlist"
+	"github.com/matthewmueller/golly/dom/idbcursordirection"
+	"github.com/matthewmueller/golly/dom/idbindexparameters"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,9 +1,9 @@
 package offlineaudiocontext
 
 import (
-	"github.com/matthewmueller/golly/dom2/audiobuffer"
-	"github.com/matthewmueller/golly/dom2/audionode"
-	"github.com/matthewmueller/golly/dom2/offlineaudiocompletionevent"
+	"github.com/matthewmueller/golly/dom/audiobuffer"
+	"github.com/matthewmueller/golly/dom/audionode"
+	"github.com/matthewmueller/golly/dom/offlineaudiocompletionevent"
 	"github.com/matthewmueller/golly/js"
 )
 

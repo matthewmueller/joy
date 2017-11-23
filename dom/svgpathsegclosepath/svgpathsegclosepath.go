@@ -1,6 +1,6 @@
 package svgpathsegclosepath
 
-import "github.com/matthewmueller/golly/dom2/svgpathseg"
+import "github.com/matthewmueller/golly/dom/svgpathseg"
 
 // SVGPathSegClosePath struct
 // js:"SVGPathSegClosePath,omit"

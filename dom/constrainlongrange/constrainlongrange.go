@@ -1,6 +1,6 @@
 package constrainlongrange
 
-import "github.com/matthewmueller/golly/dom2/longrange"
+import "github.com/matthewmueller/golly/dom/longrange"
 
 type ConstrainLongRange struct {
 	*longrange.LongRange

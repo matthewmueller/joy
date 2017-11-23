@@ -1,9 +1,9 @@
 package cache
 
 import (
-	"github.com/matthewmueller/golly/dom2/cachequeryoptions"
-	"github.com/matthewmueller/golly/dom2/request"
-	"github.com/matthewmueller/golly/dom2/response"
+	"github.com/matthewmueller/golly/dom/cachequeryoptions"
+	"github.com/matthewmueller/golly/dom/request"
+	"github.com/matthewmueller/golly/dom/response"
 	"github.com/matthewmueller/golly/js"
 )
 

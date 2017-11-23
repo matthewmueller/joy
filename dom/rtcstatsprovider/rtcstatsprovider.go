@@ -1,8 +1,8 @@
 package rtcstatsprovider
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcstatsreport"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/rtcstatsreport"
+	"github.com/matthewmueller/golly/dom/window"
 )
 
 // js:"RTCStatsProvider,omit"

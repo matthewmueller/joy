@@ -1,9 +1,9 @@
 package globalfetch
 
 import (
-	"github.com/matthewmueller/golly/dom2/request"
-	"github.com/matthewmueller/golly/dom2/requestinit"
-	"github.com/matthewmueller/golly/dom2/response"
+	"github.com/matthewmueller/golly/dom/request"
+	"github.com/matthewmueller/golly/dom/requestinit"
+	"github.com/matthewmueller/golly/dom/response"
 	"github.com/matthewmueller/golly/js"
 )
 

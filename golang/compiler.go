@@ -68,7 +68,7 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 
 // Parse fn
 func (c *Compiler) Parse(packages ...string) (idx *index.Index, g *graph.Graph, err error) {
-	defer log.Trace("parse").Stop(&err)
+	// defer log.Trace("parse").Stop(&err)
 
 	program, err := loader.Load(packages...)
 	if err != nil {

@@ -1,7 +1,7 @@
 package navigationcompletedevent
 
 import (
-	"github.com/matthewmueller/golly/dom2/navigationevent"
+	"github.com/matthewmueller/golly/dom/navigationevent"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,6 +1,6 @@
 package svgtitleelement
 
-import "github.com/matthewmueller/golly/dom2/window"
+import "github.com/matthewmueller/golly/dom/window"
 
 // SVGTitleElement struct
 // js:"SVGTitleElement,omit"

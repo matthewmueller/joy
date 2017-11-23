@@ -1,6 +1,6 @@
 package svgtextelement
 
-import "github.com/matthewmueller/golly/dom2/svgtextpositioningelement"
+import "github.com/matthewmueller/golly/dom/svgtextpositioningelement"
 
 // SVGTextElement struct
 // js:"SVGTextElement,omit"

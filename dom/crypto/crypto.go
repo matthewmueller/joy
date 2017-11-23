@@ -1,7 +1,7 @@
 package crypto
 
 import (
-	"github.com/matthewmueller/golly/dom2/subtlecrypto"
+	"github.com/matthewmueller/golly/dom/subtlecrypto"
 	"github.com/matthewmueller/golly/js"
 )
 

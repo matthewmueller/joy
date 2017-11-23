@@ -1,7 +1,7 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/speechsynthesisvoice"
+	"github.com/matthewmueller/golly/dom/speechsynthesisvoice"
 	"github.com/matthewmueller/golly/js"
 )
 

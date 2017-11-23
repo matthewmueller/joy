@@ -1,10 +1,10 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/getnotificationoptions"
-	"github.com/matthewmueller/golly/dom2/notificationoptions"
-	"github.com/matthewmueller/golly/dom2/pushmanager"
-	"github.com/matthewmueller/golly/dom2/syncmanager"
+	"github.com/matthewmueller/golly/dom/getnotificationoptions"
+	"github.com/matthewmueller/golly/dom/notificationoptions"
+	"github.com/matthewmueller/golly/dom/pushmanager"
+	"github.com/matthewmueller/golly/dom/syncmanager"
 	"github.com/matthewmueller/golly/js"
 )
 

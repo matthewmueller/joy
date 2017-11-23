@@ -1,10 +1,10 @@
 package htmlselectelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/htmlformelement"
-	"github.com/matthewmueller/golly/dom2/htmloptionscollection"
-	"github.com/matthewmueller/golly/dom2/validitystate"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/htmlformelement"
+	"github.com/matthewmueller/golly/dom/htmloptionscollection"
+	"github.com/matthewmueller/golly/dom/validitystate"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

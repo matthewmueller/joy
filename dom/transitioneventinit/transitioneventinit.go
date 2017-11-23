@@ -1,6 +1,6 @@
 package transitioneventinit
 
-import "github.com/matthewmueller/golly/dom2/eventinit"
+import "github.com/matthewmueller/golly/dom/eventinit"
 
 type TransitionEventInit struct {
 	*eventinit.EventInit

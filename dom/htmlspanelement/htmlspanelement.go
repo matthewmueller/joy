@@ -1,6 +1,6 @@
 package htmlspanelement
 
-import "github.com/matthewmueller/golly/dom2/window"
+import "github.com/matthewmueller/golly/dom/window"
 
 // HTMLSpanElement struct
 // js:"HTMLSpanElement,omit"

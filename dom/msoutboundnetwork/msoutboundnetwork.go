@@ -1,6 +1,6 @@
 package msoutboundnetwork
 
-import "github.com/matthewmueller/golly/dom2/msnetwork"
+import "github.com/matthewmueller/golly/dom/msnetwork"
 
 type MSOutboundNetwork struct {
 	*msnetwork.MSNetwork

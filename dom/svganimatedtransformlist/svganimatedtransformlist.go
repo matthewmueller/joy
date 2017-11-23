@@ -1,7 +1,7 @@
 package svganimatedtransformlist
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgtransformlist"
+	"github.com/matthewmueller/golly/dom/svgtransformlist"
 	"github.com/matthewmueller/golly/js"
 )
 

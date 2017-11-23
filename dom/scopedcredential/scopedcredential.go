@@ -1,7 +1,7 @@
 package scopedcredential
 
 import (
-	"github.com/matthewmueller/golly/dom2/scopedcredentialtype"
+	"github.com/matthewmueller/golly/dom/scopedcredentialtype"
 	"github.com/matthewmueller/golly/js"
 )
 

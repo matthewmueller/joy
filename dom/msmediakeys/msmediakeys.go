@@ -1,7 +1,7 @@
 package msmediakeys
 
 import (
-	"github.com/matthewmueller/golly/dom2/msmediakeysession"
+	"github.com/matthewmueller/golly/dom/msmediakeysession"
 	"github.com/matthewmueller/golly/js"
 )
 

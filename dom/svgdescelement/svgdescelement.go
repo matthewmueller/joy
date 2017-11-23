@@ -1,6 +1,6 @@
 package svgdescelement
 
-import "github.com/matthewmueller/golly/dom2/window"
+import "github.com/matthewmueller/golly/dom/window"
 
 // SVGDescElement struct
 // js:"SVGDescElement,omit"

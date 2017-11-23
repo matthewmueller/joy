@@ -1,16 +1,16 @@
 package rtcicetransport
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcicecandidatedictionary"
-	"github.com/matthewmueller/golly/dom2/rtcicecandidatepair"
-	"github.com/matthewmueller/golly/dom2/rtcicecandidatepairchangedevent"
-	"github.com/matthewmueller/golly/dom2/rtcicecomponent"
-	"github.com/matthewmueller/golly/dom2/rtcicegatherer"
-	"github.com/matthewmueller/golly/dom2/rtciceparameters"
-	"github.com/matthewmueller/golly/dom2/rtcicerole"
-	"github.com/matthewmueller/golly/dom2/rtcicetransportstate"
-	"github.com/matthewmueller/golly/dom2/rtcicetransportstatechangedevent"
-	"github.com/matthewmueller/golly/dom2/rtcstatsprovider"
+	"github.com/matthewmueller/golly/dom/rtcicecandidatedictionary"
+	"github.com/matthewmueller/golly/dom/rtcicecandidatepair"
+	"github.com/matthewmueller/golly/dom/rtcicecandidatepairchangedevent"
+	"github.com/matthewmueller/golly/dom/rtcicecomponent"
+	"github.com/matthewmueller/golly/dom/rtcicegatherer"
+	"github.com/matthewmueller/golly/dom/rtciceparameters"
+	"github.com/matthewmueller/golly/dom/rtcicerole"
+	"github.com/matthewmueller/golly/dom/rtcicetransportstate"
+	"github.com/matthewmueller/golly/dom/rtcicetransportstatechangedevent"
+	"github.com/matthewmueller/golly/dom/rtcstatsprovider"
 	"github.com/matthewmueller/golly/js"
 )
 

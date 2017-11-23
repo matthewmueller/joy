@@ -1,7 +1,7 @@
 package svgnumberlist
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgnumber"
+	"github.com/matthewmueller/golly/dom/svgnumber"
 	"github.com/matthewmueller/golly/js"
 )
 

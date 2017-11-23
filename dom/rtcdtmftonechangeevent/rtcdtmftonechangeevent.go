@@ -1,8 +1,8 @@
 package rtcdtmftonechangeevent
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcdtmftonechangeeventinit"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/rtcdtmftonechangeeventinit"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

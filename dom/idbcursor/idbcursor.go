@@ -1,8 +1,8 @@
 package idbcursor
 
 import (
-	"github.com/matthewmueller/golly/dom2/idbcursordirection"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/idbcursordirection"
+	"github.com/matthewmueller/golly/dom/window"
 )
 
 // js:"IDBCursor,omit"

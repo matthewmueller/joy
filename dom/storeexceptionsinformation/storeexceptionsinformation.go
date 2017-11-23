@@ -1,6 +1,6 @@
 package storeexceptionsinformation
 
-import "github.com/matthewmueller/golly/dom2/exceptioninformation"
+import "github.com/matthewmueller/golly/dom/exceptioninformation"
 
 type StoreExceptionsInformation struct {
 	*exceptioninformation.ExceptionInformation

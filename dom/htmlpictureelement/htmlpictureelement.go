@@ -1,6 +1,6 @@
 package htmlpictureelement
 
-import "github.com/matthewmueller/golly/dom2/window"
+import "github.com/matthewmueller/golly/dom/window"
 
 // HTMLPictureElement struct
 // js:"HTMLPictureElement,omit"

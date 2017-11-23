@@ -1,6 +1,6 @@
 package rtcsrtpsdesparameters
 
-import "github.com/matthewmueller/golly/dom2/rtcsrtpkeyparam"
+import "github.com/matthewmueller/golly/dom/rtcsrtpkeyparam"
 
 type RTCSrtpSdesParameters struct {
 	cryptoSuite   *string

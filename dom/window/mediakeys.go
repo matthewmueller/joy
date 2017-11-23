@@ -1,7 +1,7 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/mediakeysessiontype"
+	"github.com/matthewmueller/golly/dom/mediakeysessiontype"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,0 +1,27 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/65-dup-method-struct"] = (function() {
+function Document (o) {
+o = o || {};
+};
+Document.prototype.nodeName = function() {
+var d = this;
+return "";
+};
+function Window (o) {
+o = o || {};
+};
+function main () {
+var w = new Window({});
+var doc = w.Document();
+console.log(doc.nodeName.bind(doc)());
+};
+return {
+  Document: Document,
+  Window: Window,
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/65-dup-method-struct"].main();
+})()

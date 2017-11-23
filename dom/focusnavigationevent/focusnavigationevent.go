@@ -1,9 +1,9 @@
 package focusnavigationevent
 
 import (
-	"github.com/matthewmueller/golly/dom2/focusnavigationeventinit"
-	"github.com/matthewmueller/golly/dom2/navigationreason"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/focusnavigationeventinit"
+	"github.com/matthewmueller/golly/dom/navigationreason"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

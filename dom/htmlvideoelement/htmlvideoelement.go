@@ -1,9 +1,9 @@
 package htmlvideoelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/htmlmediaelement"
-	"github.com/matthewmueller/golly/dom2/videoplaybackquality"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/htmlmediaelement"
+	"github.com/matthewmueller/golly/dom/videoplaybackquality"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

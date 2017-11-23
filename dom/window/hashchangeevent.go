@@ -1,7 +1,7 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/hashchangeeventinit"
+	"github.com/matthewmueller/golly/dom/hashchangeeventinit"
 	"github.com/matthewmueller/golly/js"
 )
 

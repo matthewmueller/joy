@@ -1,9 +1,9 @@
 package msstreamreader
 
 import (
-	"github.com/matthewmueller/golly/dom2/domerror"
-	"github.com/matthewmueller/golly/dom2/msstream"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/domerror"
+	"github.com/matthewmueller/golly/dom/msstream"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

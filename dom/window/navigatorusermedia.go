@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/mediastreamconstraints"
-	"github.com/matthewmueller/golly/dom2/mediastreamerror"
+	"github.com/matthewmueller/golly/dom/mediastreamconstraints"
+	"github.com/matthewmueller/golly/dom/mediastreamerror"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,6 +1,6 @@
 package csssupportsrule
 
-import "github.com/matthewmueller/golly/dom2/cssconditionrule"
+import "github.com/matthewmueller/golly/dom/cssconditionrule"
 
 // CSSSupportsRule struct
 // js:"CSSSupportsRule,omit"

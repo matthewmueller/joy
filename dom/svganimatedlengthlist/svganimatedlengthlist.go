@@ -1,7 +1,7 @@
 package svganimatedlengthlist
 
 import (
-	"github.com/matthewmueller/golly/dom2/svglengthlist"
+	"github.com/matthewmueller/golly/dom/svglengthlist"
 	"github.com/matthewmueller/golly/js"
 )
 

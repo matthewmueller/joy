@@ -1,8 +1,8 @@
 package paymentresponse
 
 import (
-	"github.com/matthewmueller/golly/dom2/paymentaddress"
-	"github.com/matthewmueller/golly/dom2/paymentcomplete"
+	"github.com/matthewmueller/golly/dom/paymentaddress"
+	"github.com/matthewmueller/golly/dom/paymentcomplete"
 	"github.com/matthewmueller/golly/js"
 )
 

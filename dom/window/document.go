@@ -1,10 +1,10 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/htmlallcollection"
-	"github.com/matthewmueller/golly/dom2/location"
-	"github.com/matthewmueller/golly/dom2/visibilitystate"
-	"github.com/matthewmueller/golly/dom2/xpathnsresolver"
+	"github.com/matthewmueller/golly/dom/htmlallcollection"
+	"github.com/matthewmueller/golly/dom/location"
+	"github.com/matthewmueller/golly/dom/visibilitystate"
+	"github.com/matthewmueller/golly/dom/xpathnsresolver"
 )
 
 // js:"Document,omit"

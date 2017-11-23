@@ -1,7 +1,7 @@
 package datatransferitem
 
 import (
-	"github.com/matthewmueller/golly/dom2/file"
+	"github.com/matthewmueller/golly/dom/file"
 	"github.com/matthewmueller/golly/js"
 )
 

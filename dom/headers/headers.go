@@ -1,7 +1,7 @@
 package headers
 
 import (
-	"github.com/matthewmueller/golly/dom2/mediakeystatus"
+	"github.com/matthewmueller/golly/dom/mediakeystatus"
 	"github.com/matthewmueller/golly/js"
 )
 

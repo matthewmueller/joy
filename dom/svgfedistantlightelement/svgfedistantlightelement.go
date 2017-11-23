@@ -1,8 +1,8 @@
 package svgfedistantlightelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/svganimatednumber"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/svganimatednumber"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

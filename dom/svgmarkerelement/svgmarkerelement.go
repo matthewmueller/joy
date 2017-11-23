@@ -1,13 +1,13 @@
 package svgmarkerelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgangle"
-	"github.com/matthewmueller/golly/dom2/svganimatedangle"
-	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
-	"github.com/matthewmueller/golly/dom2/svganimatedlength"
-	"github.com/matthewmueller/golly/dom2/svganimatedpreserveaspectratio"
-	"github.com/matthewmueller/golly/dom2/svganimatedrect"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/svgangle"
+	"github.com/matthewmueller/golly/dom/svganimatedangle"
+	"github.com/matthewmueller/golly/dom/svganimatedenumeration"
+	"github.com/matthewmueller/golly/dom/svganimatedlength"
+	"github.com/matthewmueller/golly/dom/svganimatedpreserveaspectratio"
+	"github.com/matthewmueller/golly/dom/svganimatedrect"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

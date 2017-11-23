@@ -1,7 +1,7 @@
 package webkitfilesytem
 
 import (
-	"github.com/matthewmueller/golly/dom2/webkitdirectoryreader"
+	"github.com/matthewmueller/golly/dom/webkitdirectoryreader"
 	"github.com/matthewmueller/golly/js"
 )
 

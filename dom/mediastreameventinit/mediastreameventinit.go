@@ -1,8 +1,8 @@
 package mediastreameventinit
 
 import (
-	"github.com/matthewmueller/golly/dom2/eventinit"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/eventinit"
+	"github.com/matthewmueller/golly/dom/window"
 )
 
 type MediaStreamEventInit struct {

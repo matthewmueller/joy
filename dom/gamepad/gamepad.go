@@ -1,7 +1,7 @@
 package gamepad
 
 import (
-	"github.com/matthewmueller/golly/dom2/gamepadbutton"
+	"github.com/matthewmueller/golly/dom/gamepadbutton"
 	"github.com/matthewmueller/golly/js"
 )
 

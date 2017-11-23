@@ -1,6 +1,6 @@
 package htmltabledatacellelement
 
-import "github.com/matthewmueller/golly/dom2/htmltablecellelement"
+import "github.com/matthewmueller/golly/dom/htmltablecellelement"
 
 // HTMLTableDataCellElement struct
 // js:"HTMLTableDataCellElement,omit"

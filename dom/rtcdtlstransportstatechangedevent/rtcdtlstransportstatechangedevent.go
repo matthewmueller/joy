@@ -1,8 +1,8 @@
 package rtcdtlstransportstatechangedevent
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcdtlstransportstate"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/rtcdtlstransportstate"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

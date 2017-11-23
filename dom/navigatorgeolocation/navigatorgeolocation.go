@@ -1,7 +1,7 @@
 package navigatorgeolocation
 
 import (
-	"github.com/matthewmueller/golly/dom2/geolocation"
+	"github.com/matthewmueller/golly/dom/geolocation"
 	"github.com/matthewmueller/golly/js"
 )
 

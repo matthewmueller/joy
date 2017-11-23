@@ -1,6 +1,6 @@
 package webglrenderbuffer
 
-import "github.com/matthewmueller/golly/dom2/webglobject"
+import "github.com/matthewmueller/golly/dom/webglobject"
 
 // WebGLRenderbuffer struct
 // js:"WebGLRenderbuffer,omit"

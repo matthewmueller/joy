@@ -1,7 +1,7 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/devicelighteventinit"
+	"github.com/matthewmueller/golly/dom/devicelighteventinit"
 	"github.com/matthewmueller/golly/js"
 )
 

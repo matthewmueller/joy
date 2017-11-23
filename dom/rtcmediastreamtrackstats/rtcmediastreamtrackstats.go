@@ -1,6 +1,6 @@
 package rtcmediastreamtrackstats
 
-import "github.com/matthewmueller/golly/dom2/rtcstats"
+import "github.com/matthewmueller/golly/dom/rtcstats"
 
 type RTCMediaStreamTrackStats struct {
 	*rtcstats.RTCStats

@@ -1,7 +1,7 @@
 package position
 
 import (
-	"github.com/matthewmueller/golly/dom2/coordinates"
+	"github.com/matthewmueller/golly/dom/coordinates"
 	"github.com/matthewmueller/golly/js"
 )
 

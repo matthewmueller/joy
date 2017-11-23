@@ -1,7 +1,7 @@
 package cryptokey
 
 import (
-	"github.com/matthewmueller/golly/dom2/keyalgorithm"
+	"github.com/matthewmueller/golly/dom/keyalgorithm"
 	"github.com/matthewmueller/golly/js"
 )
 

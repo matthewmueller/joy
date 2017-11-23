@@ -1,8 +1,8 @@
 package websocket
 
 import (
-	"github.com/matthewmueller/golly/dom2/closeevent"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/closeevent"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

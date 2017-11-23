@@ -1,8 +1,8 @@
 package svgfittoviewbox
 
 import (
-	"github.com/matthewmueller/golly/dom2/svganimatedpreserveaspectratio"
-	"github.com/matthewmueller/golly/dom2/svganimatedrect"
+	"github.com/matthewmueller/golly/dom/svganimatedpreserveaspectratio"
+	"github.com/matthewmueller/golly/dom/svganimatedrect"
 	"github.com/matthewmueller/golly/js"
 )
 

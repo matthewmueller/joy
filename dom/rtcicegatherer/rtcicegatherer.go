@@ -1,13 +1,13 @@
 package rtcicegatherer
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcicecandidatedictionary"
-	"github.com/matthewmueller/golly/dom2/rtcicecomponent"
-	"github.com/matthewmueller/golly/dom2/rtcicegathererevent"
-	"github.com/matthewmueller/golly/dom2/rtcicegatheroptions"
-	"github.com/matthewmueller/golly/dom2/rtciceparameters"
-	"github.com/matthewmueller/golly/dom2/rtcstatsprovider"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/rtcicecandidatedictionary"
+	"github.com/matthewmueller/golly/dom/rtcicecomponent"
+	"github.com/matthewmueller/golly/dom/rtcicegathererevent"
+	"github.com/matthewmueller/golly/dom/rtcicegatheroptions"
+	"github.com/matthewmueller/golly/dom/rtciceparameters"
+	"github.com/matthewmueller/golly/dom/rtcstatsprovider"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

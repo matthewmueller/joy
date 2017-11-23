@@ -1,8 +1,8 @@
 package mediastreamerroreventinit
 
 import (
-	"github.com/matthewmueller/golly/dom2/eventinit"
-	"github.com/matthewmueller/golly/dom2/mediastreamerror"
+	"github.com/matthewmueller/golly/dom/eventinit"
+	"github.com/matthewmueller/golly/dom/mediastreamerror"
 )
 
 type MediaStreamErrorEventInit struct {

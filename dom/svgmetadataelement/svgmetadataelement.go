@@ -1,6 +1,6 @@
 package svgmetadataelement
 
-import "github.com/matthewmueller/golly/dom2/window"
+import "github.com/matthewmueller/golly/dom/window"
 
 // SVGMetadataElement struct
 // js:"SVGMetadataElement,omit"

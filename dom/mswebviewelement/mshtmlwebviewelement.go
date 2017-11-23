@@ -1,11 +1,11 @@
 package mswebviewelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/deferredpermissionrequest"
-	"github.com/matthewmueller/golly/dom2/focusnavigationorigin"
-	"github.com/matthewmueller/golly/dom2/mswebviewsettings"
-	"github.com/matthewmueller/golly/dom2/navigationreason"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/deferredpermissionrequest"
+	"github.com/matthewmueller/golly/dom/focusnavigationorigin"
+	"github.com/matthewmueller/golly/dom/mswebviewsettings"
+	"github.com/matthewmueller/golly/dom/navigationreason"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

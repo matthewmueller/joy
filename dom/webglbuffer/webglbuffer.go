@@ -1,6 +1,6 @@
 package webglbuffer
 
-import "github.com/matthewmueller/golly/dom2/webglobject"
+import "github.com/matthewmueller/golly/dom/webglobject"
 
 // WebGLBuffer struct
 // js:"WebGLBuffer,omit"

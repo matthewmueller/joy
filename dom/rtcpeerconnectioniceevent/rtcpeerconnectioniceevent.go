@@ -1,9 +1,9 @@
 package rtcpeerconnectioniceevent
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcicecandidate"
-	"github.com/matthewmueller/golly/dom2/rtcpeerconnectioniceeventinit"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/rtcicecandidate"
+	"github.com/matthewmueller/golly/dom/rtcpeerconnectioniceeventinit"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

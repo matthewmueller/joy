@@ -1,6 +1,6 @@
 package erroreventinit
 
-import "github.com/matthewmueller/golly/dom2/eventinit"
+import "github.com/matthewmueller/golly/dom/eventinit"
 
 type ErrorEventInit struct {
 	*eventinit.EventInit

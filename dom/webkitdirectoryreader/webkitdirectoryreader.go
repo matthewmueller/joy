@@ -1,7 +1,7 @@
 package webkitdirectoryreader
 
 import (
-	"github.com/matthewmueller/golly/dom2/domerror"
+	"github.com/matthewmueller/golly/dom/domerror"
 	"github.com/matthewmueller/golly/js"
 )
 

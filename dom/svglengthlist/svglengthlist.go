@@ -1,7 +1,7 @@
 package svglengthlist
 
 import (
-	"github.com/matthewmueller/golly/dom2/svglength"
+	"github.com/matthewmueller/golly/dom/svglength"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,7 +1,7 @@
 package url
 
 import (
-	"github.com/matthewmueller/golly/dom2/objecturloptions"
+	"github.com/matthewmueller/golly/dom/objecturloptions"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,18 +1,18 @@
 package webglrenderingcontext
 
 import (
-	"github.com/matthewmueller/golly/dom2/htmlcanvaselement"
-	"github.com/matthewmueller/golly/dom2/imagedata"
-	"github.com/matthewmueller/golly/dom2/webglactiveinfo"
-	"github.com/matthewmueller/golly/dom2/webglbuffer"
-	"github.com/matthewmueller/golly/dom2/webglcontextattributes"
-	"github.com/matthewmueller/golly/dom2/webglframebuffer"
-	"github.com/matthewmueller/golly/dom2/webglprogram"
-	"github.com/matthewmueller/golly/dom2/webglrenderbuffer"
-	"github.com/matthewmueller/golly/dom2/webglshader"
-	"github.com/matthewmueller/golly/dom2/webglshaderprecisionformat"
-	"github.com/matthewmueller/golly/dom2/webgltexture"
-	"github.com/matthewmueller/golly/dom2/webgluniformlocation"
+	"github.com/matthewmueller/golly/dom/htmlcanvaselement"
+	"github.com/matthewmueller/golly/dom/imagedata"
+	"github.com/matthewmueller/golly/dom/webglactiveinfo"
+	"github.com/matthewmueller/golly/dom/webglbuffer"
+	"github.com/matthewmueller/golly/dom/webglcontextattributes"
+	"github.com/matthewmueller/golly/dom/webglframebuffer"
+	"github.com/matthewmueller/golly/dom/webglprogram"
+	"github.com/matthewmueller/golly/dom/webglrenderbuffer"
+	"github.com/matthewmueller/golly/dom/webglshader"
+	"github.com/matthewmueller/golly/dom/webglshaderprecisionformat"
+	"github.com/matthewmueller/golly/dom/webgltexture"
+	"github.com/matthewmueller/golly/dom/webgluniformlocation"
 	"github.com/matthewmueller/golly/js"
 )
 

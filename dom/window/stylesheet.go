@@ -1,6 +1,6 @@
 package window
 
-import "github.com/matthewmueller/golly/dom2/medialist"
+import "github.com/matthewmueller/golly/dom/medialist"
 
 // js:"StyleSheet,omit"
 type StyleSheet interface {

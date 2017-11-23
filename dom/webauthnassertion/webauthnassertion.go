@@ -1,7 +1,7 @@
 package webauthnassertion
 
 import (
-	"github.com/matthewmueller/golly/dom2/scopedcredential"
+	"github.com/matthewmueller/golly/dom/scopedcredential"
 	"github.com/matthewmueller/golly/js"
 )
 

@@ -1,7 +1,7 @@
 package svganimatedpreserveaspectratio
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgpreserveaspectratio"
+	"github.com/matthewmueller/golly/dom/svgpreserveaspectratio"
 	"github.com/matthewmueller/golly/js"
 )
 

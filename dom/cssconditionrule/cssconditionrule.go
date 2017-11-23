@@ -1,6 +1,6 @@
 package cssconditionrule
 
-import "github.com/matthewmueller/golly/dom2/cssgroupingrule"
+import "github.com/matthewmueller/golly/dom/cssgroupingrule"
 
 // js:"CSSConditionRule,omit"
 type CSSConditionRule interface {

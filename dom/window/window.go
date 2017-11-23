@@ -1,30 +1,30 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/barprop"
-	"github.com/matthewmueller/golly/dom2/cachestorage"
-	"github.com/matthewmueller/golly/dom2/crypto"
-	"github.com/matthewmueller/golly/dom2/extensionscriptapis"
-	"github.com/matthewmueller/golly/dom2/external"
-	"github.com/matthewmueller/golly/dom2/focusnavigationorigin"
-	"github.com/matthewmueller/golly/dom2/history"
-	"github.com/matthewmueller/golly/dom2/location"
-	"github.com/matthewmueller/golly/dom2/mediaquery"
-	"github.com/matthewmueller/golly/dom2/mscredentials"
-	"github.com/matthewmueller/golly/dom2/navigationreason"
-	"github.com/matthewmueller/golly/dom2/performance"
-	"github.com/matthewmueller/golly/dom2/request"
-	"github.com/matthewmueller/golly/dom2/requestinit"
-	"github.com/matthewmueller/golly/dom2/response"
-	"github.com/matthewmueller/golly/dom2/storage"
-	"github.com/matthewmueller/golly/dom2/stylemedia"
-	"github.com/matthewmueller/golly/dom2/webkitpoint"
+	"github.com/matthewmueller/golly/dom/barprop"
+	"github.com/matthewmueller/golly/dom/cachestorage"
+	"github.com/matthewmueller/golly/dom/crypto"
+	"github.com/matthewmueller/golly/dom/extensionscriptapis"
+	"github.com/matthewmueller/golly/dom/external"
+	"github.com/matthewmueller/golly/dom/focusnavigationorigin"
+	"github.com/matthewmueller/golly/dom/history"
+	"github.com/matthewmueller/golly/dom/location"
+	"github.com/matthewmueller/golly/dom/mediaquery"
+	"github.com/matthewmueller/golly/dom/mscredentials"
+	"github.com/matthewmueller/golly/dom/navigationreason"
+	"github.com/matthewmueller/golly/dom/performance"
+	"github.com/matthewmueller/golly/dom/request"
+	"github.com/matthewmueller/golly/dom/requestinit"
+	"github.com/matthewmueller/golly/dom/response"
+	"github.com/matthewmueller/golly/dom/storage"
+	"github.com/matthewmueller/golly/dom/stylemedia"
+	"github.com/matthewmueller/golly/dom/webkitpoint"
 	"github.com/matthewmueller/golly/js"
 )
 
 // New fn
 func New() *Window {
-	js.Rewrite("Window")
+	js.Rewrite("window")
 	return &Window{}
 }
 
@@ -75,7 +75,7 @@ func (*Window) Fetch(input *request.Request, init *requestinit.RequestInit) (r *
 }
 
 // Alert fn
-func (*Window) Alert(message string) {
+func (*Window) Alert(message *string) {
 	js.Rewrite("$<.alert($1)", message)
 }
 
@@ -411,7 +411,7 @@ func (*Window) DevicePixelRatio() (devicePixelRatio float32) {
 }
 
 // Document prop
-func (*Window) Documents() (document Document) {
+func (*Window) Document() (document Document) {
 	js.Rewrite("$<.document")
 	return document
 }

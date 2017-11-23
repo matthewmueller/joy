@@ -1,8 +1,8 @@
 package mediaencryptedevent
 
 import (
-	"github.com/matthewmueller/golly/dom2/mediaencryptedeventinit"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/mediaencryptedeventinit"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

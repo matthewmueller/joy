@@ -1,9 +1,9 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/clientrect"
-	"github.com/matthewmueller/golly/dom2/clientrectlist"
-	"github.com/matthewmueller/golly/dom2/expandgranularity"
+	"github.com/matthewmueller/golly/dom/clientrect"
+	"github.com/matthewmueller/golly/dom/clientrectlist"
+	"github.com/matthewmueller/golly/dom/expandgranularity"
 	"github.com/matthewmueller/golly/js"
 )
 

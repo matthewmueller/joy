@@ -1,7 +1,7 @@
 package htmlareaelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

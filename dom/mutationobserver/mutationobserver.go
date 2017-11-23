@@ -1,9 +1,9 @@
 package mutationobserver
 
 import (
-	"github.com/matthewmueller/golly/dom2/mutationobserverinit"
-	"github.com/matthewmueller/golly/dom2/mutationrecord"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/mutationobserverinit"
+	"github.com/matthewmueller/golly/dom/mutationrecord"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

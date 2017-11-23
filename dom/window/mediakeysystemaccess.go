@@ -1,7 +1,7 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/mediakeysystemconfiguration"
+	"github.com/matthewmueller/golly/dom/mediakeysystemconfiguration"
 	"github.com/matthewmueller/golly/js"
 )
 

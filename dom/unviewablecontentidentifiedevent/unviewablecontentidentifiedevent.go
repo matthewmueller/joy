@@ -1,7 +1,7 @@
 package unviewablecontentidentifiedevent
 
 import (
-	"github.com/matthewmueller/golly/dom2/navigationeventwithreferrer"
+	"github.com/matthewmueller/golly/dom/navigationeventwithreferrer"
 	"github.com/matthewmueller/golly/js"
 )
 

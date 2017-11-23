@@ -1,10 +1,10 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/clientrect"
-	"github.com/matthewmueller/golly/dom2/clientrectlist"
-	"github.com/matthewmueller/golly/dom2/domtokenlist"
-	"github.com/matthewmueller/golly/dom2/mszoomtooptions"
+	"github.com/matthewmueller/golly/dom/clientrect"
+	"github.com/matthewmueller/golly/dom/clientrectlist"
+	"github.com/matthewmueller/golly/dom/domtokenlist"
+	"github.com/matthewmueller/golly/dom/mszoomtooptions"
 )
 
 // js:"Element,omit"

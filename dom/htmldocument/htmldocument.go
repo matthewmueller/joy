@@ -1,6 +1,6 @@
 package htmldocument
 
-import "github.com/matthewmueller/golly/dom2/window"
+import "github.com/matthewmueller/golly/dom/window"
 
 // HTMLDocument struct
 // js:"HTMLDocument,omit"

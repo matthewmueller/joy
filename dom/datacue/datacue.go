@@ -1,7 +1,7 @@
 package datacue
 
 import (
-	"github.com/matthewmueller/golly/dom2/texttrack"
+	"github.com/matthewmueller/golly/dom/texttrack"
 	"github.com/matthewmueller/golly/js"
 )
 

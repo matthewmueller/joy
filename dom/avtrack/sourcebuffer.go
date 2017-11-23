@@ -1,10 +1,10 @@
 package avtrack
 
 import (
-	"github.com/matthewmueller/golly/dom2/appendmode"
-	"github.com/matthewmueller/golly/dom2/msstream"
-	"github.com/matthewmueller/golly/dom2/timeranges"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/appendmode"
+	"github.com/matthewmueller/golly/dom/msstream"
+	"github.com/matthewmueller/golly/dom/timeranges"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

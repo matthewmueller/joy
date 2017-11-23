@@ -1,8 +1,8 @@
 package msmediakeysession
 
 import (
-	"github.com/matthewmueller/golly/dom2/msmediakeyerror"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/msmediakeyerror"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 

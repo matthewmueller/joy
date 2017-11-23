@@ -1,6 +1,6 @@
 package webgltexture
 
-import "github.com/matthewmueller/golly/dom2/webglobject"
+import "github.com/matthewmueller/golly/dom/webglobject"
 
 // WebGLTexture struct
 // js:"WebGLTexture,omit"

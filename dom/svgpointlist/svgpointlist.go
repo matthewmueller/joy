@@ -1,7 +1,7 @@
 package svgpointlist
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgpoint"
+	"github.com/matthewmueller/golly/dom/svgpoint"
 	"github.com/matthewmueller/golly/js"
 )
 

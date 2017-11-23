@@ -1,7 +1,7 @@
 package audionode
 
 import (
-	"github.com/matthewmueller/golly/dom2/oversampletype"
+	"github.com/matthewmueller/golly/dom/oversampletype"
 	"github.com/matthewmueller/golly/js"
 )
 

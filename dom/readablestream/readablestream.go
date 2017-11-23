@@ -1,7 +1,7 @@
 package readablestream
 
 import (
-	"github.com/matthewmueller/golly/dom2/readablestreamreader"
+	"github.com/matthewmueller/golly/dom/readablestreamreader"
 	"github.com/matthewmueller/golly/js"
 )
 

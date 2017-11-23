@@ -1,10 +1,10 @@
 package svgviewelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/svganimatedpreserveaspectratio"
-	"github.com/matthewmueller/golly/dom2/svganimatedrect"
-	"github.com/matthewmueller/golly/dom2/svgstringlist"
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/svganimatedpreserveaspectratio"
+	"github.com/matthewmueller/golly/dom/svganimatedrect"
+	"github.com/matthewmueller/golly/dom/svgstringlist"
+	"github.com/matthewmueller/golly/dom/window"
 	"github.com/matthewmueller/golly/js"
 )
 
