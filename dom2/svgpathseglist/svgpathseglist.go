@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGPathSegList struct
 // js:"SVGPathSegList,omit"
 type SVGPathSegList struct {
 }

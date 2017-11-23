@@ -2,6 +2,7 @@ package mediastreamerror
 
 import "github.com/matthewmueller/golly/js"
 
+// MediaStreamError struct
 // js:"MediaStreamError,omit"
 type MediaStreamError struct {
 }

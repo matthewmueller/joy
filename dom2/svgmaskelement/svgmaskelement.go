@@ -3,17 +3,39 @@ package svgmaskelement
 import (
 	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
 	"github.com/matthewmueller/golly/dom2/svganimatedlength"
-	"github.com/matthewmueller/golly/dom2/svgtests"
-	"github.com/matthewmueller/golly/dom2/svgunittypes"
+	"github.com/matthewmueller/golly/dom2/svgstringlist"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGMaskElement struct
 // js:"SVGMaskElement,omit"
 type SVGMaskElement struct {
 	window.SVGElement
-	svgtests.SVGTests
-	svgunittypes.SVGUnitTypes
+}
+
+// HasExtension
+func (*SVGMaskElement) HasExtension(extension string) (b bool) {
+	js.Rewrite("$<.HasExtension($1)", extension)
+	return b
+}
+
+// RequiredExtensions
+func (*SVGMaskElement) RequiredExtensions() (requiredExtensions *svgstringlist.SVGStringList) {
+	js.Rewrite("$<.RequiredExtensions")
+	return requiredExtensions
+}
+
+// RequiredFeatures
+func (*SVGMaskElement) RequiredFeatures() (requiredFeatures *svgstringlist.SVGStringList) {
+	js.Rewrite("$<.RequiredFeatures")
+	return requiredFeatures
+}
+
+// SystemLanguage
+func (*SVGMaskElement) SystemLanguage() (systemLanguage *svgstringlist.SVGStringList) {
+	js.Rewrite("$<.SystemLanguage")
+	return systemLanguage
 }
 
 // Height

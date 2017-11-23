@@ -2,6 +2,7 @@ package videoplaybackquality
 
 import "github.com/matthewmueller/golly/js"
 
+// VideoPlaybackQuality struct
 // js:"VideoPlaybackQuality,omit"
 type VideoPlaybackQuality struct {
 }

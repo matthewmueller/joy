@@ -2,12 +2,22 @@ package paymentrequest
 
 import (
 	"github.com/matthewmueller/golly/dom2/paymentaddress"
+	"github.com/matthewmueller/golly/dom2/paymentdetails"
+	"github.com/matthewmueller/golly/dom2/paymentmethoddata"
+	"github.com/matthewmueller/golly/dom2/paymentoptions"
 	"github.com/matthewmueller/golly/dom2/paymentresponse"
 	"github.com/matthewmueller/golly/dom2/paymentshippingtype"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(methoddata []*paymentmethoddata.PaymentMethodData, details *paymentdetails.PaymentDetails, options *paymentoptions.PaymentOptions) *PaymentRequest {
+	js.Rewrite("PaymentRequest")
+	return &PaymentRequest{}
+}
+
+// PaymentRequest struct
 // js:"PaymentRequest,omit"
 type PaymentRequest struct {
 	window.EventTarget

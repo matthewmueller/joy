@@ -2,6 +2,7 @@ package domstringlist
 
 import "github.com/matthewmueller/golly/js"
 
+// DOMStringList struct
 // js:"DOMStringList,omit"
 type DOMStringList struct {
 }

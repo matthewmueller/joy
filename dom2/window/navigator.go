@@ -1,36 +1,80 @@
 package window
 
 import (
+	"github.com/matthewmueller/golly/dom2/confirmsitespecificexceptionsinformation"
+	"github.com/matthewmueller/golly/dom2/exceptioninformation"
 	"github.com/matthewmueller/golly/dom2/gamepad"
 	"github.com/matthewmueller/golly/dom2/gamepadinputemulationtype"
+	"github.com/matthewmueller/golly/dom2/geolocation"
 	"github.com/matthewmueller/golly/dom2/mediakeysystemconfiguration"
+	"github.com/matthewmueller/golly/dom2/mediastreamconstraints"
+	"github.com/matthewmueller/golly/dom2/mediastreamerror"
 	"github.com/matthewmueller/golly/dom2/mimetypearray"
-	"github.com/matthewmueller/golly/dom2/msfilesaver"
-	"github.com/matthewmueller/golly/dom2/msnavigatordonottrack"
-	"github.com/matthewmueller/golly/dom2/navigatorbeacon"
-	"github.com/matthewmueller/golly/dom2/navigatorconcurrenthardware"
-	"github.com/matthewmueller/golly/dom2/navigatorcontentutils"
-	"github.com/matthewmueller/golly/dom2/navigatorgeolocation"
-	"github.com/matthewmueller/golly/dom2/navigatorid"
-	"github.com/matthewmueller/golly/dom2/navigatoronline"
-	"github.com/matthewmueller/golly/dom2/navigatorstorageutils"
 	"github.com/matthewmueller/golly/dom2/pluginarray"
+	"github.com/matthewmueller/golly/dom2/storeexceptionsinformation"
+	"github.com/matthewmueller/golly/dom2/storesitespecificexceptionsinformation"
 	"github.com/matthewmueller/golly/dom2/webauthentication"
 	"github.com/matthewmueller/golly/js"
 )
 
+// Navigator struct
 // js:"Navigator,omit"
 type Navigator struct {
-	navigatorid.NavigatorID
-	navigatoronline.NavigatorOnLine
-	navigatorcontentutils.NavigatorContentUtils
-	navigatorstorageutils.NavigatorStorageUtils
-	navigatorgeolocation.NavigatorGeolocation
-	msnavigatordonottrack.MSNavigatorDoNotTrack
-	msfilesaver.MSFileSaver
-	navigatorbeacon.NavigatorBeacon
-	navigatorconcurrenthardware.NavigatorConcurrentHardware
-	NavigatorUserMedia
+}
+
+// ConfirmSiteSpecificTrackingException
+func (*Navigator) ConfirmSiteSpecificTrackingException(args *confirmsitespecificexceptionsinformation.ConfirmSiteSpecificExceptionsInformation) (b bool) {
+	js.Rewrite("$<.ConfirmSiteSpecificTrackingException($1)", args)
+	return b
+}
+
+// ConfirmWebWideTrackingException
+func (*Navigator) ConfirmWebWideTrackingException(args *exceptioninformation.ExceptionInformation) (b bool) {
+	js.Rewrite("$<.ConfirmWebWideTrackingException($1)", args)
+	return b
+}
+
+// RemoveSiteSpecificTrackingException
+func (*Navigator) RemoveSiteSpecificTrackingException(args *exceptioninformation.ExceptionInformation) {
+	js.Rewrite("$<.RemoveSiteSpecificTrackingException($1)", args)
+}
+
+// RemoveWebWideTrackingException
+func (*Navigator) RemoveWebWideTrackingException(args *exceptioninformation.ExceptionInformation) {
+	js.Rewrite("$<.RemoveWebWideTrackingException($1)", args)
+}
+
+// StoreSiteSpecificTrackingException
+func (*Navigator) StoreSiteSpecificTrackingException(args *storesitespecificexceptionsinformation.StoreSiteSpecificExceptionsInformation) {
+	js.Rewrite("$<.StoreSiteSpecificTrackingException($1)", args)
+}
+
+// StoreWebWideTrackingException
+func (*Navigator) StoreWebWideTrackingException(args *storeexceptionsinformation.StoreExceptionsInformation) {
+	js.Rewrite("$<.StoreWebWideTrackingException($1)", args)
+}
+
+// MsSaveBlob
+func (*Navigator) MsSaveBlob(blob interface{}, defaultName *string) (b bool) {
+	js.Rewrite("$<.MsSaveBlob($1, $2)", blob, defaultName)
+	return b
+}
+
+// MsSaveOrOpenBlob
+func (*Navigator) MsSaveOrOpenBlob(blob interface{}, defaultName *string) (b bool) {
+	js.Rewrite("$<.MsSaveOrOpenBlob($1, $2)", blob, defaultName)
+	return b
+}
+
+// SendBeacon
+func (*Navigator) SendBeacon(url string, data *interface{}) (b bool) {
+	js.Rewrite("$<.SendBeacon($1, $2)", url, data)
+	return b
+}
+
+// GetUserMedia
+func (*Navigator) GetUserMedia(constraints *mediastreamconstraints.MediaStreamConstraints, successCallback func(stream *MediaStream), errorCallback func(err *mediastreamerror.MediaStreamError)) {
+	js.Rewrite("$<.GetUserMedia($1, $2, $3)", constraints, successCallback, errorCallback)
 }
 
 // GetGamepads
@@ -54,6 +98,84 @@ func (*Navigator) MsLaunchURI(uri string, successCallback *func(), noHandlerCall
 func (*Navigator) RequestMediaKeySystemAccess(keySystem string, supportedConfigurations []*mediakeysystemconfiguration.MediaKeySystemConfiguration) (m *MediaKeySystemAccess) {
 	js.Rewrite("await $<.RequestMediaKeySystemAccess($1, $2)", keySystem, supportedConfigurations)
 	return m
+}
+
+// AppCodeName
+func (*Navigator) AppCodeName() (appCodeName string) {
+	js.Rewrite("$<.AppCodeName")
+	return appCodeName
+}
+
+// AppName
+func (*Navigator) AppName() (appName string) {
+	js.Rewrite("$<.AppName")
+	return appName
+}
+
+// AppVersion
+func (*Navigator) AppVersion() (appVersion string) {
+	js.Rewrite("$<.AppVersion")
+	return appVersion
+}
+
+// Platform
+func (*Navigator) Platform() (platform string) {
+	js.Rewrite("$<.Platform")
+	return platform
+}
+
+// Product
+func (*Navigator) Product() (product string) {
+	js.Rewrite("$<.Product")
+	return product
+}
+
+// ProductSub
+func (*Navigator) ProductSub() (productSub string) {
+	js.Rewrite("$<.ProductSub")
+	return productSub
+}
+
+// UserAgent
+func (*Navigator) UserAgent() (userAgent string) {
+	js.Rewrite("$<.UserAgent")
+	return userAgent
+}
+
+// Vendor
+func (*Navigator) Vendor() (vendor string) {
+	js.Rewrite("$<.Vendor")
+	return vendor
+}
+
+// VendorSub
+func (*Navigator) VendorSub() (vendorSub string) {
+	js.Rewrite("$<.VendorSub")
+	return vendorSub
+}
+
+// OnLine
+func (*Navigator) OnLine() (onLine bool) {
+	js.Rewrite("$<.OnLine")
+	return onLine
+}
+
+// Geolocation
+func (*Navigator) Geolocation() (geolocation *geolocation.Geolocation) {
+	js.Rewrite("$<.Geolocation")
+	return geolocation
+}
+
+// HardwareConcurrency
+func (*Navigator) HardwareConcurrency() (hardwareConcurrency uint64) {
+	js.Rewrite("$<.HardwareConcurrency")
+	return hardwareConcurrency
+}
+
+// MediaDevices
+func (*Navigator) MediaDevices() (mediaDevices *MediaDevices) {
+	js.Rewrite("$<.MediaDevices")
+	return mediaDevices
 }
 
 // Authentication

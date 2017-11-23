@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// TextTrack struct
 // js:"TextTrack,omit"
 type TextTrack struct {
 	window.EventTarget

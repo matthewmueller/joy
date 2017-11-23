@@ -7,6 +7,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(callback func(mutations []*mutationrecord.MutationRecord, observer *MutationObserver)) *MutationObserver {
+	js.Rewrite("MutationObserver")
+	return &MutationObserver{}
+}
+
+// MutationObserver struct
 // js:"MutationObserver,omit"
 type MutationObserver struct {
 }

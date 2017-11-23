@@ -1,10 +1,18 @@
 package transitionevent
 
 import (
+	"github.com/matthewmueller/golly/dom2/transitioneventinit"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(typearg string, eventinitdict *transitioneventinit.TransitionEventInit) *TransitionEvent {
+	js.Rewrite("TransitionEvent")
+	return &TransitionEvent{}
+}
+
+// TransitionEvent struct
 // js:"TransitionEvent,omit"
 type TransitionEvent struct {
 	window.Event

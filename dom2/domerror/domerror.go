@@ -2,6 +2,7 @@ package domerror
 
 import "github.com/matthewmueller/golly/js"
 
+// DOMError struct
 // js:"DOMError,omit"
 type DOMError struct {
 }

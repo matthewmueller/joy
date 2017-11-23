@@ -1,19 +1,35 @@
 package svgtests
 
-import "github.com/matthewmueller/golly/dom2/svgstringlist"
+import (
+	"github.com/matthewmueller/golly/dom2/svgstringlist"
+	"github.com/matthewmueller/golly/js"
+)
 
+// SVGTests struct
 // js:"SVGTests,omit"
-type SVGTests interface {
+type SVGTests struct {
+}
 
-	// HasExtension
-	HasExtension(extension string) (b bool)
+// HasExtension
+func (*SVGTests) HasExtension(extension string) (b bool) {
+	js.Rewrite("$<.HasExtension($1)", extension)
+	return b
+}
 
-	// RequiredExtensions
-	RequiredExtensions() (requiredExtensions *svgstringlist.SVGStringList)
+// RequiredExtensions
+func (*SVGTests) RequiredExtensions() (requiredExtensions *svgstringlist.SVGStringList) {
+	js.Rewrite("$<.RequiredExtensions")
+	return requiredExtensions
+}
 
-	// RequiredFeatures
-	RequiredFeatures() (requiredFeatures *svgstringlist.SVGStringList)
+// RequiredFeatures
+func (*SVGTests) RequiredFeatures() (requiredFeatures *svgstringlist.SVGStringList) {
+	js.Rewrite("$<.RequiredFeatures")
+	return requiredFeatures
+}
 
-	// SystemLanguage
-	SystemLanguage() (systemLanguage *svgstringlist.SVGStringList)
+// SystemLanguage
+func (*SVGTests) SystemLanguage() (systemLanguage *svgstringlist.SVGStringList) {
+	js.Rewrite("$<.SystemLanguage")
+	return systemLanguage
 }

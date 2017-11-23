@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// NodeList struct
 // js:"NodeList,omit"
 type NodeList struct {
 }

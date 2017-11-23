@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGTransform struct
 // js:"SVGTransform,omit"
 type SVGTransform struct {
 }

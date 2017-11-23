@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// PerformanceResourceTiming struct
 // js:"PerformanceResourceTiming,omit"
 type PerformanceResourceTiming struct {
 	performanceentry.PerformanceEntry

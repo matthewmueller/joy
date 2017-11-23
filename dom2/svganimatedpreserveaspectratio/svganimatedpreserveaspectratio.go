@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGAnimatedPreserveAspectRatio struct
 // js:"SVGAnimatedPreserveAspectRatio,omit"
 type SVGAnimatedPreserveAspectRatio struct {
 }

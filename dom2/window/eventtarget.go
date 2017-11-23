@@ -4,11 +4,11 @@ package window
 type EventTarget interface {
 
 	// AddEventListener
-	AddEventListener(kind string, listener *func(evt Event), useCapture *bool)
+	AddEventListener(kind string, listener func(evt Event), useCapture bool)
 
 	// DispatchEvent
 	DispatchEvent(evt Event) (b bool)
 
 	// RemoveEventListener
-	RemoveEventListener(kind string, listener *func(evt Event), useCapture *bool)
+	RemoveEventListener(kind string, listener func(evt Event), useCapture bool)
 }

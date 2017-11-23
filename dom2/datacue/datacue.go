@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// DataCue struct
 // js:"DataCue,omit"
 type DataCue struct {
 	texttrack.TextTrackCue

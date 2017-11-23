@@ -1,11 +1,20 @@
 package msfilesaver
 
+import "github.com/matthewmueller/golly/js"
+
+// MSFileSaver struct
 // js:"MSFileSaver,omit"
-type MSFileSaver interface {
+type MSFileSaver struct {
+}
 
-	// MsSaveBlob
-	MsSaveBlob(blob interface{}, defaultName *string) (b bool)
+// MsSaveBlob
+func (*MSFileSaver) MsSaveBlob(blob interface{}, defaultName *string) (b bool) {
+	js.Rewrite("$<.MsSaveBlob($1, $2)", blob, defaultName)
+	return b
+}
 
-	// MsSaveOrOpenBlob
-	MsSaveOrOpenBlob(blob interface{}, defaultName *string) (b bool)
+// MsSaveOrOpenBlob
+func (*MSFileSaver) MsSaveOrOpenBlob(blob interface{}, defaultName *string) (b bool) {
+	js.Rewrite("$<.MsSaveOrOpenBlob($1, $2)", blob, defaultName)
+	return b
 }

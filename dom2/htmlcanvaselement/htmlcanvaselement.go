@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLCanvasElement struct
 // js:"HTMLCanvasElement,omit"
 type HTMLCanvasElement struct {
 	window.HTMLElement

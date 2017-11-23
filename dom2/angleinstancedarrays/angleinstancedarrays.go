@@ -2,6 +2,7 @@ package angleinstancedarrays
 
 import "github.com/matthewmueller/golly/js"
 
+// ANGLEInstancedArrays struct
 // js:"ANGLEInstancedArrays,omit"
 type ANGLEInstancedArrays struct {
 }

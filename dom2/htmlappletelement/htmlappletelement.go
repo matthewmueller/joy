@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLAppletElement struct
 // js:"HTMLAppletElement,omit"
 type HTMLAppletElement struct {
 	window.HTMLElement

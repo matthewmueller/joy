@@ -2,6 +2,13 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// NewMessageEvent fn
+func NewMessageEvent(typearg string, eventinitdict *MessageEventInit) *MessageEvent {
+	js.Rewrite("MessageEvent")
+	return &MessageEvent{}
+}
+
+// MessageEvent struct
 // js:"MessageEvent,omit"
 type MessageEvent struct {
 	Event

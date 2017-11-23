@@ -2,6 +2,7 @@ package audiobuffer
 
 import "github.com/matthewmueller/golly/js"
 
+// AudioBuffer struct
 // js:"AudioBuffer,omit"
 type AudioBuffer struct {
 }

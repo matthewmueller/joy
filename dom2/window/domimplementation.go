@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// DOMImplementation struct
 // js:"DOMImplementation,omit"
 type DOMImplementation struct {
 }

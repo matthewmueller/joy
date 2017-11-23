@@ -5,15 +5,26 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// ServiceWorker struct
 // js:"ServiceWorker,omit"
 type ServiceWorker struct {
 	EventTarget
-	AbstractWorker
 }
 
 // PostMessage
 func (*ServiceWorker) PostMessage(message interface{}, transfer *[]interface{}) {
 	js.Rewrite("$<.PostMessage($1, $2)", message, transfer)
+}
+
+// Onerror
+func (*ServiceWorker) Onerror() (onerror func(Event)) {
+	js.Rewrite("$<.Onerror")
+	return onerror
+}
+
+// Onerror
+func (*ServiceWorker) SetOnerror(onerror func(Event)) {
+	js.Rewrite("$<.Onerror = $1", onerror)
 }
 
 // Onstatechange

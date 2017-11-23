@@ -2,6 +2,7 @@ package webkitfilesytem
 
 import "github.com/matthewmueller/golly/js"
 
+// WebKitFileSystem struct
 // js:"WebKitFileSystem,omit"
 type WebKitFileSystem struct {
 }

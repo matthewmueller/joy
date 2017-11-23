@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MediaKeySystemAccess struct
 // js:"MediaKeySystemAccess,omit"
 type MediaKeySystemAccess struct {
 }

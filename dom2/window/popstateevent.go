@@ -1,7 +1,17 @@
 package window
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/popstateeventinit"
+	"github.com/matthewmueller/golly/js"
+)
 
+// NewPopStateEvent fn
+func NewPopStateEvent(typearg string, eventinitdict *popstateeventinit.PopStateEventInit) *PopStateEvent {
+	js.Rewrite("PopStateEvent")
+	return &PopStateEvent{}
+}
+
+// PopStateEvent struct
 // js:"PopStateEvent,omit"
 type PopStateEvent struct {
 	Event

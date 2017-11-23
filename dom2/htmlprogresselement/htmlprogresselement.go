@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLProgressElement struct
 // js:"HTMLProgressElement,omit"
 type HTMLProgressElement struct {
 	window.HTMLElement

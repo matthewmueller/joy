@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// CSSRuleList struct
 // js:"CSSRuleList,omit"
 type CSSRuleList struct {
 }

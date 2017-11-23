@@ -2,6 +2,7 @@ package storage
 
 import "github.com/matthewmueller/golly/js"
 
+// Storage struct
 // js:"Storage,omit"
 type Storage struct {
 }

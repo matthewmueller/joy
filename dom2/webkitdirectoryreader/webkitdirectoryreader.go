@@ -5,11 +5,12 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// WebKitDirectoryReader struct
 // js:"WebKitDirectoryReader,omit"
 type WebKitDirectoryReader struct {
 }
 
 // ReadEntries
-func (*WebKitDirectoryReader) ReadEntries(successCallback func(entries []*WebKitEntry) handleEvent, errorCallback *func(err *domerror.DOMError) handleEvent) {
+func (*WebKitDirectoryReader) ReadEntries(successCallback func(entries []*WebKitEntry), errorCallback *func(err *domerror.DOMError)) {
 	js.Rewrite("$<.ReadEntries($1, $2)", successCallback, errorCallback)
 }

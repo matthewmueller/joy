@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// ScopedCredential struct
 // js:"ScopedCredential,omit"
 type ScopedCredential struct {
 }

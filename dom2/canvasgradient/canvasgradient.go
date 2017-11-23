@@ -2,6 +2,7 @@ package canvasgradient
 
 import "github.com/matthewmueller/golly/js"
 
+// CanvasGradient struct
 // js:"CanvasGradient,omit"
 type CanvasGradient struct {
 }

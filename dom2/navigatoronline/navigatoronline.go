@@ -1,8 +1,14 @@
 package navigatoronline
 
-// js:"NavigatorOnLine,omit"
-type NavigatorOnLine interface {
+import "github.com/matthewmueller/golly/js"
 
-	// OnLine
-	OnLine() (onLine bool)
+// NavigatorOnLine struct
+// js:"NavigatorOnLine,omit"
+type NavigatorOnLine struct {
+}
+
+// OnLine
+func (*NavigatorOnLine) OnLine() (onLine bool) {
+	js.Rewrite("$<.OnLine")
+	return onLine
 }

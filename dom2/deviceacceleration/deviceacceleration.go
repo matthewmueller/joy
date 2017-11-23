@@ -2,6 +2,7 @@ package deviceacceleration
 
 import "github.com/matthewmueller/golly/js"
 
+// DeviceAcceleration struct
 // js:"DeviceAcceleration,omit"
 type DeviceAcceleration struct {
 }

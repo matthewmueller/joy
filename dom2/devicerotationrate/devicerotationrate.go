@@ -2,6 +2,7 @@ package devicerotationrate
 
 import "github.com/matthewmueller/golly/js"
 
+// DeviceRotationRate struct
 // js:"DeviceRotationRate,omit"
 type DeviceRotationRate struct {
 }

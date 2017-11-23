@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLLIElement struct
 // js:"HTMLLIElement,omit"
 type HTMLLIElement struct {
 	window.HTMLElement

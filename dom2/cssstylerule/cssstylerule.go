@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// CSSStyleRule struct
 // js:"CSSStyleRule,omit"
 type CSSStyleRule struct {
 	window.CSSRule

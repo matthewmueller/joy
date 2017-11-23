@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLMenuElement struct
 // js:"HTMLMenuElement,omit"
 type HTMLMenuElement struct {
 	window.HTMLElement

@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// HTMLHeadElement struct
 // js:"HTMLHeadElement,omit"
 type HTMLHeadElement struct {
 	HTMLElement

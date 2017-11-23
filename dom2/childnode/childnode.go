@@ -1,8 +1,13 @@
 package childnode
 
-// js:"ChildNode,omit"
-type ChildNode interface {
+import "github.com/matthewmueller/golly/js"
 
-	// Remove
-	Remove()
+// ChildNode struct
+// js:"ChildNode,omit"
+type ChildNode struct {
+}
+
+// Remove
+func (*ChildNode) Remove() {
+	js.Rewrite("$<.Remove()")
 }

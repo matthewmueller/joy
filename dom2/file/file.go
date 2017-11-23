@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// File struct
 // js:"File,omit"
 type File struct {
 	blob.Blob

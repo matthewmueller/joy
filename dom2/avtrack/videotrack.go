@@ -2,6 +2,7 @@ package avtrack
 
 import "github.com/matthewmueller/golly/js"
 
+// VideoTrack struct
 // js:"VideoTrack,omit"
 type VideoTrack struct {
 }

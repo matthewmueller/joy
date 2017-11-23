@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// ClipboardEvent struct
 // js:"ClipboardEvent,omit"
 type ClipboardEvent struct {
 	Event

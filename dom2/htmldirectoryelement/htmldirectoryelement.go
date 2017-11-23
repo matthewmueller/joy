@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLDirectoryElement struct
 // js:"HTMLDirectoryElement,omit"
 type HTMLDirectoryElement struct {
 	window.HTMLElement

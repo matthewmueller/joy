@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MSMediaKeySession struct
 // js:"MSMediaKeySession,omit"
 type MSMediaKeySession struct {
 	window.EventTarget

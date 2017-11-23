@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGEllipseElement struct
 // js:"SVGEllipseElement,omit"
 type SVGEllipseElement struct {
 	window.SVGGraphicsElement

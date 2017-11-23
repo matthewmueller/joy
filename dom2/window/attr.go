@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// Attr struct
 // js:"Attr,omit"
 type Attr struct {
 	Node

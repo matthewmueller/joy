@@ -2,6 +2,7 @@ package svglength
 
 import "github.com/matthewmueller/golly/js"
 
+// SVGLength struct
 // js:"SVGLength,omit"
 type SVGLength struct {
 }

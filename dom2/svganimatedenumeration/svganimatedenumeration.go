@@ -2,6 +2,7 @@ package svganimatedenumeration
 
 import "github.com/matthewmueller/golly/js"
 
+// SVGAnimatedEnumeration struct
 // js:"SVGAnimatedEnumeration,omit"
 type SVGAnimatedEnumeration struct {
 }

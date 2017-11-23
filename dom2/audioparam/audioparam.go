@@ -2,6 +2,7 @@ package audioparam
 
 import "github.com/matthewmueller/golly/js"
 
+// AudioParam struct
 // js:"AudioParam,omit"
 type AudioParam struct {
 }

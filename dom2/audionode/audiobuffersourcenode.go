@@ -7,6 +7,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// AudioBufferSourceNode struct
 // js:"AudioBufferSourceNode,omit"
 type AudioBufferSourceNode struct {
 	AudioNode

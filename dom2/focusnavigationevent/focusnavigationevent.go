@@ -1,11 +1,19 @@
 package focusnavigationevent
 
 import (
+	"github.com/matthewmueller/golly/dom2/focusnavigationeventinit"
 	"github.com/matthewmueller/golly/dom2/navigationreason"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(kind string, eventinitdict *focusnavigationeventinit.FocusNavigationEventInit) *FocusNavigationEvent {
+	js.Rewrite("FocusNavigationEvent")
+	return &FocusNavigationEvent{}
+}
+
+// FocusNavigationEvent struct
 // js:"FocusNavigationEvent,omit"
 type FocusNavigationEvent struct {
 	window.Event

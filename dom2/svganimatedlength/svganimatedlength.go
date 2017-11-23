@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGAnimatedLength struct
 // js:"SVGAnimatedLength,omit"
 type SVGAnimatedLength struct {
 }

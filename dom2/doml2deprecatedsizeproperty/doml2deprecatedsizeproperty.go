@@ -1,11 +1,19 @@
 package doml2deprecatedsizeproperty
 
+import "github.com/matthewmueller/golly/js"
+
+// DOML2deprecatedSizeProperty struct
 // js:"DOML2deprecatedSizeProperty,omit"
-type DOML2deprecatedSizeProperty interface {
+type DOML2deprecatedSizeProperty struct {
+}
 
-	// Size
-	Size() (size int)
+// Size
+func (*DOML2DeprecatedSizeProperty) Size() (size int) {
+	js.Rewrite("$<.Size")
+	return size
+}
 
-	// Size
-	SetSize(size int)
+// Size
+func (*DOML2DeprecatedSizeProperty) SetSize(size int) {
+	js.Rewrite("$<.Size = $1", size)
 }

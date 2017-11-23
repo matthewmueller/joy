@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// IDBIndex struct
 // js:"IDBIndex,omit"
 type IDBIndex struct {
 }

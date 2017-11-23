@@ -2,6 +2,7 @@ package mimetype
 
 import "github.com/matthewmueller/golly/js"
 
+// Plugin struct
 // js:"Plugin,omit"
 type Plugin struct {
 }

@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// TreeWalker struct
 // js:"TreeWalker,omit"
 type TreeWalker struct {
 }

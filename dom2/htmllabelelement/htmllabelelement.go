@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLLabelElement struct
 // js:"HTMLLabelElement,omit"
 type HTMLLabelElement struct {
 	window.HTMLElement

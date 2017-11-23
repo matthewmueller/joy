@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGFEDistantLightElement struct
 // js:"SVGFEDistantLightElement,omit"
 type SVGFEDistantLightElement struct {
 	window.SVGElement

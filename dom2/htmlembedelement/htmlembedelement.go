@@ -1,15 +1,20 @@
 package htmlembedelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/getsvgdocument"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLEmbedElement struct
 // js:"HTMLEmbedElement,omit"
 type HTMLEmbedElement struct {
 	window.HTMLElement
-	getsvgdocument.GetSVGDocument
+}
+
+// GetSVGDocument
+func (*HTMLEmbedElement) GetSVGDocument() (w window.Document) {
+	js.Rewrite("$<.GetSVGDocument()")
+	return w
 }
 
 // Height Sets or retrieves the height of the object.

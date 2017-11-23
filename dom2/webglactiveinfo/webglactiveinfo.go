@@ -2,6 +2,7 @@ package webglactiveinfo
 
 import "github.com/matthewmueller/golly/js"
 
+// WebGLActiveInfo struct
 // js:"WebGLActiveInfo,omit"
 type WebGLActiveInfo struct {
 }

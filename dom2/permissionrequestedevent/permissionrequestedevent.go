@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// PermissionRequestedEvent struct
 // js:"PermissionRequestedEvent,omit"
 type PermissionRequestedEvent struct {
 	window.Event

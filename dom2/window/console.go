@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// Console struct
 // js:"Console,omit"
 type Console struct {
 }

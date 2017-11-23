@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLDListElement struct
 // js:"HTMLDListElement,omit"
 type HTMLDListElement struct {
 	window.HTMLElement

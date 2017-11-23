@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// ClientRectList struct
 // js:"ClientRectList,omit"
 type ClientRectList struct {
 }

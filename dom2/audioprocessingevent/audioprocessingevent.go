@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// AudioProcessingEvent struct
 // js:"AudioProcessingEvent,omit"
 type AudioProcessingEvent struct {
 	window.Event

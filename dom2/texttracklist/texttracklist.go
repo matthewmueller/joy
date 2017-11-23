@@ -7,6 +7,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// TextTrackList struct
 // js:"TextTrackList,omit"
 type TextTrackList struct {
 	window.EventTarget

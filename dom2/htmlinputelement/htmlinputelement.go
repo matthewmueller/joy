@@ -10,6 +10,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLInputElement struct
 // js:"HTMLInputElement,omit"
 type HTMLInputElement struct {
 	window.HTMLElement

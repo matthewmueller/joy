@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// PaymentResponse struct
 // js:"PaymentResponse,omit"
 type PaymentResponse struct {
 }

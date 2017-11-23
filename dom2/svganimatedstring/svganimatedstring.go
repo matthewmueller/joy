@@ -2,6 +2,7 @@ package svganimatedstring
 
 import "github.com/matthewmueller/golly/js"
 
+// SVGAnimatedString struct
 // js:"SVGAnimatedString,omit"
 type SVGAnimatedString struct {
 }

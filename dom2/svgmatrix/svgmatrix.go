@@ -2,6 +2,7 @@ package svgmatrix
 
 import "github.com/matthewmueller/golly/js"
 
+// SVGMatrix struct
 // js:"SVGMatrix,omit"
 type SVGMatrix struct {
 }

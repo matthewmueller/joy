@@ -7,6 +7,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLFieldSetElement struct
 // js:"HTMLFieldSetElement,omit"
 type HTMLFieldSetElement struct {
 	window.HTMLElement

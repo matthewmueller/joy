@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// CSSStyleSheet struct
 // js:"CSSStyleSheet,omit"
 type CSSStyleSheet struct {
 	StyleSheet

@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SubtleCrypto struct
 // js:"SubtleCrypto,omit"
 type SubtleCrypto struct {
 }

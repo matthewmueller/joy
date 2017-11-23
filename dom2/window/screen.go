@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// Screen struct
 // js:"Screen,omit"
 type Screen struct {
 	EventTarget

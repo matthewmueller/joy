@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// TouchEvent struct
 // js:"TouchEvent,omit"
 type TouchEvent struct {
 	UIEvent

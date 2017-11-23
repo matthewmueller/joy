@@ -5,6 +5,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New() *XSLTProcessor {
+	js.Rewrite("XSLTProcessor")
+	return &XSLTProcessor{}
+}
+
+// XSLTProcessor struct
 // js:"XSLTProcessor,omit"
 type XSLTProcessor struct {
 }

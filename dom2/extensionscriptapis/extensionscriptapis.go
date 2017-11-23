@@ -2,6 +2,7 @@ package extensionscriptapis
 
 import "github.com/matthewmueller/golly/js"
 
+// ExtensionScriptApis struct
 // js:"ExtensionScriptApis,omit"
 type ExtensionScriptApis struct {
 }

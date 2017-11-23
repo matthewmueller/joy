@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MutationRecord struct
 // js:"MutationRecord,omit"
 type MutationRecord struct {
 }

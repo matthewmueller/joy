@@ -1,14 +1,19 @@
 package crypto
 
 import (
-	"github.com/matthewmueller/golly/dom2/randomsource"
 	"github.com/matthewmueller/golly/dom2/subtlecrypto"
 	"github.com/matthewmueller/golly/js"
 )
 
+// Crypto struct
 // js:"Crypto,omit"
 type Crypto struct {
-	randomsource.RandomSource
+}
+
+// GetRandomValues
+func (*Crypto) GetRandomValues(array []byte) (b []byte) {
+	js.Rewrite("$<.GetRandomValues($1)", array)
+	return b
 }
 
 // Subtle

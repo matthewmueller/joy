@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGFESpotLightElement struct
 // js:"SVGFESpotLightElement,omit"
 type SVGFESpotLightElement struct {
 	window.SVGElement

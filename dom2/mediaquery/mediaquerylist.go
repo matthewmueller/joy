@@ -2,6 +2,7 @@ package mediaquery
 
 import "github.com/matthewmueller/golly/js"
 
+// MediaQueryList struct
 // js:"MediaQueryList,omit"
 type MediaQueryList struct {
 }

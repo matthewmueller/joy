@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// RTCSsrcConflictEvent struct
 // js:"RTCSsrcConflictEvent,omit"
 type RTCSsrcConflictEvent struct {
 	window.Event

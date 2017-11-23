@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MediaDeviceInfo struct
 // js:"MediaDeviceInfo,omit"
 type MediaDeviceInfo struct {
 }

@@ -1,59 +1,107 @@
 package window
 
+import "github.com/matthewmueller/golly/js"
+
+// GlobalEventHandlers struct
 // js:"GlobalEventHandlers,omit"
-type GlobalEventHandlers interface {
+type GlobalEventHandlers struct {
+}
 
-	// Onpointercancel
-	Onpointercancel() (onpointercancel func(Event))
+// Onpointercancel
+func (*GlobalEventHandlers) Onpointercancel() (onpointercancel func(Event)) {
+	js.Rewrite("$<.Onpointercancel")
+	return onpointercancel
+}
 
-	// Onpointercancel
-	SetOnpointercancel(onpointercancel func(Event))
+// Onpointercancel
+func (*GlobalEventHandlers) SetOnpointercancel(onpointercancel func(Event)) {
+	js.Rewrite("$<.Onpointercancel = $1", onpointercancel)
+}
 
-	// Onpointerdown
-	Onpointerdown() (onpointerdown func(Event))
+// Onpointerdown
+func (*GlobalEventHandlers) Onpointerdown() (onpointerdown func(Event)) {
+	js.Rewrite("$<.Onpointerdown")
+	return onpointerdown
+}
 
-	// Onpointerdown
-	SetOnpointerdown(onpointerdown func(Event))
+// Onpointerdown
+func (*GlobalEventHandlers) SetOnpointerdown(onpointerdown func(Event)) {
+	js.Rewrite("$<.Onpointerdown = $1", onpointerdown)
+}
 
-	// Onpointerenter
-	Onpointerenter() (onpointerenter func(Event))
+// Onpointerenter
+func (*GlobalEventHandlers) Onpointerenter() (onpointerenter func(Event)) {
+	js.Rewrite("$<.Onpointerenter")
+	return onpointerenter
+}
 
-	// Onpointerenter
-	SetOnpointerenter(onpointerenter func(Event))
+// Onpointerenter
+func (*GlobalEventHandlers) SetOnpointerenter(onpointerenter func(Event)) {
+	js.Rewrite("$<.Onpointerenter = $1", onpointerenter)
+}
 
-	// Onpointerleave
-	Onpointerleave() (onpointerleave func(Event))
+// Onpointerleave
+func (*GlobalEventHandlers) Onpointerleave() (onpointerleave func(Event)) {
+	js.Rewrite("$<.Onpointerleave")
+	return onpointerleave
+}
 
-	// Onpointerleave
-	SetOnpointerleave(onpointerleave func(Event))
+// Onpointerleave
+func (*GlobalEventHandlers) SetOnpointerleave(onpointerleave func(Event)) {
+	js.Rewrite("$<.Onpointerleave = $1", onpointerleave)
+}
 
-	// Onpointermove
-	Onpointermove() (onpointermove func(Event))
+// Onpointermove
+func (*GlobalEventHandlers) Onpointermove() (onpointermove func(Event)) {
+	js.Rewrite("$<.Onpointermove")
+	return onpointermove
+}
 
-	// Onpointermove
-	SetOnpointermove(onpointermove func(Event))
+// Onpointermove
+func (*GlobalEventHandlers) SetOnpointermove(onpointermove func(Event)) {
+	js.Rewrite("$<.Onpointermove = $1", onpointermove)
+}
 
-	// Onpointerout
-	Onpointerout() (onpointerout func(Event))
+// Onpointerout
+func (*GlobalEventHandlers) Onpointerout() (onpointerout func(Event)) {
+	js.Rewrite("$<.Onpointerout")
+	return onpointerout
+}
 
-	// Onpointerout
-	SetOnpointerout(onpointerout func(Event))
+// Onpointerout
+func (*GlobalEventHandlers) SetOnpointerout(onpointerout func(Event)) {
+	js.Rewrite("$<.Onpointerout = $1", onpointerout)
+}
 
-	// Onpointerover
-	Onpointerover() (onpointerover func(Event))
+// Onpointerover
+func (*GlobalEventHandlers) Onpointerover() (onpointerover func(Event)) {
+	js.Rewrite("$<.Onpointerover")
+	return onpointerover
+}
 
-	// Onpointerover
-	SetOnpointerover(onpointerover func(Event))
+// Onpointerover
+func (*GlobalEventHandlers) SetOnpointerover(onpointerover func(Event)) {
+	js.Rewrite("$<.Onpointerover = $1", onpointerover)
+}
 
-	// Onpointerup
-	Onpointerup() (onpointerup func(Event))
+// Onpointerup
+func (*GlobalEventHandlers) Onpointerup() (onpointerup func(Event)) {
+	js.Rewrite("$<.Onpointerup")
+	return onpointerup
+}
 
-	// Onpointerup
-	SetOnpointerup(onpointerup func(Event))
+// Onpointerup
+func (*GlobalEventHandlers) SetOnpointerup(onpointerup func(Event)) {
+	js.Rewrite("$<.Onpointerup = $1", onpointerup)
+}
 
-	// Onwheel
-	Onwheel() (onwheel func(Event))
+// Onwheel
+func (*GlobalEventHandlers) Onwheel() (onwheel func(Event)) {
+	js.Rewrite("$<.Onwheel")
+	return onwheel
+}
 
-	// Onwheel
-	SetOnwheel(onwheel func(Event))
+// Onwheel
+func (*GlobalEventHandlers) SetOnwheel(onwheel func(Event)) {
+	js.Rewrite("$<.Onwheel = $1", onwheel)
 }

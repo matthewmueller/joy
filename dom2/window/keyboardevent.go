@@ -2,6 +2,13 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// NewKeyboardEvent fn
+func NewKeyboardEvent(typearg string, eventinitdict *KeyboardEventInit) *KeyboardEvent {
+	js.Rewrite("KeyboardEvent")
+	return &KeyboardEvent{}
+}
+
+// KeyboardEvent struct
 // js:"KeyboardEvent,omit"
 type KeyboardEvent struct {
 	UIEvent

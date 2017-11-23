@@ -2,6 +2,13 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// NewWheelEvent fn
+func NewWheelEvent(typearg string, eventinitdict *WheelEventInit) *WheelEvent {
+	js.Rewrite("WheelEvent")
+	return &WheelEvent{}
+}
+
+// WheelEvent struct
 // js:"WheelEvent,omit"
 type WheelEvent struct {
 	MouseEvent

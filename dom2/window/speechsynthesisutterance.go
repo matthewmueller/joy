@@ -5,6 +5,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// NewSpeechSynthesisUtterance fn
+func NewSpeechSynthesisUtterance(text *string) *SpeechSynthesisUtterance {
+	js.Rewrite("SpeechSynthesisUtterance")
+	return &SpeechSynthesisUtterance{}
+}
+
+// SpeechSynthesisUtterance struct
 // js:"SpeechSynthesisUtterance,omit"
 type SpeechSynthesisUtterance struct {
 	EventTarget

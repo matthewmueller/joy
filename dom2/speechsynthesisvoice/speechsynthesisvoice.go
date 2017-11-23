@@ -2,6 +2,7 @@ package speechsynthesisvoice
 
 import "github.com/matthewmueller/golly/js"
 
+// SpeechSynthesisVoice struct
 // js:"SpeechSynthesisVoice,omit"
 type SpeechSynthesisVoice struct {
 }

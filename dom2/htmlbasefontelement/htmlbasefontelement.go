@@ -1,15 +1,25 @@
 package htmlbasefontelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/doml2deprecatedcolorproperty"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLBaseFontElement struct
 // js:"HTMLBaseFontElement,omit"
 type HTMLBaseFontElement struct {
 	window.HTMLElement
-	doml2deprecatedcolorproperty.DOML2deprecatedColorProperty
+}
+
+// Color
+func (*HTMLBaseFontElement) Color() (color string) {
+	js.Rewrite("$<.Color")
+	return color
+}
+
+// Color
+func (*HTMLBaseFontElement) SetColor(color string) {
+	js.Rewrite("$<.Color = $1", color)
 }
 
 // Face Sets or retrieves the current typeface family.

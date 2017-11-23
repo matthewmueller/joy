@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// IDBTransaction struct
 // js:"IDBTransaction,omit"
 type IDBTransaction struct {
 	EventTarget

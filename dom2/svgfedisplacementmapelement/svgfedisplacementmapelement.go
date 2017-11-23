@@ -2,17 +2,47 @@ package svgfedisplacementmapelement
 
 import (
 	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
+	"github.com/matthewmueller/golly/dom2/svganimatedlength"
 	"github.com/matthewmueller/golly/dom2/svganimatednumber"
 	"github.com/matthewmueller/golly/dom2/svganimatedstring"
-	"github.com/matthewmueller/golly/dom2/svgfilterprimitivestandardattributes"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGFEDisplacementMapElement struct
 // js:"SVGFEDisplacementMapElement,omit"
 type SVGFEDisplacementMapElement struct {
 	window.SVGElement
-	svgfilterprimitivestandardattributes.SVGFilterPrimitiveStandardAttributes
+}
+
+// Height
+func (*SVGFEDisplacementMapElement) Height() (height *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.Height")
+	return height
+}
+
+// Result
+func (*SVGFEDisplacementMapElement) Result() (result *svganimatedstring.SVGAnimatedString) {
+	js.Rewrite("$<.Result")
+	return result
+}
+
+// Width
+func (*SVGFEDisplacementMapElement) Width() (width *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.Width")
+	return width
+}
+
+// X
+func (*SVGFEDisplacementMapElement) X() (x *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.X")
+	return x
+}
+
+// Y
+func (*SVGFEDisplacementMapElement) Y() (y *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.Y")
+	return y
 }
 
 // In1

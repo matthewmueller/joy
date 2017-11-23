@@ -7,6 +7,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// PushManager struct
 // js:"PushManager,omit"
 type PushManager struct {
 }

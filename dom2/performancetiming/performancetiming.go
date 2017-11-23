@@ -2,6 +2,7 @@ package performancetiming
 
 import "github.com/matthewmueller/golly/js"
 
+// PerformanceTiming struct
 // js:"PerformanceTiming,omit"
 type PerformanceTiming struct {
 }

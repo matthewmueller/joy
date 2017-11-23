@@ -2,6 +2,7 @@ package clientrect
 
 import "github.com/matthewmueller/golly/js"
 
+// ClientRect struct
 // js:"ClientRect,omit"
 type ClientRect struct {
 }

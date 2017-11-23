@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGFEPointLightElement struct
 // js:"SVGFEPointLightElement,omit"
 type SVGFEPointLightElement struct {
 	window.SVGElement

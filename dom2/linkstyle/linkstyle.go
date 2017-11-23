@@ -1,10 +1,17 @@
 package linkstyle
 
-import "github.com/matthewmueller/golly/dom2/window"
+import (
+	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/js"
+)
 
+// LinkStyle struct
 // js:"LinkStyle,omit"
-type LinkStyle interface {
+type LinkStyle struct {
+}
 
-	// Sheet
-	Sheet() (sheet window.StyleSheet)
+// Sheet
+func (*LinkStyle) Sheet() (sheet window.StyleSheet) {
+	js.Rewrite("$<.Sheet")
+	return sheet
 }

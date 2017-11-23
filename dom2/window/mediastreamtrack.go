@@ -8,6 +8,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MediaStreamTrack struct
 // js:"MediaStreamTrack,omit"
 type MediaStreamTrack struct {
 	EventTarget

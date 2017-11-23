@@ -2,6 +2,7 @@ package coordinates
 
 import "github.com/matthewmueller/golly/js"
 
+// Coordinates struct
 // js:"Coordinates,omit"
 type Coordinates struct {
 }

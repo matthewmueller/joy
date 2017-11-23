@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// LongRunningScriptDetectedEvent struct
 // js:"LongRunningScriptDetectedEvent,omit"
 type LongRunningScriptDetectedEvent struct {
 	window.Event

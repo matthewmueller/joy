@@ -2,15 +2,20 @@ package htmliframeelement
 
 import (
 	"github.com/matthewmueller/golly/dom2/domsettabletokenlist"
-	"github.com/matthewmueller/golly/dom2/getsvgdocument"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLIFrameElement struct
 // js:"HTMLIFrameElement,omit"
 type HTMLIFrameElement struct {
 	window.HTMLElement
-	getsvgdocument.GetSVGDocument
+}
+
+// GetSVGDocument
+func (*HTMLIFrameElement) GetSVGDocument() (w window.Document) {
+	js.Rewrite("$<.GetSVGDocument()")
+	return w
 }
 
 // Align Sets or retrieves how the object is aligned with adjacent text.

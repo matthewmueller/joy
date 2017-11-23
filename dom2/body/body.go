@@ -1,22 +1,41 @@
 package body
 
-import "github.com/matthewmueller/golly/dom2/blob"
+import (
+	"github.com/matthewmueller/golly/dom2/blob"
+	"github.com/matthewmueller/golly/js"
+)
 
+// Body struct
 // js:"Body,omit"
-type Body interface {
+type Body struct {
+}
 
-	// ArrayBuffer
-	ArrayBuffer() (b []byte)
+// ArrayBuffer
+func (*Body) ArrayBuffer() (b []byte) {
+	js.Rewrite("await $<.ArrayBuffer()")
+	return b
+}
 
-	// Blob
-	Blob() (b blob.Blob)
+// Blob
+func (*Body) Blob() (b blob.Blob) {
+	js.Rewrite("await $<.Blob()")
+	return b
+}
 
-	// JSON
-	JSON() (i interface{})
+// JSON
+func (*Body) JSON() (i interface{}) {
+	js.Rewrite("await $<.JSON()")
+	return i
+}
 
-	// Text
-	Text() (s string)
+// Text
+func (*Body) Text() (s string) {
+	js.Rewrite("await $<.Text()")
+	return s
+}
 
-	// BodyUsed
-	BodyUsed() (bodyUsed bool)
+// BodyUsed
+func (*Body) BodyUsed() (bodyUsed bool) {
+	js.Rewrite("$<.BodyUsed")
+	return bodyUsed
 }

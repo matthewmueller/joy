@@ -2,16 +2,21 @@ package xmlhttprequest
 
 import (
 	"github.com/matthewmueller/golly/dom2/window"
-	"github.com/matthewmueller/golly/dom2/xmlhttprequesteventtarget"
 	"github.com/matthewmueller/golly/dom2/xmlhttprequestresponsetype"
 	"github.com/matthewmueller/golly/dom2/xmlhttprequestupload"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New() *XMLHTTPRequest {
+	js.Rewrite("XMLHttpRequest")
+	return &XMLHTTPRequest{}
+}
+
+// XMLHTTPRequest struct
 // js:"XMLHTTPRequest,omit"
 type XMLHTTPRequest struct {
 	window.EventTarget
-	xmlhttprequesteventtarget.XMLHTTPRequestEventTarget
 }
 
 // Abort
@@ -55,6 +60,83 @@ func (*XMLHttpRequest) Send(data *interface{}) {
 // SetRequestHeader
 func (*XMLHttpRequest) SetRequestHeader(header string, value string) {
 	js.Rewrite("$<.SetRequestHeader($1, $2)", header, value)
+}
+
+// Onabort
+func (*XMLHttpRequest) Onabort() (onabort func(window.Event)) {
+	js.Rewrite("$<.Onabort")
+	return onabort
+}
+
+// Onabort
+func (*XMLHttpRequest) SetOnabort(onabort func(window.Event)) {
+	js.Rewrite("$<.Onabort = $1", onabort)
+}
+
+// Onerror
+func (*XMLHttpRequest) Onerror() (onerror func(window.Event)) {
+	js.Rewrite("$<.Onerror")
+	return onerror
+}
+
+// Onerror
+func (*XMLHttpRequest) SetOnerror(onerror func(window.Event)) {
+	js.Rewrite("$<.Onerror = $1", onerror)
+}
+
+// Onload
+func (*XMLHttpRequest) Onload() (onload func(window.Event)) {
+	js.Rewrite("$<.Onload")
+	return onload
+}
+
+// Onload
+func (*XMLHttpRequest) SetOnload(onload func(window.Event)) {
+	js.Rewrite("$<.Onload = $1", onload)
+}
+
+// Onloadend
+func (*XMLHttpRequest) Onloadend() (onloadend func(window.Event)) {
+	js.Rewrite("$<.Onloadend")
+	return onloadend
+}
+
+// Onloadend
+func (*XMLHttpRequest) SetOnloadend(onloadend func(window.Event)) {
+	js.Rewrite("$<.Onloadend = $1", onloadend)
+}
+
+// Onloadstart
+func (*XMLHttpRequest) Onloadstart() (onloadstart func(window.Event)) {
+	js.Rewrite("$<.Onloadstart")
+	return onloadstart
+}
+
+// Onloadstart
+func (*XMLHttpRequest) SetOnloadstart(onloadstart func(window.Event)) {
+	js.Rewrite("$<.Onloadstart = $1", onloadstart)
+}
+
+// Onprogress
+func (*XMLHttpRequest) Onprogress() (onprogress func(window.Event)) {
+	js.Rewrite("$<.Onprogress")
+	return onprogress
+}
+
+// Onprogress
+func (*XMLHttpRequest) SetOnprogress(onprogress func(window.Event)) {
+	js.Rewrite("$<.Onprogress = $1", onprogress)
+}
+
+// Ontimeout
+func (*XMLHttpRequest) Ontimeout() (ontimeout func(window.Event)) {
+	js.Rewrite("$<.Ontimeout")
+	return ontimeout
+}
+
+// Ontimeout
+func (*XMLHttpRequest) SetOntimeout(ontimeout func(window.Event)) {
+	js.Rewrite("$<.Ontimeout = $1", ontimeout)
 }
 
 // MsCaching

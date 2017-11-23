@@ -5,6 +5,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New() *MSGesture {
+	js.Rewrite("MSGesture")
+	return &MSGesture{}
+}
+
+// MSGesture struct
 // js:"MSGesture,omit"
 type MSGesture struct {
 }

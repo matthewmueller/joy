@@ -2,6 +2,7 @@ package svgstringlist
 
 import "github.com/matthewmueller/golly/js"
 
+// SVGStringList struct
 // js:"SVGStringList,omit"
 type SVGStringList struct {
 }

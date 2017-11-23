@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SourceBufferList struct
 // js:"SourceBufferList,omit"
 type SourceBufferList struct {
 	window.EventTarget

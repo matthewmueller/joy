@@ -2,6 +2,7 @@ package css
 
 import "github.com/matthewmueller/golly/js"
 
+// CSS struct
 // js:"CSS,omit"
 type CSS struct {
 }

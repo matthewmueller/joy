@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MSFIDOCredentialAssertion struct
 // js:"MSFIDOCredentialAssertion,omit"
 type MSFIDOCredentialAssertion struct {
 	msassertion.MSAssertion

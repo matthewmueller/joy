@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGNumberList struct
 // js:"SVGNumberList,omit"
 type SVGNumberList struct {
 }

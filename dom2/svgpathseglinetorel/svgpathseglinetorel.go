@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGPathSegLinetoRel struct
 // js:"SVGPathSegLinetoRel,omit"
 type SVGPathSegLinetoRel struct {
 	svgpathseg.SVGPathSeg

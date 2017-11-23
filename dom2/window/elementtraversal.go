@@ -1,20 +1,38 @@
 package window
 
+import "github.com/matthewmueller/golly/js"
+
+// ElementTraversal struct
 // js:"ElementTraversal,omit"
-type ElementTraversal interface {
+type ElementTraversal struct {
+}
 
-	// ChildElementCount
-	ChildElementCount() (childElementCount uint)
+// ChildElementCount
+func (*ElementTraversal) ChildElementCount() (childElementCount uint) {
+	js.Rewrite("$<.ChildElementCount")
+	return childElementCount
+}
 
-	// FirstElementChild
-	FirstElementChild() (firstElementChild Element)
+// FirstElementChild
+func (*ElementTraversal) FirstElementChild() (firstElementChild Element) {
+	js.Rewrite("$<.FirstElementChild")
+	return firstElementChild
+}
 
-	// LastElementChild
-	LastElementChild() (lastElementChild Element)
+// LastElementChild
+func (*ElementTraversal) LastElementChild() (lastElementChild Element) {
+	js.Rewrite("$<.LastElementChild")
+	return lastElementChild
+}
 
-	// NextElementSibling
-	NextElementSibling() (nextElementSibling Element)
+// NextElementSibling
+func (*ElementTraversal) NextElementSibling() (nextElementSibling Element) {
+	js.Rewrite("$<.NextElementSibling")
+	return nextElementSibling
+}
 
-	// PreviousElementSibling
-	PreviousElementSibling() (previousElementSibling Element)
+// PreviousElementSibling
+func (*ElementTraversal) PreviousElementSibling() (previousElementSibling Element) {
+	js.Rewrite("$<.PreviousElementSibling")
+	return previousElementSibling
 }

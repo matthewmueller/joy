@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// PerformanceNavigationTiming struct
 // js:"PerformanceNavigationTiming,omit"
 type PerformanceNavigationTiming struct {
 	performanceentry.PerformanceEntry

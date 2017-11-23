@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// NodeIterator struct
 // js:"NodeIterator,omit"
 type NodeIterator struct {
 }

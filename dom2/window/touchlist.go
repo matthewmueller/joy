@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// TouchList struct
 // js:"TouchList,omit"
 type TouchList struct {
 }

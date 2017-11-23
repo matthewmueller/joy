@@ -2,6 +2,7 @@ package validitystate
 
 import "github.com/matthewmueller/golly/js"
 
+// ValidityState struct
 // js:"ValidityState,omit"
 type ValidityState struct {
 }

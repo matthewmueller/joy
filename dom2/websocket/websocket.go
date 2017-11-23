@@ -6,6 +6,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(url string, protocols *interface{}) *WebSocket {
+	js.Rewrite("WebSocket")
+	return &WebSocket{}
+}
+
+// WebSocket struct
 // js:"WebSocket,omit"
 type WebSocket struct {
 	window.EventTarget

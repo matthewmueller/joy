@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLBodyElement struct
 // js:"HTMLBodyElement,omit"
 type HTMLBodyElement struct {
 	window.HTMLElement

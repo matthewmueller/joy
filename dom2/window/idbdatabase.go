@@ -7,6 +7,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// IDBDatabase struct
 // js:"IDBDatabase,omit"
 type IDBDatabase struct {
 	EventTarget

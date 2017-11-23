@@ -2,15 +2,21 @@ package svguseelement
 
 import (
 	"github.com/matthewmueller/golly/dom2/svganimatedlength"
-	"github.com/matthewmueller/golly/dom2/svgurireference"
+	"github.com/matthewmueller/golly/dom2/svganimatedstring"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGUseElement struct
 // js:"SVGUseElement,omit"
 type SVGUseElement struct {
 	window.SVGGraphicsElement
-	svgurireference.SVGURIReference
+}
+
+// Href
+func (*SVGUseElement) Href() (href *svganimatedstring.SVGAnimatedString) {
+	js.Rewrite("$<.Href")
+	return href
 }
 
 // AnimatedInstanceRoot

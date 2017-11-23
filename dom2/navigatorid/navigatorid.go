@@ -1,32 +1,62 @@
 package navigatorid
 
+import "github.com/matthewmueller/golly/js"
+
+// NavigatorID struct
 // js:"NavigatorID,omit"
-type NavigatorID interface {
+type NavigatorID struct {
+}
 
-	// AppCodeName
-	AppCodeName() (appCodeName string)
+// AppCodeName
+func (*NavigatorID) AppCodeName() (appCodeName string) {
+	js.Rewrite("$<.AppCodeName")
+	return appCodeName
+}
 
-	// AppName
-	AppName() (appName string)
+// AppName
+func (*NavigatorID) AppName() (appName string) {
+	js.Rewrite("$<.AppName")
+	return appName
+}
 
-	// AppVersion
-	AppVersion() (appVersion string)
+// AppVersion
+func (*NavigatorID) AppVersion() (appVersion string) {
+	js.Rewrite("$<.AppVersion")
+	return appVersion
+}
 
-	// Platform
-	Platform() (platform string)
+// Platform
+func (*NavigatorID) Platform() (platform string) {
+	js.Rewrite("$<.Platform")
+	return platform
+}
 
-	// Product
-	Product() (product string)
+// Product
+func (*NavigatorID) Product() (product string) {
+	js.Rewrite("$<.Product")
+	return product
+}
 
-	// ProductSub
-	ProductSub() (productSub string)
+// ProductSub
+func (*NavigatorID) ProductSub() (productSub string) {
+	js.Rewrite("$<.ProductSub")
+	return productSub
+}
 
-	// UserAgent
-	UserAgent() (userAgent string)
+// UserAgent
+func (*NavigatorID) UserAgent() (userAgent string) {
+	js.Rewrite("$<.UserAgent")
+	return userAgent
+}
 
-	// Vendor
-	Vendor() (vendor string)
+// Vendor
+func (*NavigatorID) Vendor() (vendor string) {
+	js.Rewrite("$<.Vendor")
+	return vendor
+}
 
-	// VendorSub
-	VendorSub() (vendorSub string)
+// VendorSub
+func (*NavigatorID) VendorSub() (vendorSub string) {
+	js.Rewrite("$<.VendorSub")
+	return vendorSub
 }

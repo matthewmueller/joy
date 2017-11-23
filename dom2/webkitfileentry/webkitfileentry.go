@@ -7,12 +7,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// WebKitFileEntry struct
 // js:"WebKitFileEntry,omit"
 type WebKitFileEntry struct {
 	webkitfilesytem.WebKitEntry
 }
 
 // File
-func (*WebKitFileEntry) File(successCallback func(file *file.File) handleEvent, errorCallback *func(err *domerror.DOMError) handleEvent) {
+func (*WebKitFileEntry) File(successCallback func(file *file.File), errorCallback *func(err *domerror.DOMError)) {
 	js.Rewrite("$<.File($1, $2)", successCallback, errorCallback)
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// DragEvent struct
 // js:"DragEvent,omit"
 type DragEvent struct {
 	MouseEvent

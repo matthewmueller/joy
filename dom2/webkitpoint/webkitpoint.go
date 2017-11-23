@@ -2,6 +2,13 @@ package webkitpoint
 
 import "github.com/matthewmueller/golly/js"
 
+// New fn
+func New(x *float32, y *float32) *WebKitPoint {
+	js.Rewrite("WebKitPoint")
+	return &WebKitPoint{}
+}
+
+// WebKitPoint struct
 // js:"WebKitPoint,omit"
 type WebKitPoint struct {
 }

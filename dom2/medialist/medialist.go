@@ -2,6 +2,7 @@ package medialist
 
 import "github.com/matthewmueller/golly/js"
 
+// MediaList struct
 // js:"MediaList,omit"
 type MediaList struct {
 }

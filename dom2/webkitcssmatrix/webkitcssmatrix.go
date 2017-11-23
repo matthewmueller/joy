@@ -2,6 +2,13 @@ package webkitcssmatrix
 
 import "github.com/matthewmueller/golly/js"
 
+// New fn
+func New(text *string) *WebKitCSSMatrix {
+	js.Rewrite("WebKitCSSMatrix")
+	return &WebKitCSSMatrix{}
+}
+
+// WebKitCSSMatrix struct
 // js:"WebKitCSSMatrix,omit"
 type WebKitCSSMatrix struct {
 }

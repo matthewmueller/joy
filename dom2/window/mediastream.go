@@ -2,6 +2,13 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// NewMediaStream fn
+func NewMediaStream(streamortracks *interface{}) *MediaStream {
+	js.Rewrite("MediaStream")
+	return &MediaStream{}
+}
+
+// MediaStream struct
 // js:"MediaStream,omit"
 type MediaStream struct {
 	EventTarget

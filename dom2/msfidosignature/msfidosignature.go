@@ -2,6 +2,7 @@ package msfidosignature
 
 import "github.com/matthewmueller/golly/js"
 
+// MSFIDOSignature struct
 // js:"MSFIDOSignature,omit"
 type MSFIDOSignature struct {
 }

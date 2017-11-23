@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// ListeningStateChangedEvent struct
 // js:"ListeningStateChangedEvent,omit"
 type ListeningStateChangedEvent struct {
 	window.Event

@@ -1,10 +1,18 @@
 package speechsynthesisevent
 
 import (
+	"github.com/matthewmueller/golly/dom2/speechsynthesiseventinit"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(kind string, eventinitdict *speechsynthesiseventinit.SpeechSynthesisEventInit) *SpeechSynthesisEvent {
+	js.Rewrite("SpeechSynthesisEvent")
+	return &SpeechSynthesisEvent{}
+}
+
+// SpeechSynthesisEvent struct
 // js:"SpeechSynthesisEvent,omit"
 type SpeechSynthesisEvent struct {
 	window.Event

@@ -3,14 +3,22 @@ package svgfittoviewbox
 import (
 	"github.com/matthewmueller/golly/dom2/svganimatedpreserveaspectratio"
 	"github.com/matthewmueller/golly/dom2/svganimatedrect"
+	"github.com/matthewmueller/golly/js"
 )
 
+// SVGFitToViewBox struct
 // js:"SVGFitToViewBox,omit"
-type SVGFitToViewBox interface {
+type SVGFitToViewBox struct {
+}
 
-	// PreserveAspectRatio
-	PreserveAspectRatio() (preserveAspectRatio *svganimatedpreserveaspectratio.SVGAnimatedPreserveAspectRatio)
+// PreserveAspectRatio
+func (*SVGFitToViewBox) PreserveAspectRatio() (preserveAspectRatio *svganimatedpreserveaspectratio.SVGAnimatedPreserveAspectRatio) {
+	js.Rewrite("$<.PreserveAspectRatio")
+	return preserveAspectRatio
+}
 
-	// ViewBox
-	ViewBox() (viewBox *svganimatedrect.SVGAnimatedRect)
+// ViewBox
+func (*SVGFitToViewBox) ViewBox() (viewBox *svganimatedrect.SVGAnimatedRect) {
+	js.Rewrite("$<.ViewBox")
+	return viewBox
 }

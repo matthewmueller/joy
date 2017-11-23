@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MSInputMethodContext struct
 // js:"MSInputMethodContext,omit"
 type MSInputMethodContext struct {
 	EventTarget

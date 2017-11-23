@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGElementInstance struct
 // js:"SVGElementInstance,omit"
 type SVGElementInstance struct {
 	window.EventTarget

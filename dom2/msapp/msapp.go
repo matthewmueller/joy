@@ -8,6 +8,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MSApp struct
 // js:"MSApp,omit"
 type MSApp struct {
 }

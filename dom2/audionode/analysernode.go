@@ -2,6 +2,7 @@ package audionode
 
 import "github.com/matthewmueller/golly/js"
 
+// AnalyserNode struct
 // js:"AnalyserNode,omit"
 type AnalyserNode struct {
 	AudioNode

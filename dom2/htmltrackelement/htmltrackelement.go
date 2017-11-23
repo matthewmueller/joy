@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLTrackElement struct
 // js:"HTMLTrackElement,omit"
 type HTMLTrackElement struct {
 	window.HTMLElement

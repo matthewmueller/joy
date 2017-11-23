@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLAreaElement struct
 // js:"HTMLAreaElement,omit"
 type HTMLAreaElement struct {
 	window.HTMLElement

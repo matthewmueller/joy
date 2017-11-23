@@ -5,6 +5,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(init *interface{}) *Headers {
+	js.Rewrite("Headers")
+	return &Headers{}
+}
+
+// Headers struct
 // js:"Headers,omit"
 type Headers struct {
 }

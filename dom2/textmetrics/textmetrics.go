@@ -2,6 +2,7 @@ package textmetrics
 
 import "github.com/matthewmueller/golly/js"
 
+// TextMetrics struct
 // js:"TextMetrics,omit"
 type TextMetrics struct {
 }

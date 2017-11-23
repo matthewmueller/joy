@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLOptGroupElement struct
 // js:"HTMLOptGroupElement,omit"
 type HTMLOptGroupElement struct {
 	window.HTMLElement

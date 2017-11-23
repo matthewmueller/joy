@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// Selection struct
 // js:"Selection,omit"
 type Selection struct {
 }

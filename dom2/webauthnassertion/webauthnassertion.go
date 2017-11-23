@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// WebAuthnAssertion struct
 // js:"WebAuthnAssertion,omit"
 type WebAuthnAssertion struct {
 }

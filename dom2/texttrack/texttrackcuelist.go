@@ -2,6 +2,7 @@ package texttrack
 
 import "github.com/matthewmueller/golly/js"
 
+// TextTrackCueList struct
 // js:"TextTrackCueList,omit"
 type TextTrackCueList struct {
 }

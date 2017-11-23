@@ -3,7 +3,6 @@ package defs
 import (
 	"strings"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/index"
 	"github.com/matthewmueller/golly/internal/dom/raw"
@@ -104,7 +103,7 @@ func (d *method) generate(recv Interface) (string, error) {
 		Comment string
 	}{
 		Recv:    gen.Pointer(recv.Name()),
-		Name:    gen.Capitalize(d.data.Name),
+		Name:    d.data.Name,
 		Comment: d.data.Comment,
 	}
 
@@ -134,16 +133,16 @@ func (d *method) generate(recv Interface) (string, error) {
 	if t == "" {
 		if async {
 			return gen.Generate("method/"+d.data.Name, data, `
-				// {{ .Name }} {{ .Comment }}
-				func ({{ .Recv }}) {{ .Name }}({{ joinvt .Params }}) {
+				// {{ capitalize .Name }} fn {{ .Comment }}
+				func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) {
 					js.Rewrite("await $<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 				}
 			`)
 		}
 
 		return gen.Generate("method/"+d.data.Name, data, `
-			// {{ .Name }} {{ .Comment }}
-			func ({{ .Recv }}) {{ .Name }}({{ joinvt .Params }}) {
+			// {{ capitalize .Name }} fn {{ .Comment }}
+			func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) {
 				js.Rewrite("$<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 			}
 		`)
@@ -151,16 +150,16 @@ func (d *method) generate(recv Interface) (string, error) {
 
 	if async {
 		return gen.Generate("method/"+d.data.Name, data, `
-			// {{ .Name }} {{ .Comment }}
-			func ({{ .Recv }}) {{ .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
+			// {{ capitalize .Name }} fn {{ .Comment }}
+			func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
 				js.Rewrite("await $<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 				return {{ .Result.Var }}
 			}
 		`)
 	}
 	return gen.Generate("method/"+d.data.Name, data, `
-		// {{ .Name }} {{ .Comment }}
-		func ({{ .Recv }}) {{ .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
+		// {{ capitalize .Name }} fn {{ .Comment }}
+		func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
 			js.Rewrite("$<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 			return {{ .Result.Var }}
 		}
@@ -186,10 +185,6 @@ func (d *method) GenerateInterface() (string, error) {
 			return "", errors.Wrapf(err, "error coercing param")
 		}
 
-		if param.Name == "listener" {
-			log.Infof("coercing=%s type=%s resolved=%s", param.Name, param.Type, t)
-		}
-
 		data.Params = append(data.Params, gen.Vartype{
 			Var:      gen.Identifier(param.Name),
 			Optional: param.Optional,
@@ -208,13 +203,13 @@ func (d *method) GenerateInterface() (string, error) {
 
 	if t == "" {
 		return gen.Generate("method/"+d.data.Name, data, `
-			// {{ .Name }} {{ .Comment }}
-			{{ .Name }}({{ joinvt .Params }})
+			// {{ capitalize .Name }} {{ .Comment }}
+			{{ capitalize .Name }}({{ joinvt .Params }})
 		`)
 	}
 
 	return gen.Generate("method/"+d.data.Name, data, `
-		// {{ .Name }} {{ .Comment }}
-		{{ .Name }}({{ joinvt .Params }}) ({{ vt .Result }})
+		// {{ capitalize .Name }} {{ .Comment }}
+		{{ capitalize .Name }}({{ joinvt .Params }}) ({{ vt .Result }})
 	`)
 }

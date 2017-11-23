@@ -1,14 +1,16 @@
 package window
 
-import (
-	"github.com/matthewmueller/golly/dom2/childnode"
-	"github.com/matthewmueller/golly/js"
-)
+import "github.com/matthewmueller/golly/js"
 
+// DocumentType struct
 // js:"DocumentType,omit"
 type DocumentType struct {
 	Node
-	childnode.ChildNode
+}
+
+// Remove
+func (*DocumentType) Remove() {
+	js.Rewrite("$<.Remove()")
 }
 
 // Entities

@@ -3,15 +3,21 @@ package svgtextpathelement
 import (
 	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
 	"github.com/matthewmueller/golly/dom2/svganimatedlength"
+	"github.com/matthewmueller/golly/dom2/svganimatedstring"
 	"github.com/matthewmueller/golly/dom2/svgtextcontentelement"
-	"github.com/matthewmueller/golly/dom2/svgurireference"
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGTextPathElement struct
 // js:"SVGTextPathElement,omit"
 type SVGTextPathElement struct {
 	svgtextcontentelement.SVGTextContentElement
-	svgurireference.SVGURIReference
+}
+
+// Href
+func (*SVGTextPathElement) Href() (href *svganimatedstring.SVGAnimatedString) {
+	js.Rewrite("$<.Href")
+	return href
 }
 
 // Method

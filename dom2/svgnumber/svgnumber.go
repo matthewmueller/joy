@@ -2,6 +2,7 @@ package svgnumber
 
 import "github.com/matthewmueller/golly/js"
 
+// SVGNumber struct
 // js:"SVGNumber,omit"
 type SVGNumber struct {
 }

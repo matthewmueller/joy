@@ -2,6 +2,7 @@ package svgpreserveaspectratio
 
 import "github.com/matthewmueller/golly/js"
 
+// SVGPreserveAspectRatio struct
 // js:"SVGPreserveAspectRatio,omit"
 type SVGPreserveAspectRatio struct {
 }

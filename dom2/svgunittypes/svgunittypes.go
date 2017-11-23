@@ -1,5 +1,6 @@
 package svgunittypes
 
+// SVGUnitTypes struct
 // js:"SVGUnitTypes,omit"
-type SVGUnitTypes interface {
+type SVGUnitTypes struct {
 }

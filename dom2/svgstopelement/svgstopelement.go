@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGStopElement struct
 // js:"SVGStopElement,omit"
 type SVGStopElement struct {
 	window.SVGElement

@@ -1,10 +1,17 @@
 package getsvgdocument
 
-import "github.com/matthewmueller/golly/dom2/window"
+import (
+	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/js"
+)
 
+// GetSVGDocument struct
 // js:"GetSVGDocument,omit"
-type GetSVGDocument interface {
+type GetSVGDocument struct {
+}
 
-	// GetSVGDocument
-	GetSVGDocument() (w window.Document)
+// GetSVGDocument
+func (*GetSVGDocument) GetSVGDocument() (w window.Document) {
+	js.Rewrite("$<.GetSVGDocument()")
+	return w
 }

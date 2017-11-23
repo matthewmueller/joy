@@ -10,6 +10,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(track *window.MediaStreamTrack, transport interface{}, rtcptransport *rtcdtlstransport.RTCDtlsTransport) *RTCRtpSender {
+	js.Rewrite("RTCRtpSender")
+	return &RTCRtpSender{}
+}
+
+// RTCRtpSender struct
 // js:"RTCRtpSender,omit"
 type RTCRtpSender struct {
 	rtcstatsprovider.RTCStatsProvider

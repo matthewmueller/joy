@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLMarqueeElement struct
 // js:"HTMLMarqueeElement,omit"
 type HTMLMarqueeElement struct {
 	window.HTMLElement

@@ -10,6 +10,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// WebAuthentication struct
 // js:"WebAuthentication,omit"
 type WebAuthentication struct {
 }

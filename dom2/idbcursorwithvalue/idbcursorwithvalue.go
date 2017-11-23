@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// IDBCursorWithValue struct
 // js:"IDBCursorWithValue,omit"
 type IDBCursorWithValue struct {
 	idbcursor.IDBCursor

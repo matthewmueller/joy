@@ -1,8 +1,14 @@
 package svgzoomandpan
 
-// js:"SVGZoomAndPan,omit"
-type SVGZoomAndPan interface {
+import "github.com/matthewmueller/golly/js"
 
-	// ZoomAndPan
-	ZoomAndPan() (zoomAndPan uint8)
+// SVGZoomAndPan struct
+// js:"SVGZoomAndPan,omit"
+type SVGZoomAndPan struct {
+}
+
+// ZoomAndPan
+func (*SVGZoomAndPan) ZoomAndPan() (zoomAndPan uint8) {
+	js.Rewrite("$<.ZoomAndPan")
+	return zoomAndPan
 }

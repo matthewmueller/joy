@@ -2,6 +2,7 @@ package history
 
 import "github.com/matthewmueller/golly/js"
 
+// History struct
 // js:"History,omit"
 type History struct {
 }

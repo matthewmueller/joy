@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// FileList struct
 // js:"FileList,omit"
 type FileList struct {
 }

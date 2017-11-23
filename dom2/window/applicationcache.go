@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// ApplicationCache struct
 // js:"ApplicationCache,omit"
 type ApplicationCache struct {
 	EventTarget

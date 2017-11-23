@@ -7,6 +7,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(sender *rtcrtpsender.RTCRtpSender) *RTCDtmfSender {
+	js.Rewrite("RTCDtmfSender")
+	return &RTCDtmfSender{}
+}
+
+// RTCDtmfSender struct
 // js:"RTCDtmfSender,omit"
 type RTCDtmfSender struct {
 	window.EventTarget

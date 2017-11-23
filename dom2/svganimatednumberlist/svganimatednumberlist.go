@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGAnimatedNumberList struct
 // js:"SVGAnimatedNumberList,omit"
 type SVGAnimatedNumberList struct {
 }

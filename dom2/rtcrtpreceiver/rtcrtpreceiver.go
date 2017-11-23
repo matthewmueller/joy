@@ -10,6 +10,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(transport interface{}, kind string, rtcptransport *rtcdtlstransport.RTCDtlsTransport) *RTCRtpReceiver {
+	js.Rewrite("RTCRtpReceiver")
+	return &RTCRtpReceiver{}
+}
+
+// RTCRtpReceiver struct
 // js:"RTCRtpReceiver,omit"
 type RTCRtpReceiver struct {
 	rtcstatsprovider.RTCStatsProvider

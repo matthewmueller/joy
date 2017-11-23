@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// CSSFontFaceRule struct
 // js:"CSSFontFaceRule,omit"
 type CSSFontFaceRule struct {
 	window.CSSRule

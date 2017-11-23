@@ -2,6 +2,7 @@ package audionode
 
 import "github.com/matthewmueller/golly/js"
 
+// IIRFilterNode struct
 // js:"IIRFilterNode,omit"
 type IIRFilterNode struct {
 	AudioNode

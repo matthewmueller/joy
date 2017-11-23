@@ -2,6 +2,7 @@ package readablestreamreader
 
 import "github.com/matthewmueller/golly/js"
 
+// ReadableStreamReader struct
 // js:"ReadableStreamReader,omit"
 type ReadableStreamReader struct {
 }

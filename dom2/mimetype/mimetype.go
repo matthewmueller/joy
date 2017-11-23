@@ -2,6 +2,7 @@ package mimetype
 
 import "github.com/matthewmueller/golly/js"
 
+// MimeType struct
 // js:"MimeType,omit"
 type MimeType struct {
 }

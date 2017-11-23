@@ -2,6 +2,13 @@ package imagedata
 
 import "github.com/matthewmueller/golly/js"
 
+// New fn
+func New(width uint, height uint) *ImageData {
+	js.Rewrite("ImageData")
+	return &ImageData{}
+}
+
+// ImageData struct
 // js:"ImageData,omit"
 type ImageData struct {
 }

@@ -1,11 +1,19 @@
 package window
 
+import "github.com/matthewmueller/golly/js"
+
+// AbstractWorker struct
 // js:"AbstractWorker,omit"
-type AbstractWorker interface {
+type AbstractWorker struct {
+}
 
-	// Onerror
-	Onerror() (onerror func(Event))
+// Onerror
+func (*AbstractWorker) Onerror() (onerror func(Event)) {
+	js.Rewrite("$<.Onerror")
+	return onerror
+}
 
-	// Onerror
-	SetOnerror(onerror func(Event))
+// Onerror
+func (*AbstractWorker) SetOnerror(onerror func(Event)) {
+	js.Rewrite("$<.Onerror = $1", onerror)
 }

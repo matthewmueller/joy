@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// WebKitDirectoryEntry struct
 // js:"WebKitDirectoryEntry,omit"
 type WebKitDirectoryEntry struct {
 	WebKitEntry

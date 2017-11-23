@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGLineElement struct
 // js:"SVGLineElement,omit"
 type SVGLineElement struct {
 	window.SVGGraphicsElement

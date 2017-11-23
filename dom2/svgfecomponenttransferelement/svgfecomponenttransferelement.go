@@ -1,16 +1,46 @@
 package svgfecomponenttransferelement
 
 import (
+	"github.com/matthewmueller/golly/dom2/svganimatedlength"
 	"github.com/matthewmueller/golly/dom2/svganimatedstring"
-	"github.com/matthewmueller/golly/dom2/svgfilterprimitivestandardattributes"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGFEComponentTransferElement struct
 // js:"SVGFEComponentTransferElement,omit"
 type SVGFEComponentTransferElement struct {
 	window.SVGElement
-	svgfilterprimitivestandardattributes.SVGFilterPrimitiveStandardAttributes
+}
+
+// Height
+func (*SVGFEComponentTransferElement) Height() (height *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.Height")
+	return height
+}
+
+// Result
+func (*SVGFEComponentTransferElement) Result() (result *svganimatedstring.SVGAnimatedString) {
+	js.Rewrite("$<.Result")
+	return result
+}
+
+// Width
+func (*SVGFEComponentTransferElement) Width() (width *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.Width")
+	return width
+}
+
+// X
+func (*SVGFEComponentTransferElement) X() (x *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.X")
+	return x
+}
+
+// Y
+func (*SVGFEComponentTransferElement) Y() (y *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.Y")
+	return y
 }
 
 // In1

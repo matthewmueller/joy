@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLFrameSetElement struct
 // js:"HTMLFrameSetElement,omit"
 type HTMLFrameSetElement struct {
 	window.HTMLElement

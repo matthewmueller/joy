@@ -1,13 +1,23 @@
 package svganimatedpoints
 
-import "github.com/matthewmueller/golly/dom2/svgpointlist"
+import (
+	"github.com/matthewmueller/golly/dom2/svgpointlist"
+	"github.com/matthewmueller/golly/js"
+)
 
+// SVGAnimatedPoints struct
 // js:"SVGAnimatedPoints,omit"
-type SVGAnimatedPoints interface {
+type SVGAnimatedPoints struct {
+}
 
-	// AnimatedPoints
-	AnimatedPoints() (animatedPoints *svgpointlist.SVGPointList)
+// AnimatedPoints
+func (*SVGAnimatedPoints) AnimatedPoints() (animatedPoints *svgpointlist.SVGPointList) {
+	js.Rewrite("$<.AnimatedPoints")
+	return animatedPoints
+}
 
-	// Points
-	Points() (points *svgpointlist.SVGPointList)
+// Points
+func (*SVGAnimatedPoints) Points() (points *svgpointlist.SVGPointList) {
+	js.Rewrite("$<.Points")
+	return points
 }

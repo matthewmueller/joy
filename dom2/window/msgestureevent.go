@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// MSGestureEvent struct
 // js:"MSGestureEvent,omit"
 type MSGestureEvent struct {
 	UIEvent

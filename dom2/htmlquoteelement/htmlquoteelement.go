@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLQuoteElement struct
 // js:"HTMLQuoteElement,omit"
 type HTMLQuoteElement struct {
 	window.HTMLElement

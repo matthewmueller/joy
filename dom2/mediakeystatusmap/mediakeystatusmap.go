@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MediaKeyStatusMap struct
 // js:"MediaKeyStatusMap,omit"
 type MediaKeyStatusMap struct {
 }

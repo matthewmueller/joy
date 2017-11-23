@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// Position struct
 // js:"Position,omit"
 type Position struct {
 }

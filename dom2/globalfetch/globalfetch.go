@@ -7,6 +7,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// GlobalFetch struct
 // js:"GlobalFetch,omit"
 type GlobalFetch struct {
 }

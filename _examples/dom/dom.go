@@ -17,12 +17,12 @@ import (
 // }
 
 func main() {
-	w := window.Window{}
-
+	w := window.New()
+	doc := w.Document()
 	// s := Sub{}
 	// s.Go()
 
-	w.AddEventListener("click", func(evt window.Event) {
+	doc.AddEventListener("click", func(evt window.Event) {
 		evt.PreventDefault()
 		evt.StopImmediatePropagation()
 

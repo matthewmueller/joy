@@ -7,6 +7,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(numberofchannels uint, length uint, samplerate float32) *OfflineAudioContext {
+	js.Rewrite("OfflineAudioContext")
+	return &OfflineAudioContext{}
+}
+
+// OfflineAudioContext struct
 // js:"OfflineAudioContext,omit"
 type OfflineAudioContext struct {
 	audionode.AudioContext

@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// PermissionRequest struct
 // js:"PermissionRequest,omit"
 type PermissionRequest struct {
 	deferredpermissionrequest.DeferredPermissionRequest

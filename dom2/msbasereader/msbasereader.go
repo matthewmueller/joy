@@ -1,52 +1,94 @@
 package msbasereader
 
-import "github.com/matthewmueller/golly/dom2/window"
+import (
+	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/js"
+)
 
+// MSBaseReader struct
 // js:"MSBaseReader,omit"
-type MSBaseReader interface {
+type MSBaseReader struct {
+}
 
-	// Abort
-	Abort()
+// Abort
+func (*MSBaseReader) Abort() {
+	js.Rewrite("$<.Abort()")
+}
 
-	// Onabort
-	Onabort() (onabort func(window.Event))
+// Onabort
+func (*MSBaseReader) Onabort() (onabort func(window.Event)) {
+	js.Rewrite("$<.Onabort")
+	return onabort
+}
 
-	// Onabort
-	SetOnabort(onabort func(window.Event))
+// Onabort
+func (*MSBaseReader) SetOnabort(onabort func(window.Event)) {
+	js.Rewrite("$<.Onabort = $1", onabort)
+}
 
-	// Onerror
-	Onerror() (onerror func(window.Event))
+// Onerror
+func (*MSBaseReader) Onerror() (onerror func(window.Event)) {
+	js.Rewrite("$<.Onerror")
+	return onerror
+}
 
-	// Onerror
-	SetOnerror(onerror func(window.Event))
+// Onerror
+func (*MSBaseReader) SetOnerror(onerror func(window.Event)) {
+	js.Rewrite("$<.Onerror = $1", onerror)
+}
 
-	// Onload
-	Onload() (onload func(window.Event))
+// Onload
+func (*MSBaseReader) Onload() (onload func(window.Event)) {
+	js.Rewrite("$<.Onload")
+	return onload
+}
 
-	// Onload
-	SetOnload(onload func(window.Event))
+// Onload
+func (*MSBaseReader) SetOnload(onload func(window.Event)) {
+	js.Rewrite("$<.Onload = $1", onload)
+}
 
-	// Onloadend
-	Onloadend() (onloadend func(window.Event))
+// Onloadend
+func (*MSBaseReader) Onloadend() (onloadend func(window.Event)) {
+	js.Rewrite("$<.Onloadend")
+	return onloadend
+}
 
-	// Onloadend
-	SetOnloadend(onloadend func(window.Event))
+// Onloadend
+func (*MSBaseReader) SetOnloadend(onloadend func(window.Event)) {
+	js.Rewrite("$<.Onloadend = $1", onloadend)
+}
 
-	// Onloadstart
-	Onloadstart() (onloadstart func(window.Event))
+// Onloadstart
+func (*MSBaseReader) Onloadstart() (onloadstart func(window.Event)) {
+	js.Rewrite("$<.Onloadstart")
+	return onloadstart
+}
 
-	// Onloadstart
-	SetOnloadstart(onloadstart func(window.Event))
+// Onloadstart
+func (*MSBaseReader) SetOnloadstart(onloadstart func(window.Event)) {
+	js.Rewrite("$<.Onloadstart = $1", onloadstart)
+}
 
-	// Onprogress
-	Onprogress() (onprogress func(window.Event))
+// Onprogress
+func (*MSBaseReader) Onprogress() (onprogress func(window.Event)) {
+	js.Rewrite("$<.Onprogress")
+	return onprogress
+}
 
-	// Onprogress
-	SetOnprogress(onprogress func(window.Event))
+// Onprogress
+func (*MSBaseReader) SetOnprogress(onprogress func(window.Event)) {
+	js.Rewrite("$<.Onprogress = $1", onprogress)
+}
 
-	// ReadyState
-	ReadyState() (readyState uint8)
+// ReadyState
+func (*MSBaseReader) ReadyState() (readyState uint8) {
+	js.Rewrite("$<.ReadyState")
+	return readyState
+}
 
-	// Result
-	Result() (result interface{})
+// Result
+func (*MSBaseReader) Result() (result interface{}) {
+	js.Rewrite("$<.Result")
+	return result
 }

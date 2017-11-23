@@ -5,6 +5,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(url string, base *string) *URL {
+	js.Rewrite("URL")
+	return &URL{}
+}
+
+// URL struct
 // js:"URL,omit"
 type URL struct {
 }

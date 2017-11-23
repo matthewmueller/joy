@@ -2,6 +2,7 @@ package htmlallcollection
 
 import "github.com/matthewmueller/golly/js"
 
+// HTMLAllCollection struct
 // js:"HTMLAllCollection,omit"
 type HTMLAllCollection struct {
 }

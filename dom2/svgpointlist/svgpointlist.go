@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGPointList struct
 // js:"SVGPointList,omit"
 type SVGPointList struct {
 }

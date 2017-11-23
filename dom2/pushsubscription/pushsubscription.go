@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// PushSubscription struct
 // js:"PushSubscription,omit"
 type PushSubscription struct {
 }

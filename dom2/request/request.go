@@ -1,27 +1,64 @@
 package request
 
 import (
-	"github.com/matthewmueller/golly/dom2/body"
+	"github.com/matthewmueller/golly/dom2/blob"
 	"github.com/matthewmueller/golly/dom2/headers"
 	"github.com/matthewmueller/golly/dom2/referrerpolicy"
 	"github.com/matthewmueller/golly/dom2/requestcache"
 	"github.com/matthewmueller/golly/dom2/requestcredentials"
 	"github.com/matthewmueller/golly/dom2/requestdestination"
+	"github.com/matthewmueller/golly/dom2/requestinit"
 	"github.com/matthewmueller/golly/dom2/requestmode"
 	"github.com/matthewmueller/golly/dom2/requestredirect"
 	"github.com/matthewmueller/golly/dom2/requesttype"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(input interface{}, init *requestinit.RequestInit) *Request {
+	js.Rewrite("Request")
+	return &Request{}
+}
+
+// Request struct
 // js:"Request,omit"
 type Request struct {
-	body.Body
+}
+
+// ArrayBuffer
+func (*Request) ArrayBuffer() (b []byte) {
+	js.Rewrite("await $<.ArrayBuffer()")
+	return b
+}
+
+// Blob
+func (*Request) Blob() (b blob.Blob) {
+	js.Rewrite("await $<.Blob()")
+	return b
+}
+
+// JSON
+func (*Request) JSON() (i interface{}) {
+	js.Rewrite("await $<.JSON()")
+	return i
+}
+
+// Text
+func (*Request) Text() (s string) {
+	js.Rewrite("await $<.Text()")
+	return s
 }
 
 // Clone
 func (*Request) Clone() (r *Request) {
 	js.Rewrite("$<.Clone()")
 	return r
+}
+
+// BodyUsed
+func (*Request) BodyUsed() (bodyUsed bool) {
+	js.Rewrite("$<.BodyUsed")
+	return bodyUsed
 }
 
 // Cache

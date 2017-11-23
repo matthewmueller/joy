@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// CSSPageRule struct
 // js:"CSSPageRule,omit"
 type CSSPageRule struct {
 	CSSRule

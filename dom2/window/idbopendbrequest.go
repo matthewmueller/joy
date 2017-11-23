@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// IDBOpenDBRequest struct
 // js:"IDBOpenDBRequest,omit"
 type IDBOpenDBRequest struct {
 	IDBRequest

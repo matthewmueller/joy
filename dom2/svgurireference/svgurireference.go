@@ -1,10 +1,17 @@
 package svgurireference
 
-import "github.com/matthewmueller/golly/dom2/svganimatedstring"
+import (
+	"github.com/matthewmueller/golly/dom2/svganimatedstring"
+	"github.com/matthewmueller/golly/js"
+)
 
+// SVGURIReference struct
 // js:"SVGURIReference,omit"
-type SVGURIReference interface {
+type SVGURIReference struct {
+}
 
-	// Href
-	Href() (href *svganimatedstring.SVGAnimatedString)
+// Href
+func (*SVGURIReference) Href() (href *svganimatedstring.SVGAnimatedString) {
+	js.Rewrite("$<.Href")
+	return href
 }

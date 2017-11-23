@@ -2,6 +2,7 @@ package svguseelement
 
 import "github.com/matthewmueller/golly/js"
 
+// SVGElementInstanceList struct
 // js:"SVGElementInstanceList,omit"
 type SVGElementInstanceList struct {
 }

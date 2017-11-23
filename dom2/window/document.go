@@ -10,9 +10,6 @@ import (
 // js:"Document,omit"
 type Document interface {
 	Node
-	GlobalEventHandlers
-	NodeSelector
-	DocumentEvent
 
 	// AdoptNode
 	AdoptNode(source Node) (n Node)

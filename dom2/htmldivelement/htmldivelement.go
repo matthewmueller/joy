@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLDivElement struct
 // js:"HTMLDivElement,omit"
 type HTMLDivElement struct {
 	window.HTMLElement

@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLParagraphElement struct
 // js:"HTMLParagraphElement,omit"
 type HTMLParagraphElement struct {
 	window.HTMLElement

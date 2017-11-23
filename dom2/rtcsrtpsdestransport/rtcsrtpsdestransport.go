@@ -7,6 +7,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(transport *rtcicetransport.RTCIceTransport, encryptparameters *rtcsrtpsdesparameters.RTCSrtpSdesParameters, decryptparameters *rtcsrtpsdesparameters.RTCSrtpSdesParameters) *RTCSrtpSdesTransport {
+	js.Rewrite("RTCSrtpSdesTransport")
+	return &RTCSrtpSdesTransport{}
+}
+
+// RTCSrtpSdesTransport struct
 // js:"RTCSrtpSdesTransport,omit"
 type RTCSrtpSdesTransport struct {
 	window.EventTarget

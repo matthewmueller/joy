@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLModElement struct
 // js:"HTMLModElement,omit"
 type HTMLModElement struct {
 	window.HTMLElement

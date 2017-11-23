@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// BiquadFilterNode struct
 // js:"BiquadFilterNode,omit"
 type BiquadFilterNode struct {
 	AudioNode

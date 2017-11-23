@@ -5,6 +5,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New() *MSBlobBuilder {
+	js.Rewrite("MSBlobBuilder")
+	return &MSBlobBuilder{}
+}
+
+// MSBlobBuilder struct
 // js:"MSBlobBuilder,omit"
 type MSBlobBuilder struct {
 }

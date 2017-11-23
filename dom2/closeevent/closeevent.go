@@ -1,10 +1,18 @@
 package closeevent
 
 import (
+	"github.com/matthewmueller/golly/dom2/closeeventinit"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(typearg string, eventinitdict *closeeventinit.CloseEventInit) *CloseEvent {
+	js.Rewrite("CloseEvent")
+	return &CloseEvent{}
+}
+
+// CloseEvent struct
 // js:"CloseEvent,omit"
 type CloseEvent struct {
 	window.Event

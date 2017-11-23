@@ -1,7 +1,17 @@
 package window
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/deviceorientationeventinit"
+	"github.com/matthewmueller/golly/js"
+)
 
+// NewDeviceOrientationEvent fn
+func NewDeviceOrientationEvent(typearg string, eventinitdict *deviceorientationeventinit.DeviceOrientationEventInit) *DeviceOrientationEvent {
+	js.Rewrite("DeviceOrientationEvent")
+	return &DeviceOrientationEvent{}
+}
+
+// DeviceOrientationEvent struct
 // js:"DeviceOrientationEvent,omit"
 type DeviceOrientationEvent struct {
 	Event

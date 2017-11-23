@@ -2,10 +2,18 @@ package intersectionobserverentry
 
 import (
 	"github.com/matthewmueller/golly/dom2/clientrect"
+	"github.com/matthewmueller/golly/dom2/intersectionobserverentryinit"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(intersectionobserverentryinit *intersectionobserverentryinit.IntersectionObserverEntryInit) *IntersectionObserverEntry {
+	js.Rewrite("IntersectionObserverEntry")
+	return &IntersectionObserverEntry{}
+}
+
+// IntersectionObserverEntry struct
 // js:"IntersectionObserverEntry,omit"
 type IntersectionObserverEntry struct {
 }

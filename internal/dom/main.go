@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"runtime"
 	"strings"
 
 	"github.com/apex/log"
@@ -39,7 +40,17 @@ var cliqueNames = map[string]string{
 }
 
 func generate(dir string) error {
-	xml, err := curl.XML(browserAPIURL)
+	_, file, _, ok := runtime.Caller(0)
+	if !ok {
+		return fmt.Errorf("couldn't get file from runtime")
+	}
+	dirname := path.Dir(file)
+	// xml, err := curl.XML(browserAPIURL)
+	// if err != nil {
+	// 	return err
+	// }
+
+	xml, err := ioutil.ReadFile(path.Join(dirname, "inputs", "browser.webidl.xml"))
 	if err != nil {
 		return err
 	}
@@ -49,10 +60,16 @@ func generate(dir string) error {
 		return err
 	}
 
-	index, err := parser.Parse(xml, comments)
+	index, err := parser.Parse(string(xml), comments)
 	if err != nil {
 		return err
 	}
+
+	// idx, err := override.Override(index)
+	// if err != nil {
+	// 	return errors.Wrapf(err, "error overriding")
+	// }
+	// index = idx
 
 	g := graph.New()
 	for _, parent := range index {
@@ -116,9 +133,9 @@ func generate(dir string) error {
 
 	// write first so we have all the files present
 	for i, def := range defs {
-		if !strings.Contains(def.GetPackage(), "cache") {
-			continue
-		}
+		// if !strings.Contains(def.GetPackage(), "window") {
+		// 	continue
+		// }
 
 		code, err := def.Generate()
 		if err != nil {
@@ -134,14 +151,14 @@ func generate(dir string) error {
 			return errors.Wrapf(err, "error writefile")
 		}
 
-		log.Debugf("generated %s (%d/%d)", def.ID(), i, l)
+		log.Infof("generated %s (%d/%d)", def.ID(), i, l)
 	}
 
 	// format and link all the packages up
 	for i, def := range defs {
-		if !strings.Contains(def.GetPackage(), "cache") {
-			continue
-		}
+		// if !strings.Contains(def.GetPackage(), "window") {
+		// 	continue
+		// }
 
 		filepath := path.Join(dir, def.GetPackage(), def.GetFile()+".go")
 
@@ -152,7 +169,7 @@ func generate(dir string) error {
 
 		code, err := gen.Format(string(buf))
 		if err != nil {
-			return errors.Wrapf(err, "error formatting")
+			return errors.Wrapf(err, "error formatting %s", def.ID())
 		}
 
 		// overwrite
@@ -160,7 +177,7 @@ func generate(dir string) error {
 			return errors.Wrapf(err, "error writefile")
 		}
 
-		log.Debugf("formatted %s (%d/%d)", def.ID(), i, l)
+		log.Infof("formatted %s (%d/%d)", def.ID(), i, l)
 	}
 
 	return nil

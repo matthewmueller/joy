@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// CSSKeyframesRule struct
 // js:"CSSKeyframesRule,omit"
 type CSSKeyframesRule struct {
 	window.CSSRule

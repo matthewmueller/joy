@@ -1,15 +1,20 @@
 package htmllinkelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/linkstyle"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLLinkElement struct
 // js:"HTMLLinkElement,omit"
 type HTMLLinkElement struct {
 	window.HTMLElement
-	linkstyle.LinkStyle
+}
+
+// Sheet
+func (*HTMLLinkElement) Sheet() (sheet window.StyleSheet) {
+	js.Rewrite("$<.Sheet")
+	return sheet
 }
 
 // Charset Sets or retrieves the character set used to encode the object.

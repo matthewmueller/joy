@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// BeforeUnloadEvent struct
 // js:"BeforeUnloadEvent,omit"
 type BeforeUnloadEvent struct {
 	Event

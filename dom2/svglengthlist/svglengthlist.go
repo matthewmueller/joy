@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGLengthList struct
 // js:"SVGLengthList,omit"
 type SVGLengthList struct {
 }

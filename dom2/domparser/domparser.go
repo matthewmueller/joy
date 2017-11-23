@@ -5,6 +5,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New() *DOMParser {
+	js.Rewrite("DOMParser")
+	return &DOMParser{}
+}
+
+// DOMParser struct
 // js:"DOMParser,omit"
 type DOMParser struct {
 }

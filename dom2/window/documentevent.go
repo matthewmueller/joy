@@ -1,8 +1,14 @@
 package window
 
-// js:"DocumentEvent,omit"
-type DocumentEvent interface {
+import "github.com/matthewmueller/golly/js"
 
-	// CreateEvent
-	CreateEvent(eventInterface string) (e Event)
+// DocumentEvent struct
+// js:"DocumentEvent,omit"
+type DocumentEvent struct {
+}
+
+// CreateEvent
+func (*DocumentEvent) CreateEvent(eventInterface string) (e Event) {
+	js.Rewrite("$<.CreateEvent($1)", eventInterface)
+	return e
 }

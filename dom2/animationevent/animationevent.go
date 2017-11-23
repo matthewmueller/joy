@@ -1,10 +1,18 @@
 package animationevent
 
 import (
+	"github.com/matthewmueller/golly/dom2/animationeventinit"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(typearg string, eventinitdict *animationeventinit.AnimationEventInit) *AnimationEvent {
+	js.Rewrite("AnimationEvent")
+	return &AnimationEvent{}
+}
+
+// AnimationEvent struct
 // js:"AnimationEvent,omit"
 type AnimationEvent struct {
 	window.Event

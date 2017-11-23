@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGStyleElement struct
 // js:"SVGStyleElement,omit"
 type SVGStyleElement struct {
 	window.SVGElement

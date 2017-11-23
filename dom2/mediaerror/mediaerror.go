@@ -2,6 +2,7 @@ package mediaerror
 
 import "github.com/matthewmueller/golly/js"
 
+// MediaError struct
 // js:"MediaError,omit"
 type MediaError struct {
 }

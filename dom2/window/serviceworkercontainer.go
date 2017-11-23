@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// ServiceWorkerContainer struct
 // js:"ServiceWorkerContainer,omit"
 type ServiceWorkerContainer struct {
 	EventTarget

@@ -2,6 +2,7 @@ package msgraphicstrust
 
 import "github.com/matthewmueller/golly/js"
 
+// MSGraphicsTrust struct
 // js:"MSGraphicsTrust,omit"
 type MSGraphicsTrust struct {
 }

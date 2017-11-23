@@ -2,6 +2,7 @@ package stylemedia
 
 import "github.com/matthewmueller/golly/js"
 
+// StyleMedia struct
 // js:"StyleMedia,omit"
 type StyleMedia struct {
 }

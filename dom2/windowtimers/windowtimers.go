@@ -1,20 +1,41 @@
 package windowtimers
 
-import "github.com/matthewmueller/golly/dom2/windowtimersextension"
+import "github.com/matthewmueller/golly/js"
 
+// WindowTimers struct
 // js:"WindowTimers,omit"
-type WindowTimers interface {
-	windowtimersextension.WindowTimersExtension
+type WindowTimers struct {
+}
 
-	// ClearInterval
-	ClearInterval(handle int)
+// ClearImmediate
+func (*WindowTimers) ClearImmediate(handle int) {
+	js.Rewrite("$<.ClearImmediate($1)", handle)
+}
 
-	// ClearTimeout
-	ClearTimeout(handle int)
+// SetImmediate
+func (*WindowTimers) SetImmediate(expression interface{}, args interface{}) (i int) {
+	js.Rewrite("$<.SetImmediate($1, $2)", expression, args)
+	return i
+}
 
-	// SetInterval
-	SetInterval(handler interface{}, timeout *interface{}, args interface{}) (i int)
+// ClearInterval
+func (*WindowTimers) ClearInterval(handle int) {
+	js.Rewrite("$<.ClearInterval($1)", handle)
+}
 
-	// SetTimeout
-	SetTimeout(handler interface{}, timeout *interface{}, args interface{}) (i int)
+// ClearTimeout
+func (*WindowTimers) ClearTimeout(handle int) {
+	js.Rewrite("$<.ClearTimeout($1)", handle)
+}
+
+// SetInterval
+func (*WindowTimers) SetInterval(handler interface{}, timeout *interface{}, args interface{}) (i int) {
+	js.Rewrite("$<.SetInterval($1, $2, $3)", handler, timeout, args)
+	return i
+}
+
+// SetTimeout
+func (*WindowTimers) SetTimeout(handler interface{}, timeout *interface{}, args interface{}) (i int) {
+	js.Rewrite("$<.SetTimeout($1, $2, $3)", handler, timeout, args)
+	return i
 }

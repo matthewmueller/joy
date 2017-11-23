@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// CryptoKeyPair struct
 // js:"CryptoKeyPair,omit"
 type CryptoKeyPair struct {
 }

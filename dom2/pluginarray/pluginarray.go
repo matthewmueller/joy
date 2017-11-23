@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// PluginArray struct
 // js:"PluginArray,omit"
 type PluginArray struct {
 }

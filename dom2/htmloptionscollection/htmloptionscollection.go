@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLOptionsCollection struct
 // js:"HTMLOptionsCollection,omit"
 type HTMLOptionsCollection struct {
 	window.HTMLCollection

@@ -4,12 +4,20 @@ import (
 	"github.com/matthewmueller/golly/dom2/rtcicecandidatedictionary"
 	"github.com/matthewmueller/golly/dom2/rtcicecomponent"
 	"github.com/matthewmueller/golly/dom2/rtcicegathererevent"
+	"github.com/matthewmueller/golly/dom2/rtcicegatheroptions"
 	"github.com/matthewmueller/golly/dom2/rtciceparameters"
 	"github.com/matthewmueller/golly/dom2/rtcstatsprovider"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(options *rtcicegatheroptions.RTCIceGatherOptions) *RTCIceGatherer {
+	js.Rewrite("RTCIceGatherer")
+	return &RTCIceGatherer{}
+}
+
+// RTCIceGatherer struct
 // js:"RTCIceGatherer,omit"
 type RTCIceGatherer struct {
 	rtcstatsprovider.RTCStatsProvider

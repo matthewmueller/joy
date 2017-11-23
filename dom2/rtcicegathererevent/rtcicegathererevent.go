@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// RTCIceGathererEvent struct
 // js:"RTCIceGathererEvent,omit"
 type RTCIceGathererEvent struct {
 	window.Event

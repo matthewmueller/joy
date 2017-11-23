@@ -1,7 +1,17 @@
 package window
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/progresseventinit"
+	"github.com/matthewmueller/golly/js"
+)
 
+// NewProgressEvent fn
+func NewProgressEvent(typearg string, eventinitdict *progresseventinit.ProgressEventInit) *ProgressEvent {
+	js.Rewrite("ProgressEvent")
+	return &ProgressEvent{}
+}
+
+// ProgressEvent struct
 // js:"ProgressEvent,omit"
 type ProgressEvent struct {
 	Event

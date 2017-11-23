@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// XPathExpression struct
 // js:"XPathExpression,omit"
 type XPathExpression struct {
 }

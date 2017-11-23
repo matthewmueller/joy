@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// WaveShaperNode struct
 // js:"WaveShaperNode,omit"
 type WaveShaperNode struct {
 	AudioNode

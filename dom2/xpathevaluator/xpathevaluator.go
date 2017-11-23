@@ -6,6 +6,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New() *XPathEvaluator {
+	js.Rewrite("XPathEvaluator")
+	return &XPathEvaluator{}
+}
+
+// XPathEvaluator struct
 // js:"XPathEvaluator,omit"
 type XPathEvaluator struct {
 }

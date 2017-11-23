@@ -7,6 +7,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MediaDevices struct
 // js:"MediaDevices,omit"
 type MediaDevices struct {
 	EventTarget

@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// DataTransferItemList struct
 // js:"DataTransferItemList,omit"
 type DataTransferItemList struct {
 }

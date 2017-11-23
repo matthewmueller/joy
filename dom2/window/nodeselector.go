@@ -1,11 +1,20 @@
 package window
 
+import "github.com/matthewmueller/golly/js"
+
+// NodeSelector struct
 // js:"NodeSelector,omit"
-type NodeSelector interface {
+type NodeSelector struct {
+}
 
-	// QuerySelector
-	QuerySelector(selectors string) (e Element)
+// QuerySelector
+func (*NodeSelector) QuerySelector(selectors string) (e Element) {
+	js.Rewrite("$<.QuerySelector($1)", selectors)
+	return e
+}
 
-	// QuerySelectorAll
-	QuerySelectorAll(selectors string) (n *NodeList)
+// QuerySelectorAll
+func (*NodeSelector) QuerySelectorAll(selectors string) (n *NodeList) {
+	js.Rewrite("$<.QuerySelectorAll($1)", selectors)
+	return n
 }

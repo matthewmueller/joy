@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MimeTypeArray struct
 // js:"MimeTypeArray,omit"
 type MimeTypeArray struct {
 }

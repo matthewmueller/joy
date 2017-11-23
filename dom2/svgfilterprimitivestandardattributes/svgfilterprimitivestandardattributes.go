@@ -3,23 +3,40 @@ package svgfilterprimitivestandardattributes
 import (
 	"github.com/matthewmueller/golly/dom2/svganimatedlength"
 	"github.com/matthewmueller/golly/dom2/svganimatedstring"
+	"github.com/matthewmueller/golly/js"
 )
 
+// SVGFilterPrimitiveStandardAttributes struct
 // js:"SVGFilterPrimitiveStandardAttributes,omit"
-type SVGFilterPrimitiveStandardAttributes interface {
+type SVGFilterPrimitiveStandardAttributes struct {
+}
 
-	// Height
-	Height() (height *svganimatedlength.SVGAnimatedLength)
+// Height
+func (*SVGFilterPrimitiveStandardAttributes) Height() (height *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.Height")
+	return height
+}
 
-	// Result
-	Result() (result *svganimatedstring.SVGAnimatedString)
+// Result
+func (*SVGFilterPrimitiveStandardAttributes) Result() (result *svganimatedstring.SVGAnimatedString) {
+	js.Rewrite("$<.Result")
+	return result
+}
 
-	// Width
-	Width() (width *svganimatedlength.SVGAnimatedLength)
+// Width
+func (*SVGFilterPrimitiveStandardAttributes) Width() (width *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.Width")
+	return width
+}
 
-	// X
-	X() (x *svganimatedlength.SVGAnimatedLength)
+// X
+func (*SVGFilterPrimitiveStandardAttributes) X() (x *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.X")
+	return x
+}
 
-	// Y
-	Y() (y *svganimatedlength.SVGAnimatedLength)
+// Y
+func (*SVGFilterPrimitiveStandardAttributes) Y() (y *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.Y")
+	return y
 }

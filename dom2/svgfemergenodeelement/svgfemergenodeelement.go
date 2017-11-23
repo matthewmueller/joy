@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGFEMergeNodeElement struct
 // js:"SVGFEMergeNodeElement,omit"
 type SVGFEMergeNodeElement struct {
 	window.SVGElement

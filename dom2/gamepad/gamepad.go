@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// Gamepad struct
 // js:"Gamepad,omit"
 type Gamepad struct {
 }

@@ -16,6 +16,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// WebGLRenderingContext struct
 // js:"WebGLRenderingContext,omit"
 type WebGLRenderingContext struct {
 }

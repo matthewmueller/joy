@@ -7,33 +7,71 @@ import (
 	"github.com/matthewmueller/golly/dom2/extensionscriptapis"
 	"github.com/matthewmueller/golly/dom2/external"
 	"github.com/matthewmueller/golly/dom2/focusnavigationorigin"
-	"github.com/matthewmueller/golly/dom2/globalfetch"
 	"github.com/matthewmueller/golly/dom2/history"
 	"github.com/matthewmueller/golly/dom2/location"
 	"github.com/matthewmueller/golly/dom2/mediaquery"
 	"github.com/matthewmueller/golly/dom2/mscredentials"
 	"github.com/matthewmueller/golly/dom2/navigationreason"
 	"github.com/matthewmueller/golly/dom2/performance"
+	"github.com/matthewmueller/golly/dom2/request"
+	"github.com/matthewmueller/golly/dom2/requestinit"
+	"github.com/matthewmueller/golly/dom2/response"
+	"github.com/matthewmueller/golly/dom2/storage"
 	"github.com/matthewmueller/golly/dom2/stylemedia"
 	"github.com/matthewmueller/golly/dom2/webkitpoint"
-	"github.com/matthewmueller/golly/dom2/windowbase64"
-	"github.com/matthewmueller/golly/dom2/windowlocalstorage"
-	"github.com/matthewmueller/golly/dom2/windowsessionstorage"
-	"github.com/matthewmueller/golly/dom2/windowtimers"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New() *Window {
+	js.Rewrite("window")
+	return &Window{}
+}
+
+// Window struct
 // js:"Window,omit"
 type Window struct {
 	EventTarget
-	windowtimers.WindowTimers
-	windowsessionstorage.WindowSessionStorage
-	windowlocalstorage.WindowLocalStorage
-	WindowConsole
-	GlobalEventHandlers
-	IDBEnvironment
-	windowbase64.WindowBase64
-	globalfetch.GlobalFetch
+}
+
+// ClearInterval
+func (*Window) ClearInterval(handle int) {
+	js.Rewrite("$<.ClearInterval($1)", handle)
+}
+
+// ClearTimeout
+func (*Window) ClearTimeout(handle int) {
+	js.Rewrite("$<.ClearTimeout($1)", handle)
+}
+
+// SetInterval
+func (*Window) SetInterval(handler interface{}, timeout *interface{}, args interface{}) (i int) {
+	js.Rewrite("$<.SetInterval($1, $2, $3)", handler, timeout, args)
+	return i
+}
+
+// SetTimeout
+func (*Window) SetTimeout(handler interface{}, timeout *interface{}, args interface{}) (i int) {
+	js.Rewrite("$<.SetTimeout($1, $2, $3)", handler, timeout, args)
+	return i
+}
+
+// Atob
+func (*Window) Atob(encodedString string) (s string) {
+	js.Rewrite("$<.Atob($1)", encodedString)
+	return s
+}
+
+// Btoa
+func (*Window) Btoa(rawString string) (s string) {
+	js.Rewrite("$<.Btoa($1)", rawString)
+	return s
+}
+
+// Fetch
+func (*Window) Fetch(input *request.Request, init *requestinit.RequestInit) (r *response.Response) {
+	js.Rewrite("await $<.Fetch($1, $2)", input, init)
+	return r
 }
 
 // Alert
@@ -202,6 +240,129 @@ func (*Window) WebkitRequestAnimationFrame(callback func(time int)) (i int) {
 	return i
 }
 
+// SessionStorage
+func (*Window) SessionStorage() (sessionStorage *storage.Storage) {
+	js.Rewrite("$<.SessionStorage")
+	return sessionStorage
+}
+
+// LocalStorage
+func (*Window) LocalStorage() (localStorage *storage.Storage) {
+	js.Rewrite("$<.LocalStorage")
+	return localStorage
+}
+
+// Console
+func (*Window) Console() (console *Console) {
+	js.Rewrite("$<.Console")
+	return console
+}
+
+// Onpointercancel
+func (*Window) Onpointercancel() (onpointercancel func(Event)) {
+	js.Rewrite("$<.Onpointercancel")
+	return onpointercancel
+}
+
+// Onpointercancel
+func (*Window) SetOnpointercancel(onpointercancel func(Event)) {
+	js.Rewrite("$<.Onpointercancel = $1", onpointercancel)
+}
+
+// Onpointerdown
+func (*Window) Onpointerdown() (onpointerdown func(Event)) {
+	js.Rewrite("$<.Onpointerdown")
+	return onpointerdown
+}
+
+// Onpointerdown
+func (*Window) SetOnpointerdown(onpointerdown func(Event)) {
+	js.Rewrite("$<.Onpointerdown = $1", onpointerdown)
+}
+
+// Onpointerenter
+func (*Window) Onpointerenter() (onpointerenter func(Event)) {
+	js.Rewrite("$<.Onpointerenter")
+	return onpointerenter
+}
+
+// Onpointerenter
+func (*Window) SetOnpointerenter(onpointerenter func(Event)) {
+	js.Rewrite("$<.Onpointerenter = $1", onpointerenter)
+}
+
+// Onpointerleave
+func (*Window) Onpointerleave() (onpointerleave func(Event)) {
+	js.Rewrite("$<.Onpointerleave")
+	return onpointerleave
+}
+
+// Onpointerleave
+func (*Window) SetOnpointerleave(onpointerleave func(Event)) {
+	js.Rewrite("$<.Onpointerleave = $1", onpointerleave)
+}
+
+// Onpointermove
+func (*Window) Onpointermove() (onpointermove func(Event)) {
+	js.Rewrite("$<.Onpointermove")
+	return onpointermove
+}
+
+// Onpointermove
+func (*Window) SetOnpointermove(onpointermove func(Event)) {
+	js.Rewrite("$<.Onpointermove = $1", onpointermove)
+}
+
+// Onpointerout
+func (*Window) Onpointerout() (onpointerout func(Event)) {
+	js.Rewrite("$<.Onpointerout")
+	return onpointerout
+}
+
+// Onpointerout
+func (*Window) SetOnpointerout(onpointerout func(Event)) {
+	js.Rewrite("$<.Onpointerout = $1", onpointerout)
+}
+
+// Onpointerover
+func (*Window) Onpointerover() (onpointerover func(Event)) {
+	js.Rewrite("$<.Onpointerover")
+	return onpointerover
+}
+
+// Onpointerover
+func (*Window) SetOnpointerover(onpointerover func(Event)) {
+	js.Rewrite("$<.Onpointerover = $1", onpointerover)
+}
+
+// Onpointerup
+func (*Window) Onpointerup() (onpointerup func(Event)) {
+	js.Rewrite("$<.Onpointerup")
+	return onpointerup
+}
+
+// Onpointerup
+func (*Window) SetOnpointerup(onpointerup func(Event)) {
+	js.Rewrite("$<.Onpointerup = $1", onpointerup)
+}
+
+// Onwheel
+func (*Window) Onwheel() (onwheel func(Event)) {
+	js.Rewrite("$<.Onwheel")
+	return onwheel
+}
+
+// Onwheel
+func (*Window) SetOnwheel(onwheel func(Event)) {
+	js.Rewrite("$<.Onwheel = $1", onwheel)
+}
+
+// IndexedDB
+func (*Window) IndexedDB() (indexedDB *IDBFactory) {
+	js.Rewrite("$<.IndexedDB")
+	return indexedDB
+}
+
 // ApplicationCache
 func (*Window) ApplicationCache() (applicationCache *ApplicationCache) {
 	js.Rewrite("$<.ApplicationCache")
@@ -251,7 +412,7 @@ func (*Window) DevicePixelRatio() (devicePixelRatio float32) {
 
 // Document
 func (*Window) Document() (document Document) {
-	js.Rewrite("$<.Document")
+	js.Rewrite("$<.document")
 	return document
 }
 

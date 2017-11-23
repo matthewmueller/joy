@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// MessagePort struct
 // js:"MessagePort,omit"
 type MessagePort struct {
 	EventTarget

@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MutationEvent struct
 // js:"MutationEvent,omit"
 type MutationEvent struct {
 	window.Event

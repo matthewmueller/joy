@@ -1,15 +1,21 @@
 package svgscriptelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgurireference"
+	"github.com/matthewmueller/golly/dom2/svganimatedstring"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGScriptElement struct
 // js:"SVGScriptElement,omit"
 type SVGScriptElement struct {
 	window.SVGElement
-	svgurireference.SVGURIReference
+}
+
+// Href
+func (*SVGScriptElement) Href() (href *svganimatedstring.SVGAnimatedString) {
+	js.Rewrite("$<.Href")
+	return href
 }
 
 // Type

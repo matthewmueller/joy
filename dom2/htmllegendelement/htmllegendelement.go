@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLLegendElement struct
 // js:"HTMLLegendElement,omit"
 type HTMLLegendElement struct {
 	window.HTMLElement

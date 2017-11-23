@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// StyleSheetPageList struct
 // js:"StyleSheetPageList,omit"
 type StyleSheetPageList struct {
 }

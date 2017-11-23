@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MSFIDOSignatureAssertion struct
 // js:"MSFIDOSignatureAssertion,omit"
 type MSFIDOSignatureAssertion struct {
 	msassertion.MSAssertion

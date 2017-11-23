@@ -1,10 +1,17 @@
 package navigatorgeolocation
 
-import "github.com/matthewmueller/golly/dom2/geolocation"
+import (
+	"github.com/matthewmueller/golly/dom2/geolocation"
+	"github.com/matthewmueller/golly/js"
+)
 
+// NavigatorGeolocation struct
 // js:"NavigatorGeolocation,omit"
-type NavigatorGeolocation interface {
+type NavigatorGeolocation struct {
+}
 
-	// Geolocation
-	Geolocation() (geolocation *geolocation.Geolocation)
+// Geolocation
+func (*NavigatorGeolocation) Geolocation() (geolocation *geolocation.Geolocation) {
+	js.Rewrite("$<.Geolocation")
+	return geolocation
 }

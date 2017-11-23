@@ -4,10 +4,18 @@ import (
 	"github.com/matthewmueller/golly/dom2/blob"
 	"github.com/matthewmueller/golly/dom2/headers"
 	"github.com/matthewmueller/golly/dom2/readablestream"
+	"github.com/matthewmueller/golly/dom2/responseinit"
 	"github.com/matthewmueller/golly/dom2/responsetype"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(body *interface{}, init *responseinit.ResponseInit) *Response {
+	js.Rewrite("Response")
+	return &Response{}
+}
+
+// Response struct
 // js:"Response,omit"
 type Response struct {
 }

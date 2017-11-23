@@ -1,23 +1,41 @@
 package htmltablealignment
 
+import "github.com/matthewmueller/golly/js"
+
+// HTMLTableAlignment struct
 // js:"HTMLTableAlignment,omit"
-type HTMLTableAlignment interface {
+type HTMLTableAlignment struct {
+}
 
-	// Ch
-	Ch() (ch string)
+// Ch
+func (*HTMLTableAlignment) Ch() (ch string) {
+	js.Rewrite("$<.Ch")
+	return ch
+}
 
-	// Ch
-	SetCh(ch string)
+// Ch
+func (*HTMLTableAlignment) SetCh(ch string) {
+	js.Rewrite("$<.Ch = $1", ch)
+}
 
-	// ChOff
-	ChOff() (chOff string)
+// ChOff
+func (*HTMLTableAlignment) ChOff() (chOff string) {
+	js.Rewrite("$<.ChOff")
+	return chOff
+}
 
-	// ChOff
-	SetChOff(chOff string)
+// ChOff
+func (*HTMLTableAlignment) SetChOff(chOff string) {
+	js.Rewrite("$<.ChOff = $1", chOff)
+}
 
-	// VAlign
-	VAlign() (vAlign string)
+// VAlign
+func (*HTMLTableAlignment) VAlign() (vAlign string) {
+	js.Rewrite("$<.VAlign")
+	return vAlign
+}
 
-	// VAlign
-	SetVAlign(vAlign string)
+// VAlign
+func (*HTMLTableAlignment) SetVAlign(vAlign string) {
+	js.Rewrite("$<.VAlign = $1", vAlign)
 }

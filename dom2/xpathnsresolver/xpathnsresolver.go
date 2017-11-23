@@ -2,6 +2,7 @@ package xpathnsresolver
 
 import "github.com/matthewmueller/golly/js"
 
+// XPathNSResolver struct
 // js:"XPathNSResolver,omit"
 type XPathNSResolver struct {
 }

@@ -1,11 +1,8 @@
 package window
 
-import "github.com/matthewmueller/golly/dom2/childnode"
-
 // js:"CharacterData,omit"
 type CharacterData interface {
 	Node
-	childnode.ChildNode
 
 	// AppendData
 	AppendData(arg string)

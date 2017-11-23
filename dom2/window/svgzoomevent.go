@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGZoomEvent struct
 // js:"SVGZoomEvent,omit"
 type SVGZoomEvent struct {
 	UIEvent

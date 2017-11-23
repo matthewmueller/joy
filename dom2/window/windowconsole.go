@@ -1,8 +1,14 @@
 package window
 
-// js:"WindowConsole,omit"
-type WindowConsole interface {
+import "github.com/matthewmueller/golly/js"
 
-	// Console
-	Console() (console *Console)
+// WindowConsole struct
+// js:"WindowConsole,omit"
+type WindowConsole struct {
+}
+
+// Console
+func (*WindowConsole) Console() (console *Console) {
+	js.Rewrite("$<.Console")
+	return console
 }

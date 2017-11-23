@@ -1,17 +1,22 @@
 package htmlobjectelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/getsvgdocument"
 	"github.com/matthewmueller/golly/dom2/htmlformelement"
 	"github.com/matthewmueller/golly/dom2/validitystate"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLObjectElement struct
 // js:"HTMLObjectElement,omit"
 type HTMLObjectElement struct {
 	window.HTMLElement
-	getsvgdocument.GetSVGDocument
+}
+
+// GetSVGDocument
+func (*HTMLObjectElement) GetSVGDocument() (w window.Document) {
+	js.Rewrite("$<.GetSVGDocument()")
+	return w
 }
 
 // CheckValidity Returns whether a form will validate when it is submitted, without having to submit it.

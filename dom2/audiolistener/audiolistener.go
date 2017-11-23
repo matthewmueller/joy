@@ -2,6 +2,7 @@ package audiolistener
 
 import "github.com/matthewmueller/golly/js"
 
+// AudioListener struct
 // js:"AudioListener,omit"
 type AudioListener struct {
 }

@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// NamedNodeMap struct
 // js:"NamedNodeMap,omit"
 type NamedNodeMap struct {
 }

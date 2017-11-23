@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// VideoTrackList struct
 // js:"VideoTrackList,omit"
 type VideoTrackList struct {
 	window.EventTarget

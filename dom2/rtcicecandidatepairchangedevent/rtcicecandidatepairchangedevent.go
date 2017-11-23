@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// RTCIceCandidatePairChangedEvent struct
 // js:"RTCIceCandidatePairChangedEvent,omit"
 type RTCIceCandidatePairChangedEvent struct {
 	window.Event

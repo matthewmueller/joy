@@ -5,6 +5,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New() *MessageChannel {
+	js.Rewrite("MessageChannel")
+	return &MessageChannel{}
+}
+
+// MessageChannel struct
 // js:"MessageChannel,omit"
 type MessageChannel struct {
 }

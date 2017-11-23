@@ -5,15 +5,16 @@ import (
 	"github.com/matthewmueller/golly/dom2/svganimatedangle"
 	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
 	"github.com/matthewmueller/golly/dom2/svganimatedlength"
-	"github.com/matthewmueller/golly/dom2/svgfittoviewbox"
+	"github.com/matthewmueller/golly/dom2/svganimatedpreserveaspectratio"
+	"github.com/matthewmueller/golly/dom2/svganimatedrect"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGMarkerElement struct
 // js:"SVGMarkerElement,omit"
 type SVGMarkerElement struct {
 	window.SVGElement
-	svgfittoviewbox.SVGFitToViewBox
 }
 
 // SetOrientToAngle
@@ -24,6 +25,18 @@ func (*SVGMarkerElement) SetOrientToAngle(angle *svgangle.SVGAngle) {
 // SetOrientToAuto
 func (*SVGMarkerElement) SetOrientToAuto() {
 	js.Rewrite("$<.SetOrientToAuto()")
+}
+
+// PreserveAspectRatio
+func (*SVGMarkerElement) PreserveAspectRatio() (preserveAspectRatio *svganimatedpreserveaspectratio.SVGAnimatedPreserveAspectRatio) {
+	js.Rewrite("$<.PreserveAspectRatio")
+	return preserveAspectRatio
+}
+
+// ViewBox
+func (*SVGMarkerElement) ViewBox() (viewBox *svganimatedrect.SVGAnimatedRect) {
+	js.Rewrite("$<.ViewBox")
+	return viewBox
 }
 
 // MarkerHeight

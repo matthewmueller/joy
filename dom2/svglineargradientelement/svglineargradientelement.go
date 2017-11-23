@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGLinearGradientElement struct
 // js:"SVGLinearGradientElement,omit"
 type SVGLinearGradientElement struct {
 	svggradientelement.SVGGradientElement

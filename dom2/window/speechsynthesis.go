@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SpeechSynthesis struct
 // js:"SpeechSynthesis,omit"
 type SpeechSynthesis struct {
 	EventTarget

@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLMeterElement struct
 // js:"HTMLMeterElement,omit"
 type HTMLMeterElement struct {
 	window.HTMLElement

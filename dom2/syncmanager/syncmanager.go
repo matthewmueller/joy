@@ -2,6 +2,7 @@ package syncmanager
 
 import "github.com/matthewmueller/golly/js"
 
+// SyncManager struct
 // js:"SyncManager,omit"
 type SyncManager struct {
 }

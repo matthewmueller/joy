@@ -1,49 +1,88 @@
 package xmlhttprequesteventtarget
 
-import "github.com/matthewmueller/golly/dom2/window"
+import (
+	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/js"
+)
 
+// XMLHTTPRequestEventTarget struct
 // js:"XMLHTTPRequestEventTarget,omit"
-type XMLHTTPRequestEventTarget interface {
+type XMLHTTPRequestEventTarget struct {
+}
 
-	// Onabort
-	Onabort() (onabort func(window.Event))
+// Onabort
+func (*XMLHttpRequestEventTarget) Onabort() (onabort func(window.Event)) {
+	js.Rewrite("$<.Onabort")
+	return onabort
+}
 
-	// Onabort
-	SetOnabort(onabort func(window.Event))
+// Onabort
+func (*XMLHttpRequestEventTarget) SetOnabort(onabort func(window.Event)) {
+	js.Rewrite("$<.Onabort = $1", onabort)
+}
 
-	// Onerror
-	Onerror() (onerror func(window.Event))
+// Onerror
+func (*XMLHttpRequestEventTarget) Onerror() (onerror func(window.Event)) {
+	js.Rewrite("$<.Onerror")
+	return onerror
+}
 
-	// Onerror
-	SetOnerror(onerror func(window.Event))
+// Onerror
+func (*XMLHttpRequestEventTarget) SetOnerror(onerror func(window.Event)) {
+	js.Rewrite("$<.Onerror = $1", onerror)
+}
 
-	// Onload
-	Onload() (onload func(window.Event))
+// Onload
+func (*XMLHttpRequestEventTarget) Onload() (onload func(window.Event)) {
+	js.Rewrite("$<.Onload")
+	return onload
+}
 
-	// Onload
-	SetOnload(onload func(window.Event))
+// Onload
+func (*XMLHttpRequestEventTarget) SetOnload(onload func(window.Event)) {
+	js.Rewrite("$<.Onload = $1", onload)
+}
 
-	// Onloadend
-	Onloadend() (onloadend func(window.Event))
+// Onloadend
+func (*XMLHttpRequestEventTarget) Onloadend() (onloadend func(window.Event)) {
+	js.Rewrite("$<.Onloadend")
+	return onloadend
+}
 
-	// Onloadend
-	SetOnloadend(onloadend func(window.Event))
+// Onloadend
+func (*XMLHttpRequestEventTarget) SetOnloadend(onloadend func(window.Event)) {
+	js.Rewrite("$<.Onloadend = $1", onloadend)
+}
 
-	// Onloadstart
-	Onloadstart() (onloadstart func(window.Event))
+// Onloadstart
+func (*XMLHttpRequestEventTarget) Onloadstart() (onloadstart func(window.Event)) {
+	js.Rewrite("$<.Onloadstart")
+	return onloadstart
+}
 
-	// Onloadstart
-	SetOnloadstart(onloadstart func(window.Event))
+// Onloadstart
+func (*XMLHttpRequestEventTarget) SetOnloadstart(onloadstart func(window.Event)) {
+	js.Rewrite("$<.Onloadstart = $1", onloadstart)
+}
 
-	// Onprogress
-	Onprogress() (onprogress func(window.Event))
+// Onprogress
+func (*XMLHttpRequestEventTarget) Onprogress() (onprogress func(window.Event)) {
+	js.Rewrite("$<.Onprogress")
+	return onprogress
+}
 
-	// Onprogress
-	SetOnprogress(onprogress func(window.Event))
+// Onprogress
+func (*XMLHttpRequestEventTarget) SetOnprogress(onprogress func(window.Event)) {
+	js.Rewrite("$<.Onprogress = $1", onprogress)
+}
 
-	// Ontimeout
-	Ontimeout() (ontimeout func(window.Event))
+// Ontimeout
+func (*XMLHttpRequestEventTarget) Ontimeout() (ontimeout func(window.Event)) {
+	js.Rewrite("$<.Ontimeout")
+	return ontimeout
+}
 
-	// Ontimeout
-	SetOntimeout(ontimeout func(window.Event))
+// Ontimeout
+func (*XMLHttpRequestEventTarget) SetOntimeout(ontimeout func(window.Event)) {
+	js.Rewrite("$<.Ontimeout = $1", ontimeout)
 }

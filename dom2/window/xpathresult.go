@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// XPathResult struct
 // js:"XPathResult,omit"
 type XPathResult struct {
 }

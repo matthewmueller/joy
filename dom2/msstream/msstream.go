@@ -2,6 +2,7 @@ package msstream
 
 import "github.com/matthewmueller/golly/js"
 
+// MSStream struct
 // js:"MSStream,omit"
 type MSStream struct {
 }

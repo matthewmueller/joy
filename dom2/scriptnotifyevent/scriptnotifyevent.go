@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// ScriptNotifyEvent struct
 // js:"ScriptNotifyEvent,omit"
 type ScriptNotifyEvent struct {
 	window.Event

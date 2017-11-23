@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// UnviewableContentIdentifiedEvent struct
 // js:"UnviewableContentIdentifiedEvent,omit"
 type UnviewableContentIdentifiedEvent struct {
 	navigationeventwithreferrer.NavigationEventWithReferrer

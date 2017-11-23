@@ -10,6 +10,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(transport *rtcicetransport.RTCIceTransport) *RTCDtlsTransport {
+	js.Rewrite("RTCDtlsTransport")
+	return &RTCDtlsTransport{}
+}
+
+// RTCDtlsTransport struct
 // js:"RTCDtlsTransport,omit"
 type RTCDtlsTransport struct {
 	rtcstatsprovider.RTCStatsProvider

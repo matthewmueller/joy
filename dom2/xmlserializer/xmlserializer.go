@@ -5,6 +5,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New() *XMLSerializer {
+	js.Rewrite("XMLSerializer")
+	return &XMLSerializer{}
+}
+
+// XMLSerializer struct
 // js:"XMLSerializer,omit"
 type XMLSerializer struct {
 }

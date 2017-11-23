@@ -2,9 +2,17 @@ package rtcsessiondescription
 
 import (
 	"github.com/matthewmueller/golly/dom2/rtcsdptype"
+	"github.com/matthewmueller/golly/dom2/rtcsessiondescriptioninit"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(descriptioninitdict *rtcsessiondescriptioninit.RTCSessionDescriptionInit) *RTCSessionDescription {
+	js.Rewrite("RTCSessionDescription")
+	return &RTCSessionDescription{}
+}
+
+// RTCSessionDescription struct
 // js:"RTCSessionDescription,omit"
 type RTCSessionDescription struct {
 }

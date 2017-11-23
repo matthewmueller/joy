@@ -2,6 +2,7 @@ package svgangle
 
 import "github.com/matthewmueller/golly/js"
 
+// SVGAngle struct
 // js:"SVGAngle,omit"
 type SVGAngle struct {
 }

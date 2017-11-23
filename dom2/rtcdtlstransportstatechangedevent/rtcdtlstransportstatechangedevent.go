@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// RTCDtlsTransportStateChangedEvent struct
 // js:"RTCDtlsTransportStateChangedEvent,omit"
 type RTCDtlsTransportStateChangedEvent struct {
 	window.Event

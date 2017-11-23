@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// Comment struct
 // js:"Comment,omit"
 type Comment struct {
 	CharacterData

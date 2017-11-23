@@ -8,6 +8,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLOutputElement struct
 // js:"HTMLOutputElement,omit"
 type HTMLOutputElement struct {
 	window.HTMLElement

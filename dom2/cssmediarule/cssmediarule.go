@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// CSSMediaRule struct
 // js:"CSSMediaRule,omit"
 type CSSMediaRule struct {
 	cssconditionrule.CSSConditionRule

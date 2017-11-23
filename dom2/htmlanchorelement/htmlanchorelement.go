@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLAnchorElement struct
 // js:"HTMLAnchorElement,omit"
 type HTMLAnchorElement struct {
 	window.HTMLElement

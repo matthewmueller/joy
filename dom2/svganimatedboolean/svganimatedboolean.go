@@ -2,6 +2,7 @@ package svganimatedboolean
 
 import "github.com/matthewmueller/golly/js"
 
+// SVGAnimatedBoolean struct
 // js:"SVGAnimatedBoolean,omit"
 type SVGAnimatedBoolean struct {
 }

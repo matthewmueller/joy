@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// GainNode struct
 // js:"GainNode,omit"
 type GainNode struct {
 	AudioNode

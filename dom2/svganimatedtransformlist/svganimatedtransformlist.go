@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGAnimatedTransformList struct
 // js:"SVGAnimatedTransformList,omit"
 type SVGAnimatedTransformList struct {
 }

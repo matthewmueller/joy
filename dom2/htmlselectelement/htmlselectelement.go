@@ -8,6 +8,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLSelectElement struct
 // js:"HTMLSelectElement,omit"
 type HTMLSelectElement struct {
 	window.HTMLElement

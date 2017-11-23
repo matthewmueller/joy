@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// ReadableStream struct
 // js:"ReadableStream,omit"
 type ReadableStream struct {
 }

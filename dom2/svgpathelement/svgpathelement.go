@@ -26,6 +26,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGPathElement struct
 // js:"SVGPathElement,omit"
 type SVGPathElement struct {
 	window.SVGGraphicsElement

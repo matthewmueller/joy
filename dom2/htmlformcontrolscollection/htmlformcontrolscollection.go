@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLFormControlsCollection struct
 // js:"HTMLFormControlsCollection,omit"
 type HTMLFormControlsCollection struct {
 	window.HTMLCollection

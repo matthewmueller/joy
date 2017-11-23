@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// DOMSettableTokenList struct
 // js:"DOMSettableTokenList,omit"
 type DOMSettableTokenList struct {
 	domtokenlist.DOMTokenList

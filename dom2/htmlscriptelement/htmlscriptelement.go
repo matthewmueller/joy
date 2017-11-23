@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLScriptElement struct
 // js:"HTMLScriptElement,omit"
 type HTMLScriptElement struct {
 	window.HTMLElement

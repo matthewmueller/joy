@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// IDBVersionChangeEvent struct
 // js:"IDBVersionChangeEvent,omit"
 type IDBVersionChangeEvent struct {
 	Event

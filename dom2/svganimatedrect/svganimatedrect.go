@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGAnimatedRect struct
 // js:"SVGAnimatedRect,omit"
 type SVGAnimatedRect struct {
 }

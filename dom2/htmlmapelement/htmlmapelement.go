@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLMapElement struct
 // js:"HTMLMapElement,omit"
 type HTMLMapElement struct {
 	window.HTMLElement

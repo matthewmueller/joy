@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGPathSegLinetoVerticalAbs struct
 // js:"SVGPathSegLinetoVerticalAbs,omit"
 type SVGPathSegLinetoVerticalAbs struct {
 	svgpathseg.SVGPathSeg

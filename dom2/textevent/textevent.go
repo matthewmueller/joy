@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// TextEvent struct
 // js:"TextEvent,omit"
 type TextEvent struct {
 	window.UIEvent

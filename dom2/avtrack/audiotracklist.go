@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// AudioTrackList struct
 // js:"AudioTrackList,omit"
 type AudioTrackList struct {
 	window.EventTarget

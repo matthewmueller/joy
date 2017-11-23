@@ -1,14 +1,10 @@
 package htmltablecellelement
 
-import (
-	"github.com/matthewmueller/golly/dom2/htmltablealignment"
-	"github.com/matthewmueller/golly/dom2/window"
-)
+import "github.com/matthewmueller/golly/dom2/window"
 
 // js:"HTMLTableCellElement,omit"
 type HTMLTableCellElement interface {
 	window.HTMLElement
-	htmltablealignment.HTMLTableAlignment
 
 	// Abbr Sets or retrieves abbreviated text for the object.
 	Abbr() (abbr string)

@@ -1,15 +1,14 @@
 package htmltablerowelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/htmltablealignment"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLTableRowElement struct
 // js:"HTMLTableRowElement,omit"
 type HTMLTableRowElement struct {
 	window.HTMLElement
-	htmltablealignment.HTMLTableAlignment
 }
 
 // DeleteCell Removes the specified cell from the table row, as well as from the cells collection.
@@ -23,6 +22,39 @@ func (*HTMLTableRowElement) DeleteCell(index *int) {
 func (*HTMLTableRowElement) InsertCell(index *int) (w window.HTMLElement) {
 	js.Rewrite("$<.InsertCell($1)", index)
 	return w
+}
+
+// Ch
+func (*HTMLTableRowElement) Ch() (ch string) {
+	js.Rewrite("$<.Ch")
+	return ch
+}
+
+// Ch
+func (*HTMLTableRowElement) SetCh(ch string) {
+	js.Rewrite("$<.Ch = $1", ch)
+}
+
+// ChOff
+func (*HTMLTableRowElement) ChOff() (chOff string) {
+	js.Rewrite("$<.ChOff")
+	return chOff
+}
+
+// ChOff
+func (*HTMLTableRowElement) SetChOff(chOff string) {
+	js.Rewrite("$<.ChOff = $1", chOff)
+}
+
+// VAlign
+func (*HTMLTableRowElement) VAlign() (vAlign string) {
+	js.Rewrite("$<.VAlign")
+	return vAlign
+}
+
+// VAlign
+func (*HTMLTableRowElement) SetVAlign(vAlign string) {
+	js.Rewrite("$<.VAlign = $1", vAlign)
 }
 
 // Align Sets or retrieves how the object is aligned with adjacent text.

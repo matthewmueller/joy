@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// CSSNamespaceRule struct
 // js:"CSSNamespaceRule,omit"
 type CSSNamespaceRule struct {
 	window.CSSRule

@@ -2,10 +2,18 @@ package window
 
 import (
 	"github.com/matthewmueller/golly/dom2/notificationdirection"
+	"github.com/matthewmueller/golly/dom2/notificationoptions"
 	"github.com/matthewmueller/golly/dom2/notificationpermission"
 	"github.com/matthewmueller/golly/js"
 )
 
+// NewNotification fn
+func NewNotification(title string, options *notificationoptions.NotificationOptions) *Notification {
+	js.Rewrite("Notification")
+	return &Notification{}
+}
+
+// Notification struct
 // js:"Notification,omit"
 type Notification struct {
 	EventTarget

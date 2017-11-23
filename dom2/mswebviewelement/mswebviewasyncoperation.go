@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MSWebViewAsyncOperation struct
 // js:"MSWebViewAsyncOperation,omit"
 type MSWebViewAsyncOperation struct {
 	window.EventTarget

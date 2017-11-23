@@ -2,6 +2,13 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// NewFocusEvent fn
+func NewFocusEvent(typearg string, eventinitdict *FocusEventInit) *FocusEvent {
+	js.Rewrite("FocusEvent")
+	return &FocusEvent{}
+}
+
+// FocusEvent struct
 // js:"FocusEvent,omit"
 type FocusEvent struct {
 	UIEvent

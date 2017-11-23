@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGRectElement struct
 // js:"SVGRectElement,omit"
 type SVGRectElement struct {
 	window.SVGGraphicsElement

@@ -7,6 +7,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// Geolocation struct
 // js:"Geolocation,omit"
 type Geolocation struct {
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MSHTMLWebViewElement struct
 // js:"MSHTMLWebViewElement,omit"
 type MSHTMLWebViewElement struct {
 	window.HTMLElement

@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// PannerNode struct
 // js:"PannerNode,omit"
 type PannerNode struct {
 	AudioNode

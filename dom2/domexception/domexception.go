@@ -2,6 +2,7 @@ package domexception
 
 import "github.com/matthewmueller/golly/js"
 
+// DOMException struct
 // js:"DOMException,omit"
 type DOMException struct {
 }

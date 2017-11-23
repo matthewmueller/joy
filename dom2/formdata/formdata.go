@@ -2,6 +2,13 @@ package formdata
 
 import "github.com/matthewmueller/golly/js"
 
+// New fn
+func New() *FormData {
+	js.Rewrite("FormData")
+	return &FormData{}
+}
+
+// FormData struct
 // js:"FormData,omit"
 type FormData struct {
 }

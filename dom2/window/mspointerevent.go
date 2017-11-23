@@ -2,6 +2,13 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// NewMSPointerEvent fn
+func NewMSPointerEvent(typearg string, eventinitdict *PointerEventInit) *MSPointerEvent {
+	js.Rewrite("MSPointerEvent")
+	return &MSPointerEvent{}
+}
+
+// MSPointerEvent struct
 // js:"MSPointerEvent,omit"
 type MSPointerEvent struct {
 	MouseEvent

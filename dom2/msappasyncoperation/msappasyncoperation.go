@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MSAppAsyncOperation struct
 // js:"MSAppAsyncOperation,omit"
 type MSAppAsyncOperation struct {
 	window.EventTarget

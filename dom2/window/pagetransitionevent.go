@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// PageTransitionEvent struct
 // js:"PageTransitionEvent,omit"
 type PageTransitionEvent struct {
 	Event

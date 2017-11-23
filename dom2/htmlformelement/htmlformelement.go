@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLFormElement struct
 // js:"HTMLFormElement,omit"
 type HTMLFormElement struct {
 	window.HTMLElement

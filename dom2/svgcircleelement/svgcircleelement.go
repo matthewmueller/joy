@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGCircleElement struct
 // js:"SVGCircleElement,omit"
 type SVGCircleElement struct {
 	window.SVGGraphicsElement

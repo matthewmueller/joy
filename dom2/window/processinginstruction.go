@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// ProcessingInstruction struct
 // js:"ProcessingInstruction,omit"
 type ProcessingInstruction struct {
 	CharacterData

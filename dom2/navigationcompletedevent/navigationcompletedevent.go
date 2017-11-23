@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// NavigationCompletedEvent struct
 // js:"NavigationCompletedEvent,omit"
 type NavigationCompletedEvent struct {
 	navigationevent.NavigationEvent

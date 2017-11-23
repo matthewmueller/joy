@@ -3,23 +3,27 @@ package window
 import (
 	"github.com/matthewmueller/golly/dom2/svgangle"
 	"github.com/matthewmueller/golly/dom2/svganimatedlength"
-	"github.com/matthewmueller/golly/dom2/svgfittoviewbox"
+	"github.com/matthewmueller/golly/dom2/svganimatedpreserveaspectratio"
+	"github.com/matthewmueller/golly/dom2/svganimatedrect"
 	"github.com/matthewmueller/golly/dom2/svglength"
 	"github.com/matthewmueller/golly/dom2/svgmatrix"
 	"github.com/matthewmueller/golly/dom2/svgnumber"
 	"github.com/matthewmueller/golly/dom2/svgpoint"
 	"github.com/matthewmueller/golly/dom2/svgrect"
 	"github.com/matthewmueller/golly/dom2/svgtransform"
-	"github.com/matthewmueller/golly/dom2/svgzoomandpan"
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGSVGElement struct
 // js:"SVGSVGElement,omit"
 type SVGSVGElement struct {
 	SVGGraphicsElement
-	DocumentEvent
-	svgfittoviewbox.SVGFitToViewBox
-	svgzoomandpan.SVGZoomAndPan
+}
+
+// CreateEvent
+func (*SVGSVGElement) CreateEvent(eventInterface string) (e Event) {
+	js.Rewrite("$<.CreateEvent($1)", eventInterface)
+	return e
 }
 
 // CheckEnclosure
@@ -151,6 +155,24 @@ func (*SVGSVGElement) UnsuspendRedraw(suspendHandleID uint) {
 // UnsuspendRedrawAll
 func (*SVGSVGElement) UnsuspendRedrawAll() {
 	js.Rewrite("$<.UnsuspendRedrawAll()")
+}
+
+// PreserveAspectRatio
+func (*SVGSVGElement) PreserveAspectRatio() (preserveAspectRatio *svganimatedpreserveaspectratio.SVGAnimatedPreserveAspectRatio) {
+	js.Rewrite("$<.PreserveAspectRatio")
+	return preserveAspectRatio
+}
+
+// ViewBox
+func (*SVGSVGElement) ViewBox() (viewBox *svganimatedrect.SVGAnimatedRect) {
+	js.Rewrite("$<.ViewBox")
+	return viewBox
+}
+
+// ZoomAndPan
+func (*SVGSVGElement) ZoomAndPan() (zoomAndPan uint8) {
+	js.Rewrite("$<.ZoomAndPan")
+	return zoomAndPan
 }
 
 // ContentScriptType

@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// DynamicsCompressorNode struct
 // js:"DynamicsCompressorNode,omit"
 type DynamicsCompressorNode struct {
 	AudioNode

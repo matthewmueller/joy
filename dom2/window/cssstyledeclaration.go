@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// CSSStyleDeclaration struct
 // js:"CSSStyleDeclaration,omit"
 type CSSStyleDeclaration struct {
 }

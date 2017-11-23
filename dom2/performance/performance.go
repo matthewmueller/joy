@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// Performance struct
 // js:"Performance,omit"
 type Performance struct {
 }

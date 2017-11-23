@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// ConvolverNode struct
 // js:"ConvolverNode,omit"
 type ConvolverNode struct {
 	AudioNode

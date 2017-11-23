@@ -1,17 +1,36 @@
 package htmlhrelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/doml2deprecatedcolorproperty"
-	"github.com/matthewmueller/golly/dom2/doml2deprecatedsizeproperty"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLHRElement struct
 // js:"HTMLHRElement,omit"
 type HTMLHRElement struct {
 	window.HTMLElement
-	doml2deprecatedcolorproperty.DOML2deprecatedColorProperty
-	doml2deprecatedsizeproperty.DOML2deprecatedSizeProperty
+}
+
+// Color
+func (*HTMLHRElement) Color() (color string) {
+	js.Rewrite("$<.Color")
+	return color
+}
+
+// Color
+func (*HTMLHRElement) SetColor(color string) {
+	js.Rewrite("$<.Color = $1", color)
+}
+
+// Size
+func (*HTMLHRElement) Size() (size int) {
+	js.Rewrite("$<.Size")
+	return size
+}
+
+// Size
+func (*HTMLHRElement) SetSize(size int) {
+	js.Rewrite("$<.Size = $1", size)
 }
 
 // Align Sets or retrieves how the object is aligned with adjacent text.

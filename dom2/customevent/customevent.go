@@ -1,10 +1,18 @@
 package customevent
 
 import (
+	"github.com/matthewmueller/golly/dom2/customeventinit"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(typearg string, eventinitdict *customeventinit.CustomEventInit) *CustomEvent {
+	js.Rewrite("CustomEvent")
+	return &CustomEvent{}
+}
+
+// CustomEvent struct
 // js:"CustomEvent,omit"
 type CustomEvent struct {
 	window.Event

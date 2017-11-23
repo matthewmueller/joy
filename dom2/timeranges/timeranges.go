@@ -2,6 +2,7 @@ package timeranges
 
 import "github.com/matthewmueller/golly/js"
 
+// TimeRanges struct
 // js:"TimeRanges,omit"
 type TimeRanges struct {
 }

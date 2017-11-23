@@ -8,6 +8,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SourceBuffer struct
 // js:"SourceBuffer,omit"
 type SourceBuffer struct {
 	window.EventTarget

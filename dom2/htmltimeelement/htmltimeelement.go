@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLTimeElement struct
 // js:"HTMLTimeElement,omit"
 type HTMLTimeElement struct {
 	window.HTMLElement

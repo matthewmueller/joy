@@ -2,6 +2,7 @@ package pushsubscriptionoptions
 
 import "github.com/matthewmueller/golly/js"
 
+// PushSubscriptionOptions struct
 // js:"PushSubscriptionOptions,omit"
 type PushSubscriptionOptions struct {
 }

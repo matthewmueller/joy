@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLBRElement struct
 // js:"HTMLBRElement,omit"
 type HTMLBRElement struct {
 	window.HTMLElement

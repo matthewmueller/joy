@@ -7,6 +7,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLTableElement struct
 // js:"HTMLTableElement,omit"
 type HTMLTableElement struct {
 	window.HTMLElement

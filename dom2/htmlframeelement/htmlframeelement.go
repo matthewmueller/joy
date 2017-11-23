@@ -1,15 +1,20 @@
 package htmlframeelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/getsvgdocument"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLFrameElement struct
 // js:"HTMLFrameElement,omit"
 type HTMLFrameElement struct {
 	window.HTMLElement
-	getsvgdocument.GetSVGDocument
+}
+
+// GetSVGDocument
+func (*HTMLFrameElement) GetSVGDocument() (w window.Document) {
+	js.Rewrite("$<.GetSVGDocument()")
+	return w
 }
 
 // Border Specifies the properties of a border drawn around an object.

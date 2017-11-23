@@ -1,8 +1,14 @@
 package navigatorconcurrenthardware
 
-// js:"NavigatorConcurrentHardware,omit"
-type NavigatorConcurrentHardware interface {
+import "github.com/matthewmueller/golly/js"
 
-	// HardwareConcurrency
-	HardwareConcurrency() (hardwareConcurrency uint64)
+// NavigatorConcurrentHardware struct
+// js:"NavigatorConcurrentHardware,omit"
+type NavigatorConcurrentHardware struct {
+}
+
+// HardwareConcurrency
+func (*NavigatorConcurrentHardware) HardwareConcurrency() (hardwareConcurrency uint64) {
+	js.Rewrite("$<.HardwareConcurrency")
+	return hardwareConcurrency
 }

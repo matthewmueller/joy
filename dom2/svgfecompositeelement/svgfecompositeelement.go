@@ -2,17 +2,47 @@ package svgfecompositeelement
 
 import (
 	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
+	"github.com/matthewmueller/golly/dom2/svganimatedlength"
 	"github.com/matthewmueller/golly/dom2/svganimatednumber"
 	"github.com/matthewmueller/golly/dom2/svganimatedstring"
-	"github.com/matthewmueller/golly/dom2/svgfilterprimitivestandardattributes"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGFECompositeElement struct
 // js:"SVGFECompositeElement,omit"
 type SVGFECompositeElement struct {
 	window.SVGElement
-	svgfilterprimitivestandardattributes.SVGFilterPrimitiveStandardAttributes
+}
+
+// Height
+func (*SVGFECompositeElement) Height() (height *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.Height")
+	return height
+}
+
+// Result
+func (*SVGFECompositeElement) Result() (result *svganimatedstring.SVGAnimatedString) {
+	js.Rewrite("$<.Result")
+	return result
+}
+
+// Width
+func (*SVGFECompositeElement) Width() (width *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.Width")
+	return width
+}
+
+// X
+func (*SVGFECompositeElement) X() (x *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.X")
+	return x
+}
+
+// Y
+func (*SVGFECompositeElement) Y() (y *svganimatedlength.SVGAnimatedLength) {
+	js.Rewrite("$<.Y")
+	return y
 }
 
 // In1

@@ -8,6 +8,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// OscillatorNode struct
 // js:"OscillatorNode,omit"
 type OscillatorNode struct {
 	AudioNode

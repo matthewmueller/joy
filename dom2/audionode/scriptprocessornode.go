@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// ScriptProcessorNode struct
 // js:"ScriptProcessorNode,omit"
 type ScriptProcessorNode struct {
 	AudioNode

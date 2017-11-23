@@ -14,17 +14,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-// apis struct
-type apis struct {
-	CallbackFunctions  []*raw.Callback          `xml:"callback-functions>callback-function"`
-	CallbackInterfaces []*raw.CallbackInterface `xml:"callback-interfaces>interface"`
-	Dictionaries       []*raw.Dictionary        `xml:"dictionaries>dictionary"`
-	Enums              []*raw.Enum              `xml:"enums>enum"`
-	Interfaces         []*raw.Interface         `xml:"interfaces>interface"`
-	MixinInterfaces    []*raw.Interface         `xml:"mixin-interfaces>interface"`
-	TypeDefs           []*raw.TypeDef           `xml:"typedefs>typedef"`
-}
-
 // docs
 type docs struct {
 	Interfaces []*struct {
@@ -44,7 +33,7 @@ type docs struct {
 
 // Parse the data
 func Parse(api string, doc string) (index.Index, error) {
-	var a apis
+	var a raw.API
 	if e := xml.Unmarshal([]byte(api), &a); e != nil {
 		return nil, errors.Wrap(e, "error parsing xml")
 	}

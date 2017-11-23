@@ -2,6 +2,7 @@ package positionerror
 
 import "github.com/matthewmueller/golly/js"
 
+// PositionError struct
 // js:"PositionError,omit"
 type PositionError struct {
 }

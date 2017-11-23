@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// OverflowEvent struct
 // js:"OverflowEvent,omit"
 type OverflowEvent struct {
 	window.UIEvent

@@ -1,5 +1,16 @@
 package raw
 
+// API for the web
+type API struct {
+	CallbackFunctions  []*Callback          `xml:"callback-functions>callback-function"`
+	CallbackInterfaces []*CallbackInterface `xml:"callback-interfaces>interface"`
+	Dictionaries       []*Dictionary        `xml:"dictionaries>dictionary"`
+	Enums              []*Enum              `xml:"enums>enum"`
+	Interfaces         []*Interface         `xml:"interfaces>interface"`
+	MixinInterfaces    []*Interface         `xml:"mixin-interfaces>interface"`
+	TypeDefs           []*TypeDef           `xml:"typedefs>typedef"`
+}
+
 // Interface struct
 type Interface struct {
 	Name                       string                        `xml:"name,attr"`

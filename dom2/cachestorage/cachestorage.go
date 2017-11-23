@@ -7,6 +7,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// CacheStorage struct
 // js:"CacheStorage,omit"
 type CacheStorage struct {
 }

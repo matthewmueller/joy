@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLImageElement struct
 // js:"HTMLImageElement,omit"
 type HTMLImageElement struct {
 	window.HTMLElement

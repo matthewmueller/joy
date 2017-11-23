@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLMetaElement struct
 // js:"HTMLMetaElement,omit"
 type HTMLMetaElement struct {
 	window.HTMLElement

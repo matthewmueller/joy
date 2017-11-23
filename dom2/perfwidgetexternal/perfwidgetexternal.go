@@ -2,6 +2,7 @@ package perfwidgetexternal
 
 import "github.com/matthewmueller/golly/js"
 
+// PerfWidgetExternal struct
 // js:"PerfWidgetExternal,omit"
 type PerfWidgetExternal struct {
 }

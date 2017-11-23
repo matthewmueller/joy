@@ -7,6 +7,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// IDBObjectStore struct
 // js:"IDBObjectStore,omit"
 type IDBObjectStore struct {
 }

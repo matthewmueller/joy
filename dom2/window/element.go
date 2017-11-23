@@ -1,7 +1,6 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/childnode"
 	"github.com/matthewmueller/golly/dom2/clientrect"
 	"github.com/matthewmueller/golly/dom2/clientrectlist"
 	"github.com/matthewmueller/golly/dom2/domtokenlist"
@@ -11,10 +10,6 @@ import (
 // js:"Element,omit"
 type Element interface {
 	Node
-	GlobalEventHandlers
-	ElementTraversal
-	NodeSelector
-	childnode.ChildNode
 
 	// GetAttribute
 	GetAttribute(qualifiedName string) (s string)

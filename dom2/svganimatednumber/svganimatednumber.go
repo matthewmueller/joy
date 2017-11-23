@@ -2,6 +2,7 @@ package svganimatednumber
 
 import "github.com/matthewmueller/golly/js"
 
+// SVGAnimatedNumber struct
 // js:"SVGAnimatedNumber,omit"
 type SVGAnimatedNumber struct {
 }

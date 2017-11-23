@@ -7,6 +7,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLVideoElement struct
 // js:"HTMLVideoElement,omit"
 type HTMLVideoElement struct {
 	htmlmediaelement.HTMLMediaElement

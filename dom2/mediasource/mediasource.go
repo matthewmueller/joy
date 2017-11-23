@@ -7,6 +7,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New() *MediaSource {
+	js.Rewrite("MediaSource")
+	return &MediaSource{}
+}
+
+// MediaSource struct
 // js:"MediaSource,omit"
 type MediaSource struct {
 	window.EventTarget

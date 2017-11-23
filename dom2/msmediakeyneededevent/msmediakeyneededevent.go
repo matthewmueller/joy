@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MSMediaKeyNeededEvent struct
 // js:"MSMediaKeyNeededEvent,omit"
 type MSMediaKeyNeededEvent struct {
 	window.Event

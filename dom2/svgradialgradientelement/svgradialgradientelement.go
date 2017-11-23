@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGRadialGradientElement struct
 // js:"SVGRadialGradientElement,omit"
 type SVGRadialGradientElement struct {
 	svggradientelement.SVGGradientElement

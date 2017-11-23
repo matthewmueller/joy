@@ -4,22 +4,26 @@ import (
 	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
 	"github.com/matthewmueller/golly/dom2/svganimatedinteger"
 	"github.com/matthewmueller/golly/dom2/svganimatedlength"
-	"github.com/matthewmueller/golly/dom2/svgunittypes"
-	"github.com/matthewmueller/golly/dom2/svgurireference"
+	"github.com/matthewmueller/golly/dom2/svganimatedstring"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGFilterElement struct
 // js:"SVGFilterElement,omit"
 type SVGFilterElement struct {
 	window.SVGElement
-	svgunittypes.SVGUnitTypes
-	svgurireference.SVGURIReference
 }
 
 // SetFilterRes
 func (*SVGFilterElement) SetFilterRes(filterResX uint, filterResY uint) {
 	js.Rewrite("$<.SetFilterRes($1, $2)", filterResX, filterResY)
+}
+
+// Href
+func (*SVGFilterElement) Href() (href *svganimatedstring.SVGAnimatedString) {
+	js.Rewrite("$<.Href")
+	return href
 }
 
 // FilterResX

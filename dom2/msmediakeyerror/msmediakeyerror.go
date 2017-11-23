@@ -2,6 +2,7 @@ package msmediakeyerror
 
 import "github.com/matthewmueller/golly/js"
 
+// MSMediaKeyError struct
 // js:"MSMediaKeyError,omit"
 type MSMediaKeyError struct {
 }

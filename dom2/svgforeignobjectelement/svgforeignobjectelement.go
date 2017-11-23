@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// SVGForeignObjectElement struct
 // js:"SVGForeignObjectElement,omit"
 type SVGForeignObjectElement struct {
 	window.SVGGraphicsElement

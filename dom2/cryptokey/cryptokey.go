@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// CryptoKey struct
 // js:"CryptoKey,omit"
 type CryptoKey struct {
 }

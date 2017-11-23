@@ -5,6 +5,13 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(keysystem string) *MSMediaKeys {
+	js.Rewrite("MSMediaKeys")
+	return &MSMediaKeys{}
+}
+
+// MSMediaKeys struct
 // js:"MSMediaKeys,omit"
 type MSMediaKeys struct {
 }

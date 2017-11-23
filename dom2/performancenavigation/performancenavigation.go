@@ -2,6 +2,7 @@ package performancenavigation
 
 import "github.com/matthewmueller/golly/js"
 
+// PerformanceNavigation struct
 // js:"PerformanceNavigation,omit"
 type PerformanceNavigation struct {
 }

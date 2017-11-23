@@ -9,6 +9,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MSCredentials struct
 // js:"MSCredentials,omit"
 type MSCredentials struct {
 }

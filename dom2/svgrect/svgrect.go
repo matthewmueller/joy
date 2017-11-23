@@ -2,6 +2,7 @@ package svgrect
 
 import "github.com/matthewmueller/golly/js"
 
+// SVGRect struct
 // js:"SVGRect,omit"
 type SVGRect struct {
 }

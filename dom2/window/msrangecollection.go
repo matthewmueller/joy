@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// MSRangeCollection struct
 // js:"MSRangeCollection,omit"
 type MSRangeCollection struct {
 }

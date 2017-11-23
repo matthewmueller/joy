@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLTableHeaderCellElement struct
 // js:"HTMLTableHeaderCellElement,omit"
 type HTMLTableHeaderCellElement struct {
 	htmltablecellelement.HTMLTableCellElement

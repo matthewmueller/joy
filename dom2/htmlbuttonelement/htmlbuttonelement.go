@@ -7,6 +7,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLButtonElement struct
 // js:"HTMLButtonElement,omit"
 type HTMLButtonElement struct {
 	window.HTMLElement

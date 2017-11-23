@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLHeadingElement struct
 // js:"HTMLHeadingElement,omit"
 type HTMLHeadingElement struct {
 	window.HTMLElement

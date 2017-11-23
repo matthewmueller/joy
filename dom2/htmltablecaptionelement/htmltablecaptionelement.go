@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLTableCaptionElement struct
 // js:"HTMLTableCaptionElement,omit"
 type HTMLTableCaptionElement struct {
 	window.HTMLElement

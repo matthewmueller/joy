@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// StorageEvent struct
 // js:"StorageEvent,omit"
 type StorageEvent struct {
 	Event

@@ -1,15 +1,14 @@
 package htmltablesectionelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/htmltablealignment"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLTableSectionElement struct
 // js:"HTMLTableSectionElement,omit"
 type HTMLTableSectionElement struct {
 	window.HTMLElement
-	htmltablealignment.HTMLTableAlignment
 }
 
 // DeleteRow Removes the specified row (tr) from the element and from the rows collection.
@@ -23,6 +22,39 @@ func (*HTMLTableSectionElement) DeleteRow(index *int) {
 func (*HTMLTableSectionElement) InsertRow(index *int) (w window.HTMLElement) {
 	js.Rewrite("$<.InsertRow($1)", index)
 	return w
+}
+
+// Ch
+func (*HTMLTableSectionElement) Ch() (ch string) {
+	js.Rewrite("$<.Ch")
+	return ch
+}
+
+// Ch
+func (*HTMLTableSectionElement) SetCh(ch string) {
+	js.Rewrite("$<.Ch = $1", ch)
+}
+
+// ChOff
+func (*HTMLTableSectionElement) ChOff() (chOff string) {
+	js.Rewrite("$<.ChOff")
+	return chOff
+}
+
+// ChOff
+func (*HTMLTableSectionElement) SetChOff(chOff string) {
+	js.Rewrite("$<.ChOff = $1", chOff)
+}
+
+// VAlign
+func (*HTMLTableSectionElement) VAlign() (vAlign string) {
+	js.Rewrite("$<.VAlign")
+	return vAlign
+}
+
+// VAlign
+func (*HTMLTableSectionElement) SetVAlign(vAlign string) {
+	js.Rewrite("$<.VAlign = $1", vAlign)
 }
 
 // Align Sets or retrieves a value that indicates the table alignment.

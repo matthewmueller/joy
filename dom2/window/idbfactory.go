@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// IDBFactory struct
 // js:"IDBFactory,omit"
 type IDBFactory struct {
 }

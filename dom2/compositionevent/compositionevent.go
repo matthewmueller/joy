@@ -1,10 +1,18 @@
 package compositionevent
 
 import (
+	"github.com/matthewmueller/golly/dom2/compositioneventinit"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// New fn
+func New(typearg string, eventinitdict *compositioneventinit.CompositionEventInit) *CompositionEvent {
+	js.Rewrite("CompositionEvent")
+	return &CompositionEvent{}
+}
+
+// CompositionEvent struct
 // js:"CompositionEvent,omit"
 type CompositionEvent struct {
 	window.UIEvent

@@ -8,6 +8,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// ServiceWorkerRegistration struct
 // js:"ServiceWorkerRegistration,omit"
 type ServiceWorkerRegistration struct {
 	EventTarget

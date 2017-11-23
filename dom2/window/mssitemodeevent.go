@@ -2,6 +2,7 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// MSSiteModeEvent struct
 // js:"MSSiteModeEvent,omit"
 type MSSiteModeEvent struct {
 	Event

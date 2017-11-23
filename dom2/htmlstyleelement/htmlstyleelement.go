@@ -1,15 +1,20 @@
 package htmlstyleelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/linkstyle"
 	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
+// HTMLStyleElement struct
 // js:"HTMLStyleElement,omit"
 type HTMLStyleElement struct {
 	window.HTMLElement
-	linkstyle.LinkStyle
+}
+
+// Sheet
+func (*HTMLStyleElement) Sheet() (sheet window.StyleSheet) {
+	js.Rewrite("$<.Sheet")
+	return sheet
 }
 
 // Disabled

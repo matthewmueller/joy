@@ -2,6 +2,7 @@ package location
 
 import "github.com/matthewmueller/golly/js"
 
+// Location struct
 // js:"Location,omit"
 type Location struct {
 }

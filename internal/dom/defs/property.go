@@ -109,7 +109,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 		Comment string
 	}{
 		Recv:    gen.Pointer(recv.Name()),
-		Name:    gen.Capitalize(d.data.Name),
+		Name:    d.data.Name,
 		Comment: d.data.Comment,
 	}
 
@@ -151,7 +151,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 
 	if async && data.Result.Type == "" {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
-			func ({{ .Recv }}) {{ .Name }}() {
+			func ({{ .Recv }}) {{ capitalize .Name }}() {
 				js.Rewrite("await $<.{{ .Name }}")
 			}
 		`)
@@ -161,8 +161,8 @@ func (d *prop) generate(recv Interface) (string, error) {
 		results = append(results, getter)
 	} else {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
-		// {{ .Name }} {{ .Comment }}
-		func ({{ .Recv }}) {{ .Name }}() ({{ .Result.Var }} {{ .Result.Type }}) {
+		// {{ capitalize .Name }} prop {{ .Comment }}
+		func ({{ .Recv }}) {{ capitalize .Name }}() ({{ .Result.Var }} {{ .Result.Type }}) {
 			js.Rewrite("$<.{{ .Name }}")
 			return {{ .Result.Var }}
 		}
@@ -175,8 +175,8 @@ func (d *prop) generate(recv Interface) (string, error) {
 
 	if !d.data.ReadOnly {
 		setter, e := gen.Generate("property_setter/"+d.data.Name, data, `
-		// {{ .Name }} {{ .Comment }}
-		func ({{ .Recv }}) Set{{ .Name }} ({{ .Result.Var }} {{ .Result.Type }}) {
+		// {{ capitalize .Name }} prop {{ .Comment }}
+		func ({{ .Recv }}) Set{{ capitalize .Name }} ({{ .Result.Var }} {{ .Result.Type }}) {
 			js.Rewrite("$<.{{ .Name }} = $1", {{ .Result.Var }})
 		}
 		`)
@@ -240,7 +240,7 @@ func (d *prop) GenerateInterface() (string, error) {
 
 	if async && data.Result.Type == "" {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
-			{{ .Name }}()
+			{{ capitalize .Name }}()
 		`)
 		if e != nil {
 			return "", e
@@ -248,8 +248,8 @@ func (d *prop) GenerateInterface() (string, error) {
 		results = append(results, getter)
 	} else {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
-		// {{ .Name }} {{ .Comment }}
-		{{ .Name }}() ({{ .Result.Var }} {{ .Result.Type }})
+		// {{ capitalize .Name }} prop {{ .Comment }}
+		{{ capitalize .Name }}() ({{ .Result.Var }} {{ .Result.Type }})
 		`)
 		if e != nil {
 			return "", e
@@ -259,8 +259,8 @@ func (d *prop) GenerateInterface() (string, error) {
 
 	if !d.data.ReadOnly {
 		setter, e := gen.Generate("property_setter/"+d.data.Name, data, `
-		// {{ .Name }} {{ .Comment }}
-		Set{{ .Name }} ({{ .Result.Var }} {{ .Result.Type }})
+		// {{ capitalize .Name }} prop {{ .Comment }}
+		Set{{ capitalize .Name }} ({{ .Result.Var }} {{ .Result.Type }})
 		`)
 		if e != nil {
 			return "", e

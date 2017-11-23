@@ -2,6 +2,7 @@ package paymentaddress
 
 import "github.com/matthewmueller/golly/js"
 
+// PaymentAddress struct
 // js:"PaymentAddress,omit"
 type PaymentAddress struct {
 }

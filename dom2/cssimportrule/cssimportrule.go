@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// CSSImportRule struct
 // js:"CSSImportRule,omit"
 type CSSImportRule struct {
 	window.CSSRule

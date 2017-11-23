@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// MediaKeySession struct
 // js:"MediaKeySession,omit"
 type MediaKeySession struct {
 	EventTarget

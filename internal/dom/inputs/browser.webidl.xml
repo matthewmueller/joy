@@ -4166,16 +4166,16 @@
       <methods>
         <method name="addEventListener" type="void">
           <param name="type" type="DOMString"/>
-          <param name="listener" nullable="1" optional="1" type="EventListener"/>
-          <param name="useCapture" default="FALSE" optional="1" type="boolean"/>
+          <param name="listener" type="EventListener"/>
+          <param name="useCapture" type="boolean"/>
         </method>
         <method name="dispatchEvent" type="boolean">
           <param name="evt" type="Event"/>
         </method>
         <method name="removeEventListener" type="void">
           <param name="type" type="DOMString"/>
-          <param name="listener" nullable="1" optional="1" type="EventListener"/>
-          <param name="useCapture" default="FALSE" optional="1" type="boolean"/>
+          <param name="listener" type="EventListener"/>
+          <param name="useCapture" type="boolean"/>
         </method>
       </methods>
     </interface>
@@ -9321,19 +9321,8 @@
         <event name="SVGLoad" dispatch="async" type="Event"/>
       </events>
       <properties>
-        <property name="className" content-attribute="class" content-attribute-reflects="1" content-attribute-value-syntax="space_separated_tokens" read-only="1" type="SVGAnimatedString"/>
-        <property name="onclick" content-attribute="onclick" content-attribute-value-syntax="javascript" event-handler="click" type="EventHandler"/>
-        <property name="ondblclick" content-attribute="ondblclick" content-attribute-value-syntax="javascript" event-handler="dblclick" type="EventHandler"/>
-        <property name="onfocusin" content-attribute="onfocusin" content-attribute-value-syntax="javascript" event-handler="focusin" type="EventHandler"/>
-        <property name="onfocusout" content-attribute="onfocusout" content-attribute-value-syntax="javascript" event-handler="focusout" type="EventHandler"/>
-        <property name="onload" content-attribute="onload" content-attribute-value-syntax="javascript" event-handler="load" type="EventHandler"/>
-        <property name="onmousedown" content-attribute="onmousedown" content-attribute-value-syntax="javascript" event-handler="mousedown" type="EventHandler"/>
-        <property name="onmousemove" content-attribute="onmousemove" content-attribute-value-syntax="javascript" event-handler="mousemove" type="EventHandler"/>
-        <property name="onmouseout" content-attribute="onmouseout" content-attribute-value-syntax="javascript" event-handler="mouseout" type="EventHandler"/>
-        <property name="onmouseover" content-attribute="onmouseover" content-attribute-value-syntax="javascript" event-handler="mouseover" type="EventHandler"/>
-        <property name="onmouseup" content-attribute="onmouseup" content-attribute-value-syntax="javascript" event-handler="mouseup" type="EventHandler"/>
+        <property name="dataset" read-only="1" type="DOMStringMap"/>
         <property name="ownerSVGElement" read-only="1" type="SVGSVGElement"/>
-        <property name="style" content-attribute="style" content-attribute-value-syntax="css" read-only="1" type="CSSStyleDeclaration"/>
         <property name="viewportElement" read-only="1" type="SVGElement"/>
         <property name="xmlbase" type="DOMString"/>
       </properties>
@@ -12603,6 +12592,7 @@
       </properties>
     </interface>
     <interface name="Window" extends="EventTarget" implicit-this="1" primary-global="Window">
+      <constructor />
       <anonymous-methods>
         <method getter="1" type="Window">
           <param name="index" type="unsigned long"/>

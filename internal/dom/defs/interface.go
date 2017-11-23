@@ -229,14 +229,19 @@ func (d *iface) Generate() (string, error) {
 	}
 
 	data := struct {
-		Package    string
-		Name       string
-		Embeds     []string
-		Methods    []string
-		Properties []string
+		Package     string
+		Name        string
+		Type        string
+		Embeds      []string
+		Methods     []string
+		Properties  []string
+		Constructor struct {
+			Name   string
+			Params []gen.Vartype
+		}
 	}{
 		Package: d.pkg,
-		Name:    gen.Capitalize(d.data.Name),
+		Name:    d.data.Name,
 	}
 
 	// Handle embeds
@@ -251,6 +256,13 @@ func (d *iface) Generate() (string, error) {
 		}
 		data.Embeds = append(data.Embeds, t)
 	}
+
+	// Get the type
+	t, err := d.Type(d.pkg)
+	if err != nil {
+		return "", err
+	}
+	data.Type = t
 
 	// handle the implements too
 	for _, imp := range d.data.Implements {
@@ -299,11 +311,43 @@ func (d *iface) Generate() (string, error) {
 		data.Properties = append(data.Properties, m)
 	}
 
+	if d.data.Constructor != nil {
+		// New()
+		if d.pkg == d.file {
+			data.Constructor.Name = "New"
+		} else {
+			data.Constructor.Name = "New" + gen.Capitalize(d.data.Name)
+		}
+
+		for _, param := range d.data.Constructor.Params {
+			t, err := d.index.Coerce(d.pkg, param.Type)
+			if err != nil {
+				return "", errors.Wrapf(err, "constructor param")
+			}
+
+			data.Constructor.Params = append(data.Constructor.Params, gen.Vartype{
+				Var:      gen.Lowercase(param.Name),
+				Optional: param.Optional,
+				Type:     t,
+			})
+		}
+
+	}
+
 	return gen.Generate("interface/"+d.data.Name, data, `
 		package {{ .Package }}
 		
-		// js:"{{ .Name }},omit"
-		type {{ .Name }} struct {
+		{{ if .Constructor.Name -}}
+		// {{ .Constructor.Name }} fn
+		func {{ .Constructor.Name }}({{ joinvt .Constructor.Params }}) {{ .Type }} {
+			js.Rewrite("{{ .Name }}")
+			return &{{ capitalize .Name }}{}
+		}
+		{{- end }}
+
+		// {{ capitalize .Name }} struct
+		// js:"{{ capitalize .Name }},omit"
+		type {{ capitalize .Name }} struct {
 			{{- range .Embeds }}
 			{{ . }}
 			{{- end }}

@@ -1,7 +1,17 @@
 package rtcicecandidate
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/rtcicecandidateinit"
+	"github.com/matthewmueller/golly/js"
+)
 
+// New fn
+func New(candidateinitdict *rtcicecandidateinit.RTCIceCandidateInit) *RTCIceCandidate {
+	js.Rewrite("RTCIceCandidate")
+	return &RTCIceCandidate{}
+}
+
+// RTCIceCandidate struct
 // js:"RTCIceCandidate,omit"
 type RTCIceCandidate struct {
 }

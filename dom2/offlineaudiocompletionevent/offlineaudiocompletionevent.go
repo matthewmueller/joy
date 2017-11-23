@@ -6,6 +6,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// OfflineAudioCompletionEvent struct
 // js:"OfflineAudioCompletionEvent,omit"
 type OfflineAudioCompletionEvent struct {
 	window.Event

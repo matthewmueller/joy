@@ -5,6 +5,7 @@ import (
 	"github.com/matthewmueller/golly/js"
 )
 
+// DelayNode struct
 // js:"DelayNode,omit"
 type DelayNode struct {
 	AudioNode
