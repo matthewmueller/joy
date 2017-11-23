@@ -103,7 +103,18 @@ func generate(dir string) error {
 		}
 	}
 
-	defs := index.FindByKind("ENUM", "DICTIONARY", "INTERFACE")
+	// sort so goimports finds dependencies
+	var defs []def.Definition
+	sorted, _ := g.Toposort()
+	for _, node := range sorted {
+		def := index[node.ID()]
+
+		// only use these as these are our top-level files
+		switch def.Kind() {
+		case "ENUM", "DICTIONARY", "INTERFACE":
+			defs = append(defs, def)
+		}
+	}
 
 	l := len(defs)
 	for i, def := range defs {

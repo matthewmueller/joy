@@ -1,10 +1,5 @@
 package svgtextpositioningelement
 
-import (
-	"github.com/matthewmueller/golly/dom2/svganimatednumberlist"
-	"github.com/matthewmueller/golly/dom2/svgtextcontentelement"
-)
-
 // js:"SVGTextPositioningElement,omit"
 type SVGTextPositioningElement interface {
 	svgtextcontentelement.SVGTextContentElement

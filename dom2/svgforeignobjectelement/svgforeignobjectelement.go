@@ -1,6 +1,10 @@
 package svgforeignobjectelement
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/svganimatedlength"
+	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"SVGForeignObjectElement,omit"
 type SVGForeignObjectElement struct {

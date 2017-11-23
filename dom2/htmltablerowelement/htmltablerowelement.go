@@ -1,10 +1,6 @@
 package htmltablerowelement
 
-import (
-	"github.com/matthewmueller/golly/dom2/htmltablealignment"
-	"github.com/matthewmueller/golly/dom2/window"
-	"github.com/matthewmueller/golly/js"
-)
+import "github.com/matthewmueller/golly/js"
 
 // js:"HTMLTableRowElement,omit"
 type HTMLTableRowElement struct {

@@ -1,9 +1,6 @@
 package svgstopelement
 
-import (
-	"github.com/matthewmueller/golly/dom2/window"
-	"github.com/matthewmueller/golly/js"
-)
+import "github.com/matthewmueller/golly/js"
 
 // js:"SVGStopElement,omit"
 type SVGStopElement struct {

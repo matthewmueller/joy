@@ -1,9 +1,6 @@
 package websocket
 
-import (
-	"github.com/matthewmueller/golly/dom2/closeevent"
-	"github.com/matthewmueller/golly/js"
-)
+import "github.com/matthewmueller/golly/js"
 
 // js:"WebSocket,omit"
 type WebSocket struct {

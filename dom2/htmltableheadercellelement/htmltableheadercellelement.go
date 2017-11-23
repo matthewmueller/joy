@@ -1,9 +1,6 @@
 package htmltableheadercellelement
 
-import (
-	"github.com/matthewmueller/golly/dom2/htmltablecellelement"
-	"github.com/matthewmueller/golly/js"
-)
+import "github.com/matthewmueller/golly/js"
 
 // js:"HTMLTableHeaderCellElement,omit"
 type HTMLTableHeaderCellElement struct {

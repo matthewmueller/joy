@@ -1,9 +1,6 @@
 package rtcicecandidatepairstats
 
-import (
-	"github.com/matthewmueller/golly/dom2/rtcstats"
-	"github.com/matthewmueller/golly/dom2/rtcstatsicecandidatepairstate"
-)
+import "github.com/matthewmueller/golly/dom2/rtcstats"
 
 type RTCIceCandidatePairStats struct {
 	*rtcstats.RTCStats

@@ -1,9 +1,6 @@
 package sourcebufferlist
 
-import (
-	"github.com/matthewmueller/golly/dom2/window"
-	"github.com/matthewmueller/golly/js"
-)
+import "github.com/matthewmueller/golly/js"
 
 // js:"SourceBufferList,omit"
 type SourceBufferList struct {

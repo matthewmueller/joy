@@ -1,11 +1,5 @@
 package window
 
-import (
-	"github.com/matthewmueller/golly/dom2/svgmatrix"
-	"github.com/matthewmueller/golly/dom2/svgrect"
-	"github.com/matthewmueller/golly/dom2/svgtests"
-)
-
 // js:"SVGGraphicsElement,omit"
 type SVGGraphicsElement interface {
 	SVGElement

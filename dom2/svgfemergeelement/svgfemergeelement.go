@@ -1,6 +1,9 @@
 package svgfemergeelement
 
-import "github.com/matthewmueller/golly/dom2/window"
+import (
+	"github.com/matthewmueller/golly/dom2/svgfilterprimitivestandardattributes"
+	"github.com/matthewmueller/golly/dom2/window"
+)
 
 // js:"SVGFEMergeElement,omit"
 type SVGFEMergeElement struct {

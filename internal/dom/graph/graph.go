@@ -49,7 +49,7 @@ func (g *Graph) ToposortBy(node Node) (sorted []string) {
 }
 
 // Toposort sorts topologically
-func (g *Graph) Toposort() (sorted []string, hasCycles bool) {
+func (g *Graph) Toposort() (sorted []Node, hasCycles bool) {
 	reversed := g.reverse()
 	var roots []string
 	for _, node := range reversed.nodes {
@@ -62,11 +62,11 @@ func (g *Graph) Toposort() (sorted []string, hasCycles bool) {
 	for len(roots) > 0 {
 		root := roots[0]
 		roots = roots[1:]
-		sorted = append(sorted, root)
+		sorted = append(sorted, g.nodes[root])
 		for child := range clone.edges[root] {
 			delete(clone.edges[root], child)
 			if len(clone.edges[root]) == 0 {
-				sorted = append(sorted, child)
+				sorted = append(sorted, g.nodes[child])
 			}
 		}
 	}

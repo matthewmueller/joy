@@ -1,9 +1,6 @@
 package rtcicetransport
 
-import (
-	"github.com/matthewmueller/golly/dom2/rtcicegatherer"
-	"github.com/matthewmueller/golly/js"
-)
+import "github.com/matthewmueller/golly/js"
 
 // js:"RTCIceTransport,omit"
 type RTCIceTransport struct {

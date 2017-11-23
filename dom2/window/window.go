@@ -1,23 +1,7 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom2/barprop"
-	"github.com/matthewmueller/golly/dom2/cachestorage"
-	"github.com/matthewmueller/golly/dom2/crypto"
-	"github.com/matthewmueller/golly/dom2/extensionscriptapis"
-	"github.com/matthewmueller/golly/dom2/external"
-	"github.com/matthewmueller/golly/dom2/focusnavigationorigin"
-	"github.com/matthewmueller/golly/dom2/globalfetch"
-	"github.com/matthewmueller/golly/dom2/history"
-	"github.com/matthewmueller/golly/dom2/location"
-	"github.com/matthewmueller/golly/dom2/mediaquery"
-	"github.com/matthewmueller/golly/dom2/mscredentials"
-	"github.com/matthewmueller/golly/dom2/navigationreason"
-	"github.com/matthewmueller/golly/dom2/performance"
-	"github.com/matthewmueller/golly/dom2/webkitpoint"
-	"github.com/matthewmueller/golly/dom2/windowbase64"
-	"github.com/matthewmueller/golly/dom2/windowlocalstorage"
-	"github.com/matthewmueller/golly/dom2/windowtimers"
+	"github.com/Azure/azure-sdk-for-go/management/location"
 	"github.com/matthewmueller/golly/js"
 )
 

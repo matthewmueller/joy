@@ -1,18 +1,7 @@
 package svgpathelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/svgpathsegarcabs"
-	"github.com/matthewmueller/golly/dom2/svgpathsegclosepath"
-	"github.com/matthewmueller/golly/dom2/svgpathsegcurvetocubicsmoothabs"
-	"github.com/matthewmueller/golly/dom2/svgpathsegcurvetoquadraticabs"
-	"github.com/matthewmueller/golly/dom2/svgpathsegcurvetoquadraticrel"
-	"github.com/matthewmueller/golly/dom2/svgpathsegcurvetoquadraticsmoothabs"
-	"github.com/matthewmueller/golly/dom2/svgpathsegcurvetoquadraticsmoothrel"
-	"github.com/matthewmueller/golly/dom2/svgpathseglinetoabs"
-	"github.com/matthewmueller/golly/dom2/svgpathseglinetohorizontalrel"
-	"github.com/matthewmueller/golly/dom2/svgpathseglinetoverticalabs"
-	"github.com/matthewmueller/golly/dom2/svgpathseglist"
-	"github.com/matthewmueller/golly/dom2/svgpathsegmovetoabs"
+	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 

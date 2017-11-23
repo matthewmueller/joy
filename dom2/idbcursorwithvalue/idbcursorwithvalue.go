@@ -1,9 +1,6 @@
 package idbcursorwithvalue
 
-import (
-	"github.com/matthewmueller/golly/dom2/idbcursor"
-	"github.com/matthewmueller/golly/js"
-)
+import "github.com/matthewmueller/golly/js"
 
 // js:"IDBCursorWithValue,omit"
 type IDBCursorWithValue struct {

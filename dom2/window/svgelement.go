@@ -1,5 +1,7 @@
 package window
 
+import "github.com/matthewmueller/golly/dom2/svganimatedstring"
+
 // js:"SVGElement,omit"
 type SVGElement interface {
 	Element

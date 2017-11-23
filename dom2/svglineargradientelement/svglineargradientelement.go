@@ -1,6 +1,9 @@
 package svglineargradientelement
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/svganimatedlength"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"SVGLinearGradientElement,omit"
 type SVGLinearGradientElement struct {

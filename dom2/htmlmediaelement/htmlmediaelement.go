@@ -1,12 +1,5 @@
 package htmlmediaelement
 
-import (
-	"github.com/matthewmueller/golly/dom2/mediaencryptedevent"
-	"github.com/matthewmueller/golly/dom2/mediaerror"
-	"github.com/matthewmueller/golly/dom2/texttrack"
-	"github.com/matthewmueller/golly/dom2/window"
-)
-
 // js:"HTMLMediaElement,omit"
 type HTMLMediaElement interface {
 	window.HTMLElement

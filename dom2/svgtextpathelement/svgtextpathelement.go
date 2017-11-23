@@ -1,9 +1,7 @@
 package svgtextpathelement
 
 import (
-	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
 	"github.com/matthewmueller/golly/dom2/svganimatedlength"
-	"github.com/matthewmueller/golly/dom2/svgtextcontentelement"
 	"github.com/matthewmueller/golly/dom2/svgurireference"
 	"github.com/matthewmueller/golly/js"
 )

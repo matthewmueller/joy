@@ -1,6 +1,12 @@
 package svgfemorphologyelement
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/svganimatedenumeration"
+	"github.com/matthewmueller/golly/dom2/svganimatednumber"
+	"github.com/matthewmueller/golly/dom2/svgfilterprimitivestandardattributes"
+	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"SVGFEMorphologyElement,omit"
 type SVGFEMorphologyElement struct {

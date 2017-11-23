@@ -2,7 +2,6 @@ package cssmediarule
 
 import (
 	"github.com/matthewmueller/golly/dom2/cssconditionrule"
-	"github.com/matthewmueller/golly/dom2/medialist"
 	"github.com/matthewmueller/golly/js"
 )
 

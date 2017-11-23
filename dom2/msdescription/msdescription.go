@@ -1,9 +1,6 @@
 package msdescription
 
-import (
-	"github.com/matthewmueller/golly/dom2/msconnectivity"
-	"github.com/matthewmueller/golly/dom2/rtcstats"
-)
+import "github.com/matthewmueller/golly/dom2/rtcstats"
 
 type MSDescription struct {
 	*rtcstats.RTCStats

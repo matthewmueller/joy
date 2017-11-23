@@ -1,3 +1,0 @@
-package channelinterpretation
-
-type ChannelInterpretation string

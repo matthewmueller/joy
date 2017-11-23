@@ -1,5 +1,7 @@
 package svgfilterprimitivestandardattributes
 
+import "github.com/matthewmueller/golly/dom2/svganimatedlength"
+
 // js:"SVGFilterPrimitiveStandardAttributes,omit"
 type SVGFilterPrimitiveStandardAttributes interface {
 

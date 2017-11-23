@@ -1,9 +1,7 @@
 package webkitfileentry
 
 import (
-	"github.com/matthewmueller/golly/dom2/domerror"
-	"github.com/matthewmueller/golly/dom2/file"
-	"github.com/matthewmueller/golly/dom2/webkitfilesytem"
+	"github.com/matthewmueller/goja/file"
 	"github.com/matthewmueller/golly/js"
 )
 

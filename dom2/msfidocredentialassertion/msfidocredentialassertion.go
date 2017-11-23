@@ -1,6 +1,9 @@
 package msfidocredentialassertion
 
-import "github.com/matthewmueller/golly/js"
+import (
+	"github.com/matthewmueller/golly/dom2/msassertion"
+	"github.com/matthewmueller/golly/js"
+)
 
 // js:"MSFIDOCredentialAssertion,omit"
 type MSFIDOCredentialAssertion struct {

@@ -1,3 +1,0 @@
-package rtcicetransportstate
-
-type RTCIceTransportState string

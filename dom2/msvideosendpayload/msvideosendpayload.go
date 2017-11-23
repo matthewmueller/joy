@@ -1,7 +1,5 @@
 package msvideosendpayload
 
-import "github.com/matthewmueller/golly/dom2/msvideopayload"
-
 type MSVideoSendPayload struct {
 	*msvideopayload.MSVideoPayload
 

@@ -1,11 +1,7 @@
 package rtcrtpsender
 
 import (
-	"github.com/matthewmueller/golly/dom2/rtcdtlstransport"
 	"github.com/matthewmueller/golly/dom2/rtcrtpparameters"
-	"github.com/matthewmueller/golly/dom2/rtcssrcconflictevent"
-	"github.com/matthewmueller/golly/dom2/rtcstatsprovider"
-	"github.com/matthewmueller/golly/dom2/window"
 	"github.com/matthewmueller/golly/js"
 )
 
