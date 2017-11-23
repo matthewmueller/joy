@@ -2,24 +2,12 @@
 (function() {
 var pkg = {};
 pkg["github.com/matthewmueller/golly/testdata/65-dup-method-struct"] = (function() {
-function Document (o) {
-o = o || {};
-};
-Document.prototype.nodeName = function() {
-var d = this;
-return "";
-};
-function Window (o) {
-o = o || {};
-};
 function main () {
-var w = new Window({});
-var doc = w.Document();
-console.log(doc.nodeName.bind(doc)());
+var w = window;
+var doc = document;
+console.log(doc.nodeName);
 };
 return {
-  Document: Document,
-  Window: Window,
   main: main
 };
 })();

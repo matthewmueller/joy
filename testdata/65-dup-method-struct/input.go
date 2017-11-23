@@ -3,16 +3,25 @@ package main
 import "github.com/matthewmueller/golly/js"
 
 // Document struct
+// js:"document,omit"
 type Document struct {
 }
 
 // NodeName fn
 // js:"nodeName"
 func (d *Document) NodeName() string {
+	js.Rewrite("$<.nodeName")
 	return ""
 }
 
+// New fn
+func New() *Window {
+	js.Rewrite("window")
+	return &Window{}
+}
+
 // Window struct
+// js:"window,omit"
 type Window struct {
 }
 
@@ -23,7 +32,7 @@ func (w *Window) Document() *Document {
 }
 
 func main() {
-	w := Window{}
+	w := New()
 	doc := w.Document()
 	println(doc.NodeName())
 }

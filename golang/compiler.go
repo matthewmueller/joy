@@ -130,7 +130,7 @@ func (c *Compiler) Parse(packages ...string) (idx *index.Index, g *graph.Graph, 
 
 // Assemble the code
 func (c *Compiler) Assemble(idx *index.Index, g *graph.Graph) (scripts []*script.Script, err error) {
-	defer log.Trace("assemble").Stop(&err)
+	// defer log.Trace("assemble").Stop(&err)
 
 	tr := translator.New(idx)
 

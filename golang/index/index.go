@@ -176,6 +176,8 @@ func (i *Index) Runtime(names ...string) (runtimes []def.Definition, err error) 
 // TODO: memoize
 func (i *Index) DefinitionOf(packagePath string, n ast.Node) (def.Definition, error) {
 	switch t := n.(type) {
+	// case *ast.CallExpr:
+	// 	return i.callExpr(packagePath, t)
 	case *ast.SelectorExpr:
 		return i.selectorDefinition(packagePath, t)
 	case *ast.Ident:
@@ -190,6 +192,46 @@ func (i *Index) DefinitionOf(packagePath string, n ast.Node) (def.Definition, er
 		return i.identDefinition(packagePath, id)
 	}
 }
+
+// func (i *Index) callExpr(packagePath string, n *ast.CallExpr) (def.Definition, error) {
+// 	var caller def.Definition
+// 	switch t := n.Fun.(type) {
+// 	case *ast.SelectorExpr:
+// 		c, e := i.selectorDefinition(packagePath, t)
+// 		if e != nil {
+// 			return nil, e
+// 		}
+// 		caller = c
+// 	case *ast.Ident:
+// 		c, e := i.identDefinition(packagePath, t)
+// 		if e != nil {
+// 			return nil, e
+// 		}
+// 		caller = c
+// 	default:
+// 		return nil, fmt.Errorf("index/callExpr: unexpected func %T", n.Fun)
+// 	}
+
+// 	if caller != nil {
+// 		d := i.Get(caller.ID() + " " + )
+// 		if d != nil {
+// 			log.Infof()
+// 		}
+
+// 		log.Infof("KIND=%s ID=%s", caller.Kind(), caller.ID())
+// 	}
+
+// 	// switch t := caller.(type) {
+// 	// case defs.Structer:
+// 	// 	_ = t
+// 	// case defs.Interfacer:
+// 	// 	_ = t
+// 	// default:
+// 	// 	return nil, fmt.Errorf("index/callExpr: unexpected caller %T", caller)
+// 	// }
+
+// 	return caller, nil
+// }
 
 // Finds the definition based on the selector expression
 // This is a bit subtle, but we basically do the following:
@@ -261,9 +303,9 @@ func (i *Index) identDefinition(packagePath string, n *ast.Ident) (def.Definitio
 	// is a hack to make sure that we prioritize methods over functions
 	// e.g. t.test() > test()
 	// ... but prioritize values over methods
-	// e.g (document.Body).InnerHTML() > document.(Body.InnerHTML()))
+	// e.g [document.Body].InnerHTML() > document.[Body.InnerHTML()]
 	d := i.Get(pkg.Path() + " " + obj.Name())
-	if d != nil && d.Kind() != "FUNCTION" {
+	if d != nil && d.Kind() == "METHOD" {
 		return d, nil
 	}
 
