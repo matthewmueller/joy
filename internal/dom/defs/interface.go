@@ -3,7 +3,6 @@ package defs
 import (
 	"fmt"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/index"
 	"github.com/matthewmueller/golly/internal/dom/raw"
@@ -15,17 +14,27 @@ var _ Interface = (*iface)(nil)
 
 // NewInterface creates an interface
 func NewInterface(index index.Index, data *raw.Interface) Interface {
-	return &iface{
+	d := &iface{
 		data:  data,
 		index: index,
 	}
+
+	for _, method := range data.Methods {
+		d.methods = append(d.methods, NewMethod(index, method, d))
+	}
+
+	for _, property := range data.Properties {
+		d.properties = append(d.properties, NewProperty(index, property, d))
+	}
+
+	return d
 }
 
 // Interface interface
 type Interface interface {
 	ImplementedBy() ([]def.Definition, error)
-	Properties() []def.Definition
-	Methods() []def.Definition
+	Properties() []Property
+	Methods() []Method
 	FindEvent(name string) (def.Definition, error)
 
 	def.Definition
@@ -39,8 +48,8 @@ type iface struct {
 
 	index         index.Index
 	implementedBy []def.Definition
-	methods       []def.Definition
-	properties    []def.Definition
+	methods       []Method
+	properties    []Property
 }
 
 // ID fn
@@ -58,12 +67,32 @@ func (d *iface) Kind() string {
 	return "INTERFACE"
 }
 
-func (d *iface) Type() (string, error) {
-	return d.index.Coerce(d.data.Name)
+func (d *iface) Type(caller string) (string, error) {
+	imps, err := d.ImplementedBy()
+	if err != nil {
+		return "", errors.Wrapf(err, "implemented by")
+	}
+	if caller == d.pkg || d.pkg == "" {
+		if len(imps) > 0 {
+			return gen.Capitalize(d.data.Name), nil
+		}
+		return gen.Pointer(gen.Capitalize(d.data.Name)), nil
+	}
+
+	if len(imps) > 0 {
+		return d.pkg + "." + gen.Capitalize(d.data.Name), nil
+	}
+	return gen.Pointer(d.pkg + "." + gen.Capitalize(d.data.Name)), nil
 }
 
 func (d *iface) SetPackage(pkg string) {
 	d.pkg = pkg
+	for _, method := range d.Methods() {
+		method.SetPackage(pkg)
+	}
+	for _, property := range d.Properties() {
+		property.SetPackage(pkg)
+	}
 }
 func (d *iface) GetPackage() string {
 	return d.pkg
@@ -71,6 +100,12 @@ func (d *iface) GetPackage() string {
 
 func (d *iface) SetFile(file string) {
 	d.file = file
+	for _, method := range d.Methods() {
+		method.SetFile(file)
+	}
+	for _, property := range d.Properties() {
+		property.SetFile(file)
+	}
 }
 func (d *iface) GetFile() string {
 	return d.file
@@ -102,18 +137,12 @@ func (d *iface) ImplementedBy() (imps []def.Definition, err error) {
 	return imps, nil
 }
 
-func (d *iface) Methods() (methods []def.Definition) {
-	for _, method := range d.data.Methods {
-		methods = append(methods, NewMethod(d.index, method, d))
-	}
-	return methods
+func (d *iface) Methods() (methods []Method) {
+	return d.methods
 }
 
-func (d *iface) Properties() (props []def.Definition) {
-	for _, prop := range d.data.Properties {
-		props = append(props, NewProperty(d.index, prop, d))
-	}
-	return props
+func (d *iface) Properties() (props []Property) {
+	return d.properties
 }
 
 // Parents fn
@@ -139,13 +168,19 @@ func (d *iface) Parents() (parents []def.Definition, err error) {
 
 // Dependencies fn
 func (d *iface) Dependencies() (defs []def.Definition, err error) {
-	// imps, err := d.ImplementedBy()
-	// if err != nil {
-	// 	return defs, err
-	// }
-	// if len(imps) > 0 {
-	// 	return defs, nil
-	// }
+	// Extends
+	if d.data.Extends != "" {
+		if def := d.index.Find(d.data.Extends); def != nil {
+			defs = append(defs, def)
+		}
+	}
+
+	// Implements
+	for _, imp := range d.data.Implements {
+		if def := d.index.Find(imp); def != nil {
+			defs = append(defs, def)
+		}
+	}
 
 	if d.data.Constructor != nil {
 		for _, param := range d.data.Constructor.Params {
@@ -179,17 +214,28 @@ func (d *iface) Dependencies() (defs []def.Definition, err error) {
 		defs = append(defs, deps...)
 	}
 
-	// for _, event := range d.data.Events {
-	// 	if def := d.index.Find(event.Type); def != nil {
-	// 		defs = append(defs, def)
-	// 	}
-	// }
-
 	return defs, nil
 }
 
 // Generate fn
 func (d *iface) Generate() (string, error) {
+	imps, err := d.ImplementedBy()
+	if err != nil {
+		return "", errors.Wrap(err, "implemented by")
+	}
+	// ignore for now
+	if len(imps) > 0 {
+		return d.generateInterface()
+		// log.Infof("use interface=%s", d.Name())
+		// return gen.Generate("interface/"+d.data.Name, data, `
+		// package {{ .Package }}
+
+		// type {{ .Name }} interface {
+
+		// }
+		// `)
+	}
+
 	data := struct {
 		Package    string
 		Name       string
@@ -201,29 +247,17 @@ func (d *iface) Generate() (string, error) {
 		Name:    gen.Capitalize(d.data.Name),
 	}
 
-	imps, err := d.ImplementedBy()
-	if err != nil {
-		return "", errors.Wrap(err, "implemented by")
-	}
-	// ignore for now
-	if len(imps) > 0 {
-		log.Infof("use interface=%s", d.Name())
-		return gen.Generate("interface/"+d.data.Name, data, `
-		package {{ .Package }}
-
-		type {{ .Name }} interface {
-
-		}
-		`)
-	}
-
 	// Handle embeds
 	parents, err := d.Parents()
 	if err != nil {
 		return "", errors.Wrapf(err, "error getting parents")
 	}
 	for _, parent := range parents {
-		data.Embeds = append(data.Embeds, parent.Name())
+		t, err := parent.Type(d.pkg)
+		if err != nil {
+			return "", errors.Wrapf(err, "parent type")
+		}
+		data.Embeds = append(data.Embeds, t)
 	}
 
 	// handle methods
@@ -247,6 +281,7 @@ func (d *iface) Generate() (string, error) {
 	return gen.Generate("interface/"+d.data.Name, data, `
 		package {{ .Package }}
 		
+		// js:"{{ .Name }},omit"
 		type {{ .Name }} struct {
 			{{- range .Embeds }}
 			{{ . }}
@@ -260,6 +295,69 @@ func (d *iface) Generate() (string, error) {
 		{{ range .Properties -}}
 		{{ . }}
 		{{- end }}
+	`)
+}
+
+func (d *iface) generateInterface() (string, error) {
+	data := struct {
+		Package    string
+		Name       string
+		Embeds     []string
+		Methods    []string
+		Properties []string
+	}{
+		Package: d.pkg,
+		Name:    gen.Capitalize(d.data.Name),
+	}
+
+	// Handle embeds
+	parents, err := d.Parents()
+	if err != nil {
+		return "", errors.Wrapf(err, "error getting parents")
+	}
+	for _, parent := range parents {
+		t, err := parent.Type(d.pkg)
+		if err != nil {
+			return "", errors.Wrapf(err, "parent type")
+		}
+		data.Embeds = append(data.Embeds, t)
+	}
+
+	// handle methods
+	for _, method := range d.Methods() {
+		m, err := method.GenerateInterface()
+		if err != nil {
+			return "", errors.Wrapf(err, "error generating method")
+		}
+		data.Methods = append(data.Methods, m)
+	}
+
+	// handle properties
+	for _, property := range d.Properties() {
+		m, err := property.GenerateInterface()
+		if err != nil {
+			return "", errors.Wrapf(err, "error generating property")
+		}
+		data.Properties = append(data.Properties, m)
+	}
+
+	return gen.Generate("interface/"+d.data.Name, data, `
+		package {{ .Package }}
+		
+		// js:"{{ .Name }},omit"
+		type {{ .Name }} interface {
+			{{- range .Embeds }}
+			{{ . }}
+			{{- end }}
+		
+			{{ range .Methods -}}
+			{{ . }}
+			{{- end }}
+	
+			{{ range .Properties -}}
+			{{ . }}
+			{{- end }}
+		}
 	`)
 }
 

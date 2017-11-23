@@ -46,8 +46,11 @@ func (d *enum) Kind() string {
 	return "ENUM"
 }
 
-func (d *enum) Type() (string, error) {
-	return d.index.Coerce(d.data.Name)
+func (d *enum) Type(caller string) (string, error) {
+	if caller == d.pkg {
+		return gen.Pointer(gen.Capitalize(d.data.Name)), nil
+	}
+	return gen.Pointer(d.pkg + "." + gen.Capitalize(d.data.Name)), nil
 }
 
 func (d *enum) SetPackage(pkg string) {
@@ -64,16 +67,6 @@ func (d *enum) GetFile() string {
 	return d.file
 }
 
-// // Parents fn
-// func (d *Enum) Parents() []def.Definition {
-// 	return nil
-// }
-
-// // Ancestors fn
-// func (d *Enum) Ancestors() []def.Definition {
-// 	return nil
-// }
-
 // Children fn
 func (d *enum) Dependencies() (defs []def.Definition, err error) {
 	return defs, nil
@@ -86,7 +79,7 @@ func (d *enum) Generate() (string, error) {
 		Name    string
 	}{
 		Package: d.pkg,
-		Name:    d.data.Name,
+		Name:    gen.Capitalize(d.data.Name),
 	}
 
 	return gen.Generate("enum/"+d.data.Name, data, `

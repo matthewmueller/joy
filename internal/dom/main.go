@@ -3,9 +3,11 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
@@ -32,6 +34,8 @@ var cliqueNames = map[string]string{
 	"TextTrack":            "texttrack",
 	"MSHTMLWebViewElement": "mswebviewelement",
 	"SVGUseElement":        "svguseelement",
+	"WebKitFileSystem":     "webkitfilesytem",
+	"AudioNode":            "audionode",
 }
 
 func generate(dir string) error {
@@ -45,13 +49,15 @@ func generate(dir string) error {
 		return err
 	}
 
-	definitions, err := parser.Parse(xml, comments)
+	index, err := parser.Parse(xml, comments)
 	if err != nil {
 		return err
 	}
 
 	g := graph.New()
-	for _, parent := range definitions {
+	for _, parent := range index {
+		g.Node(parent)
+
 		deps, err := parent.Dependencies()
 		if err != nil {
 			return err
@@ -67,7 +73,7 @@ func generate(dir string) error {
 		if len(clique) == 1 {
 			name := clique[0].ID()
 			pkgname := gen.Lowercase(name)
-			def := definitions[name]
+			def := index[name]
 			def.SetPackage(pkgname)
 			def.SetFile(pkgname)
 			continue
@@ -81,22 +87,34 @@ func generate(dir string) error {
 			}
 		}
 		if pkgname == "" {
-			return errors.New("clique name is not defined")
+			var ids []string
+			for _, def := range clique {
+				ids = append(ids, def.ID())
+			}
+			return fmt.Errorf("group name not defined for this clique: %s", strings.Join(ids, ", "))
 		}
 
 		for _, def := range clique {
 			name := def.ID()
 			filename := gen.Lowercase(name)
-			def := definitions[name]
+			def := index[name]
 			def.SetPackage(pkgname)
 			def.SetFile(filename)
 		}
 	}
 
-	for id, def := range definitions {
+	defs := index.FindByKind("ENUM", "DICTIONARY", "INTERFACE")
+
+	l := len(defs)
+	for i, def := range defs {
 		code, err := def.Generate()
 		if err != nil {
-			return errors.Wrapf(err, "error generating %s", id)
+			return errors.Wrapf(err, "error generating %s", def.ID())
+		}
+
+		formatted, err := gen.Format(code)
+		if err != nil {
+			return errors.Wrapf(err, "error formatting %s received\n%s", def.ID(), code)
 		}
 
 		pkgpath := path.Join(dir, def.GetPackage())
@@ -104,9 +122,11 @@ func generate(dir string) error {
 			return errors.Wrapf(err, "error mkdir")
 		}
 
-		if err := ioutil.WriteFile(path.Join(pkgpath, def.GetFile()+".go"), []byte(code), 0644); err != nil {
+		if err := ioutil.WriteFile(path.Join(pkgpath, def.GetFile()+".go"), []byte(formatted), 0644); err != nil {
 			return errors.Wrapf(err, "error writefile")
 		}
+
+		log.Infof("generated %s (%d/%d)", def.ID(), i, l)
 	}
 
 	return nil
@@ -132,6 +152,10 @@ func main() {
 	pwd, err := os.Getwd()
 	if err != nil {
 		log.WithError(err).Fatalf("error getting cwd")
+	}
+
+	if err := os.RemoveAll(path.Join(pwd, "dom2")); err != nil {
+		log.WithError(err).Fatalf("removing dom")
 	}
 
 	if e := generate(path.Join(pwd, "dom2")); e != nil {

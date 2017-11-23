@@ -46,7 +46,7 @@ func (d *cb) Kind() string {
 	return "CALLBACK"
 }
 
-func (d *cb) Type() (string, error) {
+func (d *cb) Type(caller string) (string, error) {
 	return d.Generate()
 }
 
@@ -80,7 +80,7 @@ func (d *cb) Generate() (string, error) {
 	}{}
 
 	for _, param := range d.data.Params {
-		t, err := d.index.Coerce(param.Type)
+		t, err := d.index.Coerce(d.pkg, param.Type)
 		if err != nil {
 			return "", err
 		}
@@ -91,7 +91,7 @@ func (d *cb) Generate() (string, error) {
 		})
 	}
 
-	t, err := d.index.Coerce(d.data.Type)
+	t, err := d.index.Coerce(d.pkg, d.data.Type)
 	if err != nil {
 		return "", err
 	}

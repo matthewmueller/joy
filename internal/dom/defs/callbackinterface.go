@@ -48,8 +48,8 @@ func (d *cbiface) Kind() string {
 	return "CALLBACK_INTERFACE"
 }
 
-func (d *cbiface) Type() (string, error) {
-	return d.index.Coerce(d.data.Name)
+func (d *cbiface) Type(caller string) (string, error) {
+	return d.Generate()
 }
 
 func (d *cbiface) SetPackage(pkg string) {
@@ -68,6 +68,13 @@ func (d *cbiface) GetFile() string {
 
 // Children fn
 func (d *cbiface) Dependencies() (defs []def.Definition, err error) {
+	// Extends
+	if d.data.Extends != "" {
+		if def := d.index.Find(d.data.Extends); def != nil {
+			defs = append(defs, def)
+		}
+	}
+
 	for _, method := range d.data.Methods {
 		for _, param := range method.Params {
 			if def := d.index.Find(param.Type); def != nil {
@@ -97,7 +104,7 @@ func (d *cbiface) Generate() (string, error) {
 
 	method := d.data.Methods[0]
 	for _, param := range method.Params {
-		t, e := d.index.Coerce(param.Type)
+		t, e := d.index.Coerce(d.pkg, param.Type)
 		if e != nil {
 			return "", e
 		}
@@ -108,7 +115,7 @@ func (d *cbiface) Generate() (string, error) {
 		})
 	}
 
-	t, e := d.index.Coerce(method.Type)
+	t, e := d.index.Coerce(d.pkg, method.Type)
 	if e != nil {
 		return "", e
 	}

@@ -43,7 +43,7 @@ type docs struct {
 }
 
 // Parse the data
-func Parse(api string, doc string) (map[string]def.Definition, error) {
+func Parse(api string, doc string) (index.Index, error) {
 	var a apis
 	if e := xml.Unmarshal([]byte(api), &a); e != nil {
 		return nil, errors.Wrap(e, "error parsing xml")
@@ -86,13 +86,15 @@ func Parse(api string, doc string) (map[string]def.Definition, error) {
 
 		for _, m := range iface.Methods {
 			if i, isset := methodmap[name+" "+m.Name]; isset {
-				m.Comment = strings.Trim(doc.Members.Methods[i].Comment, "/* \r\n\t/")
+				comment := strings.Trim(doc.Members.Methods[i].Comment, "/* \r\n\t/")
+				m.Comment = strings.Join(strings.Split(comment, "\n"), "\n//")
 			}
 		}
 
 		for _, m := range iface.Properties {
 			if i, isset := propmap[name+" "+m.Name]; isset {
-				m.Comment = strings.Trim(doc.Members.Properties[i].Comment, "/* \r\n\t/")
+				comment := strings.Trim(doc.Members.Properties[i].Comment, "/* \r\n\t/")
+				m.Comment = strings.Join(strings.Split(comment, "\n"), "\n//")
 			}
 		}
 	}

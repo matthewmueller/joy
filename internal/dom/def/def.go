@@ -5,7 +5,7 @@ type Definition interface {
 	ID() string
 	Name() string
 	Kind() string
-	Type() (string, error)
+	Type(caller string) (string, error)
 	Dependencies() ([]Definition, error)
 	Generate() (string, error)
 

@@ -23,6 +23,10 @@ func New() *Graph {
 	}
 }
 
+func (g *Graph) Node(node Node) {
+	g.nodes[node.ID()] = node
+}
+
 // Edge adds an edge
 func (g *Graph) Edge(parent Node, child Node) {
 	g.nodes[parent.ID()] = parent

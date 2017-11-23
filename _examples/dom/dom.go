@@ -1,22 +1,24 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/dom"
-	"github.com/matthewmueller/golly/dom/window"
+	"github.com/matthewmueller/golly/dom2/window"
 )
 
 func main() {
 
-	w := window.New()
-	w.AddEventListener("click", func(evt *dom.Event) {
-		t := evt.GetType()
-		println(t)
-	}, false)
-	w.Alert("amazing!!!!!!")
+	w := window.Window{}
+	w.AddEventListener("click", func(evt window.Event) {
+		// evt.
+	})
+	// w.AddEventListener("click", func(evt *dom.Event) {
+	// 	t := evt.GetType()
+	// 	println(t)
+	// }, false)
+	// w.Alert("amazing!!!!!!")
 
-	a := w.GetDocument().QuerySelector("a")
-	hostname := a.(dom.HTMLAnchorElement).GetHostname()
-	println(hostname)
+	// a := w.GetDocument().QuerySelector("a")
+	// hostname := a.(dom.HTMLAnchorElement).GetHostname()
+	// println(hostname)
 }
 
 // func test() {

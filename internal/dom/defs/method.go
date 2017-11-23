@@ -23,6 +23,8 @@ func NewMethod(index index.Index, data *raw.Method, receiver Interface) Method {
 
 // Method interface
 type Method interface {
+	GenerateInterface() (string, error)
+
 	def.Definition
 }
 
@@ -49,8 +51,11 @@ func (d *method) Kind() string {
 	return "METHOD"
 }
 
-func (d *method) Type() (string, error) {
-	return d.index.Coerce(d.data.Name)
+func (d *method) Type(caller string) (string, error) {
+	if caller == d.pkg {
+		return gen.Pointer(gen.Capitalize(d.data.Name)), nil
+	}
+	return gen.Pointer(d.pkg + "." + gen.Capitalize(d.data.Name)), nil
 }
 
 func (d *method) SetPackage(pkg string) {
@@ -83,17 +88,19 @@ func (d *method) Dependencies() (defs []def.Definition, e error) {
 // Generate fn
 func (d *method) Generate() (string, error) {
 	data := struct {
-		Recv   string
-		Name   string
-		Params []gen.Vartype
-		Result gen.Vartype
+		Recv    string
+		Name    string
+		Params  []gen.Vartype
+		Result  gen.Vartype
+		Comment string
 	}{
-		Recv: gen.Pointer(d.recv.Name()),
-		Name: gen.Capitalize(d.data.Name),
+		Recv:    gen.Pointer(d.recv.Name()),
+		Name:    gen.Capitalize(d.data.Name),
+		Comment: d.data.Comment,
 	}
 
 	for _, param := range d.data.Params {
-		t, err := d.index.Coerce(param.Type)
+		t, err := d.index.Coerce(d.pkg, param.Type)
 		if err != nil {
 			return "", errors.Wrapf(err, "error coercing param")
 		}
@@ -104,7 +111,7 @@ func (d *method) Generate() (string, error) {
 		})
 	}
 
-	t, e := d.index.Coerce(d.data.Type)
+	t, e := d.index.Coerce(d.pkg, d.data.Type)
 	if e != nil {
 		return "", e
 	}
@@ -117,14 +124,16 @@ func (d *method) Generate() (string, error) {
 	if t == "" {
 		if async {
 			return gen.Generate("method/"+d.data.Name, data, `
-				func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) {
+				// {{ .Name }} {{ .Comment }}
+				func ({{ .Recv }}) {{ .Name }}({{ joinvt .Params }}) {
 					js.Rewrite("await $<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 				}
 			`)
 		}
 
 		return gen.Generate("method/"+d.data.Name, data, `
-			func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) {
+			// {{ .Name }} {{ .Comment }}
+			func ({{ .Recv }}) {{ .Name }}({{ joinvt .Params }}) {
 				js.Rewrite("$<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 			}
 		`)
@@ -132,16 +141,65 @@ func (d *method) Generate() (string, error) {
 
 	if async {
 		return gen.Generate("method/"+d.data.Name, data, `
-			func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
+			// {{ .Name }} {{ .Comment }}
+			func ({{ .Recv }}) {{ .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
 				js.Rewrite("await $<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 				return {{ .Result.Var }}
 			}
 		`)
 	}
 	return gen.Generate("method/"+d.data.Name, data, `
-		func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
+		// {{ .Name }} {{ .Comment }}
+		func ({{ .Recv }}) {{ .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
 			js.Rewrite("$<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 			return {{ .Result.Var }}
 		}
+	`)
+}
+
+func (d *method) GenerateInterface() (string, error) {
+	data := struct {
+		Recv    string
+		Name    string
+		Params  []gen.Vartype
+		Result  gen.Vartype
+		Comment string
+	}{
+		Recv:    gen.Pointer(gen.Capitalize(d.recv.Name())),
+		Name:    gen.Capitalize(d.data.Name),
+		Comment: d.data.Comment,
+	}
+
+	for _, param := range d.data.Params {
+		t, err := d.index.Coerce(d.pkg, param.Type)
+		if err != nil {
+			return "", errors.Wrapf(err, "error coercing param")
+		}
+		data.Params = append(data.Params, gen.Vartype{
+			Var:      gen.Identifier(param.Name),
+			Optional: param.Optional,
+			Type:     t,
+		})
+	}
+
+	t, e := d.index.Coerce(d.pkg, d.data.Type)
+	if e != nil {
+		return "", e
+	}
+	data.Result = gen.Vartype{
+		Var:  gen.Variable(t),
+		Type: t,
+	}
+
+	if t == "" {
+		return gen.Generate("method/"+d.data.Name, data, `
+			// {{ .Name }} {{ .Comment }}
+			{{ .Name }}({{ joinvt .Params }})
+		`)
+	}
+
+	return gen.Generate("method/"+d.data.Name, data, `
+		// {{ .Name }} {{ .Comment }}
+		{{ .Name }}({{ joinvt .Params }}) ({{ vt .Result }})
 	`)
 }

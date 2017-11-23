@@ -4,6 +4,7 @@ import (
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/index"
 	"github.com/matthewmueller/golly/internal/dom/raw"
+	"github.com/matthewmueller/golly/internal/gen"
 )
 
 var _ TypeDef = (*typedef)(nil)
@@ -44,8 +45,11 @@ func (d *typedef) Kind() string {
 	return "TYPEDEF"
 }
 
-func (d *typedef) Type() (string, error) {
-	return d.index.Coerce(d.data.NewType)
+func (d *typedef) Type(caller string) (string, error) {
+	if caller == d.pkg {
+		return gen.Pointer(gen.Capitalize(d.data.NewType)), nil
+	}
+	return gen.Pointer(d.pkg + "." + gen.Capitalize(d.data.NewType)), nil
 }
 
 func (d *typedef) SetPackage(pkg string) {

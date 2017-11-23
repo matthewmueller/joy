@@ -49,8 +49,11 @@ func (d *dict) Kind() string {
 	return "DICTIONARY"
 }
 
-func (d *dict) Type() (string, error) {
-	return d.index.Coerce(d.data.Name)
+func (d *dict) Type(caller string) (string, error) {
+	if caller == d.pkg {
+		return gen.Pointer(gen.Capitalize(d.data.Name)), nil
+	}
+	return gen.Pointer(d.pkg + "." + gen.Capitalize(d.data.Name)), nil
 }
 
 func (d *dict) SetPackage(pkg string) {
@@ -81,6 +84,13 @@ func (d *dict) Parents() (parents []def.Definition, err error) {
 
 // Children fn
 func (d *dict) Dependencies() (defs []def.Definition, err error) {
+	// Extends
+	if d.data.Extends != "" {
+		if def := d.index.Find(d.data.Extends); def != nil {
+			defs = append(defs, def)
+		}
+	}
+
 	for _, member := range d.data.Members {
 		if def := d.index.Find(member.Type); def != nil {
 			defs = append(defs, def)
@@ -107,7 +117,11 @@ func (d *dict) Generate() (string, error) {
 		return "", errors.Wrapf(err, "error getting parents")
 	}
 	for _, parent := range parents {
-		data.Embeds = append(data.Embeds, parent.Name())
+		t, err := parent.Type(d.pkg)
+		if err != nil {
+			return "", errors.Wrapf(err, "parent type")
+		}
+		data.Embeds = append(data.Embeds, t)
 	}
 
 	for _, member := range d.data.Members {
@@ -133,18 +147,13 @@ func (d *dict) Generate() (string, error) {
 	`)
 }
 
-type memberData struct {
-	Name string
-	Type string
-}
-
 // Generate fn
 func (d *dict) generateMember(m *raw.Member) (string, error) {
 	member := gen.Vartype{
 		Var: m.Name,
 	}
 
-	t, e := d.index.Coerce(m.Type)
+	t, e := d.index.Coerce(d.pkg, m.Type)
 	if e != nil {
 		return "", e
 	}

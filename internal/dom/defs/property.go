@@ -23,6 +23,8 @@ func NewProperty(index index.Index, data *raw.Property, receiver Interface) Prop
 
 // Property interface
 type Property interface {
+	GenerateInterface() (string, error)
+
 	def.Definition
 }
 
@@ -49,8 +51,11 @@ func (d *prop) Kind() string {
 	return "PROPERTY"
 }
 
-func (d *prop) Type() (string, error) {
-	return d.index.Coerce(d.data.Name)
+func (d *prop) Type(caller string) (string, error) {
+	if caller == d.pkg {
+		return gen.Pointer(gen.Capitalize(d.data.Name)), nil
+	}
+	return gen.Pointer(d.pkg + "." + gen.Capitalize(d.data.Name)), nil
 }
 
 func (d *prop) SetPackage(pkg string) {
@@ -68,12 +73,16 @@ func (d *prop) GetFile() string {
 }
 
 // Dependencies fn
+// NOTE: Since this is called via
 func (d *prop) Dependencies() (defs []def.Definition, err error) {
 	if d.data.Type == "EventHandler" {
 		def, err := d.findEvent(d.data.EventHandler)
 		if err != nil {
-			return append(defs, def), nil
+			return defs, errors.Wrapf(err, "event handler error")
+		} else if def == nil {
+			return defs, nil
 		}
+		return append(defs, def), nil
 	}
 
 	if def := d.index.Find(d.data.Type); def != nil {
@@ -85,12 +94,14 @@ func (d *prop) Dependencies() (defs []def.Definition, err error) {
 
 func (d *prop) Generate() (string, error) {
 	data := struct {
-		Recv   string
-		Name   string
-		Result gen.Vartype
+		Recv    string
+		Name    string
+		Result  gen.Vartype
+		Comment string
 	}{
-		Recv: gen.Pointer(d.recv.Name()),
-		Name: gen.Capitalize(d.data.Name),
+		Recv:    gen.Pointer(d.recv.Name()),
+		Name:    gen.Capitalize(d.data.Name),
+		Comment: d.data.Comment,
 	}
 
 	if d.data.Type == "EventHandler" {
@@ -99,26 +110,30 @@ func (d *prop) Generate() (string, error) {
 			return "", err
 		}
 
-		t, err := def.Type()
+		t, err := def.Type(d.pkg)
 		if err != nil {
 			return "", errors.Wrapf(err, "error getting type")
 		}
 
+		// event handlers are functions
+		// TODO: this seems fragile
+		t = "func(" + t + ")"
+
 		data.Result = gen.Vartype{
-			Var:      gen.Identifier(def.Name()),
+			Var:      gen.Lowercase(d.data.Name),
 			Optional: d.data.Nullable,
 			Type:     t,
 		}
-	}
+	} else {
+		t, err := d.index.Coerce(d.pkg, d.data.Type)
+		if err != nil {
+			return "", errors.Wrapf(err, "error coercing")
+		}
 
-	t, err := d.index.Coerce(d.data.Type)
-	if err != nil {
-		return "", errors.Wrapf(err, "error coercing")
-	}
-
-	data.Result = gen.Vartype{
-		Var:  gen.Identifier(d.data.Name),
-		Type: t,
+		data.Result = gen.Vartype{
+			Var:  gen.Identifier(d.data.Name),
+			Type: t,
+		}
 	}
 
 	// only one known instance of this (property that returns a Promise that returns undefined)
@@ -128,7 +143,7 @@ func (d *prop) Generate() (string, error) {
 
 	if async && data.Result.Type == "" {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
-			func ({{ .Recv }}) Get{{ capitalize .Name }}() {
+			func ({{ .Recv }}) {{ .Name }}() {
 				js.Rewrite("await $<.{{ .Name }}")
 			}
 		`)
@@ -138,7 +153,8 @@ func (d *prop) Generate() (string, error) {
 		results = append(results, getter)
 	} else {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
-		func ({{ .Recv }}) Get{{ capitalize .Name }}() ({{ .Result.Var }} {{ .Result.Type }}) {
+		// {{ .Name }} {{ .Comment }}
+		func ({{ .Recv }}) {{ .Name }}() ({{ .Result.Var }} {{ .Result.Type }}) {
 			js.Rewrite("$<.{{ .Name }}")
 			return {{ .Result.Var }}
 		}
@@ -151,9 +167,92 @@ func (d *prop) Generate() (string, error) {
 
 	if !d.data.ReadOnly {
 		setter, e := gen.Generate("property_setter/"+d.data.Name, data, `
-		func ({{ .Recv }}) Set{{ capitalize .Name }} ({{ .Result.Var }} {{ .Result.Type }}) {
+		// {{ .Name }} {{ .Comment }}
+		func ({{ .Recv }}) Set{{ .Name }} ({{ .Result.Var }} {{ .Result.Type }}) {
 			js.Rewrite("$<.{{ .Name }} = $1", {{ .Result.Var }})
 		}
+		`)
+		if e != nil {
+			return "", e
+		}
+		results = append(results, setter)
+	}
+
+	return strings.Join(results, "\n"), nil
+}
+
+func (d *prop) GenerateInterface() (string, error) {
+	data := struct {
+		Recv    string
+		Name    string
+		Result  gen.Vartype
+		Comment string
+	}{
+		Recv:    gen.Pointer(gen.Capitalize(d.recv.Name())),
+		Name:    gen.Capitalize(d.data.Name),
+		Comment: d.data.Comment,
+	}
+
+	if d.data.Type == "EventHandler" {
+		def, err := d.findEvent(d.data.EventHandler)
+		if err != nil {
+			return "", err
+		}
+
+		t, err := def.Type(d.pkg)
+		if err != nil {
+			return "", errors.Wrapf(err, "error getting type")
+		}
+
+		// event handlers are functions
+		// TODO: this seems fragile
+		t = "func(" + t + ")"
+
+		data.Result = gen.Vartype{
+			Var:      gen.Lowercase(d.data.Name),
+			Optional: d.data.Nullable,
+			Type:     t,
+		}
+	} else {
+		t, err := d.index.Coerce(d.pkg, d.data.Type)
+		if err != nil {
+			return "", errors.Wrapf(err, "error coercing")
+		}
+
+		data.Result = gen.Vartype{
+			Var:  gen.Identifier(d.data.Name),
+			Type: t,
+		}
+	}
+
+	// only one known instance of this (property that returns a Promise that returns undefined)
+	// so we'll just special case this for now
+	async := strings.Contains(d.data.Type, "Promise<")
+	results := []string{}
+
+	if async && data.Result.Type == "" {
+		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
+			{{ .Name }}()
+		`)
+		if e != nil {
+			return "", e
+		}
+		results = append(results, getter)
+	} else {
+		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
+		// {{ .Name }} {{ .Comment }}
+		{{ .Name }}() ({{ .Result.Var }} {{ .Result.Type }})
+		`)
+		if e != nil {
+			return "", e
+		}
+		results = append(results, getter)
+	}
+
+	if !d.data.ReadOnly {
+		setter, e := gen.Generate("property_setter/"+d.data.Name, data, `
+		// {{ .Name }} {{ .Comment }}
+		Set{{ .Name }} ({{ .Result.Var }} {{ .Result.Type }})
 		`)
 		if e != nil {
 			return "", e

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/matthewmueller/golly/internal/dom/def"
-	"github.com/matthewmueller/golly/internal/gen"
+	"github.com/pkg/errors"
 )
 
 // Index struct
@@ -74,7 +74,7 @@ var resequence = regexp.MustCompile(`sequence<([\w<>]+)>`)
 var repromise = regexp.MustCompile(`Promise<([\w<>]+)>`)
 
 // Coerce the type
-func (i Index) Coerce(kind string) (string, error) {
+func (i Index) Coerce(pkgname, kind string) (string, error) {
 	kind = strings.TrimSpace(kind)
 	isSlice := false
 
@@ -96,8 +96,15 @@ func (i Index) Coerce(kind string) (string, error) {
 
 	if _, isset := overrides[kind]; isset {
 		kind = overrides[kind]
-	} else {
-		kind = gen.Pointer(kind)
+	}
+
+	def := i.Find(kind)
+	if def != nil {
+		t, err := def.Type(pkgname)
+		if err != nil {
+			return kind, errors.Wrapf(err, "error getting type")
+		}
+		kind = t
 	}
 
 	if isSlice {
@@ -107,27 +114,39 @@ func (i Index) Coerce(kind string) (string, error) {
 }
 
 // Find a definition by it's type
-func (i Index) Find(kind string) def.Definition {
-	kind = strings.TrimSpace(kind)
+func (i Index) Find(id string) def.Definition {
+	id = strings.TrimSpace(id)
 
 	// TODO: handle unions better
-	if strings.Contains(kind, " or ") {
+	if strings.Contains(id, " or ") {
 		return nil
 	}
 
-	matches := repromise.FindStringSubmatch(kind)
+	matches := repromise.FindStringSubmatch(id)
 	if len(matches) > 1 {
-		kind = matches[1]
+		id = matches[1]
 	}
 
-	matches = resequence.FindStringSubmatch(kind)
+	matches = resequence.FindStringSubmatch(id)
 	if len(matches) > 1 {
-		kind = matches[1]
+		id = matches[1]
 	}
 
-	if overrides[kind] != "" {
+	if overrides[id] != "" {
 		return nil
 	}
 
-	return i[kind]
+	return i[id]
+}
+
+// FindByKind finds definitions by it's kind
+func (i Index) FindByKind(kinds ...string) (defs []def.Definition) {
+	for _, d := range i {
+		for _, kind := range kinds {
+			if kind == d.Kind() {
+				defs = append(defs, d)
+			}
+		}
+	}
+	return defs
 }
