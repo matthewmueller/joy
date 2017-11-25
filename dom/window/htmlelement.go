@@ -51,6 +51,7 @@ type HTMLElement interface {
 	AccessKey() (accessKey string)
 
 	// AccessKey prop
+	// js:"setaccessKey"
 	SetAccessKey(accessKey string)
 
 	// Children prop
@@ -62,6 +63,7 @@ type HTMLElement interface {
 	ContentEditable() (contentEditable string)
 
 	// ContentEditable prop
+	// js:"setcontentEditable"
 	SetContentEditable(contentEditable string)
 
 	// Dataset prop
@@ -73,6 +75,7 @@ type HTMLElement interface {
 	Dir() (dir string)
 
 	// Dir prop
+	// js:"setdir"
 	SetDir(dir string)
 
 	// Draggable prop
@@ -80,6 +83,7 @@ type HTMLElement interface {
 	Draggable() (draggable bool)
 
 	// Draggable prop
+	// js:"setdraggable"
 	SetDraggable(draggable bool)
 
 	// Hidden prop
@@ -87,6 +91,7 @@ type HTMLElement interface {
 	Hidden() (hidden bool)
 
 	// Hidden prop
+	// js:"sethidden"
 	SetHidden(hidden bool)
 
 	// HideFocus prop
@@ -94,6 +99,7 @@ type HTMLElement interface {
 	HideFocus() (hideFocus bool)
 
 	// HideFocus prop
+	// js:"sethideFocus"
 	SetHideFocus(hideFocus bool)
 
 	// InnerText prop
@@ -101,6 +107,7 @@ type HTMLElement interface {
 	InnerText() (innerText string)
 
 	// InnerText prop
+	// js:"setinnerText"
 	SetInnerText(innerText string)
 
 	// IsContentEditable prop
@@ -112,6 +119,7 @@ type HTMLElement interface {
 	Lang() (lang string)
 
 	// Lang prop
+	// js:"setlang"
 	SetLang(lang string)
 
 	// OffsetHeight prop
@@ -139,6 +147,7 @@ type HTMLElement interface {
 	Onabort() (onabort func(Event))
 
 	// Onabort prop
+	// js:"setonabort"
 	SetOnabort(onabort func(Event))
 
 	// Onactivate prop
@@ -146,6 +155,7 @@ type HTMLElement interface {
 	Onactivate() (onactivate func(UIEvent))
 
 	// Onactivate prop
+	// js:"setonactivate"
 	SetOnactivate(onactivate func(UIEvent))
 
 	// Onbeforeactivate prop
@@ -153,6 +163,7 @@ type HTMLElement interface {
 	Onbeforeactivate() (onbeforeactivate func(UIEvent))
 
 	// Onbeforeactivate prop
+	// js:"setonbeforeactivate"
 	SetOnbeforeactivate(onbeforeactivate func(UIEvent))
 
 	// Onbeforecopy prop
@@ -160,6 +171,7 @@ type HTMLElement interface {
 	Onbeforecopy() (onbeforecopy func(*ClipboardEvent))
 
 	// Onbeforecopy prop
+	// js:"setonbeforecopy"
 	SetOnbeforecopy(onbeforecopy func(*ClipboardEvent))
 
 	// Onbeforecut prop
@@ -167,6 +179,7 @@ type HTMLElement interface {
 	Onbeforecut() (onbeforecut func(*ClipboardEvent))
 
 	// Onbeforecut prop
+	// js:"setonbeforecut"
 	SetOnbeforecut(onbeforecut func(*ClipboardEvent))
 
 	// Onbeforedeactivate prop
@@ -174,6 +187,7 @@ type HTMLElement interface {
 	Onbeforedeactivate() (onbeforedeactivate func(UIEvent))
 
 	// Onbeforedeactivate prop
+	// js:"setonbeforedeactivate"
 	SetOnbeforedeactivate(onbeforedeactivate func(UIEvent))
 
 	// Onbeforepaste prop
@@ -181,6 +195,7 @@ type HTMLElement interface {
 	Onbeforepaste() (onbeforepaste func(*ClipboardEvent))
 
 	// Onbeforepaste prop
+	// js:"setonbeforepaste"
 	SetOnbeforepaste(onbeforepaste func(*ClipboardEvent))
 
 	// Onblur prop
@@ -188,6 +203,7 @@ type HTMLElement interface {
 	Onblur() (onblur func(*FocusEvent))
 
 	// Onblur prop
+	// js:"setonblur"
 	SetOnblur(onblur func(*FocusEvent))
 
 	// Oncanplay prop
@@ -195,6 +211,7 @@ type HTMLElement interface {
 	Oncanplay() (oncanplay func(Event))
 
 	// Oncanplay prop
+	// js:"setoncanplay"
 	SetOncanplay(oncanplay func(Event))
 
 	// Oncanplaythrough prop
@@ -202,6 +219,7 @@ type HTMLElement interface {
 	Oncanplaythrough() (oncanplaythrough func(Event))
 
 	// Oncanplaythrough prop
+	// js:"setoncanplaythrough"
 	SetOncanplaythrough(oncanplaythrough func(Event))
 
 	// Onchange prop
@@ -209,6 +227,7 @@ type HTMLElement interface {
 	Onchange() (onchange func(Event))
 
 	// Onchange prop
+	// js:"setonchange"
 	SetOnchange(onchange func(Event))
 
 	// Onclick prop
@@ -216,6 +235,7 @@ type HTMLElement interface {
 	Onclick() (onclick func(MouseEvent))
 
 	// Onclick prop
+	// js:"setonclick"
 	SetOnclick(onclick func(MouseEvent))
 
 	// Oncontextmenu prop
@@ -223,6 +243,7 @@ type HTMLElement interface {
 	Oncontextmenu() (oncontextmenu func(*PointerEvent))
 
 	// Oncontextmenu prop
+	// js:"setoncontextmenu"
 	SetOncontextmenu(oncontextmenu func(*PointerEvent))
 
 	// Oncopy prop
@@ -230,6 +251,7 @@ type HTMLElement interface {
 	Oncopy() (oncopy func(*ClipboardEvent))
 
 	// Oncopy prop
+	// js:"setoncopy"
 	SetOncopy(oncopy func(*ClipboardEvent))
 
 	// Oncuechange prop
@@ -237,6 +259,7 @@ type HTMLElement interface {
 	Oncuechange() (oncuechange func(Event))
 
 	// Oncuechange prop
+	// js:"setoncuechange"
 	SetOncuechange(oncuechange func(Event))
 
 	// Oncut prop
@@ -244,6 +267,7 @@ type HTMLElement interface {
 	Oncut() (oncut func(*ClipboardEvent))
 
 	// Oncut prop
+	// js:"setoncut"
 	SetOncut(oncut func(*ClipboardEvent))
 
 	// Ondblclick prop
@@ -251,6 +275,7 @@ type HTMLElement interface {
 	Ondblclick() (ondblclick func(MouseEvent))
 
 	// Ondblclick prop
+	// js:"setondblclick"
 	SetOndblclick(ondblclick func(MouseEvent))
 
 	// Ondeactivate prop
@@ -258,6 +283,7 @@ type HTMLElement interface {
 	Ondeactivate() (ondeactivate func(UIEvent))
 
 	// Ondeactivate prop
+	// js:"setondeactivate"
 	SetOndeactivate(ondeactivate func(UIEvent))
 
 	// Ondrag prop
@@ -265,6 +291,7 @@ type HTMLElement interface {
 	Ondrag() (ondrag func(*DragEvent))
 
 	// Ondrag prop
+	// js:"setondrag"
 	SetOndrag(ondrag func(*DragEvent))
 
 	// Ondragend prop
@@ -272,6 +299,7 @@ type HTMLElement interface {
 	Ondragend() (ondragend func(*DragEvent))
 
 	// Ondragend prop
+	// js:"setondragend"
 	SetOndragend(ondragend func(*DragEvent))
 
 	// Ondragenter prop
@@ -279,6 +307,7 @@ type HTMLElement interface {
 	Ondragenter() (ondragenter func(*DragEvent))
 
 	// Ondragenter prop
+	// js:"setondragenter"
 	SetOndragenter(ondragenter func(*DragEvent))
 
 	// Ondragleave prop
@@ -286,6 +315,7 @@ type HTMLElement interface {
 	Ondragleave() (ondragleave func(*DragEvent))
 
 	// Ondragleave prop
+	// js:"setondragleave"
 	SetOndragleave(ondragleave func(*DragEvent))
 
 	// Ondragover prop
@@ -293,6 +323,7 @@ type HTMLElement interface {
 	Ondragover() (ondragover func(*DragEvent))
 
 	// Ondragover prop
+	// js:"setondragover"
 	SetOndragover(ondragover func(*DragEvent))
 
 	// Ondragstart prop
@@ -300,6 +331,7 @@ type HTMLElement interface {
 	Ondragstart() (ondragstart func(*DragEvent))
 
 	// Ondragstart prop
+	// js:"setondragstart"
 	SetOndragstart(ondragstart func(*DragEvent))
 
 	// Ondrop prop
@@ -307,6 +339,7 @@ type HTMLElement interface {
 	Ondrop() (ondrop func(*DragEvent))
 
 	// Ondrop prop
+	// js:"setondrop"
 	SetOndrop(ondrop func(*DragEvent))
 
 	// Ondurationchange prop
@@ -314,6 +347,7 @@ type HTMLElement interface {
 	Ondurationchange() (ondurationchange func(Event))
 
 	// Ondurationchange prop
+	// js:"setondurationchange"
 	SetOndurationchange(ondurationchange func(Event))
 
 	// Onemptied prop
@@ -321,6 +355,7 @@ type HTMLElement interface {
 	Onemptied() (onemptied func(Event))
 
 	// Onemptied prop
+	// js:"setonemptied"
 	SetOnemptied(onemptied func(Event))
 
 	// Onended prop
@@ -328,6 +363,7 @@ type HTMLElement interface {
 	Onended() (onended func(Event))
 
 	// Onended prop
+	// js:"setonended"
 	SetOnended(onended func(Event))
 
 	// Onerror prop
@@ -335,6 +371,7 @@ type HTMLElement interface {
 	Onerror() (onerror func(Event))
 
 	// Onerror prop
+	// js:"setonerror"
 	SetOnerror(onerror func(Event))
 
 	// Onfocus prop
@@ -342,6 +379,7 @@ type HTMLElement interface {
 	Onfocus() (onfocus func(*FocusEvent))
 
 	// Onfocus prop
+	// js:"setonfocus"
 	SetOnfocus(onfocus func(*FocusEvent))
 
 	// Oninput prop
@@ -349,6 +387,7 @@ type HTMLElement interface {
 	Oninput() (oninput func(Event))
 
 	// Oninput prop
+	// js:"setoninput"
 	SetOninput(oninput func(Event))
 
 	// Oninvalid prop
@@ -356,6 +395,7 @@ type HTMLElement interface {
 	Oninvalid() (oninvalid func(Event))
 
 	// Oninvalid prop
+	// js:"setoninvalid"
 	SetOninvalid(oninvalid func(Event))
 
 	// Onkeydown prop
@@ -363,6 +403,7 @@ type HTMLElement interface {
 	Onkeydown() (onkeydown func(*KeyboardEvent))
 
 	// Onkeydown prop
+	// js:"setonkeydown"
 	SetOnkeydown(onkeydown func(*KeyboardEvent))
 
 	// Onkeypress prop
@@ -370,6 +411,7 @@ type HTMLElement interface {
 	Onkeypress() (onkeypress func(*KeyboardEvent))
 
 	// Onkeypress prop
+	// js:"setonkeypress"
 	SetOnkeypress(onkeypress func(*KeyboardEvent))
 
 	// Onkeyup prop
@@ -377,6 +419,7 @@ type HTMLElement interface {
 	Onkeyup() (onkeyup func(*KeyboardEvent))
 
 	// Onkeyup prop
+	// js:"setonkeyup"
 	SetOnkeyup(onkeyup func(*KeyboardEvent))
 
 	// Onload prop
@@ -384,6 +427,7 @@ type HTMLElement interface {
 	Onload() (onload func(Event))
 
 	// Onload prop
+	// js:"setonload"
 	SetOnload(onload func(Event))
 
 	// Onloadeddata prop
@@ -391,6 +435,7 @@ type HTMLElement interface {
 	Onloadeddata() (onloadeddata func(Event))
 
 	// Onloadeddata prop
+	// js:"setonloadeddata"
 	SetOnloadeddata(onloadeddata func(Event))
 
 	// Onloadedmetadata prop
@@ -398,6 +443,7 @@ type HTMLElement interface {
 	Onloadedmetadata() (onloadedmetadata func(Event))
 
 	// Onloadedmetadata prop
+	// js:"setonloadedmetadata"
 	SetOnloadedmetadata(onloadedmetadata func(Event))
 
 	// Onloadstart prop
@@ -405,6 +451,7 @@ type HTMLElement interface {
 	Onloadstart() (onloadstart func(Event))
 
 	// Onloadstart prop
+	// js:"setonloadstart"
 	SetOnloadstart(onloadstart func(Event))
 
 	// Onmousedown prop
@@ -412,6 +459,7 @@ type HTMLElement interface {
 	Onmousedown() (onmousedown func(MouseEvent))
 
 	// Onmousedown prop
+	// js:"setonmousedown"
 	SetOnmousedown(onmousedown func(MouseEvent))
 
 	// Onmouseenter prop
@@ -419,6 +467,7 @@ type HTMLElement interface {
 	Onmouseenter() (onmouseenter func(MouseEvent))
 
 	// Onmouseenter prop
+	// js:"setonmouseenter"
 	SetOnmouseenter(onmouseenter func(MouseEvent))
 
 	// Onmouseleave prop
@@ -426,6 +475,7 @@ type HTMLElement interface {
 	Onmouseleave() (onmouseleave func(MouseEvent))
 
 	// Onmouseleave prop
+	// js:"setonmouseleave"
 	SetOnmouseleave(onmouseleave func(MouseEvent))
 
 	// Onmousemove prop
@@ -433,6 +483,7 @@ type HTMLElement interface {
 	Onmousemove() (onmousemove func(MouseEvent))
 
 	// Onmousemove prop
+	// js:"setonmousemove"
 	SetOnmousemove(onmousemove func(MouseEvent))
 
 	// Onmouseout prop
@@ -440,6 +491,7 @@ type HTMLElement interface {
 	Onmouseout() (onmouseout func(MouseEvent))
 
 	// Onmouseout prop
+	// js:"setonmouseout"
 	SetOnmouseout(onmouseout func(MouseEvent))
 
 	// Onmouseover prop
@@ -447,6 +499,7 @@ type HTMLElement interface {
 	Onmouseover() (onmouseover func(MouseEvent))
 
 	// Onmouseover prop
+	// js:"setonmouseover"
 	SetOnmouseover(onmouseover func(MouseEvent))
 
 	// Onmouseup prop
@@ -454,6 +507,7 @@ type HTMLElement interface {
 	Onmouseup() (onmouseup func(MouseEvent))
 
 	// Onmouseup prop
+	// js:"setonmouseup"
 	SetOnmouseup(onmouseup func(MouseEvent))
 
 	// Onmousewheel prop
@@ -461,6 +515,7 @@ type HTMLElement interface {
 	Onmousewheel() (onmousewheel func(*WheelEvent))
 
 	// Onmousewheel prop
+	// js:"setonmousewheel"
 	SetOnmousewheel(onmousewheel func(*WheelEvent))
 
 	// Onmscontentzoom prop
@@ -468,6 +523,7 @@ type HTMLElement interface {
 	Onmscontentzoom() (onmscontentzoom func(UIEvent))
 
 	// Onmscontentzoom prop
+	// js:"setonmscontentzoom"
 	SetOnmscontentzoom(onmscontentzoom func(UIEvent))
 
 	// Onmsmanipulationstatechanged prop
@@ -475,6 +531,7 @@ type HTMLElement interface {
 	Onmsmanipulationstatechanged() (onmsmanipulationstatechanged func(*MSManipulationEvent))
 
 	// Onmsmanipulationstatechanged prop
+	// js:"setonmsmanipulationstatechanged"
 	SetOnmsmanipulationstatechanged(onmsmanipulationstatechanged func(*MSManipulationEvent))
 
 	// Onpaste prop
@@ -482,6 +539,7 @@ type HTMLElement interface {
 	Onpaste() (onpaste func(*ClipboardEvent))
 
 	// Onpaste prop
+	// js:"setonpaste"
 	SetOnpaste(onpaste func(*ClipboardEvent))
 
 	// Onpause prop
@@ -489,6 +547,7 @@ type HTMLElement interface {
 	Onpause() (onpause func(Event))
 
 	// Onpause prop
+	// js:"setonpause"
 	SetOnpause(onpause func(Event))
 
 	// Onplay prop
@@ -496,6 +555,7 @@ type HTMLElement interface {
 	Onplay() (onplay func(Event))
 
 	// Onplay prop
+	// js:"setonplay"
 	SetOnplay(onplay func(Event))
 
 	// Onplaying prop
@@ -503,6 +563,7 @@ type HTMLElement interface {
 	Onplaying() (onplaying func(Event))
 
 	// Onplaying prop
+	// js:"setonplaying"
 	SetOnplaying(onplaying func(Event))
 
 	// Onprogress prop
@@ -510,6 +571,7 @@ type HTMLElement interface {
 	Onprogress() (onprogress func(Event))
 
 	// Onprogress prop
+	// js:"setonprogress"
 	SetOnprogress(onprogress func(Event))
 
 	// Onratechange prop
@@ -517,6 +579,7 @@ type HTMLElement interface {
 	Onratechange() (onratechange func(Event))
 
 	// Onratechange prop
+	// js:"setonratechange"
 	SetOnratechange(onratechange func(Event))
 
 	// Onreset prop
@@ -524,6 +587,7 @@ type HTMLElement interface {
 	Onreset() (onreset func(Event))
 
 	// Onreset prop
+	// js:"setonreset"
 	SetOnreset(onreset func(Event))
 
 	// Onscroll prop
@@ -531,6 +595,7 @@ type HTMLElement interface {
 	Onscroll() (onscroll func(UIEvent))
 
 	// Onscroll prop
+	// js:"setonscroll"
 	SetOnscroll(onscroll func(UIEvent))
 
 	// Onseeked prop
@@ -538,6 +603,7 @@ type HTMLElement interface {
 	Onseeked() (onseeked func(Event))
 
 	// Onseeked prop
+	// js:"setonseeked"
 	SetOnseeked(onseeked func(Event))
 
 	// Onseeking prop
@@ -545,6 +611,7 @@ type HTMLElement interface {
 	Onseeking() (onseeking func(Event))
 
 	// Onseeking prop
+	// js:"setonseeking"
 	SetOnseeking(onseeking func(Event))
 
 	// Onselect prop
@@ -552,6 +619,7 @@ type HTMLElement interface {
 	Onselect() (onselect func(UIEvent))
 
 	// Onselect prop
+	// js:"setonselect"
 	SetOnselect(onselect func(UIEvent))
 
 	// Onselectstart prop
@@ -559,6 +627,7 @@ type HTMLElement interface {
 	Onselectstart() (onselectstart func(Event))
 
 	// Onselectstart prop
+	// js:"setonselectstart"
 	SetOnselectstart(onselectstart func(Event))
 
 	// Onstalled prop
@@ -566,6 +635,7 @@ type HTMLElement interface {
 	Onstalled() (onstalled func(Event))
 
 	// Onstalled prop
+	// js:"setonstalled"
 	SetOnstalled(onstalled func(Event))
 
 	// Onsubmit prop
@@ -573,6 +643,7 @@ type HTMLElement interface {
 	Onsubmit() (onsubmit func(Event))
 
 	// Onsubmit prop
+	// js:"setonsubmit"
 	SetOnsubmit(onsubmit func(Event))
 
 	// Onsuspend prop
@@ -580,6 +651,7 @@ type HTMLElement interface {
 	Onsuspend() (onsuspend func(Event))
 
 	// Onsuspend prop
+	// js:"setonsuspend"
 	SetOnsuspend(onsuspend func(Event))
 
 	// Ontimeupdate prop
@@ -587,6 +659,7 @@ type HTMLElement interface {
 	Ontimeupdate() (ontimeupdate func(Event))
 
 	// Ontimeupdate prop
+	// js:"setontimeupdate"
 	SetOntimeupdate(ontimeupdate func(Event))
 
 	// Onvolumechange prop
@@ -594,6 +667,7 @@ type HTMLElement interface {
 	Onvolumechange() (onvolumechange func(Event))
 
 	// Onvolumechange prop
+	// js:"setonvolumechange"
 	SetOnvolumechange(onvolumechange func(Event))
 
 	// Onwaiting prop
@@ -601,6 +675,7 @@ type HTMLElement interface {
 	Onwaiting() (onwaiting func(Event))
 
 	// Onwaiting prop
+	// js:"setonwaiting"
 	SetOnwaiting(onwaiting func(Event))
 
 	// OuterText prop
@@ -608,6 +683,7 @@ type HTMLElement interface {
 	OuterText() (outerText string)
 
 	// OuterText prop
+	// js:"setouterText"
 	SetOuterText(outerText string)
 
 	// Spellcheck prop
@@ -615,6 +691,7 @@ type HTMLElement interface {
 	Spellcheck() (spellcheck bool)
 
 	// Spellcheck prop
+	// js:"setspellcheck"
 	SetSpellcheck(spellcheck bool)
 
 	// Style prop
@@ -626,6 +703,7 @@ type HTMLElement interface {
 	TabIndex() (tabIndex int8)
 
 	// TabIndex prop
+	// js:"settabIndex"
 	SetTabIndex(tabIndex int8)
 
 	// Title prop
@@ -633,5 +711,6 @@ type HTMLElement interface {
 	Title() (title string)
 
 	// Title prop
+	// js:"settitle"
 	SetTitle(title string)
 }

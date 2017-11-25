@@ -18,6 +18,7 @@ type IDBRequest interface {
 	Onerror() (onerror func(Event))
 
 	// Onerror prop
+	// js:"setonerror"
 	SetOnerror(onerror func(Event))
 
 	// Onsuccess prop
@@ -25,6 +26,7 @@ type IDBRequest interface {
 	Onsuccess() (onsuccess func(Event))
 
 	// Onsuccess prop
+	// js:"setonsuccess"
 	SetOnsuccess(onsuccess func(Event))
 
 	// ReadyState prop

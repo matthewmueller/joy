@@ -232,7 +232,7 @@ func (d *iface) Generate() (string, error) {
 		Package     string
 		Name        string
 		Type        string
-		Embeds      []string
+		Extends     []string
 		Methods     []string
 		Properties  []string
 		Constructor struct {
@@ -245,7 +245,7 @@ func (d *iface) Generate() (string, error) {
 		Name:    d.data.Name,
 	}
 
-	// Handle embeds
+	// Handle extends
 	parents, err := d.Parents()
 	if err != nil {
 		return "", errors.Wrapf(err, "error getting parents")
@@ -255,7 +255,7 @@ func (d *iface) Generate() (string, error) {
 		if err != nil {
 			return "", errors.Wrapf(err, "parent type")
 		}
-		data.Embeds = append(data.Embeds, t)
+		data.Extends = append(data.Extends, t)
 	}
 
 	// Get the type
@@ -353,7 +353,7 @@ func (d *iface) Generate() (string, error) {
 		// {{ capitalize .Name }} struct
 		// js:"{{ capitalize .Name }},omit"
 		type {{ capitalize .Name }} struct {
-			{{- range .Embeds }}
+			{{- range .Extends }}
 			{{ . }}
 			{{- end }}
 		}
@@ -372,7 +372,7 @@ func (d *iface) generateInterface() (string, error) {
 	data := struct {
 		Package    string
 		Name       string
-		Embeds     []string
+		Extends    []string
 		Methods    []string
 		Properties []string
 	}{
@@ -390,7 +390,36 @@ func (d *iface) generateInterface() (string, error) {
 		if err != nil {
 			return "", errors.Wrapf(err, "parent type")
 		}
-		data.Embeds = append(data.Embeds, t)
+		data.Extends = append(data.Extends, t)
+	}
+
+	// handle the implements too
+	for _, imp := range d.data.Implements {
+		def := d.index.Find(imp)
+		if def == nil {
+			return "", fmt.Errorf("implements missing %s", imp)
+		}
+
+		t, ok := def.(Interface)
+		if !ok {
+			return "", fmt.Errorf("implements not an interface %s", imp)
+		}
+
+		for _, method := range t.Methods() {
+			m, err := method.GenerateInterface()
+			if err != nil {
+				return "", errors.Wrapf(err, "error generating method")
+			}
+			data.Methods = append(data.Methods, m)
+		}
+
+		for _, property := range t.Properties() {
+			m, err := property.GenerateInterface()
+			if err != nil {
+				return "", errors.Wrapf(err, "error generating property")
+			}
+			data.Properties = append(data.Properties, m)
+		}
 	}
 
 	// handle methods
@@ -416,7 +445,7 @@ func (d *iface) generateInterface() (string, error) {
 		
 		// js:"{{ .Name }},omit"
 		type {{ .Name }} interface {
-			{{- range .Embeds }}
+			{{- range .Extends }}
 			{{ . }}
 			{{- end }}
 		

@@ -191,12 +191,10 @@ func (d *prop) generate(recv Interface) (string, error) {
 
 func (d *prop) GenerateInterface() (string, error) {
 	data := struct {
-		Recv    string
 		Name    string
 		Result  gen.Vartype
 		Comment string
 	}{
-		Recv:    gen.Pointer(gen.Capitalize(d.recv.Name())),
 		Name:    d.data.Name,
 		Comment: d.data.Comment,
 	}
@@ -261,6 +259,7 @@ func (d *prop) GenerateInterface() (string, error) {
 	if !d.data.ReadOnly {
 		setter, e := gen.Generate("property_setter/"+d.data.Name, data, `
 		// {{ capitalize .Name }} prop {{ .Comment }}
+		// js:"set{{ .Name }}"
 		Set{{ capitalize .Name }} ({{ .Result.Var }} {{ .Result.Type }})
 		`)
 		if e != nil {

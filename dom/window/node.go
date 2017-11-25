@@ -109,6 +109,7 @@ type Node interface {
 	NodeValue() (nodeValue string)
 
 	// NodeValue prop
+	// js:"setnodeValue"
 	SetNodeValue(nodeValue string)
 
 	// OwnerDocument prop
@@ -132,5 +133,6 @@ type Node interface {
 	TextContent() (textContent string)
 
 	// TextContent prop
+	// js:"settextContent"
 	SetTextContent(textContent string)
 }

@@ -1,0 +1,17 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/67-return-values"] = (function() {
+function test () {
+return [a, t];
+};
+function main () {
+var $a = test(), a = $a[0], t = $a[1];
+console.log(a, t);
+};
+return {
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/67-return-values"].main();
+})()

@@ -10,6 +10,7 @@ type StyleSheet interface {
 	Disabled() (disabled bool)
 
 	// Disabled prop
+	// js:"setdisabled"
 	SetDisabled(disabled bool)
 
 	// Href prop

@@ -11,6 +11,18 @@ import (
 type Document interface {
 	Node
 
+	// QuerySelector
+	// js:"querySelector"
+	QuerySelector(selectors string) (e Element)
+
+	// QuerySelectorAll
+	// js:"querySelectorAll"
+	QuerySelectorAll(selectors string) (n *NodeList)
+
+	// CreateEvent
+	// js:"createEvent"
+	CreateEvent(eventInterface string) (e Event)
+
 	// AdoptNode
 	// js:"adoptNode"
 	AdoptNode(source Node) (n Node)
@@ -248,6 +260,78 @@ type Document interface {
 	// js:"writeln"
 	Writeln(content string)
 
+	// Onpointercancel prop
+	// js:"onpointercancel"
+	Onpointercancel() (onpointercancel func(Event))
+
+	// Onpointercancel prop
+	// js:"setonpointercancel"
+	SetOnpointercancel(onpointercancel func(Event))
+
+	// Onpointerdown prop
+	// js:"onpointerdown"
+	Onpointerdown() (onpointerdown func(Event))
+
+	// Onpointerdown prop
+	// js:"setonpointerdown"
+	SetOnpointerdown(onpointerdown func(Event))
+
+	// Onpointerenter prop
+	// js:"onpointerenter"
+	Onpointerenter() (onpointerenter func(Event))
+
+	// Onpointerenter prop
+	// js:"setonpointerenter"
+	SetOnpointerenter(onpointerenter func(Event))
+
+	// Onpointerleave prop
+	// js:"onpointerleave"
+	Onpointerleave() (onpointerleave func(Event))
+
+	// Onpointerleave prop
+	// js:"setonpointerleave"
+	SetOnpointerleave(onpointerleave func(Event))
+
+	// Onpointermove prop
+	// js:"onpointermove"
+	Onpointermove() (onpointermove func(Event))
+
+	// Onpointermove prop
+	// js:"setonpointermove"
+	SetOnpointermove(onpointermove func(Event))
+
+	// Onpointerout prop
+	// js:"onpointerout"
+	Onpointerout() (onpointerout func(Event))
+
+	// Onpointerout prop
+	// js:"setonpointerout"
+	SetOnpointerout(onpointerout func(Event))
+
+	// Onpointerover prop
+	// js:"onpointerover"
+	Onpointerover() (onpointerover func(Event))
+
+	// Onpointerover prop
+	// js:"setonpointerover"
+	SetOnpointerover(onpointerover func(Event))
+
+	// Onpointerup prop
+	// js:"onpointerup"
+	Onpointerup() (onpointerup func(Event))
+
+	// Onpointerup prop
+	// js:"setonpointerup"
+	SetOnpointerup(onpointerup func(Event))
+
+	// Onwheel prop
+	// js:"onwheel"
+	Onwheel() (onwheel func(Event))
+
+	// Onwheel prop
+	// js:"setonwheel"
+	SetOnwheel(onwheel func(Event))
+
 	// ActiveElement prop Gets the object that has the focus when the parent document has focus.
 	// js:"activeElement"
 	ActiveElement() (activeElement Element)
@@ -257,6 +341,7 @@ type Document interface {
 	AlinkColor() (alinkColor string)
 
 	// AlinkColor prop Sets or gets the color of all active links in the document.
+	// js:"setalinkColor"
 	SetAlinkColor(alinkColor string)
 
 	// All prop Returns a reference to the collection of elements contained by the object.
@@ -276,6 +361,7 @@ type Document interface {
 	BgColor() (bgColor string)
 
 	// BgColor prop Deprecated. Sets or retrieves a value that indicates the background color behind the object.
+	// js:"setbgColor"
 	SetBgColor(bgColor string)
 
 	// Body prop Specifies the beginning and end of the document body.
@@ -283,6 +369,7 @@ type Document interface {
 	Body() (body HTMLElement)
 
 	// Body prop Specifies the beginning and end of the document body.
+	// js:"setbody"
 	SetBody(body HTMLElement)
 
 	// CharacterSet prop
@@ -294,6 +381,7 @@ type Document interface {
 	Charset() (charset string)
 
 	// Charset prop Gets or sets the character set used to encode the object.
+	// js:"setcharset"
 	SetCharset(charset string)
 
 	// CompatMode prop Gets a value that indicates whether standards-compliant mode is switched on for the object.
@@ -305,6 +393,7 @@ type Document interface {
 	Cookie() (cookie string)
 
 	// Cookie prop
+	// js:"setcookie"
 	SetCookie(cookie string)
 
 	// CurrentScript prop
@@ -320,6 +409,7 @@ type Document interface {
 	DesignMode() (designMode string)
 
 	// DesignMode prop Sets or gets a value that indicates whether the document can be edited.
+	// js:"setdesignMode"
 	SetDesignMode(designMode string)
 
 	// Dir prop Sets or retrieves a value that indicates the reading order of the object.
@@ -327,6 +417,7 @@ type Document interface {
 	Dir() (dir string)
 
 	// Dir prop Sets or retrieves a value that indicates the reading order of the object.
+	// js:"setdir"
 	SetDir(dir string)
 
 	// Doctype prop Gets an object representing the document type declaration associated with the current document.
@@ -342,6 +433,7 @@ type Document interface {
 	Domain() (domain string)
 
 	// Domain prop Sets or gets the security domain of the document.
+	// js:"setdomain"
 	SetDomain(domain string)
 
 	// Embeds prop Retrieves a collection of all embed objects in the document.
@@ -353,6 +445,7 @@ type Document interface {
 	FgColor() (fgColor string)
 
 	// FgColor prop Sets or gets the foreground (text) color of the document.
+	// js:"setfgColor"
 	SetFgColor(fgColor string)
 
 	// Forms prop Retrieves a collection, in source order, of all form objects in the document.
@@ -396,6 +489,7 @@ type Document interface {
 	LinkColor() (linkColor string)
 
 	// LinkColor prop Sets or gets the color of the document links.
+	// js:"setlinkColor"
 	SetLinkColor(linkColor string)
 
 	// Links prop Retrieves a collection of all a objects that specify the href property and all area objects in the document.
@@ -411,6 +505,7 @@ type Document interface {
 	MsCapsLockWarningOff() (msCapsLockWarningOff bool)
 
 	// MsCapsLockWarningOff prop
+	// js:"setmsCapsLockWarningOff"
 	SetMsCapsLockWarningOff(msCapsLockWarningOff bool)
 
 	// MsCSSOMElementFloatMetrics prop
@@ -418,6 +513,7 @@ type Document interface {
 	MsCSSOMElementFloatMetrics() (msCSSOMElementFloatMetrics bool)
 
 	// MsCSSOMElementFloatMetrics prop
+	// js:"setmsCSSOMElementFloatMetrics"
 	SetMsCSSOMElementFloatMetrics(msCSSOMElementFloatMetrics bool)
 
 	// Onabort prop Fires when the user aborts the download.
@@ -427,6 +523,7 @@ type Document interface {
 
 	// Onabort prop Fires when the user aborts the download.
 	//     * @param ev The event.
+	// js:"setonabort"
 	SetOnabort(onabort func(Event))
 
 	// Onactivate prop Fires when the object is set as the active element.
@@ -436,6 +533,7 @@ type Document interface {
 
 	// Onactivate prop Fires when the object is set as the active element.
 	//     * @param ev The event.
+	// js:"setonactivate"
 	SetOnactivate(onactivate func(Event))
 
 	// Onbeforeactivate prop Fires immediately before the object is set as the active element.
@@ -445,6 +543,7 @@ type Document interface {
 
 	// Onbeforeactivate prop Fires immediately before the object is set as the active element.
 	//     * @param ev The event.
+	// js:"setonbeforeactivate"
 	SetOnbeforeactivate(onbeforeactivate func(Event))
 
 	// Onbeforedeactivate prop Fires immediately before the activeElement is changed from the current object to another object in the parent document.
@@ -454,6 +553,7 @@ type Document interface {
 
 	// Onbeforedeactivate prop Fires immediately before the activeElement is changed from the current object to another object in the parent document.
 	//     * @param ev The event.
+	// js:"setonbeforedeactivate"
 	SetOnbeforedeactivate(onbeforedeactivate func(Event))
 
 	// Onblur prop Fires when the object loses the input focus.
@@ -463,6 +563,7 @@ type Document interface {
 
 	// Onblur prop Fires when the object loses the input focus.
 	//     * @param ev The focus event.
+	// js:"setonblur"
 	SetOnblur(onblur func(Event))
 
 	// Oncanplay prop Occurs when playback is possible, but would require further buffering.
@@ -472,6 +573,7 @@ type Document interface {
 
 	// Oncanplay prop Occurs when playback is possible, but would require further buffering.
 	//     * @param ev The event.
+	// js:"setoncanplay"
 	SetOncanplay(oncanplay func(Event))
 
 	// Oncanplaythrough prop
@@ -479,6 +581,7 @@ type Document interface {
 	Oncanplaythrough() (oncanplaythrough func(Event))
 
 	// Oncanplaythrough prop
+	// js:"setoncanplaythrough"
 	SetOncanplaythrough(oncanplaythrough func(Event))
 
 	// Onchange prop Fires when the contents of the object or selection have changed.
@@ -488,6 +591,7 @@ type Document interface {
 
 	// Onchange prop Fires when the contents of the object or selection have changed.
 	//     * @param ev The event.
+	// js:"setonchange"
 	SetOnchange(onchange func(Event))
 
 	// Onclick prop Fires when the user clicks the left mouse button on the object
@@ -497,6 +601,7 @@ type Document interface {
 
 	// Onclick prop Fires when the user clicks the left mouse button on the object
 	//     * @param ev The mouse event.
+	// js:"setonclick"
 	SetOnclick(onclick func(Event))
 
 	// Oncontextmenu prop Fires when the user clicks the right mouse button in the client area, opening the context menu.
@@ -506,6 +611,7 @@ type Document interface {
 
 	// Oncontextmenu prop Fires when the user clicks the right mouse button in the client area, opening the context menu.
 	//     * @param ev The mouse event.
+	// js:"setoncontextmenu"
 	SetOncontextmenu(oncontextmenu func(Event))
 
 	// Ondblclick prop Fires when the user double-clicks the object.
@@ -515,6 +621,7 @@ type Document interface {
 
 	// Ondblclick prop Fires when the user double-clicks the object.
 	//     * @param ev The mouse event.
+	// js:"setondblclick"
 	SetOndblclick(ondblclick func(Event))
 
 	// Ondeactivate prop Fires when the activeElement is changed from the current object to another object in the parent document.
@@ -524,6 +631,7 @@ type Document interface {
 
 	// Ondeactivate prop Fires when the activeElement is changed from the current object to another object in the parent document.
 	//     * @param ev The UI Event
+	// js:"setondeactivate"
 	SetOndeactivate(ondeactivate func(Event))
 
 	// Ondrag prop Fires on the source object continuously during a drag operation.
@@ -533,6 +641,7 @@ type Document interface {
 
 	// Ondrag prop Fires on the source object continuously during a drag operation.
 	//     * @param ev The event.
+	// js:"setondrag"
 	SetOndrag(ondrag func(Event))
 
 	// Ondragend prop Fires on the source object when the user releases the mouse at the close of a drag operation.
@@ -542,6 +651,7 @@ type Document interface {
 
 	// Ondragend prop Fires on the source object when the user releases the mouse at the close of a drag operation.
 	//     * @param ev The event.
+	// js:"setondragend"
 	SetOndragend(ondragend func(Event))
 
 	// Ondragenter prop Fires on the target element when the user drags the object to a valid drop target.
@@ -551,6 +661,7 @@ type Document interface {
 
 	// Ondragenter prop Fires on the target element when the user drags the object to a valid drop target.
 	//     * @param ev The drag event.
+	// js:"setondragenter"
 	SetOndragenter(ondragenter func(Event))
 
 	// Ondragleave prop Fires on the target object when the user moves the mouse out of a valid drop target during a drag operation.
@@ -560,6 +671,7 @@ type Document interface {
 
 	// Ondragleave prop Fires on the target object when the user moves the mouse out of a valid drop target during a drag operation.
 	//     * @param ev The drag event.
+	// js:"setondragleave"
 	SetOndragleave(ondragleave func(Event))
 
 	// Ondragover prop Fires on the target element continuously while the user drags the object over a valid drop target.
@@ -569,6 +681,7 @@ type Document interface {
 
 	// Ondragover prop Fires on the target element continuously while the user drags the object over a valid drop target.
 	//     * @param ev The event.
+	// js:"setondragover"
 	SetOndragover(ondragover func(Event))
 
 	// Ondragstart prop Fires on the source object when the user starts to drag a text selection or selected object.
@@ -578,6 +691,7 @@ type Document interface {
 
 	// Ondragstart prop Fires on the source object when the user starts to drag a text selection or selected object.
 	//     * @param ev The event.
+	// js:"setondragstart"
 	SetOndragstart(ondragstart func(Event))
 
 	// Ondrop prop
@@ -585,6 +699,7 @@ type Document interface {
 	Ondrop() (ondrop func(Event))
 
 	// Ondrop prop
+	// js:"setondrop"
 	SetOndrop(ondrop func(Event))
 
 	// Ondurationchange prop Occurs when the duration attribute is updated.
@@ -594,6 +709,7 @@ type Document interface {
 
 	// Ondurationchange prop Occurs when the duration attribute is updated.
 	//     * @param ev The event.
+	// js:"setondurationchange"
 	SetOndurationchange(ondurationchange func(Event))
 
 	// Onemptied prop Occurs when the media element is reset to its initial state.
@@ -603,6 +719,7 @@ type Document interface {
 
 	// Onemptied prop Occurs when the media element is reset to its initial state.
 	//     * @param ev The event.
+	// js:"setonemptied"
 	SetOnemptied(onemptied func(Event))
 
 	// Onended prop Occurs when the end of playback is reached.
@@ -612,6 +729,7 @@ type Document interface {
 
 	// Onended prop Occurs when the end of playback is reached.
 	//     * @param ev The event
+	// js:"setonended"
 	SetOnended(onended func(Event))
 
 	// Onerror prop Fires when an error occurs during object loading.
@@ -621,6 +739,7 @@ type Document interface {
 
 	// Onerror prop Fires when an error occurs during object loading.
 	//     * @param ev The event.
+	// js:"setonerror"
 	SetOnerror(onerror func(Event))
 
 	// Onfocus prop Fires when the object receives focus.
@@ -630,6 +749,7 @@ type Document interface {
 
 	// Onfocus prop Fires when the object receives focus.
 	//     * @param ev The event.
+	// js:"setonfocus"
 	SetOnfocus(onfocus func(Event))
 
 	// Onfullscreenchange prop
@@ -637,6 +757,7 @@ type Document interface {
 	Onfullscreenchange() (onfullscreenchange func(Event))
 
 	// Onfullscreenchange prop
+	// js:"setonfullscreenchange"
 	SetOnfullscreenchange(onfullscreenchange func(Event))
 
 	// Onfullscreenerror prop
@@ -644,6 +765,7 @@ type Document interface {
 	Onfullscreenerror() (onfullscreenerror func(Event))
 
 	// Onfullscreenerror prop
+	// js:"setonfullscreenerror"
 	SetOnfullscreenerror(onfullscreenerror func(Event))
 
 	// Oninput prop
@@ -651,6 +773,7 @@ type Document interface {
 	Oninput() (oninput func(Event))
 
 	// Oninput prop
+	// js:"setoninput"
 	SetOninput(oninput func(Event))
 
 	// Oninvalid prop
@@ -658,6 +781,7 @@ type Document interface {
 	Oninvalid() (oninvalid func(Event))
 
 	// Oninvalid prop
+	// js:"setoninvalid"
 	SetOninvalid(oninvalid func(Event))
 
 	// Onkeydown prop Fires when the user presses a key.
@@ -667,6 +791,7 @@ type Document interface {
 
 	// Onkeydown prop Fires when the user presses a key.
 	//     * @param ev The keyboard event
+	// js:"setonkeydown"
 	SetOnkeydown(onkeydown func(Event))
 
 	// Onkeypress prop Fires when the user presses an alphanumeric key.
@@ -676,6 +801,7 @@ type Document interface {
 
 	// Onkeypress prop Fires when the user presses an alphanumeric key.
 	//     * @param ev The event.
+	// js:"setonkeypress"
 	SetOnkeypress(onkeypress func(Event))
 
 	// Onkeyup prop Fires when the user releases a key.
@@ -685,6 +811,7 @@ type Document interface {
 
 	// Onkeyup prop Fires when the user releases a key.
 	//     * @param ev The keyboard event
+	// js:"setonkeyup"
 	SetOnkeyup(onkeyup func(Event))
 
 	// Onload prop Fires immediately after the browser loads the object.
@@ -694,6 +821,7 @@ type Document interface {
 
 	// Onload prop Fires immediately after the browser loads the object.
 	//     * @param ev The event.
+	// js:"setonload"
 	SetOnload(onload func(Event))
 
 	// Onloadeddata prop Occurs when media data is loaded at the current playback position.
@@ -703,6 +831,7 @@ type Document interface {
 
 	// Onloadeddata prop Occurs when media data is loaded at the current playback position.
 	//     * @param ev The event.
+	// js:"setonloadeddata"
 	SetOnloadeddata(onloadeddata func(Event))
 
 	// Onloadedmetadata prop Occurs when the duration and dimensions of the media have been determined.
@@ -712,6 +841,7 @@ type Document interface {
 
 	// Onloadedmetadata prop Occurs when the duration and dimensions of the media have been determined.
 	//     * @param ev The event.
+	// js:"setonloadedmetadata"
 	SetOnloadedmetadata(onloadedmetadata func(Event))
 
 	// Onloadstart prop Occurs when Internet Explorer begins looking for media data.
@@ -721,6 +851,7 @@ type Document interface {
 
 	// Onloadstart prop Occurs when Internet Explorer begins looking for media data.
 	//     * @param ev The event.
+	// js:"setonloadstart"
 	SetOnloadstart(onloadstart func(Event))
 
 	// Onmousedown prop Fires when the user clicks the object with either mouse button.
@@ -730,6 +861,7 @@ type Document interface {
 
 	// Onmousedown prop Fires when the user clicks the object with either mouse button.
 	//     * @param ev The mouse event.
+	// js:"setonmousedown"
 	SetOnmousedown(onmousedown func(Event))
 
 	// Onmousemove prop Fires when the user moves the mouse over the object.
@@ -739,6 +871,7 @@ type Document interface {
 
 	// Onmousemove prop Fires when the user moves the mouse over the object.
 	//     * @param ev The mouse event.
+	// js:"setonmousemove"
 	SetOnmousemove(onmousemove func(Event))
 
 	// Onmouseout prop Fires when the user moves the mouse pointer outside the boundaries of the object.
@@ -748,6 +881,7 @@ type Document interface {
 
 	// Onmouseout prop Fires when the user moves the mouse pointer outside the boundaries of the object.
 	//     * @param ev The mouse event.
+	// js:"setonmouseout"
 	SetOnmouseout(onmouseout func(Event))
 
 	// Onmouseover prop Fires when the user moves the mouse pointer into the object.
@@ -757,6 +891,7 @@ type Document interface {
 
 	// Onmouseover prop Fires when the user moves the mouse pointer into the object.
 	//     * @param ev The mouse event.
+	// js:"setonmouseover"
 	SetOnmouseover(onmouseover func(Event))
 
 	// Onmouseup prop Fires when the user releases a mouse button while the mouse is over the object.
@@ -766,6 +901,7 @@ type Document interface {
 
 	// Onmouseup prop Fires when the user releases a mouse button while the mouse is over the object.
 	//     * @param ev The mouse event.
+	// js:"setonmouseup"
 	SetOnmouseup(onmouseup func(Event))
 
 	// Onmousewheel prop Fires when the wheel button is rotated.
@@ -775,6 +911,7 @@ type Document interface {
 
 	// Onmousewheel prop Fires when the wheel button is rotated.
 	//     * @param ev The mouse event
+	// js:"setonmousewheel"
 	SetOnmousewheel(onmousewheel func(Event))
 
 	// Onmscontentzoom prop
@@ -782,6 +919,7 @@ type Document interface {
 	Onmscontentzoom() (onmscontentzoom func(UIEvent))
 
 	// Onmscontentzoom prop
+	// js:"setonmscontentzoom"
 	SetOnmscontentzoom(onmscontentzoom func(UIEvent))
 
 	// Onmsgesturechange prop
@@ -789,6 +927,7 @@ type Document interface {
 	Onmsgesturechange() (onmsgesturechange func(Event))
 
 	// Onmsgesturechange prop
+	// js:"setonmsgesturechange"
 	SetOnmsgesturechange(onmsgesturechange func(Event))
 
 	// Onmsgesturedoubletap prop
@@ -796,6 +935,7 @@ type Document interface {
 	Onmsgesturedoubletap() (onmsgesturedoubletap func(Event))
 
 	// Onmsgesturedoubletap prop
+	// js:"setonmsgesturedoubletap"
 	SetOnmsgesturedoubletap(onmsgesturedoubletap func(Event))
 
 	// Onmsgestureend prop
@@ -803,6 +943,7 @@ type Document interface {
 	Onmsgestureend() (onmsgestureend func(Event))
 
 	// Onmsgestureend prop
+	// js:"setonmsgestureend"
 	SetOnmsgestureend(onmsgestureend func(Event))
 
 	// Onmsgesturehold prop
@@ -810,6 +951,7 @@ type Document interface {
 	Onmsgesturehold() (onmsgesturehold func(Event))
 
 	// Onmsgesturehold prop
+	// js:"setonmsgesturehold"
 	SetOnmsgesturehold(onmsgesturehold func(Event))
 
 	// Onmsgesturestart prop
@@ -817,6 +959,7 @@ type Document interface {
 	Onmsgesturestart() (onmsgesturestart func(Event))
 
 	// Onmsgesturestart prop
+	// js:"setonmsgesturestart"
 	SetOnmsgesturestart(onmsgesturestart func(Event))
 
 	// Onmsgesturetap prop
@@ -824,6 +967,7 @@ type Document interface {
 	Onmsgesturetap() (onmsgesturetap func(Event))
 
 	// Onmsgesturetap prop
+	// js:"setonmsgesturetap"
 	SetOnmsgesturetap(onmsgesturetap func(Event))
 
 	// Onmsinertiastart prop
@@ -831,6 +975,7 @@ type Document interface {
 	Onmsinertiastart() (onmsinertiastart func(Event))
 
 	// Onmsinertiastart prop
+	// js:"setonmsinertiastart"
 	SetOnmsinertiastart(onmsinertiastart func(Event))
 
 	// Onmsmanipulationstatechanged prop
@@ -838,6 +983,7 @@ type Document interface {
 	Onmsmanipulationstatechanged() (onmsmanipulationstatechanged func(*MSManipulationEvent))
 
 	// Onmsmanipulationstatechanged prop
+	// js:"setonmsmanipulationstatechanged"
 	SetOnmsmanipulationstatechanged(onmsmanipulationstatechanged func(*MSManipulationEvent))
 
 	// Onmspointercancel prop
@@ -845,6 +991,7 @@ type Document interface {
 	Onmspointercancel() (onmspointercancel func(Event))
 
 	// Onmspointercancel prop
+	// js:"setonmspointercancel"
 	SetOnmspointercancel(onmspointercancel func(Event))
 
 	// Onmspointerdown prop
@@ -852,6 +999,7 @@ type Document interface {
 	Onmspointerdown() (onmspointerdown func(Event))
 
 	// Onmspointerdown prop
+	// js:"setonmspointerdown"
 	SetOnmspointerdown(onmspointerdown func(Event))
 
 	// Onmspointerenter prop
@@ -859,6 +1007,7 @@ type Document interface {
 	Onmspointerenter() (onmspointerenter func(Event))
 
 	// Onmspointerenter prop
+	// js:"setonmspointerenter"
 	SetOnmspointerenter(onmspointerenter func(Event))
 
 	// Onmspointerleave prop
@@ -866,6 +1015,7 @@ type Document interface {
 	Onmspointerleave() (onmspointerleave func(Event))
 
 	// Onmspointerleave prop
+	// js:"setonmspointerleave"
 	SetOnmspointerleave(onmspointerleave func(Event))
 
 	// Onmspointermove prop
@@ -873,6 +1023,7 @@ type Document interface {
 	Onmspointermove() (onmspointermove func(Event))
 
 	// Onmspointermove prop
+	// js:"setonmspointermove"
 	SetOnmspointermove(onmspointermove func(Event))
 
 	// Onmspointerout prop
@@ -880,6 +1031,7 @@ type Document interface {
 	Onmspointerout() (onmspointerout func(Event))
 
 	// Onmspointerout prop
+	// js:"setonmspointerout"
 	SetOnmspointerout(onmspointerout func(Event))
 
 	// Onmspointerover prop
@@ -887,6 +1039,7 @@ type Document interface {
 	Onmspointerover() (onmspointerover func(Event))
 
 	// Onmspointerover prop
+	// js:"setonmspointerover"
 	SetOnmspointerover(onmspointerover func(Event))
 
 	// Onmspointerup prop
@@ -894,6 +1047,7 @@ type Document interface {
 	Onmspointerup() (onmspointerup func(Event))
 
 	// Onmspointerup prop
+	// js:"setonmspointerup"
 	SetOnmspointerup(onmspointerup func(Event))
 
 	// Onmssitemodejumplistitemremoved prop Occurs when an item is removed from a Jump List of a webpage running in Site Mode.
@@ -903,6 +1057,7 @@ type Document interface {
 
 	// Onmssitemodejumplistitemremoved prop Occurs when an item is removed from a Jump List of a webpage running in Site Mode.
 	//     * @param ev The event.
+	// js:"setonmssitemodejumplistitemremoved"
 	SetOnmssitemodejumplistitemremoved(onmssitemodejumplistitemremoved func(*MSSiteModeEvent))
 
 	// Onmsthumbnailclick prop Occurs when a user clicks a button in a Thumbnail Toolbar of a webpage running in Site Mode.
@@ -912,6 +1067,7 @@ type Document interface {
 
 	// Onmsthumbnailclick prop Occurs when a user clicks a button in a Thumbnail Toolbar of a webpage running in Site Mode.
 	//     * @param ev The event.
+	// js:"setonmsthumbnailclick"
 	SetOnmsthumbnailclick(onmsthumbnailclick func(*MSSiteModeEvent))
 
 	// Onpause prop Occurs when playback is paused.
@@ -921,6 +1077,7 @@ type Document interface {
 
 	// Onpause prop Occurs when playback is paused.
 	//     * @param ev The event.
+	// js:"setonpause"
 	SetOnpause(onpause func(Event))
 
 	// Onplay prop Occurs when the play method is requested.
@@ -930,6 +1087,7 @@ type Document interface {
 
 	// Onplay prop Occurs when the play method is requested.
 	//     * @param ev The event.
+	// js:"setonplay"
 	SetOnplay(onplay func(Event))
 
 	// Onplaying prop Occurs when the audio or video has started playing.
@@ -939,6 +1097,7 @@ type Document interface {
 
 	// Onplaying prop Occurs when the audio or video has started playing.
 	//     * @param ev The event.
+	// js:"setonplaying"
 	SetOnplaying(onplaying func(Event))
 
 	// Onpointerlockchange prop
@@ -946,6 +1105,7 @@ type Document interface {
 	Onpointerlockchange() (onpointerlockchange func(Event))
 
 	// Onpointerlockchange prop
+	// js:"setonpointerlockchange"
 	SetOnpointerlockchange(onpointerlockchange func(Event))
 
 	// Onpointerlockerror prop
@@ -953,6 +1113,7 @@ type Document interface {
 	Onpointerlockerror() (onpointerlockerror func(Event))
 
 	// Onpointerlockerror prop
+	// js:"setonpointerlockerror"
 	SetOnpointerlockerror(onpointerlockerror func(Event))
 
 	// Onprogress prop Occurs to indicate progress while downloading media data.
@@ -962,6 +1123,7 @@ type Document interface {
 
 	// Onprogress prop Occurs to indicate progress while downloading media data.
 	//     * @param ev The event.
+	// js:"setonprogress"
 	SetOnprogress(onprogress func(Event))
 
 	// Onratechange prop Occurs when the playback rate is increased or decreased.
@@ -971,6 +1133,7 @@ type Document interface {
 
 	// Onratechange prop Occurs when the playback rate is increased or decreased.
 	//     * @param ev The event.
+	// js:"setonratechange"
 	SetOnratechange(onratechange func(Event))
 
 	// Onreadystatechange prop Fires when the state of the object has changed.
@@ -980,6 +1143,7 @@ type Document interface {
 
 	// Onreadystatechange prop Fires when the state of the object has changed.
 	//     * @param ev The event
+	// js:"setonreadystatechange"
 	SetOnreadystatechange(onreadystatechange func(Event))
 
 	// Onreset prop Fires when the user resets a form.
@@ -989,6 +1153,7 @@ type Document interface {
 
 	// Onreset prop Fires when the user resets a form.
 	//     * @param ev The event.
+	// js:"setonreset"
 	SetOnreset(onreset func(Event))
 
 	// Onscroll prop Fires when the user repositions the scroll box in the scroll bar on the object.
@@ -998,6 +1163,7 @@ type Document interface {
 
 	// Onscroll prop Fires when the user repositions the scroll box in the scroll bar on the object.
 	//     * @param ev The event.
+	// js:"setonscroll"
 	SetOnscroll(onscroll func(Event))
 
 	// Onseeked prop Occurs when the seek operation ends.
@@ -1007,6 +1173,7 @@ type Document interface {
 
 	// Onseeked prop Occurs when the seek operation ends.
 	//     * @param ev The event.
+	// js:"setonseeked"
 	SetOnseeked(onseeked func(Event))
 
 	// Onseeking prop Occurs when the current playback position is moved.
@@ -1016,6 +1183,7 @@ type Document interface {
 
 	// Onseeking prop Occurs when the current playback position is moved.
 	//     * @param ev The event.
+	// js:"setonseeking"
 	SetOnseeking(onseeking func(Event))
 
 	// Onselect prop Fires when the current selection changes.
@@ -1025,6 +1193,7 @@ type Document interface {
 
 	// Onselect prop Fires when the current selection changes.
 	//     * @param ev The event.
+	// js:"setonselect"
 	SetOnselect(onselect func(Event))
 
 	// Onselectionchange prop Fires when the selection state of a document changes.
@@ -1034,6 +1203,7 @@ type Document interface {
 
 	// Onselectionchange prop Fires when the selection state of a document changes.
 	//     * @param ev The event.
+	// js:"setonselectionchange"
 	SetOnselectionchange(onselectionchange func(Event))
 
 	// Onselectstart prop
@@ -1041,6 +1211,7 @@ type Document interface {
 	Onselectstart() (onselectstart func(Event))
 
 	// Onselectstart prop
+	// js:"setonselectstart"
 	SetOnselectstart(onselectstart func(Event))
 
 	// Onstalled prop Occurs when the download has stopped.
@@ -1050,6 +1221,7 @@ type Document interface {
 
 	// Onstalled prop Occurs when the download has stopped.
 	//     * @param ev The event.
+	// js:"setonstalled"
 	SetOnstalled(onstalled func(Event))
 
 	// Onstop prop Fires when the user clicks the Stop button or leaves the Web page.
@@ -1059,6 +1231,7 @@ type Document interface {
 
 	// Onstop prop Fires when the user clicks the Stop button or leaves the Web page.
 	//     * @param ev The event.
+	// js:"setonstop"
 	SetOnstop(onstop func(Event))
 
 	// Onsubmit prop
@@ -1066,6 +1239,7 @@ type Document interface {
 	Onsubmit() (onsubmit func(Event))
 
 	// Onsubmit prop
+	// js:"setonsubmit"
 	SetOnsubmit(onsubmit func(Event))
 
 	// Onsuspend prop Occurs if the load operation has been intentionally halted.
@@ -1075,6 +1249,7 @@ type Document interface {
 
 	// Onsuspend prop Occurs if the load operation has been intentionally halted.
 	//     * @param ev The event.
+	// js:"setonsuspend"
 	SetOnsuspend(onsuspend func(Event))
 
 	// Ontimeupdate prop Occurs to indicate the current playback position.
@@ -1084,6 +1259,7 @@ type Document interface {
 
 	// Ontimeupdate prop Occurs to indicate the current playback position.
 	//     * @param ev The event.
+	// js:"setontimeupdate"
 	SetOntimeupdate(ontimeupdate func(Event))
 
 	// Ontouchcancel prop
@@ -1091,6 +1267,7 @@ type Document interface {
 	Ontouchcancel() (ontouchcancel func(Event))
 
 	// Ontouchcancel prop
+	// js:"setontouchcancel"
 	SetOntouchcancel(ontouchcancel func(Event))
 
 	// Ontouchend prop
@@ -1098,6 +1275,7 @@ type Document interface {
 	Ontouchend() (ontouchend func(Event))
 
 	// Ontouchend prop
+	// js:"setontouchend"
 	SetOntouchend(ontouchend func(Event))
 
 	// Ontouchmove prop
@@ -1105,6 +1283,7 @@ type Document interface {
 	Ontouchmove() (ontouchmove func(Event))
 
 	// Ontouchmove prop
+	// js:"setontouchmove"
 	SetOntouchmove(ontouchmove func(Event))
 
 	// Ontouchstart prop
@@ -1112,6 +1291,7 @@ type Document interface {
 	Ontouchstart() (ontouchstart func(Event))
 
 	// Ontouchstart prop
+	// js:"setontouchstart"
 	SetOntouchstart(ontouchstart func(Event))
 
 	// Onvolumechange prop Occurs when the volume is changed, or playback is muted or unmuted.
@@ -1121,6 +1301,7 @@ type Document interface {
 
 	// Onvolumechange prop Occurs when the volume is changed, or playback is muted or unmuted.
 	//     * @param ev The event.
+	// js:"setonvolumechange"
 	SetOnvolumechange(onvolumechange func(Event))
 
 	// Onwaiting prop Occurs when playback stops because the next frame of a video resource is not available.
@@ -1130,6 +1311,7 @@ type Document interface {
 
 	// Onwaiting prop Occurs when playback stops because the next frame of a video resource is not available.
 	//     * @param ev The event.
+	// js:"setonwaiting"
 	SetOnwaiting(onwaiting func(Event))
 
 	// Onwebkitfullscreenchange prop
@@ -1137,6 +1319,7 @@ type Document interface {
 	Onwebkitfullscreenchange() (onwebkitfullscreenchange func(Event))
 
 	// Onwebkitfullscreenchange prop
+	// js:"setonwebkitfullscreenchange"
 	SetOnwebkitfullscreenchange(onwebkitfullscreenchange func(Event))
 
 	// Onwebkitfullscreenerror prop
@@ -1144,6 +1327,7 @@ type Document interface {
 	Onwebkitfullscreenerror() (onwebkitfullscreenerror func(Event))
 
 	// Onwebkitfullscreenerror prop
+	// js:"setonwebkitfullscreenerror"
 	SetOnwebkitfullscreenerror(onwebkitfullscreenerror func(Event))
 
 	// Plugins prop
@@ -1183,6 +1367,7 @@ type Document interface {
 	Title() (title string)
 
 	// Title prop Contains the title of the document.
+	// js:"settitle"
 	SetTitle(title string)
 
 	// URL prop Sets or gets the URL for the current document.
@@ -1202,6 +1387,7 @@ type Document interface {
 	VlinkColor() (vlinkColor string)
 
 	// VlinkColor prop Sets or gets the color of the links that the user has visited.
+	// js:"setvlinkColor"
 	SetVlinkColor(vlinkColor string)
 
 	// WebkitCurrentFullScreenElement prop
@@ -1229,6 +1415,7 @@ type Document interface {
 	XMLStandalone() (xmlStandalone bool)
 
 	// XMLStandalone prop
+	// js:"setxmlStandalone"
 	SetXMLStandalone(xmlStandalone bool)
 
 	// XMLVersion prop Gets or sets the version attribute specified in the declaration of an XML document.
@@ -1236,5 +1423,6 @@ type Document interface {
 	XMLVersion() (xmlVersion string)
 
 	// XMLVersion prop Gets or sets the version attribute specified in the declaration of an XML document.
+	// js:"setxmlVersion"
 	SetXMLVersion(xmlVersion string)
 }

@@ -2555,19 +2555,44 @@ func (tr *Translator) maybeJSRewrite(d def.Definition, sp *scope.Scope, n *ast.C
 	}
 
 	// find the corresponding declaration (if there is one)
-	def, err := tr.index.DefinitionOf(d.Path(), id)
+	df, err := tr.index.DefinitionOf(d.Path(), id)
 	if err != nil {
 		return nil, err
-	} else if def == nil {
+	} else if df == nil {
 		return nil, nil
 	}
 
-	fn, ok := def.(defs.Functioner)
-	if !ok {
-		return nil, nil
+	// TODO: cleanup
+	var rewrite def.Rewrite
+	switch t := df.(type) {
+	case defs.Methoder:
+		rewrite = t.Rewrite()
+		if rewrite != nil {
+			stct := t.Recv()
+			ifaces, err := stct.Implements()
+			if err != nil {
+				return nil, err
+			}
+			for _, iface := range ifaces {
+				method := iface.FindMethod(id.Name)
+				if method != nil && method.RewriteFunction() != nil {
+					return nil, fmt.Errorf("interface (%s) with method rewrite (%s) conflicts with struct method rewrite (%s)", iface.ID(), method.RewriteFunction().ID(), t.ID())
+				}
+			}
+		}
+	case defs.Functioner:
+		rewrite = t.Rewrite()
+	case defs.Interfacer:
+		method := t.FindMethod(id.Name)
+		if method != nil && method.RewriteFunction() != nil {
+			fn := method.RewriteFunction()
+			if f, ok := fn.(defs.Functioner); ok {
+				rewrite = f.Rewrite()
+			}
+		}
 	}
 
-	expr, e := tr.Rewrite(fn.Rewrite(), d, sp, n.Fun, n.Args...)
+	expr, e := tr.Rewrite(rewrite, d, sp, n.Fun, n.Args...)
 	if e != nil {
 		return nil, e
 	} else if expr == nil {

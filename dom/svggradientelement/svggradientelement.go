@@ -2,6 +2,7 @@ package svggradientelement
 
 import (
 	"github.com/matthewmueller/golly/dom/svganimatedenumeration"
+	"github.com/matthewmueller/golly/dom/svganimatedstring"
 	"github.com/matthewmueller/golly/dom/svganimatedtransformlist"
 	"github.com/matthewmueller/golly/dom/window"
 )
@@ -9,6 +10,10 @@ import (
 // js:"SVGGradientElement,omit"
 type SVGGradientElement interface {
 	window.SVGElement
+
+	// Href prop
+	// js:"href"
+	Href() (href *svganimatedstring.SVGAnimatedString)
 
 	// GradientTransform prop
 	// js:"gradientTransform"

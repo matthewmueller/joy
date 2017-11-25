@@ -70,6 +70,7 @@ type HTMLMediaElement interface {
 	Autoplay() (autoplay bool)
 
 	// Autoplay prop Gets or sets a value that indicates whether to start playing the media automatically.
+	// js:"setautoplay"
 	SetAutoplay(autoplay bool)
 
 	// Buffered prop Gets a collection of buffered time ranges.
@@ -81,6 +82,7 @@ type HTMLMediaElement interface {
 	Controls() (controls bool)
 
 	// Controls prop Gets or sets a flag that indicates whether the client provides a set of controls for the media (in case the developer does not include controls for the player).
+	// js:"setcontrols"
 	SetControls(controls bool)
 
 	// CrossOrigin prop
@@ -88,6 +90,7 @@ type HTMLMediaElement interface {
 	CrossOrigin() (crossOrigin string)
 
 	// CrossOrigin prop
+	// js:"setcrossOrigin"
 	SetCrossOrigin(crossOrigin string)
 
 	// CurrentSrc prop Gets the address or URL of the current media resource that is selected by IHTMLMediaElement.
@@ -99,6 +102,7 @@ type HTMLMediaElement interface {
 	CurrentTime() (currentTime float32)
 
 	// CurrentTime prop Gets or sets the current playback position, in seconds.
+	// js:"setcurrentTime"
 	SetCurrentTime(currentTime float32)
 
 	// DefaultMuted prop
@@ -106,6 +110,7 @@ type HTMLMediaElement interface {
 	DefaultMuted() (defaultMuted bool)
 
 	// DefaultMuted prop
+	// js:"setdefaultMuted"
 	SetDefaultMuted(defaultMuted bool)
 
 	// DefaultPlaybackRate prop Gets or sets the default playback rate when the user is not using fast forward or reverse for a video or audio resource.
@@ -113,6 +118,7 @@ type HTMLMediaElement interface {
 	DefaultPlaybackRate() (defaultPlaybackRate float32)
 
 	// DefaultPlaybackRate prop Gets or sets the default playback rate when the user is not using fast forward or reverse for a video or audio resource.
+	// js:"setdefaultPlaybackRate"
 	SetDefaultPlaybackRate(defaultPlaybackRate float32)
 
 	// Duration prop Returns the duration in seconds of the current media resource. A NaN value is returned if duration is not available, or Infinity if the media resource is streaming.
@@ -132,6 +138,7 @@ type HTMLMediaElement interface {
 	Loop() (loop bool)
 
 	// Loop prop Gets or sets a flag to specify whether playback should restart after it completes.
+	// js:"setloop"
 	SetLoop(loop bool)
 
 	// MediaKeys prop
@@ -143,6 +150,7 @@ type HTMLMediaElement interface {
 	MsAudioCategory() (msAudioCategory string)
 
 	// MsAudioCategory prop Specifies the purpose of the audio or video media, such as background audio or alerts.
+	// js:"setmsAudioCategory"
 	SetMsAudioCategory(msAudioCategory string)
 
 	// MsAudioDeviceType prop Specifies the output device id that the audio will be sent to.
@@ -150,6 +158,7 @@ type HTMLMediaElement interface {
 	MsAudioDeviceType() (msAudioDeviceType string)
 
 	// MsAudioDeviceType prop Specifies the output device id that the audio will be sent to.
+	// js:"setmsAudioDeviceType"
 	SetMsAudioDeviceType(msAudioDeviceType string)
 
 	// MsGraphicsTrustStatus prop
@@ -165,6 +174,7 @@ type HTMLMediaElement interface {
 	MsPlayToDisabled() (msPlayToDisabled bool)
 
 	// MsPlayToDisabled prop Gets or sets whether the DLNA PlayTo device is available.
+	// js:"setmsPlayToDisabled"
 	SetMsPlayToDisabled(msPlayToDisabled bool)
 
 	// MsPlayToPreferredSourceURI prop Gets or sets the path to the preferred media source. This enables the Play To target device to stream the media content, which can be DRM protected, from a different location, such as a cloud media server.
@@ -172,6 +182,7 @@ type HTMLMediaElement interface {
 	MsPlayToPreferredSourceURI() (msPlayToPreferredSourceUri string)
 
 	// MsPlayToPreferredSourceURI prop Gets or sets the path to the preferred media source. This enables the Play To target device to stream the media content, which can be DRM protected, from a different location, such as a cloud media server.
+	// js:"setmsPlayToPreferredSourceUri"
 	SetMsPlayToPreferredSourceURI(msPlayToPreferredSourceUri string)
 
 	// MsPlayToPrimary prop Gets or sets the primary DLNA PlayTo device.
@@ -179,6 +190,7 @@ type HTMLMediaElement interface {
 	MsPlayToPrimary() (msPlayToPrimary bool)
 
 	// MsPlayToPrimary prop Gets or sets the primary DLNA PlayTo device.
+	// js:"setmsPlayToPrimary"
 	SetMsPlayToPrimary(msPlayToPrimary bool)
 
 	// MsPlayToSource prop Gets the source associated with the media element for use by the PlayToManager.
@@ -190,6 +202,7 @@ type HTMLMediaElement interface {
 	MsRealTime() (msRealTime bool)
 
 	// MsRealTime prop Specifies whether or not to enable low-latency playback on the media element.
+	// js:"setmsRealTime"
 	SetMsRealTime(msRealTime bool)
 
 	// Muted prop Gets or sets a flag that indicates whether the audio (either audio or the audio track on video media) is muted.
@@ -197,6 +210,7 @@ type HTMLMediaElement interface {
 	Muted() (muted bool)
 
 	// Muted prop Gets or sets a flag that indicates whether the audio (either audio or the audio track on video media) is muted.
+	// js:"setmuted"
 	SetMuted(muted bool)
 
 	// NetworkState prop Gets the current network activity for the element.
@@ -208,6 +222,7 @@ type HTMLMediaElement interface {
 	Onencrypted() (onencrypted func(*mediaencryptedevent.MediaEncryptedEvent))
 
 	// Onencrypted prop
+	// js:"setonencrypted"
 	SetOnencrypted(onencrypted func(*mediaencryptedevent.MediaEncryptedEvent))
 
 	// Onmsneedkey prop
@@ -215,6 +230,7 @@ type HTMLMediaElement interface {
 	Onmsneedkey() (onmsneedkey func(*msmediakeyneededevent.MSMediaKeyNeededEvent))
 
 	// Onmsneedkey prop
+	// js:"setonmsneedkey"
 	SetOnmsneedkey(onmsneedkey func(*msmediakeyneededevent.MSMediaKeyNeededEvent))
 
 	// Paused prop Gets a flag that specifies whether playback is paused.
@@ -226,6 +242,7 @@ type HTMLMediaElement interface {
 	PlaybackRate() (playbackRate float32)
 
 	// PlaybackRate prop Gets or sets the current rate of speed for the media resource to play. This speed is expressed as a multiple of the normal speed of the media resource.
+	// js:"setplaybackRate"
 	SetPlaybackRate(playbackRate float32)
 
 	// Played prop Gets TimeRanges for the current media resource that has been played.
@@ -237,6 +254,7 @@ type HTMLMediaElement interface {
 	Preload() (preload string)
 
 	// Preload prop Gets or sets the current playback position, in seconds.
+	// js:"setpreload"
 	SetPreload(preload string)
 
 	// ReadyState prop
@@ -256,6 +274,7 @@ type HTMLMediaElement interface {
 	Src() (src string)
 
 	// Src prop The address or URL of the a media resource that is to be considered.
+	// js:"setsrc"
 	SetSrc(src string)
 
 	// SrcObject prop
@@ -263,6 +282,7 @@ type HTMLMediaElement interface {
 	SrcObject() (srcObject *window.MediaStream)
 
 	// SrcObject prop
+	// js:"setsrcObject"
 	SetSrcObject(srcObject *window.MediaStream)
 
 	// TextTracks prop
@@ -278,5 +298,6 @@ type HTMLMediaElement interface {
 	Volume() (volume float32)
 
 	// Volume prop Gets or sets the volume level for audio portions of the media element.
+	// js:"setvolume"
 	SetVolume(volume float32)
 }

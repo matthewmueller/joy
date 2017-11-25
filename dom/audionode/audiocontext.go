@@ -123,6 +123,7 @@ type AudioContext interface {
 	Onstatechange() (onstatechange func(window.Event))
 
 	// Onstatechange prop
+	// js:"setonstatechange"
 	SetOnstatechange(onstatechange func(window.Event))
 
 	// SampleRate prop

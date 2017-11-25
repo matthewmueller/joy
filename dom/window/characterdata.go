@@ -4,6 +4,10 @@ package window
 type CharacterData interface {
 	Node
 
+	// Remove
+	// js:"remove"
+	Remove()
+
 	// AppendData
 	// js:"appendData"
 	AppendData(arg string)
@@ -29,6 +33,7 @@ type CharacterData interface {
 	Data() (data string)
 
 	// Data prop
+	// js:"setdata"
 	SetData(data string)
 
 	// Length prop

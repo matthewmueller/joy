@@ -20,45 +20,45 @@ type XMLHTTPRequest struct {
 }
 
 // Abort fn
-func (*XMLHttpRequest) Abort() {
+func (*XMLHTTPRequest) Abort() {
 	js.Rewrite("$<.abort()")
 }
 
 // GetAllResponseHeaders fn
-func (*XMLHttpRequest) GetAllResponseHeaders() (s string) {
+func (*XMLHTTPRequest) GetAllResponseHeaders() (s string) {
 	js.Rewrite("$<.getAllResponseHeaders()")
 	return s
 }
 
 // GetResponseHeader fn
-func (*XMLHttpRequest) GetResponseHeader(header string) (s string) {
+func (*XMLHTTPRequest) GetResponseHeader(header string) (s string) {
 	js.Rewrite("$<.getResponseHeader($1)", header)
 	return s
 }
 
 // MsCachingEnabled fn
-func (*XMLHttpRequest) MsCachingEnabled() (b bool) {
+func (*XMLHTTPRequest) MsCachingEnabled() (b bool) {
 	js.Rewrite("$<.msCachingEnabled()")
 	return b
 }
 
 // Open fn
-func (*XMLHttpRequest) Open(method string, url string, async *bool, user *string, password *string) {
+func (*XMLHTTPRequest) Open(method string, url string, async *bool, user *string, password *string) {
 	js.Rewrite("$<.open($1, $2, $3, $4, $5)", method, url, async, user, password)
 }
 
 // OverrideMimeType fn
-func (*XMLHttpRequest) OverrideMimeType(mime string) {
+func (*XMLHTTPRequest) OverrideMimeType(mime string) {
 	js.Rewrite("$<.overrideMimeType($1)", mime)
 }
 
 // Send fn
-func (*XMLHttpRequest) Send(data *interface{}) {
+func (*XMLHTTPRequest) Send(data *interface{}) {
 	js.Rewrite("$<.send($1)", data)
 }
 
 // SetRequestHeader fn
-func (*XMLHttpRequest) SetRequestHeader(header string, value string) {
+func (*XMLHTTPRequest) SetRequestHeader(header string, value string) {
 	js.Rewrite("$<.setRequestHeader($1, $2)", header, value)
 }
 

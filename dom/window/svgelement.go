@@ -23,5 +23,6 @@ type SVGElement interface {
 	Xmlbase() (xmlbase string)
 
 	// Xmlbase prop
+	// js:"setxmlbase"
 	SetXmlbase(xmlbase string)
 }

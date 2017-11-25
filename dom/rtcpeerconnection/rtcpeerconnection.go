@@ -92,6 +92,7 @@ type RTCPeerConnection interface {
 	Onaddstream() (onaddstream func(*mediastreamevent.MediaStreamEvent))
 
 	// Onaddstream prop
+	// js:"setonaddstream"
 	SetOnaddstream(onaddstream func(*mediastreamevent.MediaStreamEvent))
 
 	// Onicecandidate prop
@@ -99,6 +100,7 @@ type RTCPeerConnection interface {
 	Onicecandidate() (onicecandidate func(*rtcpeerconnectioniceevent.RTCPeerConnectionIceEvent))
 
 	// Onicecandidate prop
+	// js:"setonicecandidate"
 	SetOnicecandidate(onicecandidate func(*rtcpeerconnectioniceevent.RTCPeerConnectionIceEvent))
 
 	// Oniceconnectionstatechange prop
@@ -106,6 +108,7 @@ type RTCPeerConnection interface {
 	Oniceconnectionstatechange() (oniceconnectionstatechange func(window.Event))
 
 	// Oniceconnectionstatechange prop
+	// js:"setoniceconnectionstatechange"
 	SetOniceconnectionstatechange(oniceconnectionstatechange func(window.Event))
 
 	// Onicegatheringstatechange prop
@@ -113,6 +116,7 @@ type RTCPeerConnection interface {
 	Onicegatheringstatechange() (onicegatheringstatechange func(window.Event))
 
 	// Onicegatheringstatechange prop
+	// js:"setonicegatheringstatechange"
 	SetOnicegatheringstatechange(onicegatheringstatechange func(window.Event))
 
 	// Onnegotiationneeded prop
@@ -120,6 +124,7 @@ type RTCPeerConnection interface {
 	Onnegotiationneeded() (onnegotiationneeded func(window.Event))
 
 	// Onnegotiationneeded prop
+	// js:"setonnegotiationneeded"
 	SetOnnegotiationneeded(onnegotiationneeded func(window.Event))
 
 	// Onremovestream prop
@@ -127,6 +132,7 @@ type RTCPeerConnection interface {
 	Onremovestream() (onremovestream func(*mediastreamevent.MediaStreamEvent))
 
 	// Onremovestream prop
+	// js:"setonremovestream"
 	SetOnremovestream(onremovestream func(*mediastreamevent.MediaStreamEvent))
 
 	// Onsignalingstatechange prop
@@ -134,6 +140,7 @@ type RTCPeerConnection interface {
 	Onsignalingstatechange() (onsignalingstatechange func(window.Event))
 
 	// Onsignalingstatechange prop
+	// js:"setonsignalingstatechange"
 	SetOnsignalingstatechange(onsignalingstatechange func(window.Event))
 
 	// RemoteDescription prop

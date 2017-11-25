@@ -11,6 +11,18 @@ import (
 type Element interface {
 	Node
 
+	// QuerySelector
+	// js:"querySelector"
+	QuerySelector(selectors string) (e Element)
+
+	// QuerySelectorAll
+	// js:"querySelectorAll"
+	QuerySelectorAll(selectors string) (n *NodeList)
+
+	// Remove
+	// js:"remove"
+	Remove()
+
 	// GetAttribute
 	// js:"getAttribute"
 	GetAttribute(qualifiedName string) (s string)
@@ -131,6 +143,98 @@ type Element interface {
 	// js:"webkitRequestFullScreen"
 	WebkitRequestFullScreen()
 
+	// Onpointercancel prop
+	// js:"onpointercancel"
+	Onpointercancel() (onpointercancel func(Event))
+
+	// Onpointercancel prop
+	// js:"setonpointercancel"
+	SetOnpointercancel(onpointercancel func(Event))
+
+	// Onpointerdown prop
+	// js:"onpointerdown"
+	Onpointerdown() (onpointerdown func(Event))
+
+	// Onpointerdown prop
+	// js:"setonpointerdown"
+	SetOnpointerdown(onpointerdown func(Event))
+
+	// Onpointerenter prop
+	// js:"onpointerenter"
+	Onpointerenter() (onpointerenter func(Event))
+
+	// Onpointerenter prop
+	// js:"setonpointerenter"
+	SetOnpointerenter(onpointerenter func(Event))
+
+	// Onpointerleave prop
+	// js:"onpointerleave"
+	Onpointerleave() (onpointerleave func(Event))
+
+	// Onpointerleave prop
+	// js:"setonpointerleave"
+	SetOnpointerleave(onpointerleave func(Event))
+
+	// Onpointermove prop
+	// js:"onpointermove"
+	Onpointermove() (onpointermove func(Event))
+
+	// Onpointermove prop
+	// js:"setonpointermove"
+	SetOnpointermove(onpointermove func(Event))
+
+	// Onpointerout prop
+	// js:"onpointerout"
+	Onpointerout() (onpointerout func(Event))
+
+	// Onpointerout prop
+	// js:"setonpointerout"
+	SetOnpointerout(onpointerout func(Event))
+
+	// Onpointerover prop
+	// js:"onpointerover"
+	Onpointerover() (onpointerover func(Event))
+
+	// Onpointerover prop
+	// js:"setonpointerover"
+	SetOnpointerover(onpointerover func(Event))
+
+	// Onpointerup prop
+	// js:"onpointerup"
+	Onpointerup() (onpointerup func(Event))
+
+	// Onpointerup prop
+	// js:"setonpointerup"
+	SetOnpointerup(onpointerup func(Event))
+
+	// Onwheel prop
+	// js:"onwheel"
+	Onwheel() (onwheel func(Event))
+
+	// Onwheel prop
+	// js:"setonwheel"
+	SetOnwheel(onwheel func(Event))
+
+	// ChildElementCount prop
+	// js:"childElementCount"
+	ChildElementCount() (childElementCount uint)
+
+	// FirstElementChild prop
+	// js:"firstElementChild"
+	FirstElementChild() (firstElementChild Element)
+
+	// LastElementChild prop
+	// js:"lastElementChild"
+	LastElementChild() (lastElementChild Element)
+
+	// NextElementSibling prop
+	// js:"nextElementSibling"
+	NextElementSibling() (nextElementSibling Element)
+
+	// PreviousElementSibling prop
+	// js:"previousElementSibling"
+	PreviousElementSibling() (previousElementSibling Element)
+
 	// ClassList prop
 	// js:"classList"
 	ClassList() (classList domtokenlist.DOMTokenList)
@@ -140,6 +244,7 @@ type Element interface {
 	ClassName() (className string)
 
 	// ClassName prop
+	// js:"setclassName"
 	SetClassName(className string)
 
 	// ClientHeight prop
@@ -163,6 +268,7 @@ type Element interface {
 	ID() (id string)
 
 	// ID prop
+	// js:"setid"
 	SetID(id string)
 
 	// InnerHTML prop
@@ -170,6 +276,7 @@ type Element interface {
 	InnerHTML() (innerHTML string)
 
 	// InnerHTML prop
+	// js:"setinnerHTML"
 	SetInnerHTML(innerHTML string)
 
 	// MsContentZoomFactor prop
@@ -177,6 +284,7 @@ type Element interface {
 	MsContentZoomFactor() (msContentZoomFactor float32)
 
 	// MsContentZoomFactor prop
+	// js:"setmsContentZoomFactor"
 	SetMsContentZoomFactor(msContentZoomFactor float32)
 
 	// MsRegionOverflow prop
@@ -188,6 +296,7 @@ type Element interface {
 	Onariarequest() (onariarequest func(Event))
 
 	// Onariarequest prop
+	// js:"setonariarequest"
 	SetOnariarequest(onariarequest func(Event))
 
 	// Oncommand prop
@@ -195,6 +304,7 @@ type Element interface {
 	Oncommand() (oncommand func(Event))
 
 	// Oncommand prop
+	// js:"setoncommand"
 	SetOncommand(oncommand func(Event))
 
 	// Ongotpointercapture prop
@@ -202,6 +312,7 @@ type Element interface {
 	Ongotpointercapture() (ongotpointercapture func(*PointerEvent))
 
 	// Ongotpointercapture prop
+	// js:"setongotpointercapture"
 	SetOngotpointercapture(ongotpointercapture func(*PointerEvent))
 
 	// Onlostpointercapture prop
@@ -209,6 +320,7 @@ type Element interface {
 	Onlostpointercapture() (onlostpointercapture func(*PointerEvent))
 
 	// Onlostpointercapture prop
+	// js:"setonlostpointercapture"
 	SetOnlostpointercapture(onlostpointercapture func(*PointerEvent))
 
 	// Onmsgesturechange prop
@@ -216,6 +328,7 @@ type Element interface {
 	Onmsgesturechange() (onmsgesturechange func(*MSGestureEvent))
 
 	// Onmsgesturechange prop
+	// js:"setonmsgesturechange"
 	SetOnmsgesturechange(onmsgesturechange func(*MSGestureEvent))
 
 	// Onmsgesturedoubletap prop
@@ -223,6 +336,7 @@ type Element interface {
 	Onmsgesturedoubletap() (onmsgesturedoubletap func(*MSGestureEvent))
 
 	// Onmsgesturedoubletap prop
+	// js:"setonmsgesturedoubletap"
 	SetOnmsgesturedoubletap(onmsgesturedoubletap func(*MSGestureEvent))
 
 	// Onmsgestureend prop
@@ -230,6 +344,7 @@ type Element interface {
 	Onmsgestureend() (onmsgestureend func(*MSGestureEvent))
 
 	// Onmsgestureend prop
+	// js:"setonmsgestureend"
 	SetOnmsgestureend(onmsgestureend func(*MSGestureEvent))
 
 	// Onmsgesturehold prop
@@ -237,6 +352,7 @@ type Element interface {
 	Onmsgesturehold() (onmsgesturehold func(*MSGestureEvent))
 
 	// Onmsgesturehold prop
+	// js:"setonmsgesturehold"
 	SetOnmsgesturehold(onmsgesturehold func(*MSGestureEvent))
 
 	// Onmsgesturestart prop
@@ -244,6 +360,7 @@ type Element interface {
 	Onmsgesturestart() (onmsgesturestart func(*MSGestureEvent))
 
 	// Onmsgesturestart prop
+	// js:"setonmsgesturestart"
 	SetOnmsgesturestart(onmsgesturestart func(*MSGestureEvent))
 
 	// Onmsgesturetap prop
@@ -251,6 +368,7 @@ type Element interface {
 	Onmsgesturetap() (onmsgesturetap func(*MSGestureEvent))
 
 	// Onmsgesturetap prop
+	// js:"setonmsgesturetap"
 	SetOnmsgesturetap(onmsgesturetap func(*MSGestureEvent))
 
 	// Onmsgotpointercapture prop
@@ -258,6 +376,7 @@ type Element interface {
 	Onmsgotpointercapture() (onmsgotpointercapture func(*MSPointerEvent))
 
 	// Onmsgotpointercapture prop
+	// js:"setonmsgotpointercapture"
 	SetOnmsgotpointercapture(onmsgotpointercapture func(*MSPointerEvent))
 
 	// Onmsinertiastart prop
@@ -265,6 +384,7 @@ type Element interface {
 	Onmsinertiastart() (onmsinertiastart func(*MSGestureEvent))
 
 	// Onmsinertiastart prop
+	// js:"setonmsinertiastart"
 	SetOnmsinertiastart(onmsinertiastart func(*MSGestureEvent))
 
 	// Onmslostpointercapture prop
@@ -272,6 +392,7 @@ type Element interface {
 	Onmslostpointercapture() (onmslostpointercapture func(*MSPointerEvent))
 
 	// Onmslostpointercapture prop
+	// js:"setonmslostpointercapture"
 	SetOnmslostpointercapture(onmslostpointercapture func(*MSPointerEvent))
 
 	// Onmspointercancel prop
@@ -279,6 +400,7 @@ type Element interface {
 	Onmspointercancel() (onmspointercancel func(*MSPointerEvent))
 
 	// Onmspointercancel prop
+	// js:"setonmspointercancel"
 	SetOnmspointercancel(onmspointercancel func(*MSPointerEvent))
 
 	// Onmspointerdown prop
@@ -286,6 +408,7 @@ type Element interface {
 	Onmspointerdown() (onmspointerdown func(*MSPointerEvent))
 
 	// Onmspointerdown prop
+	// js:"setonmspointerdown"
 	SetOnmspointerdown(onmspointerdown func(*MSPointerEvent))
 
 	// Onmspointerenter prop
@@ -293,6 +416,7 @@ type Element interface {
 	Onmspointerenter() (onmspointerenter func(*MSPointerEvent))
 
 	// Onmspointerenter prop
+	// js:"setonmspointerenter"
 	SetOnmspointerenter(onmspointerenter func(*MSPointerEvent))
 
 	// Onmspointerleave prop
@@ -300,6 +424,7 @@ type Element interface {
 	Onmspointerleave() (onmspointerleave func(*MSPointerEvent))
 
 	// Onmspointerleave prop
+	// js:"setonmspointerleave"
 	SetOnmspointerleave(onmspointerleave func(*MSPointerEvent))
 
 	// Onmspointermove prop
@@ -307,6 +432,7 @@ type Element interface {
 	Onmspointermove() (onmspointermove func(*MSPointerEvent))
 
 	// Onmspointermove prop
+	// js:"setonmspointermove"
 	SetOnmspointermove(onmspointermove func(*MSPointerEvent))
 
 	// Onmspointerout prop
@@ -314,6 +440,7 @@ type Element interface {
 	Onmspointerout() (onmspointerout func(*MSPointerEvent))
 
 	// Onmspointerout prop
+	// js:"setonmspointerout"
 	SetOnmspointerout(onmspointerout func(*MSPointerEvent))
 
 	// Onmspointerover prop
@@ -321,6 +448,7 @@ type Element interface {
 	Onmspointerover() (onmspointerover func(*MSPointerEvent))
 
 	// Onmspointerover prop
+	// js:"setonmspointerover"
 	SetOnmspointerover(onmspointerover func(*MSPointerEvent))
 
 	// Onmspointerup prop
@@ -328,6 +456,7 @@ type Element interface {
 	Onmspointerup() (onmspointerup func(*MSPointerEvent))
 
 	// Onmspointerup prop
+	// js:"setonmspointerup"
 	SetOnmspointerup(onmspointerup func(*MSPointerEvent))
 
 	// Ontouchcancel prop
@@ -335,6 +464,7 @@ type Element interface {
 	Ontouchcancel() (ontouchcancel func(*TouchEvent))
 
 	// Ontouchcancel prop
+	// js:"setontouchcancel"
 	SetOntouchcancel(ontouchcancel func(*TouchEvent))
 
 	// Ontouchend prop
@@ -342,6 +472,7 @@ type Element interface {
 	Ontouchend() (ontouchend func(*TouchEvent))
 
 	// Ontouchend prop
+	// js:"setontouchend"
 	SetOntouchend(ontouchend func(*TouchEvent))
 
 	// Ontouchmove prop
@@ -349,6 +480,7 @@ type Element interface {
 	Ontouchmove() (ontouchmove func(*TouchEvent))
 
 	// Ontouchmove prop
+	// js:"setontouchmove"
 	SetOntouchmove(ontouchmove func(*TouchEvent))
 
 	// Ontouchstart prop
@@ -356,6 +488,7 @@ type Element interface {
 	Ontouchstart() (ontouchstart func(*TouchEvent))
 
 	// Ontouchstart prop
+	// js:"setontouchstart"
 	SetOntouchstart(ontouchstart func(*TouchEvent))
 
 	// Onwebkitfullscreenchange prop
@@ -363,6 +496,7 @@ type Element interface {
 	Onwebkitfullscreenchange() (onwebkitfullscreenchange func(Event))
 
 	// Onwebkitfullscreenchange prop
+	// js:"setonwebkitfullscreenchange"
 	SetOnwebkitfullscreenchange(onwebkitfullscreenchange func(Event))
 
 	// Onwebkitfullscreenerror prop
@@ -370,6 +504,7 @@ type Element interface {
 	Onwebkitfullscreenerror() (onwebkitfullscreenerror func(Event))
 
 	// Onwebkitfullscreenerror prop
+	// js:"setonwebkitfullscreenerror"
 	SetOnwebkitfullscreenerror(onwebkitfullscreenerror func(Event))
 
 	// OuterHTML prop
@@ -377,6 +512,7 @@ type Element interface {
 	OuterHTML() (outerHTML string)
 
 	// OuterHTML prop
+	// js:"setouterHTML"
 	SetOuterHTML(outerHTML string)
 
 	// Prefix prop
@@ -392,6 +528,7 @@ type Element interface {
 	ScrollLeft() (scrollLeft int)
 
 	// ScrollLeft prop
+	// js:"setscrollLeft"
 	SetScrollLeft(scrollLeft int)
 
 	// ScrollTop prop
@@ -399,6 +536,7 @@ type Element interface {
 	ScrollTop() (scrollTop int)
 
 	// ScrollTop prop
+	// js:"setscrollTop"
 	SetScrollTop(scrollTop int)
 
 	// ScrollWidth prop

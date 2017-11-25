@@ -171,10 +171,34 @@ func structType(ctx *context, n *ast.StructType) error {
 }
 
 func interfaceType(ctx *context, n *ast.InterfaceType) error {
-	// for _, m := range n.Methods.List {
+	if iface, ok := ctx.d.(*interfaces); ok {
+		for _, method := range iface.methods {
+			if method.tag == nil {
+				continue
+			}
 
-	// }
-	// log.Debugf("got an interface type %T", n)
+			// support js:"name,rewrite=fn"
+			for _, option := range method.tag.Options {
+				kv := strings.SplitN(option, "=", 2)
+				if len(kv) != 2 || kv[0] != "rewrite" {
+					continue
+				}
+
+				// find the definition
+				def := ctx.idx.Get(ctx.d.Path() + " " + kv[1])
+				if def == nil {
+					return fmt.Errorf("no rewrite function found for %s rewrite=%s", iface.ID(), kv[1])
+				}
+
+				// found a rewrite function we'll use
+				method.rewriteFunction = def
+
+				// add dependencies
+				ctx.state.deps = append(ctx.state.deps, def)
+			}
+		}
+	}
+
 	return nil
 }
 

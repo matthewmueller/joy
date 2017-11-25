@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/dom2/window"
+	"github.com/matthewmueller/golly/dom/window"
 )
 
 // type Test interface {
@@ -18,18 +18,29 @@ import (
 
 func main() {
 	w := window.New()
-	doc := w.Documents()
-	html := doc.DocumentElement()
-	w.Alert("hi")
-	println(w.DefaultStatus())
-	// s := Sub{}
-	// s.Go()
+	doc := w.Document()
+	println(doc.NodeName())
+	// html, ok := doc.DocumentElement().(window.HTMLElement)
+	// if !ok {
+	// 	return
+	// }
+	// html.EscapeString(s)
+	// w.Alert("hi")
+	// println(w.DefaultStatus())
+	// // s := Sub{}
+	// // s.Go()
 
-	html.AddEventListener("click", func(evt window.Event) {
-		evt.PreventDefault()
-		evt.StopImmediatePropagation()
+	// a := html.QuerySelector("a")
+	// if a != nil {
+	// 	println(a)
+	// }
+	// doc.QueryCommandEnabled(commandId)
 
-	}, false)
+	// html.AddEventListener("click", func(evt window.Event) {
+	// 	evt.PreventDefault()
+	// 	evt.StopImmediatePropagation()
+	// }, false)
+
 	// w.AddEventListener("click", func(evt *dom.Event) {
 	// 	t := evt.GetType()
 	// 	println(t)

@@ -32,6 +32,7 @@ type Event interface {
 	CancelBubble() (cancelBubble bool)
 
 	// CancelBubble prop
+	// js:"setcancelBubble"
 	SetCancelBubble(cancelBubble bool)
 
 	// CurrentTarget prop
@@ -55,6 +56,7 @@ type Event interface {
 	ReturnValue() (returnValue bool)
 
 	// ReturnValue prop
+	// js:"setreturnValue"
 	SetReturnValue(returnValue bool)
 
 	// SrcElement prop

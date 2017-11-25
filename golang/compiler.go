@@ -72,12 +72,12 @@ func (c *Compiler) Parse(packages ...string) (idx *index.Index, g *graph.Graph, 
 
 	program, err := loader.Load(packages...)
 	if err != nil {
-		return idx, g, err
+		return idx, g, errors.Wrapf(err, "load error")
 	}
 
 	idx, err = db.New(program)
 	if err != nil {
-		return idx, g, err
+		return idx, g, errors.Wrapf(err, "indexing error")
 	}
 
 	// initial packages

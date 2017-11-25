@@ -15,7 +15,7 @@ import (
 // Methoder interface
 type Methoder interface {
 	Functioner
-	Recv() def.Definition
+	Recv() Structer
 }
 
 var _ Methoder = (*methods)(nil)
@@ -40,7 +40,7 @@ type methods struct {
 	rewrite   def.Rewrite
 	omit      bool
 	variadic  bool
-	rename string
+	rename    string
 }
 
 // Method fn
@@ -153,8 +153,6 @@ func (d *methods) process() (err error) {
 		return e
 	}
 
-
-
 	// copy state into function
 	d.processed = true
 	d.async = state.async
@@ -244,8 +242,15 @@ func (d *methods) Kind() string {
 	return "METHOD"
 }
 
-func (d *methods) Recv() def.Definition {
-	return d.index.Get(d.recv)
+func (d *methods) Recv() Structer {
+	def := d.index.Get(d.recv)
+	if def == nil {
+		return nil
+	}
+	if stct, ok := def.(Structer); ok {
+		return stct
+	}
+	return nil
 }
 
 func (d *methods) Imports() map[string]string {

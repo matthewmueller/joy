@@ -102,7 +102,7 @@ func (d *method) generate(recv Interface) (string, error) {
 		Result  gen.Vartype
 		Comment string
 	}{
-		Recv:    gen.Pointer(recv.Name()),
+		Recv:    gen.Pointer(gen.Capitalize(recv.Name())),
 		Name:    d.data.Name,
 		Comment: d.data.Comment,
 	}
@@ -168,13 +168,11 @@ func (d *method) generate(recv Interface) (string, error) {
 
 func (d *method) GenerateInterface() (string, error) {
 	data := struct {
-		Recv    string
 		Name    string
 		Params  []gen.Vartype
 		Result  gen.Vartype
 		Comment string
 	}{
-		Recv:    gen.Pointer(gen.Capitalize(d.recv.Name())),
 		Name:    d.data.Name,
 		Comment: d.data.Comment,
 	}

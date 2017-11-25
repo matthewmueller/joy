@@ -8,6 +8,7 @@ type CSSRule interface {
 	CSSText() (cssText string)
 
 	// CSSText prop
+	// js:"setcssText"
 	SetCSSText(cssText string)
 
 	// ParentRule prop

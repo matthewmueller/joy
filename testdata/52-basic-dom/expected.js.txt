@@ -13,8 +13,8 @@ function main () {
 var a = document.createElement("a");
 console.log(a.nodeName);
 console.log(document.createElement("strong").outerHTML);
-console.log(document.body.outerHTML);
-console.log(document.body.outerHTML);
+console.log(dom.Body.outerHTML);
+console.log(dom.Body.outerHTML);
 console.log(dom.Hello);
 };
 return {

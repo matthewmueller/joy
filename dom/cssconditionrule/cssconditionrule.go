@@ -11,5 +11,6 @@ type CSSConditionRule interface {
 	ConditionText() (conditionText string)
 
 	// ConditionText prop
+	// js:"setconditionText"
 	SetConditionText(conditionText string)
 }

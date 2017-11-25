@@ -23,6 +23,7 @@ type AudioNode interface {
 	ChannelCount() (channelCount uint)
 
 	// ChannelCount prop
+	// js:"setchannelCount"
 	SetChannelCount(channelCount uint)
 
 	// ChannelCountMode prop
@@ -30,6 +31,7 @@ type AudioNode interface {
 	ChannelCountMode() (channelCountMode *channelcountmode.ChannelCountMode)
 
 	// ChannelCountMode prop
+	// js:"setchannelCountMode"
 	SetChannelCountMode(channelCountMode *channelcountmode.ChannelCountMode)
 
 	// ChannelInterpretation prop
@@ -37,6 +39,7 @@ type AudioNode interface {
 	ChannelInterpretation() (channelInterpretation *channelinterpretation.ChannelInterpretation)
 
 	// ChannelInterpretation prop
+	// js:"setchannelInterpretation"
 	SetChannelInterpretation(channelInterpretation *channelinterpretation.ChannelInterpretation)
 
 	// Context prop

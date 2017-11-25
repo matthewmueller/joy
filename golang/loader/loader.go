@@ -18,7 +18,6 @@ import (
 func Load(packages ...string) (program *loader.Program, err error) {
 	// defer log.Trace("load").Stop(&err)
 	var conf loader.Config
-
 	goSrc, err := util.GoSourcePath()
 	if err != nil {
 		return nil, err
@@ -67,6 +66,10 @@ func Load(packages ...string) (program *loader.Program, err error) {
 		// use the alias
 		return ctxt.Import(alias, fromDir, mode)
 	}
+
+	ctx := defaultContext()
+	ctx.BuildTags = append(ctx.BuildTags, "macro")
+	conf.Build = &ctx
 
 	// load all the packages
 	program, err = conf.Load()

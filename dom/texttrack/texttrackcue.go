@@ -15,6 +15,7 @@ type TextTrackCue interface {
 	EndTime() (endTime float32)
 
 	// EndTime prop
+	// js:"setendTime"
 	SetEndTime(endTime float32)
 
 	// ID prop
@@ -22,6 +23,7 @@ type TextTrackCue interface {
 	ID() (id string)
 
 	// ID prop
+	// js:"setid"
 	SetID(id string)
 
 	// Onenter prop
@@ -29,6 +31,7 @@ type TextTrackCue interface {
 	Onenter() (onenter func(window.Event))
 
 	// Onenter prop
+	// js:"setonenter"
 	SetOnenter(onenter func(window.Event))
 
 	// Onexit prop
@@ -36,6 +39,7 @@ type TextTrackCue interface {
 	Onexit() (onexit func(window.Event))
 
 	// Onexit prop
+	// js:"setonexit"
 	SetOnexit(onexit func(window.Event))
 
 	// PauseOnExit prop
@@ -43,6 +47,7 @@ type TextTrackCue interface {
 	PauseOnExit() (pauseOnExit bool)
 
 	// PauseOnExit prop
+	// js:"setpauseOnExit"
 	SetPauseOnExit(pauseOnExit bool)
 
 	// StartTime prop
@@ -50,6 +55,7 @@ type TextTrackCue interface {
 	StartTime() (startTime float32)
 
 	// StartTime prop
+	// js:"setstartTime"
 	SetStartTime(startTime float32)
 
 	// Text prop
@@ -57,6 +63,7 @@ type TextTrackCue interface {
 	Text() (text string)
 
 	// Text prop
+	// js:"settext"
 	SetText(text string)
 
 	// Track prop

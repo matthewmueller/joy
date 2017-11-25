@@ -1,0 +1,18 @@
+;
+(function() {
+var pkg = {};
+pkg["github.com/matthewmueller/golly/testdata/66-iface-rewrites"] = (function() {
+function New () {
+return doc;
+};
+function main () {
+var doc = New();
+console.log(doc.nodeName);
+};
+return {
+  New: New,
+  main: main
+};
+})();
+return pkg["github.com/matthewmueller/golly/testdata/66-iface-rewrites"].main();
+})()
