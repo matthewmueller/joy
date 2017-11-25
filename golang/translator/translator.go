@@ -118,6 +118,25 @@ func (tr *Translator) functions(d defs.Functioner) (jsast.INode, error) {
 		}
 	}
 
+	// initialize result identifiers to their zero value
+	// if there are any
+	if n.Type != nil && n.Type.Results != nil {
+		var vars []jsast.VariableDeclarator
+		for _, field := range n.Type.Results.List {
+			for _, name := range field.Names {
+				zero, err := tr.defaultValue(d, sp, field.Type)
+				if err != nil {
+					return nil, errors.Wrapf(err, "error getting fn result zero value")
+				}
+				vars = append(vars, jsast.CreateVariableDeclarator(
+					jsast.CreateIdentifier(name.Name),
+					zero,
+				))
+			}
+		}
+		body = append(body, jsast.CreateVariableDeclaration("var", vars...))
+	}
+
 	// create the body
 	for _, stmt := range n.Body.List {
 		jsStmt, e := tr.statement(d, sp, stmt)
