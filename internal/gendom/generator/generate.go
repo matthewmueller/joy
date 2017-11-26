@@ -285,14 +285,14 @@ func (m *Method) Generate(idx *index, recv *Interface) (string, error) {
 		if async {
 			return gen.Generate("method/"+m.Name, data, `
 				func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) {
-					js.Rewrite("await $<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+					js.Rewrite("await $_.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 				}
 			`)
 		}
 
 		return gen.Generate("method/"+m.Name, data, `
 			func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) {
-				js.Rewrite("$<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+				js.Rewrite("$_.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 			}
 		`)
 	}
@@ -300,14 +300,14 @@ func (m *Method) Generate(idx *index, recv *Interface) (string, error) {
 	if async {
 		return gen.Generate("method/"+m.Name, data, `
 			func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) ({{ .Result.Var }} {{ .Result.Type }}) {
-				js.Rewrite("await $<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+				js.Rewrite("await $_.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 				return {{ .Result.Var }}
 			}
 		`)
 	}
 	return gen.Generate("method/"+m.Name, data, `
 		func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) ({{ .Result.Var }} {{ .Result.Type }}) {
-			js.Rewrite("$<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+			js.Rewrite("$_.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 			return {{ .Result.Var }}
 		}
 	`)
@@ -399,7 +399,7 @@ func (p *Property) Generate(idx *index, recv *Interface) (string, error) {
 	if async && data.Result.Type == "void" {
 		getter, e := gen.Generate("property_getter/"+p.Name, data, `
 			func ({{ .Recv }}) Get{{ capitalize .Name }}() {
-				js.Rewrite("await $<.{{ .Name }}")
+				js.Rewrite("await $_.{{ .Name }}")
 			}
 		`)
 		if e != nil {
@@ -409,7 +409,7 @@ func (p *Property) Generate(idx *index, recv *Interface) (string, error) {
 	} else {
 		getter, e := gen.Generate("property_getter/"+p.Name, data, `
 		func ({{ .Recv }}) Get{{ capitalize .Name }}() ({{ .Result.Var }} {{ .Result.Type }}) {
-			js.Rewrite("$<.{{ .Name }}")
+			js.Rewrite("$_.{{ .Name }}")
 			return {{ .Result.Var }}
 		}
 		`)
@@ -422,7 +422,7 @@ func (p *Property) Generate(idx *index, recv *Interface) (string, error) {
 	if !p.ReadOnly {
 		setter, e := gen.Generate("property_setter/"+p.Name, data, `
 		func ({{ .Recv }}) Set{{ capitalize .Name }} ({{ .Result.Var }} {{ .Result.Type }}) {
-			js.Rewrite("$<.{{ .Name }} = $1", {{ .Result.Var }})
+			js.Rewrite("$_.{{ .Name }} = $1", {{ .Result.Var }})
 		}
 		`)
 		if e != nil {

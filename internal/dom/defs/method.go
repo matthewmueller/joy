@@ -136,7 +136,7 @@ func (d *method) generate(recv Interface) (string, error) {
 			return gen.Generate("method/"+d.data.Name, data, `
 				// {{ capitalize .Name }} fn {{ .Comment }}
 				func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) {
-					js.Rewrite("await $<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+					js.Rewrite("await $_.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 				}
 			`)
 		}
@@ -144,7 +144,7 @@ func (d *method) generate(recv Interface) (string, error) {
 		return gen.Generate("method/"+d.data.Name, data, `
 			// {{ capitalize .Name }} fn {{ .Comment }}
 			func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) {
-				js.Rewrite("$<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+				js.Rewrite("$_.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 			}
 		`)
 	}
@@ -153,7 +153,7 @@ func (d *method) generate(recv Interface) (string, error) {
 		return gen.Generate("method/"+d.data.Name, data, `
 			// {{ capitalize .Name }} fn {{ .Comment }}
 			func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
-				js.Rewrite("await $<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+				js.Rewrite("await $_.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 				return {{ .Result.Var }}
 			}
 		`)
@@ -161,7 +161,7 @@ func (d *method) generate(recv Interface) (string, error) {
 	return gen.Generate("method/"+d.data.Name, data, `
 		// {{ capitalize .Name }} fn {{ .Comment }}
 		func ({{ .Recv }}) {{ capitalize .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
-			js.Rewrite("$<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+			js.Rewrite("$_.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 			return {{ .Result.Var }}
 		}
 	`)
@@ -256,7 +256,7 @@ func (d *method) GenerateRewrite() (string, error) {
 			return gen.Generate("method/"+d.data.Name, data, `
 				// {{ lowercase .Name }} fn {{ .Comment }}
 				func {{ lowercase .Name }}({{ joinvt .Params }}) {
-					js.Rewrite("await $<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+					js.Rewrite("await $_.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 				}
 			`)
 		}
@@ -264,7 +264,7 @@ func (d *method) GenerateRewrite() (string, error) {
 		return gen.Generate("method/"+d.data.Name, data, `
 			// {{ lowercase .Name }} fn {{ .Comment }}
 			func {{ lowercase .Name }}({{ joinvt .Params }}) {
-				js.Rewrite("$<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+				js.Rewrite("$_.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 			}
 		`)
 	}
@@ -273,7 +273,7 @@ func (d *method) GenerateRewrite() (string, error) {
 		return gen.Generate("method/"+d.data.Name, data, `
 			// {{ lowercase .Name }} fn {{ .Comment }}
 			func {{ lowercase .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
-				js.Rewrite("await $<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+				js.Rewrite("await $_.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 				return {{ .Result.Var }}
 			}
 		`)
@@ -281,7 +281,7 @@ func (d *method) GenerateRewrite() (string, error) {
 	return gen.Generate("method/"+d.data.Name, data, `
 		// {{ lowercase .Name }} fn {{ .Comment }}
 		func {{ lowercase .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
-			js.Rewrite("$<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+			js.Rewrite("$_.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
 			return {{ .Result.Var }}
 		}
 	`)

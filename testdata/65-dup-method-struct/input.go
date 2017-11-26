@@ -10,7 +10,7 @@ type Document struct {
 // NodeName fn
 // js:"nodeName"
 func (d *Document) NodeName() string {
-	js.Rewrite("$<.nodeName")
+	js.Rewrite("$_.nodeName")
 	return ""
 }
 

@@ -75,7 +75,7 @@ func Accesskey(accesskey string) *Props {
 
 // Accesskey fn
 func (p *Props) Accesskey(accesskey string) *Props {
-	js.Rewrite("$<.Set('accesskey', $1)", accesskey)
+	js.Rewrite("$_.Set('accesskey', $1)", accesskey)
 	p.attrs["accesskey"] = accesskey
 	return p
 }
@@ -89,7 +89,7 @@ func Class(class string) *Props {
 
 // Class fn
 func (p *Props) Class(class string) *Props {
-	js.Rewrite("$<.Set('class', $1)", class)
+	js.Rewrite("$_.Set('class', $1)", class)
 	p.attrs["class"] = class
 	return p
 }
@@ -103,7 +103,7 @@ func Contenteditable(contenteditable string) *Props {
 
 // Contenteditable fn
 func (p *Props) Contenteditable(contenteditable string) *Props {
-	js.Rewrite("$<.Set('contenteditable', $1)", contenteditable)
+	js.Rewrite("$_.Set('contenteditable', $1)", contenteditable)
 	p.attrs["contenteditable"] = contenteditable
 	return p
 }
@@ -117,7 +117,7 @@ func Contextmenu(contextmenu string) *Props {
 
 // Contextmenu fn
 func (p *Props) Contextmenu(contextmenu string) *Props {
-	js.Rewrite("$<.Set('contextmenu', $1)", contextmenu)
+	js.Rewrite("$_.Set('contextmenu', $1)", contextmenu)
 	p.attrs["contextmenu"] = contextmenu
 	return p
 }
@@ -131,7 +131,7 @@ func Dir(dir string) *Props {
 
 // Dir fn
 func (p *Props) Dir(dir string) *Props {
-	js.Rewrite("$<.Set('dir', $1)", dir)
+	js.Rewrite("$_.Set('dir', $1)", dir)
 	p.attrs["dir"] = dir
 	return p
 }
@@ -145,7 +145,7 @@ func Draggable(draggable string) *Props {
 
 // Draggable fn
 func (p *Props) Draggable(draggable string) *Props {
-	js.Rewrite("$<.Set('draggable', $1)", draggable)
+	js.Rewrite("$_.Set('draggable', $1)", draggable)
 	p.attrs["draggable"] = draggable
 	return p
 }
@@ -159,7 +159,7 @@ func Dropzone(dropzone string) *Props {
 
 // Dropzone fn
 func (p *Props) Dropzone(dropzone string) *Props {
-	js.Rewrite("$<.Set('dropzone', $1)", dropzone)
+	js.Rewrite("$_.Set('dropzone', $1)", dropzone)
 	p.attrs["dropzone"] = dropzone
 	return p
 }
@@ -173,7 +173,7 @@ func Hidden(hidden string) *Props {
 
 // Hidden fn
 func (p *Props) Hidden(hidden string) *Props {
-	js.Rewrite("$<.Set('hidden', $1)", hidden)
+	js.Rewrite("$_.Set('hidden', $1)", hidden)
 	p.attrs["hidden"] = hidden
 	return p
 }
@@ -187,7 +187,7 @@ func ID(id string) *Props {
 
 // ID fn
 func (p *Props) ID(id string) *Props {
-	js.Rewrite("$<.Set('id', $1)", id)
+	js.Rewrite("$_.Set('id', $1)", id)
 	p.attrs["id"] = id
 	return p
 }
@@ -201,7 +201,7 @@ func Itemid(itemid string) *Props {
 
 // Itemid fn
 func (p *Props) Itemid(itemid string) *Props {
-	js.Rewrite("$<.Set('itemid', $1)", itemid)
+	js.Rewrite("$_.Set('itemid', $1)", itemid)
 	p.attrs["itemid"] = itemid
 	return p
 }
@@ -215,7 +215,7 @@ func Itemprop(itemprop string) *Props {
 
 // Itemprop fn
 func (p *Props) Itemprop(itemprop string) *Props {
-	js.Rewrite("$<.Set('itemprop', $1)", itemprop)
+	js.Rewrite("$_.Set('itemprop', $1)", itemprop)
 	p.attrs["itemprop"] = itemprop
 	return p
 }
@@ -229,7 +229,7 @@ func Itemref(itemref string) *Props {
 
 // Itemref fn
 func (p *Props) Itemref(itemref string) *Props {
-	js.Rewrite("$<.Set('itemref', $1)", itemref)
+	js.Rewrite("$_.Set('itemref', $1)", itemref)
 	p.attrs["itemref"] = itemref
 	return p
 }
@@ -243,7 +243,7 @@ func Itemscope(itemscope string) *Props {
 
 // Itemscope fn
 func (p *Props) Itemscope(itemscope string) *Props {
-	js.Rewrite("$<.Set('itemscope', $1)", itemscope)
+	js.Rewrite("$_.Set('itemscope', $1)", itemscope)
 	p.attrs["itemscope"] = itemscope
 	return p
 }
@@ -257,7 +257,7 @@ func Itemtype(itemtype string) *Props {
 
 // Itemtype fn
 func (p *Props) Itemtype(itemtype string) *Props {
-	js.Rewrite("$<.Set('itemtype', $1)", itemtype)
+	js.Rewrite("$_.Set('itemtype', $1)", itemtype)
 	p.attrs["itemtype"] = itemtype
 	return p
 }
@@ -271,7 +271,7 @@ func Lang(lang string) *Props {
 
 // Lang fn
 func (p *Props) Lang(lang string) *Props {
-	js.Rewrite("$<.Set('lang', $1)", lang)
+	js.Rewrite("$_.Set('lang', $1)", lang)
 	p.attrs["lang"] = lang
 	return p
 }
@@ -285,7 +285,7 @@ func Spellcheck(spellcheck string) *Props {
 
 // Spellcheck fn
 func (p *Props) Spellcheck(spellcheck string) *Props {
-	js.Rewrite("$<.Set('spellcheck', $1)", spellcheck)
+	js.Rewrite("$_.Set('spellcheck', $1)", spellcheck)
 	p.attrs["spellcheck"] = spellcheck
 	return p
 }
@@ -299,7 +299,7 @@ func Style(style string) *Props {
 
 // Style fn
 func (p *Props) Style(style string) *Props {
-	js.Rewrite("$<.Set('style', $1)", style)
+	js.Rewrite("$_.Set('style', $1)", style)
 	p.attrs["style"] = style
 	return p
 }
@@ -313,7 +313,7 @@ func Tabindex(tabindex string) *Props {
 
 // Tabindex fn
 func (p *Props) Tabindex(tabindex string) *Props {
-	js.Rewrite("$<.Set('tabindex', $1)", tabindex)
+	js.Rewrite("$_.Set('tabindex', $1)", tabindex)
 	p.attrs["tabindex"] = tabindex
 	return p
 }
@@ -327,7 +327,7 @@ func Title(title string) *Props {
 
 // Title fn
 func (p *Props) Title(title string) *Props {
-	js.Rewrite("$<.Set('title', $1)", title)
+	js.Rewrite("$_.Set('title', $1)", title)
 	p.attrs["title"] = title
 	return p
 }
@@ -341,7 +341,7 @@ func Translate(translate string) *Props {
 
 // Translate fn
 func (p *Props) Translate(translate string) *Props {
-	js.Rewrite("$<.Set('translate', $1)", translate)
+	js.Rewrite("$_.Set('translate', $1)", translate)
 	p.attrs["translate"] = translate
 	return p
 }
@@ -355,7 +355,7 @@ func Key(key string) *Props {
 
 // Key fn
 func (p *Props) Key(key string) *Props {
-	js.Rewrite("$<.Set('key', $1)", key)
+	js.Rewrite("$_.Set('key', $1)", key)
 	p.attrs["key"] = key
 	return p
 }
@@ -369,7 +369,7 @@ func OnMount(onmount string) *Props {
 
 // OnMount fn
 func (p *Props) OnMount(onmount string) *Props {
-	js.Rewrite("$<.Set('onmount', $1)", onmount)
+	js.Rewrite("$_.Set('onmount', $1)", onmount)
 	p.attrs["onMount"] = onmount
 	return p
 }
@@ -383,7 +383,7 @@ func OnUnmount(onunmount string) *Props {
 
 // OnUnmount fn
 func (p *Props) OnUnmount(onunmount string) *Props {
-	js.Rewrite("$<.Set('onunmount', $1)", onunmount)
+	js.Rewrite("$_.Set('onunmount', $1)", onunmount)
 	p.attrs["onUnmount"] = onunmount
 	return p
 }
@@ -397,7 +397,7 @@ func OnCopy(oncopy string) *Props {
 
 // OnCopy fn
 func (p *Props) OnCopy(oncopy string) *Props {
-	js.Rewrite("$<.Set('oncopy', $1)", oncopy)
+	js.Rewrite("$_.Set('oncopy', $1)", oncopy)
 	p.attrs["onCopy"] = oncopy
 	return p
 }
@@ -411,7 +411,7 @@ func OnCut(oncut string) *Props {
 
 // OnCut fn
 func (p *Props) OnCut(oncut string) *Props {
-	js.Rewrite("$<.Set('oncut', $1)", oncut)
+	js.Rewrite("$_.Set('oncut', $1)", oncut)
 	p.attrs["onCut"] = oncut
 	return p
 }
@@ -425,7 +425,7 @@ func OnPaste(onpaste string) *Props {
 
 // OnPaste fn
 func (p *Props) OnPaste(onpaste string) *Props {
-	js.Rewrite("$<.Set('onpaste', $1)", onpaste)
+	js.Rewrite("$_.Set('onpaste', $1)", onpaste)
 	p.attrs["onPaste"] = onpaste
 	return p
 }
@@ -439,7 +439,7 @@ func OnCompositionEnd(oncompositionend string) *Props {
 
 // OnCompositionEnd fn
 func (p *Props) OnCompositionEnd(oncompositionend string) *Props {
-	js.Rewrite("$<.Set('oncompositionend', $1)", oncompositionend)
+	js.Rewrite("$_.Set('oncompositionend', $1)", oncompositionend)
 	p.attrs["onCompositionEnd"] = oncompositionend
 	return p
 }
@@ -453,7 +453,7 @@ func OnCompositionStart(oncompositionstart string) *Props {
 
 // OnCompositionStart fn
 func (p *Props) OnCompositionStart(oncompositionstart string) *Props {
-	js.Rewrite("$<.Set('oncompositionstart', $1)", oncompositionstart)
+	js.Rewrite("$_.Set('oncompositionstart', $1)", oncompositionstart)
 	p.attrs["onCompositionStart"] = oncompositionstart
 	return p
 }
@@ -467,7 +467,7 @@ func OnCompositionUpdate(oncompositionupdate string) *Props {
 
 // OnCompositionUpdate fn
 func (p *Props) OnCompositionUpdate(oncompositionupdate string) *Props {
-	js.Rewrite("$<.Set('oncompositionupdate', $1)", oncompositionupdate)
+	js.Rewrite("$_.Set('oncompositionupdate', $1)", oncompositionupdate)
 	p.attrs["onCompositionUpdate"] = oncompositionupdate
 	return p
 }
@@ -481,7 +481,7 @@ func OnKeyDown(onkeydown string) *Props {
 
 // OnKeyDown fn
 func (p *Props) OnKeyDown(onkeydown string) *Props {
-	js.Rewrite("$<.Set('onkeydown', $1)", onkeydown)
+	js.Rewrite("$_.Set('onkeydown', $1)", onkeydown)
 	p.attrs["onKeyDown"] = onkeydown
 	return p
 }
@@ -495,7 +495,7 @@ func OnKeyPress(onkeypress string) *Props {
 
 // OnKeyPress fn
 func (p *Props) OnKeyPress(onkeypress string) *Props {
-	js.Rewrite("$<.Set('onkeypress', $1)", onkeypress)
+	js.Rewrite("$_.Set('onkeypress', $1)", onkeypress)
 	p.attrs["onKeyPress"] = onkeypress
 	return p
 }
@@ -509,7 +509,7 @@ func OnKeyUp(onkeyup string) *Props {
 
 // OnKeyUp fn
 func (p *Props) OnKeyUp(onkeyup string) *Props {
-	js.Rewrite("$<.Set('onkeyup', $1)", onkeyup)
+	js.Rewrite("$_.Set('onkeyup', $1)", onkeyup)
 	p.attrs["onKeyUp"] = onkeyup
 	return p
 }
@@ -523,7 +523,7 @@ func OnFocus(onfocus string) *Props {
 
 // OnFocus fn
 func (p *Props) OnFocus(onfocus string) *Props {
-	js.Rewrite("$<.Set('onfocus', $1)", onfocus)
+	js.Rewrite("$_.Set('onfocus', $1)", onfocus)
 	p.attrs["onFocus"] = onfocus
 	return p
 }
@@ -537,7 +537,7 @@ func OnBlur(onblur string) *Props {
 
 // OnBlur fn
 func (p *Props) OnBlur(onblur string) *Props {
-	js.Rewrite("$<.Set('onblur', $1)", onblur)
+	js.Rewrite("$_.Set('onblur', $1)", onblur)
 	p.attrs["onBlur"] = onblur
 	return p
 }
@@ -551,7 +551,7 @@ func OnChange(onchange string) *Props {
 
 // OnChange fn
 func (p *Props) OnChange(onchange string) *Props {
-	js.Rewrite("$<.Set('onchange', $1)", onchange)
+	js.Rewrite("$_.Set('onchange', $1)", onchange)
 	p.attrs["onChange"] = onchange
 	return p
 }
@@ -565,7 +565,7 @@ func OnInput(oninput string) *Props {
 
 // OnInput fn
 func (p *Props) OnInput(oninput string) *Props {
-	js.Rewrite("$<.Set('oninput', $1)", oninput)
+	js.Rewrite("$_.Set('oninput', $1)", oninput)
 	p.attrs["onInput"] = oninput
 	return p
 }
@@ -579,7 +579,7 @@ func OnSubmit(onsubmit string) *Props {
 
 // OnSubmit fn
 func (p *Props) OnSubmit(onsubmit string) *Props {
-	js.Rewrite("$<.Set('onsubmit', $1)", onsubmit)
+	js.Rewrite("$_.Set('onsubmit', $1)", onsubmit)
 	p.attrs["onSubmit"] = onsubmit
 	return p
 }
@@ -593,7 +593,7 @@ func OnClick(onclick string) *Props {
 
 // OnClick fn
 func (p *Props) OnClick(onclick string) *Props {
-	js.Rewrite("$<.Set('onclick', $1)", onclick)
+	js.Rewrite("$_.Set('onclick', $1)", onclick)
 	p.attrs["onClick"] = onclick
 	return p
 }
@@ -607,7 +607,7 @@ func OnContextMenu(oncontextmenu string) *Props {
 
 // OnContextMenu fn
 func (p *Props) OnContextMenu(oncontextmenu string) *Props {
-	js.Rewrite("$<.Set('oncontextmenu', $1)", oncontextmenu)
+	js.Rewrite("$_.Set('oncontextmenu', $1)", oncontextmenu)
 	p.attrs["onContextMenu"] = oncontextmenu
 	return p
 }
@@ -621,7 +621,7 @@ func OnDoubleClick(ondoubleclick string) *Props {
 
 // OnDoubleClick fn
 func (p *Props) OnDoubleClick(ondoubleclick string) *Props {
-	js.Rewrite("$<.Set('ondoubleclick', $1)", ondoubleclick)
+	js.Rewrite("$_.Set('ondoubleclick', $1)", ondoubleclick)
 	p.attrs["onDoubleClick"] = ondoubleclick
 	return p
 }
@@ -635,7 +635,7 @@ func OnDrag(ondrag string) *Props {
 
 // OnDrag fn
 func (p *Props) OnDrag(ondrag string) *Props {
-	js.Rewrite("$<.Set('ondrag', $1)", ondrag)
+	js.Rewrite("$_.Set('ondrag', $1)", ondrag)
 	p.attrs["onDrag"] = ondrag
 	return p
 }
@@ -649,7 +649,7 @@ func OnDragEnd(ondragend string) *Props {
 
 // OnDragEnd fn
 func (p *Props) OnDragEnd(ondragend string) *Props {
-	js.Rewrite("$<.Set('ondragend', $1)", ondragend)
+	js.Rewrite("$_.Set('ondragend', $1)", ondragend)
 	p.attrs["onDragEnd"] = ondragend
 	return p
 }
@@ -663,7 +663,7 @@ func OnDragEnter(ondragenter string) *Props {
 
 // OnDragEnter fn
 func (p *Props) OnDragEnter(ondragenter string) *Props {
-	js.Rewrite("$<.Set('ondragenter', $1)", ondragenter)
+	js.Rewrite("$_.Set('ondragenter', $1)", ondragenter)
 	p.attrs["onDragEnter"] = ondragenter
 	return p
 }
@@ -677,7 +677,7 @@ func OnDragExit(ondragexit string) *Props {
 
 // OnDragExit fn
 func (p *Props) OnDragExit(ondragexit string) *Props {
-	js.Rewrite("$<.Set('ondragexit', $1)", ondragexit)
+	js.Rewrite("$_.Set('ondragexit', $1)", ondragexit)
 	p.attrs["onDragExit"] = ondragexit
 	return p
 }
@@ -691,7 +691,7 @@ func OnDragLeave(ondragleave string) *Props {
 
 // OnDragLeave fn
 func (p *Props) OnDragLeave(ondragleave string) *Props {
-	js.Rewrite("$<.Set('ondragleave', $1)", ondragleave)
+	js.Rewrite("$_.Set('ondragleave', $1)", ondragleave)
 	p.attrs["onDragLeave"] = ondragleave
 	return p
 }
@@ -705,7 +705,7 @@ func OnDragOver(ondragover string) *Props {
 
 // OnDragOver fn
 func (p *Props) OnDragOver(ondragover string) *Props {
-	js.Rewrite("$<.Set('ondragover', $1)", ondragover)
+	js.Rewrite("$_.Set('ondragover', $1)", ondragover)
 	p.attrs["onDragOver"] = ondragover
 	return p
 }
@@ -719,7 +719,7 @@ func OnDragStart(ondragstart string) *Props {
 
 // OnDragStart fn
 func (p *Props) OnDragStart(ondragstart string) *Props {
-	js.Rewrite("$<.Set('ondragstart', $1)", ondragstart)
+	js.Rewrite("$_.Set('ondragstart', $1)", ondragstart)
 	p.attrs["onDragStart"] = ondragstart
 	return p
 }
@@ -733,7 +733,7 @@ func OnDrop(ondrop string) *Props {
 
 // OnDrop fn
 func (p *Props) OnDrop(ondrop string) *Props {
-	js.Rewrite("$<.Set('ondrop', $1)", ondrop)
+	js.Rewrite("$_.Set('ondrop', $1)", ondrop)
 	p.attrs["onDrop"] = ondrop
 	return p
 }
@@ -747,7 +747,7 @@ func OnMouseDown(onmousedown string) *Props {
 
 // OnMouseDown fn
 func (p *Props) OnMouseDown(onmousedown string) *Props {
-	js.Rewrite("$<.Set('onmousedown', $1)", onmousedown)
+	js.Rewrite("$_.Set('onmousedown', $1)", onmousedown)
 	p.attrs["onMouseDown"] = onmousedown
 	return p
 }
@@ -761,7 +761,7 @@ func OnMouseEnter(onmouseenter string) *Props {
 
 // OnMouseEnter fn
 func (p *Props) OnMouseEnter(onmouseenter string) *Props {
-	js.Rewrite("$<.Set('onmouseenter', $1)", onmouseenter)
+	js.Rewrite("$_.Set('onmouseenter', $1)", onmouseenter)
 	p.attrs["onMouseEnter"] = onmouseenter
 	return p
 }
@@ -775,7 +775,7 @@ func OnMouseLeave(onmouseleave string) *Props {
 
 // OnMouseLeave fn
 func (p *Props) OnMouseLeave(onmouseleave string) *Props {
-	js.Rewrite("$<.Set('onmouseleave', $1)", onmouseleave)
+	js.Rewrite("$_.Set('onmouseleave', $1)", onmouseleave)
 	p.attrs["onMouseLeave"] = onmouseleave
 	return p
 }
@@ -789,7 +789,7 @@ func OnMouseMove(onmousemove string) *Props {
 
 // OnMouseMove fn
 func (p *Props) OnMouseMove(onmousemove string) *Props {
-	js.Rewrite("$<.Set('onmousemove', $1)", onmousemove)
+	js.Rewrite("$_.Set('onmousemove', $1)", onmousemove)
 	p.attrs["onMouseMove"] = onmousemove
 	return p
 }
@@ -803,7 +803,7 @@ func OnMouseOut(onmouseout string) *Props {
 
 // OnMouseOut fn
 func (p *Props) OnMouseOut(onmouseout string) *Props {
-	js.Rewrite("$<.Set('onmouseout', $1)", onmouseout)
+	js.Rewrite("$_.Set('onmouseout', $1)", onmouseout)
 	p.attrs["onMouseOut"] = onmouseout
 	return p
 }
@@ -817,7 +817,7 @@ func OnMouseOver(onmouseover string) *Props {
 
 // OnMouseOver fn
 func (p *Props) OnMouseOver(onmouseover string) *Props {
-	js.Rewrite("$<.Set('onmouseover', $1)", onmouseover)
+	js.Rewrite("$_.Set('onmouseover', $1)", onmouseover)
 	p.attrs["onMouseOver"] = onmouseover
 	return p
 }
@@ -831,7 +831,7 @@ func OnMouseUp(onmouseup string) *Props {
 
 // OnMouseUp fn
 func (p *Props) OnMouseUp(onmouseup string) *Props {
-	js.Rewrite("$<.Set('onmouseup', $1)", onmouseup)
+	js.Rewrite("$_.Set('onmouseup', $1)", onmouseup)
 	p.attrs["onMouseUp"] = onmouseup
 	return p
 }
@@ -845,7 +845,7 @@ func OnSelect(onselect string) *Props {
 
 // OnSelect fn
 func (p *Props) OnSelect(onselect string) *Props {
-	js.Rewrite("$<.Set('onselect', $1)", onselect)
+	js.Rewrite("$_.Set('onselect', $1)", onselect)
 	p.attrs["onSelect"] = onselect
 	return p
 }
@@ -859,7 +859,7 @@ func OnTouchCancel(ontouchcancel string) *Props {
 
 // OnTouchCancel fn
 func (p *Props) OnTouchCancel(ontouchcancel string) *Props {
-	js.Rewrite("$<.Set('ontouchcancel', $1)", ontouchcancel)
+	js.Rewrite("$_.Set('ontouchcancel', $1)", ontouchcancel)
 	p.attrs["onTouchCancel"] = ontouchcancel
 	return p
 }
@@ -873,7 +873,7 @@ func OnTouchEnd(ontouchend string) *Props {
 
 // OnTouchEnd fn
 func (p *Props) OnTouchEnd(ontouchend string) *Props {
-	js.Rewrite("$<.Set('ontouchend', $1)", ontouchend)
+	js.Rewrite("$_.Set('ontouchend', $1)", ontouchend)
 	p.attrs["onTouchEnd"] = ontouchend
 	return p
 }
@@ -887,7 +887,7 @@ func OnTouchMove(ontouchmove string) *Props {
 
 // OnTouchMove fn
 func (p *Props) OnTouchMove(ontouchmove string) *Props {
-	js.Rewrite("$<.Set('ontouchmove', $1)", ontouchmove)
+	js.Rewrite("$_.Set('ontouchmove', $1)", ontouchmove)
 	p.attrs["onTouchMove"] = ontouchmove
 	return p
 }
@@ -901,7 +901,7 @@ func OnTouchStart(ontouchstart string) *Props {
 
 // OnTouchStart fn
 func (p *Props) OnTouchStart(ontouchstart string) *Props {
-	js.Rewrite("$<.Set('ontouchstart', $1)", ontouchstart)
+	js.Rewrite("$_.Set('ontouchstart', $1)", ontouchstart)
 	p.attrs["onTouchStart"] = ontouchstart
 	return p
 }
@@ -915,7 +915,7 @@ func OnScroll(onscroll string) *Props {
 
 // OnScroll fn
 func (p *Props) OnScroll(onscroll string) *Props {
-	js.Rewrite("$<.Set('onscroll', $1)", onscroll)
+	js.Rewrite("$_.Set('onscroll', $1)", onscroll)
 	p.attrs["onScroll"] = onscroll
 	return p
 }
@@ -929,7 +929,7 @@ func OnWheel(onwheel string) *Props {
 
 // OnWheel fn
 func (p *Props) OnWheel(onwheel string) *Props {
-	js.Rewrite("$<.Set('onwheel', $1)", onwheel)
+	js.Rewrite("$_.Set('onwheel', $1)", onwheel)
 	p.attrs["onWheel"] = onwheel
 	return p
 }
@@ -943,7 +943,7 @@ func OnAbort(onabort string) *Props {
 
 // OnAbort fn
 func (p *Props) OnAbort(onabort string) *Props {
-	js.Rewrite("$<.Set('onabort', $1)", onabort)
+	js.Rewrite("$_.Set('onabort', $1)", onabort)
 	p.attrs["onAbort"] = onabort
 	return p
 }
@@ -957,7 +957,7 @@ func OnCanPlay(oncanplay string) *Props {
 
 // OnCanPlay fn
 func (p *Props) OnCanPlay(oncanplay string) *Props {
-	js.Rewrite("$<.Set('oncanplay', $1)", oncanplay)
+	js.Rewrite("$_.Set('oncanplay', $1)", oncanplay)
 	p.attrs["onCanPlay"] = oncanplay
 	return p
 }
@@ -971,7 +971,7 @@ func OnCanPlayThrough(oncanplaythrough string) *Props {
 
 // OnCanPlayThrough fn
 func (p *Props) OnCanPlayThrough(oncanplaythrough string) *Props {
-	js.Rewrite("$<.Set('oncanplaythrough', $1)", oncanplaythrough)
+	js.Rewrite("$_.Set('oncanplaythrough', $1)", oncanplaythrough)
 	p.attrs["onCanPlayThrough"] = oncanplaythrough
 	return p
 }
@@ -985,7 +985,7 @@ func OnDurationChange(ondurationchange string) *Props {
 
 // OnDurationChange fn
 func (p *Props) OnDurationChange(ondurationchange string) *Props {
-	js.Rewrite("$<.Set('ondurationchange', $1)", ondurationchange)
+	js.Rewrite("$_.Set('ondurationchange', $1)", ondurationchange)
 	p.attrs["onDurationChange"] = ondurationchange
 	return p
 }
@@ -999,7 +999,7 @@ func OnEmptied(onemptied string) *Props {
 
 // OnEmptied fn
 func (p *Props) OnEmptied(onemptied string) *Props {
-	js.Rewrite("$<.Set('onemptied', $1)", onemptied)
+	js.Rewrite("$_.Set('onemptied', $1)", onemptied)
 	p.attrs["onEmptied"] = onemptied
 	return p
 }
@@ -1013,7 +1013,7 @@ func OnEncrypted(onencrypted string) *Props {
 
 // OnEncrypted fn
 func (p *Props) OnEncrypted(onencrypted string) *Props {
-	js.Rewrite("$<.Set('onencrypted', $1)", onencrypted)
+	js.Rewrite("$_.Set('onencrypted', $1)", onencrypted)
 	p.attrs["onEncrypted"] = onencrypted
 	return p
 }
@@ -1027,7 +1027,7 @@ func OnEnded(onended string) *Props {
 
 // OnEnded fn
 func (p *Props) OnEnded(onended string) *Props {
-	js.Rewrite("$<.Set('onended', $1)", onended)
+	js.Rewrite("$_.Set('onended', $1)", onended)
 	p.attrs["onEnded"] = onended
 	return p
 }
@@ -1041,7 +1041,7 @@ func OnError(onerror string) *Props {
 
 // OnError fn
 func (p *Props) OnError(onerror string) *Props {
-	js.Rewrite("$<.Set('onerror', $1)", onerror)
+	js.Rewrite("$_.Set('onerror', $1)", onerror)
 	p.attrs["onError"] = onerror
 	return p
 }
@@ -1055,7 +1055,7 @@ func OnLoadedData(onloadeddata string) *Props {
 
 // OnLoadedData fn
 func (p *Props) OnLoadedData(onloadeddata string) *Props {
-	js.Rewrite("$<.Set('onloadeddata', $1)", onloadeddata)
+	js.Rewrite("$_.Set('onloadeddata', $1)", onloadeddata)
 	p.attrs["onLoadedData"] = onloadeddata
 	return p
 }
@@ -1069,7 +1069,7 @@ func OnLoadedMetadata(onloadedmetadata string) *Props {
 
 // OnLoadedMetadata fn
 func (p *Props) OnLoadedMetadata(onloadedmetadata string) *Props {
-	js.Rewrite("$<.Set('onloadedmetadata', $1)", onloadedmetadata)
+	js.Rewrite("$_.Set('onloadedmetadata', $1)", onloadedmetadata)
 	p.attrs["onLoadedMetadata"] = onloadedmetadata
 	return p
 }
@@ -1083,7 +1083,7 @@ func OnLoadStart(onloadstart string) *Props {
 
 // OnLoadStart fn
 func (p *Props) OnLoadStart(onloadstart string) *Props {
-	js.Rewrite("$<.Set('onloadstart', $1)", onloadstart)
+	js.Rewrite("$_.Set('onloadstart', $1)", onloadstart)
 	p.attrs["onLoadStart"] = onloadstart
 	return p
 }
@@ -1097,7 +1097,7 @@ func OnPause(onpause string) *Props {
 
 // OnPause fn
 func (p *Props) OnPause(onpause string) *Props {
-	js.Rewrite("$<.Set('onpause', $1)", onpause)
+	js.Rewrite("$_.Set('onpause', $1)", onpause)
 	p.attrs["onPause"] = onpause
 	return p
 }
@@ -1111,7 +1111,7 @@ func OnPlay(onplay string) *Props {
 
 // OnPlay fn
 func (p *Props) OnPlay(onplay string) *Props {
-	js.Rewrite("$<.Set('onplay', $1)", onplay)
+	js.Rewrite("$_.Set('onplay', $1)", onplay)
 	p.attrs["onPlay"] = onplay
 	return p
 }
@@ -1125,7 +1125,7 @@ func OnPlaying(onplaying string) *Props {
 
 // OnPlaying fn
 func (p *Props) OnPlaying(onplaying string) *Props {
-	js.Rewrite("$<.Set('onplaying', $1)", onplaying)
+	js.Rewrite("$_.Set('onplaying', $1)", onplaying)
 	p.attrs["onPlaying"] = onplaying
 	return p
 }
@@ -1139,7 +1139,7 @@ func OnProgress(onprogress string) *Props {
 
 // OnProgress fn
 func (p *Props) OnProgress(onprogress string) *Props {
-	js.Rewrite("$<.Set('onprogress', $1)", onprogress)
+	js.Rewrite("$_.Set('onprogress', $1)", onprogress)
 	p.attrs["onProgress"] = onprogress
 	return p
 }
@@ -1153,7 +1153,7 @@ func OnRateChange(onratechange string) *Props {
 
 // OnRateChange fn
 func (p *Props) OnRateChange(onratechange string) *Props {
-	js.Rewrite("$<.Set('onratechange', $1)", onratechange)
+	js.Rewrite("$_.Set('onratechange', $1)", onratechange)
 	p.attrs["onRateChange"] = onratechange
 	return p
 }
@@ -1167,7 +1167,7 @@ func OnSeeked(onseeked string) *Props {
 
 // OnSeeked fn
 func (p *Props) OnSeeked(onseeked string) *Props {
-	js.Rewrite("$<.Set('onseeked', $1)", onseeked)
+	js.Rewrite("$_.Set('onseeked', $1)", onseeked)
 	p.attrs["onSeeked"] = onseeked
 	return p
 }
@@ -1181,7 +1181,7 @@ func OnSeeking(onseeking string) *Props {
 
 // OnSeeking fn
 func (p *Props) OnSeeking(onseeking string) *Props {
-	js.Rewrite("$<.Set('onseeking', $1)", onseeking)
+	js.Rewrite("$_.Set('onseeking', $1)", onseeking)
 	p.attrs["onSeeking"] = onseeking
 	return p
 }
@@ -1195,7 +1195,7 @@ func OnStalled(onstalled string) *Props {
 
 // OnStalled fn
 func (p *Props) OnStalled(onstalled string) *Props {
-	js.Rewrite("$<.Set('onstalled', $1)", onstalled)
+	js.Rewrite("$_.Set('onstalled', $1)", onstalled)
 	p.attrs["onStalled"] = onstalled
 	return p
 }
@@ -1209,7 +1209,7 @@ func OnSuspend(onsuspend string) *Props {
 
 // OnSuspend fn
 func (p *Props) OnSuspend(onsuspend string) *Props {
-	js.Rewrite("$<.Set('onsuspend', $1)", onsuspend)
+	js.Rewrite("$_.Set('onsuspend', $1)", onsuspend)
 	p.attrs["onSuspend"] = onsuspend
 	return p
 }
@@ -1223,7 +1223,7 @@ func OnTimeUpdate(ontimeupdate string) *Props {
 
 // OnTimeUpdate fn
 func (p *Props) OnTimeUpdate(ontimeupdate string) *Props {
-	js.Rewrite("$<.Set('ontimeupdate', $1)", ontimeupdate)
+	js.Rewrite("$_.Set('ontimeupdate', $1)", ontimeupdate)
 	p.attrs["onTimeUpdate"] = ontimeupdate
 	return p
 }
@@ -1237,7 +1237,7 @@ func OnVolumeChange(onvolumechange string) *Props {
 
 // OnVolumeChange fn
 func (p *Props) OnVolumeChange(onvolumechange string) *Props {
-	js.Rewrite("$<.Set('onvolumechange', $1)", onvolumechange)
+	js.Rewrite("$_.Set('onvolumechange', $1)", onvolumechange)
 	p.attrs["onVolumeChange"] = onvolumechange
 	return p
 }
@@ -1251,7 +1251,7 @@ func OnWaiting(onwaiting string) *Props {
 
 // OnWaiting fn
 func (p *Props) OnWaiting(onwaiting string) *Props {
-	js.Rewrite("$<.Set('onwaiting', $1)", onwaiting)
+	js.Rewrite("$_.Set('onwaiting', $1)", onwaiting)
 	p.attrs["onWaiting"] = onwaiting
 	return p
 }
@@ -1265,7 +1265,7 @@ func OnLoad(onload string) *Props {
 
 // OnLoad fn
 func (p *Props) OnLoad(onload string) *Props {
-	js.Rewrite("$<.Set('onload', $1)", onload)
+	js.Rewrite("$_.Set('onload', $1)", onload)
 	p.attrs["onLoad"] = onload
 	return p
 }
@@ -1279,7 +1279,7 @@ func OnAnimationStart(onanimationstart string) *Props {
 
 // OnAnimationStart fn
 func (p *Props) OnAnimationStart(onanimationstart string) *Props {
-	js.Rewrite("$<.Set('onanimationstart', $1)", onanimationstart)
+	js.Rewrite("$_.Set('onanimationstart', $1)", onanimationstart)
 	p.attrs["onAnimationStart"] = onanimationstart
 	return p
 }
@@ -1293,7 +1293,7 @@ func OnAnimationEnd(onanimationend string) *Props {
 
 // OnAnimationEnd fn
 func (p *Props) OnAnimationEnd(onanimationend string) *Props {
-	js.Rewrite("$<.Set('onanimationend', $1)", onanimationend)
+	js.Rewrite("$_.Set('onanimationend', $1)", onanimationend)
 	p.attrs["onAnimationEnd"] = onanimationend
 	return p
 }
@@ -1307,7 +1307,7 @@ func OnAnimationIteration(onanimationiteration string) *Props {
 
 // OnAnimationIteration fn
 func (p *Props) OnAnimationIteration(onanimationiteration string) *Props {
-	js.Rewrite("$<.Set('onanimationiteration', $1)", onanimationiteration)
+	js.Rewrite("$_.Set('onanimationiteration', $1)", onanimationiteration)
 	p.attrs["onAnimationIteration"] = onanimationiteration
 	return p
 }
@@ -1321,7 +1321,7 @@ func OnTransitionEnd(ontransitionend string) *Props {
 
 // OnTransitionEnd fn
 func (p *Props) OnTransitionEnd(ontransitionend string) *Props {
-	js.Rewrite("$<.Set('ontransitionend', $1)", ontransitionend)
+	js.Rewrite("$_.Set('ontransitionend', $1)", ontransitionend)
 	p.attrs["onTransitionEnd"] = ontransitionend
 	return p
 }
@@ -1335,7 +1335,7 @@ func Height(height string) *Props {
 
 // Height fn
 func (p *Props) Height(height string) *Props {
-	js.Rewrite("$<.Set('height', $1)", height)
+	js.Rewrite("$_.Set('height', $1)", height)
 	p.attrs["height"] = height
 	return p
 }
@@ -1349,7 +1349,7 @@ func Width(width string) *Props {
 
 // Width fn
 func (p *Props) Width(width string) *Props {
-	js.Rewrite("$<.Set('width', $1)", width)
+	js.Rewrite("$_.Set('width', $1)", width)
 	p.attrs["width"] = width
 	return p
 }
@@ -1363,7 +1363,7 @@ func Attr(key string, value interface{}) *Props {
 
 // Attr fn
 func (p *Props) Attr(key string, value interface{}) *Props {
-	js.Rewrite("$<.Set($1, $2)", key, value)
+	js.Rewrite("$_.Set($1, $2)", key, value)
 	p.attrs[key] = value
 	return p
 }

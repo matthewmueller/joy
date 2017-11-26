@@ -255,7 +255,7 @@ func {{ $ac }}({{ $al }} string) *Props {
 
 // {{ $ac }} fn
 func (p *Props) {{ $ac }}({{ $al }} string) *Props {
-	js.Rewrite("$<.Set('{{ $al }}', $1)", {{ $al }})
+	js.Rewrite("$_.Set('{{ $al }}', $1)", {{ $al }})
 	p.attrs["{{ $attr }}"] = {{ $al }}
 	return p
 }
@@ -270,7 +270,7 @@ func Attr(key string, value interface{}) *Props {
 
 // Attr fn
 func (p *Props) Attr(key string, value interface{}) *Props {
-	js.Rewrite("$<.Set($1, $2)", key, value)
+	js.Rewrite("$_.Set($1, $2)", key, value)
 	p.attrs[key] = value
 	return p
 }

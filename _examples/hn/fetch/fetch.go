@@ -52,7 +52,7 @@ func (r *Response) Text() []byte {
 func (r *Response) JSON(v interface{}) error {
 	js.Rewrite(`await (async function ($obj) {
 		try {
-			var $o = await $<.json()
+			var $o = await $_.json()
 			for (var $k in $o) $obj[$k] = $o[$k]
 			return null
 		} catch ($e) {

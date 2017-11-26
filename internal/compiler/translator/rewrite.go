@@ -33,7 +33,7 @@ func (tr *Translator) Rewrite(rewrite def.Rewrite, def def.Definition, sp *scope
 	if e != nil {
 		return nil, e
 	}
-	expr = strings.Replace(expr, "$<", c, -1)
+	expr = strings.Replace(expr, "$_", c, -1)
 
 	// get the top function params
 	argmap := map[string]int{}

@@ -27,13 +27,13 @@ type Element struct {
 
 // NodeName gets the node name
 func (e *Element) NodeName() string {
-	js.Rewrite("$<.nodeName", e)
+	js.Rewrite("$_.nodeName", e)
 	return e.nodeName
 }
 
 // OuterHTML fn
 func (e *Element) OuterHTML() string {
-	js.Rewrite("$<.outerHTML")
+	js.Rewrite("$_.outerHTML")
 	lower := strings.ToLower(e.nodeName)
 	return "<" + lower + ">" + "</" + lower + ">"
 }

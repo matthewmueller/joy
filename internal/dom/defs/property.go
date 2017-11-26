@@ -153,7 +153,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 	if async && data.Result.Type == "" {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
 			func ({{ .Recv }}) {{ capitalize .Name }}() {
-				js.Rewrite("await $<.{{ .Name }}")
+				js.Rewrite("await $_.{{ .Name }}")
 			}
 		`)
 		if e != nil {
@@ -164,7 +164,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
 		// {{ capitalize .Name }} prop {{ .Comment }}
 		func ({{ .Recv }}) {{ capitalize .Name }}() ({{ .Result.Var }} {{ .Result.Type }}) {
-			js.Rewrite("$<.{{ .Name }}")
+			js.Rewrite("$_.{{ .Name }}")
 			return {{ .Result.Var }}
 		}
 		`)
@@ -178,7 +178,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 		setter, e := gen.Generate("property_setter/"+d.data.Name, data, `
 		// {{ capitalize .Name }} prop {{ .Comment }}
 		func ({{ .Recv }}) Set{{ capitalize .Name }} ({{ .Result.Var }} {{ .Result.Type }}) {
-			js.Rewrite("$<.{{ .Name }} = $1", {{ .Result.Var }})
+			js.Rewrite("$_.{{ .Name }} = $1", {{ .Result.Var }})
 		}
 		`)
 		if e != nil {
@@ -338,7 +338,7 @@ func (d *prop) GenerateRewrite() (string, error) {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
 		// {{ lowercase .Name }} prop {{ .Comment }}
 		func {{ lowercase .Name }}() ({{ vt .Result }}) {
-			js.Rewrite("$<.{{ .Name }}")
+			js.Rewrite("$_.{{ .Name }}")
 			return {{ .Result.Var }}
 		}
 		`)
@@ -352,7 +352,7 @@ func (d *prop) GenerateRewrite() (string, error) {
 		setter, e := gen.Generate("property_setter/"+d.data.Name, data, `
 		// set{{ lowercase .Name }} prop {{ .Comment }}
 		func set{{ lowercase .Name }} ({{ vt .Result }}) {
-			js.Rewrite("$<.{{ .Name }} = {{ .Result.Var }}")
+			js.Rewrite("$_.{{ .Name }} = {{ .Result.Var }}")
 		}
 		`)
 		if e != nil {

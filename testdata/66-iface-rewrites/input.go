@@ -11,7 +11,7 @@ type document struct {
 }
 
 func (d *document) NodeName() string {
-	js.Rewrite("$<.nodeName")
+	js.Rewrite("$_.nodeName")
 	return ""
 }
 
@@ -19,7 +19,7 @@ type window struct {
 }
 
 func (d *window) NodeName() string {
-	js.Rewrite("$<.nodeName")
+	js.Rewrite("$_.nodeName")
 	return ""
 }
 

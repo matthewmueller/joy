@@ -18,12 +18,6 @@ import (
 	"github.com/matthewmueller/golly/internal/compiler/loader"
 )
 
-// Declaration struct
-// type Declaration struct {
-// 	node ast.Decl
-// 	info *loader.PackageInfo
-// }
-
 // module struct
 type module struct {
 	path           string
@@ -153,19 +147,6 @@ func (c *Compiler) Assemble(idx *index.Index, g *graph.Graph) (scripts []*script
 			}
 			defs = append(defs, def)
 		}
-
-		// for _, path := range sorted {
-		// 	// Sort to have a consistent definition order (alphabetical)
-		// 	// TODO: investigate if we can maintain the order
-		// 	// the code was written in. It seems difficult
-		// 	// because we don't have easy access to raw source files,
-		// 	// just package paths, which may put definitions across
-		// 	// files in any order.
-		// 	ds := idx.DefinitionsByPath(path)
-		// 	defs = append(defs, ds...)
-		// }
-		// // uniquify all the duplicates per main file
-		// defs = util.Unique(defs)
 
 		for _, d := range defs {
 			log.Debugf("sorted=%s", d.ID())
