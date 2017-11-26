@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 
-	"github.com/matthewmueller/golly/golang"
-	"github.com/matthewmueller/golly/golang/script"
+	"github.com/matthewmueller/golly/internal/compiler"
+	"github.com/matthewmueller/golly/internal/compiler/script"
 )
 
 // BuildSettings struct
@@ -14,8 +14,8 @@ type BuildSettings struct {
 
 // Build fn
 func Build(ctx context.Context, settings *BuildSettings) (scripts []*script.Script, err error) {
-	compiler := golang.New()
-	scripts, err = compiler.Compile(settings.Packages...)
+	c := compiler.New()
+	scripts, err = c.Compile(settings.Packages...)
 	if err != nil {
 		return nil, err
 	}

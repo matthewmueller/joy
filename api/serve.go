@@ -13,8 +13,8 @@ import (
 	"github.com/apex/log/handlers/text"
 	"github.com/jaschaephraim/lrserver"
 	"github.com/julienschmidt/httprouter"
-	"github.com/matthewmueller/golly/golang"
-	"github.com/matthewmueller/golly/golang/util"
+	"github.com/matthewmueller/golly/internal/compiler"
+	"github.com/matthewmueller/golly/internal/compiler/util"
 	"github.com/radovskyb/watcher"
 )
 
@@ -42,13 +42,13 @@ func Serve(ctx context.Context, settings *ServeSettings) error {
 	// gosrc := path.Join(os.Getenv("GOPATH"), "src")
 
 	// build
-	compiler := golang.New()
-	index, graph, err := compiler.Parse(settings.Packages...)
+	c := compiler.New()
+	index, graph, err := c.Parse(settings.Packages...)
 	if err != nil {
 		return err
 	}
 
-	scripts, err := compiler.Assemble(index, graph)
+	scripts, err := c.Assemble(index, graph)
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func Serve(ctx context.Context, settings *ServeSettings) error {
 		for {
 			select {
 			case <-w.Event:
-				files, err := compiler.Compile(settings.Packages...)
+				files, err := c.Compile(settings.Packages...)
 				if err != nil {
 					log.WithError(err).Errorf("error compiling golly")
 					continue

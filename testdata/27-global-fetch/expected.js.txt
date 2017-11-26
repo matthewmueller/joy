@@ -1,7 +1,7 @@
 ;
 (function() {
 var pkg = {};
-pkg["github.com/matthewmueller/golly/runtime"] = (function() {
+pkg["github.com/matthewmueller/golly/internal/runtime"] = (function() {
 function Chan (o) {
 o = o || {};
 this.capacity = o.capacity || 0;
@@ -91,7 +91,7 @@ return {
 };
 })();
 pkg["github.com/matthewmueller/golly/testdata/27-global-fetch"] = (function() {
-var runtime = pkg["github.com/matthewmueller/golly/runtime"];
+var runtime = pkg["github.com/matthewmueller/golly/internal/runtime"];
 async function main () {
 var p = fetch("https://api.github.com/users/matthewmueller", null);
 var ch = new runtime.Channel();

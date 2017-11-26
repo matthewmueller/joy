@@ -11,7 +11,7 @@ import (
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
-	"github.com/matthewmueller/golly/chrome"
+	"github.com/matthewmueller/golly/internal/chrome"
 )
 
 func main() {

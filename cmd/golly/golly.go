@@ -12,7 +12,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/matthewmueller/golly/golang/util"
+	"github.com/matthewmueller/golly/internal/compiler/util"
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 

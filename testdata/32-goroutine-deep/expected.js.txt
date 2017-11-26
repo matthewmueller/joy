@@ -1,7 +1,7 @@
 ;
 (function() {
 var pkg = {};
-pkg["github.com/matthewmueller/golly/runtime"] = (function() {
+pkg["github.com/matthewmueller/golly/internal/runtime"] = (function() {
 function Chan (o) {
 o = o || {};
 this.capacity = o.capacity || 0;
@@ -91,7 +91,7 @@ return {
 };
 })();
 pkg["github.com/matthewmueller/golly/testdata/32-goroutine-deep"] = (function() {
-var runtime = pkg["github.com/matthewmueller/golly/runtime"];
+var runtime = pkg["github.com/matthewmueller/golly/internal/runtime"];
 function another () {
 return "another";
 };

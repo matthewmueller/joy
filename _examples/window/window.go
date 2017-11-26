@@ -1,17 +1,17 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/window"
+	"github.com/matthewmueller/golly/dom"
 )
 
 func main() {
-	w := window.New()
+	w := dom.New()
 	doc := w.Document()
 	println(doc.NodeName())
 
-	html := doc.DocumentElement().(window.HTMLElement)
+	html := doc.DocumentElement().(dom.HTMLElement)
 
-	html.AddEventListener("click", func(evt window.Event) {
+	html.AddEventListener("click", func(evt dom.Event) {
 		evt.PreventDefault()
 		evt.StopImmediatePropagation()
 		println(evt.Type())
@@ -21,7 +21,7 @@ func main() {
 	if q != nil {
 		println(q)
 	}
-	a := q.(*window.HTMLAnchorElement)
+	a := q.(*dom.HTMLAnchorElement)
 
 	println(a.Href())
 }
