@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/dom/document"
 	"github.com/matthewmueller/golly/testdata/49-jsx/header"
 	"github.com/matthewmueller/golly/testdata/49-jsx/preact"
+	"github.com/matthewmueller/golly/testdata/49-jsx/window"
 	"github.com/matthewmueller/golly/vdom"
 	"github.com/matthewmueller/golly/vdom/h/h2"
 )
@@ -16,6 +16,8 @@ func main() {
 		header.New("lol", vdom.S("hi!")),
 	)
 
-	preact.Render(hdr, document.Body)
-	println(document.Body.InnerHTML())
+	w := window.New()
+	document := w.Document()
+	preact.Render(hdr, document.Body())
+	println(document.Body().InnerHTML())
 }

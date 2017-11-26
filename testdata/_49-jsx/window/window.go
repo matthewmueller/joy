@@ -2,6 +2,46 @@ package window
 
 import "github.com/matthewmueller/golly/js"
 
+// EventTarget interface
+type EventTarget interface {
+}
+
+// Node interface
+type Node interface {
+	EventTarget
+
+	ChildNodes() []Node
+	FirstChild() Node
+	LastChild() Node
+	NextSibling() Node
+	NodeType() int8
+	NodeName() string
+	NodeValue() *string
+}
+
+// Element interface
+type Element interface {
+	Node
+
+	ClassName() string
+	ID() string
+	InnerHTML() string
+	OuterHTML() string
+	ScrollHeight() int
+	ScrollLeft() int
+	ScrollTop() int
+
+	QuerySelector(selector string) Element
+}
+
+// HTMLElement interface
+type HTMLElement interface {
+	Element
+
+	Focus()
+	Blur()
+}
+
 // Event interface
 type Event interface {
 	PreventDefault()
@@ -28,25 +68,6 @@ func (*event) Type() string {
 	return ""
 }
 
-// EventTarget interface
-type EventTarget interface {
-	AddEventListener(kind string, fn func(e Event), capture bool)
-	DispatchEvent(e Event)
-}
-
-// Node interface
-type Node interface {
-	EventTarget
-
-	ChildNodes() []Node
-	FirstChild() Node
-	LastChild() Node
-	NextSibling() Node
-	NodeType() int8
-	NodeName() string
-	NodeValue() *string
-}
-
 var _ EventTarget = (*Window)(nil)
 
 // Window fn
@@ -54,19 +75,13 @@ var _ EventTarget = (*Window)(nil)
 type Window struct {
 }
 
+// New window
 func New() *Window {
 	js.Rewrite("window")
 	return &Window{}
 }
 
-func (w *Window) AddEventListener(kind string, fn func(e Event), capture bool) {
-	js.Rewrite("$<.addEventListener($1, $2, $3)", kind, fn, capture)
-}
-
-func (w *Window) DispatchEvent(e Event) {
-
-}
-
+// Document fn
 func (w *Window) Document() Document {
 	js.Rewrite("$<.document")
 	return NewDocument()
@@ -79,6 +94,7 @@ type Document interface {
 	Node
 
 	DocumentElement() Element
+	Body() Element
 }
 
 func documentElement() Element {
@@ -102,16 +118,6 @@ type HTMLDocument struct {
 func NewDocument() *HTMLDocument {
 	js.Rewrite("document")
 	return &HTMLDocument{}
-}
-
-// AddEventListener fn
-func (h *HTMLDocument) AddEventListener(kind string, fn func(e Event), capture bool) {
-	js.Rewrite("$<.addEventListener($1, $2, $3)", kind, fn, capture)
-}
-
-// DispatchEvent fn
-func (h *HTMLDocument) DispatchEvent(e Event) {
-
 }
 
 // DocumentElement fn
@@ -160,31 +166,6 @@ func (h *HTMLDocument) NodeName() string {
 // NodeValue fn
 func (h *HTMLDocument) NodeValue() *string {
 	return nil
-}
-
-// ELEMENT
-
-// Element interface
-type Element interface {
-	Node
-
-	ClassName() string
-	ID() string
-	InnerHTML() string
-	OuterHTML() string
-	ScrollHeight() int
-	ScrollLeft() int
-	ScrollTop() int
-
-	QuerySelector(selector string) Element
-}
-
-// HTMLElement interface
-type HTMLElement interface {
-	Element
-
-	Focus()
-	Blur()
 }
 
 // HTMLHTMLElement struct
@@ -268,6 +249,7 @@ func (h *HTMLHTMLElement) ID() string {
 
 // InnerHTML fn
 func (h *HTMLHTMLElement) InnerHTML() string {
+	js.Rewrite("$<.innerHTML")
 	return ""
 }
 
@@ -390,6 +372,7 @@ func (h *HTMLAnchorElement) ID() string {
 
 // InnerHTML fn
 func (h *HTMLAnchorElement) InnerHTML() string {
+	js.Rewrite("$<.innerHTML")
 	return ""
 }
 

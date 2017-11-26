@@ -134,7 +134,9 @@ func (tr *Translator) functions(d defs.Functioner) (jsast.INode, error) {
 				))
 			}
 		}
-		body = append(body, jsast.CreateVariableDeclaration("var", vars...))
+		if len(vars) > 0 {
+			body = append(body, jsast.CreateVariableDeclaration("var", vars...))
+		}
 	}
 
 	// create the body
@@ -2602,12 +2604,16 @@ func (tr *Translator) maybeJSRewrite(d def.Definition, sp *scope.Scope, n *ast.C
 	case defs.Functioner:
 		rewrite = t.Rewrite()
 	case defs.Interfacer:
-		method := t.FindMethod(id.Name)
-		if method != nil && method.RewriteFunction() != nil {
-			fn := method.RewriteFunction()
-			if f, ok := fn.(defs.Functioner); ok {
-				rewrite = f.Rewrite()
+		// TODO: optimize
+		methods := t.ImplementedBy(id.Name)
+		var m defs.Methoder
+		for _, method := range methods {
+			rw := method.Rewrite()
+			if rw != nil && rewrite != nil && rw.Expression() != rewrite.Expression() {
+				return nil, fmt.Errorf("interface(%s) has conflicting rewrite expressions (%s -> '%s', %s -> '%s')", t.ID(), method.ID(), rw.Expression(), m.ID(), rewrite.Expression())
 			}
+			m = method
+			rewrite = rw
 		}
 	}
 
