@@ -1,3 +1,0 @@
-package xmlhttprequestresponsetype
-
-type XMLHTTPRequestResponseType string

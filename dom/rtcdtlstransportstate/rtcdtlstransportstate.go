@@ -1,3 +1,0 @@
-package rtcdtlstransportstate
-
-type RTCDtlsTransportState string

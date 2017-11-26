@@ -1,3 +1,0 @@
-package requestdestination
-
-type RequestDestination string
