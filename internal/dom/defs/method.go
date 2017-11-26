@@ -24,6 +24,7 @@ func NewMethod(index index.Index, data *raw.Method, receiver Interface) Method {
 // Method interface
 type Method interface {
 	GenerateInterface() (string, error)
+	GenerateRewrite() (string, error)
 	GenerateAs(recv Interface) (string, error)
 
 	def.Definition
@@ -202,14 +203,86 @@ func (d *method) GenerateInterface() (string, error) {
 	if t == "" {
 		return gen.Generate("method/"+d.data.Name, data, `
 			// {{ capitalize .Name }} {{ .Comment }}
-			// js:"{{ .Name }}"
+			// js:"{{ .Name }},rewrite={{ lowercase .Name }}"
 			{{ capitalize .Name }}({{ joinvt .Params }})
 		`)
 	}
 
 	return gen.Generate("method/"+d.data.Name, data, `
 		// {{ capitalize .Name }} {{ .Comment }}
-		// js:"{{ .Name }}"
+		// js:"{{ .Name }},rewrite={{ lowercase .Name }}"
 		{{ capitalize .Name }}({{ joinvt .Params }}) ({{ vt .Result }})
+	`)
+}
+
+func (d *method) GenerateRewrite() (string, error) {
+	data := struct {
+		Recv    string
+		Name    string
+		Params  []gen.Vartype
+		Result  gen.Vartype
+		Comment string
+	}{
+		Recv:    gen.Pointer(gen.Capitalize(d.recv.Name())),
+		Name:    d.data.Name,
+		Comment: d.data.Comment,
+	}
+
+	for _, param := range d.data.Params {
+		t, err := d.index.Coerce(d.pkg, param.Type)
+		if err != nil {
+			return "", errors.Wrapf(err, "error coercing param")
+		}
+
+		data.Params = append(data.Params, gen.Vartype{
+			Var:      gen.Identifier(param.Name),
+			Optional: param.Optional,
+			Type:     t,
+		})
+	}
+
+	t, e := d.index.Coerce(d.pkg, d.data.Type)
+	if e != nil {
+		return "", e
+	}
+	data.Result = gen.Vartype{
+		Var:  gen.Variable(t),
+		Type: t,
+	}
+
+	async := strings.Contains(d.data.Type, "Promise<")
+	if t == "" {
+		if async {
+			return gen.Generate("method/"+d.data.Name, data, `
+				// {{ lowercase .Name }} fn {{ .Comment }}
+				func {{ lowercase .Name }}({{ joinvt .Params }}) {
+					js.Rewrite("await $<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+				}
+			`)
+		}
+
+		return gen.Generate("method/"+d.data.Name, data, `
+			// {{ lowercase .Name }} fn {{ .Comment }}
+			func {{ lowercase .Name }}({{ joinvt .Params }}) {
+				js.Rewrite("$<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+			}
+		`)
+	}
+
+	if async {
+		return gen.Generate("method/"+d.data.Name, data, `
+			// {{ lowercase .Name }} fn {{ .Comment }}
+			func {{ lowercase .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
+				js.Rewrite("await $<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+				return {{ .Result.Var }}
+			}
+		`)
+	}
+	return gen.Generate("method/"+d.data.Name, data, `
+		// {{ lowercase .Name }} fn {{ .Comment }}
+		func {{ lowercase .Name }}({{ joinvt .Params }}) ({{ vt .Result }}) {
+			js.Rewrite("$<.{{ .Name }}({{ len .Params | sequence | join }})", {{ joinv .Params }})
+			return {{ .Result.Var }}
+		}
 	`)
 }

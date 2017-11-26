@@ -375,6 +375,7 @@ func (d *iface) generateInterface() (string, error) {
 		Extends    []string
 		Methods    []string
 		Properties []string
+		Rewrites   []string
 	}{
 		Package: d.pkg,
 		Name:    gen.Capitalize(d.data.Name),
@@ -429,6 +430,12 @@ func (d *iface) generateInterface() (string, error) {
 			return "", errors.Wrapf(err, "error generating method")
 		}
 		data.Methods = append(data.Methods, m)
+
+		r, err := method.GenerateRewrite()
+		if err != nil {
+			return "", errors.Wrapf(err, "error generating rewrite")
+		}
+		data.Rewrites = append(data.Rewrites, r)
 	}
 
 	// handle properties
@@ -438,6 +445,12 @@ func (d *iface) generateInterface() (string, error) {
 			return "", errors.Wrapf(err, "error generating property")
 		}
 		data.Properties = append(data.Properties, m)
+
+		r, err := property.GenerateRewrite()
+		if err != nil {
+			return "", errors.Wrapf(err, "error generating rewrite")
+		}
+		data.Rewrites = append(data.Rewrites, r)
 	}
 
 	return gen.Generate("interface/"+d.data.Name, data, `
@@ -457,6 +470,10 @@ func (d *iface) generateInterface() (string, error) {
 			{{ . }}
 			{{- end }}
 		}
+
+		{{ range .Rewrites -}}
+		{{ . }}
+		{{- end }}
 	`)
 }
 

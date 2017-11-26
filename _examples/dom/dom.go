@@ -20,21 +20,17 @@ func main() {
 	w := window.New()
 	doc := w.Document()
 	println(doc.NodeName())
-	// html, ok := doc.DocumentElement().(window.HTMLElement)
-	// if !ok {
-	// 	return
-	// }
-	// html.EscapeString(s)
-	// w.Alert("hi")
-	// println(w.DefaultStatus())
-	// // s := Sub{}
-	// // s.Go()
 
-	// a := html.QuerySelector("a")
-	// if a != nil {
-	// 	println(a)
-	// }
-	// doc.QueryCommandEnabled(commandId)
+	// w.Console().Log("hi", optionalParams)
+
+	html := doc.DocumentElement()
+
+	a := html.QuerySelector("a")
+	if a != nil {
+		println(a)
+	}
+
+	println(html.NodeName())
 
 	// html.AddEventListener("click", func(evt window.Event) {
 	// 	evt.PreventDefault()
