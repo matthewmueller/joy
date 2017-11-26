@@ -119,10 +119,6 @@ func (d *typedef) Exported() bool {
 
 func (d *typedef) Omitted() bool {
 	return true
-	if d.tag != nil && d.tag.HasOption("omit") {
-		return true
-	}
-	return false
 }
 
 func (d *typedef) Gen() *ast.GenDecl {

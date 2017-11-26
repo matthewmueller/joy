@@ -13,8 +13,9 @@ type File struct {
 
 // Vartype struct
 type Vartype struct {
-	Var  string
-	Type string
+	Var      string
+	Type     string
+	Optional bool
 }
 
 // Generate function
@@ -30,4 +31,12 @@ func Generate(name string, data interface{}, tpl string) (string, error) {
 	}
 
 	return string(b.Bytes()), nil
+}
+
+// IsBuiltin checks if the name is builtin
+func IsBuiltin(name string) bool {
+	if builtins[name] == "" {
+		return false
+	}
+	return true
 }

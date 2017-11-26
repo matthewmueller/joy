@@ -17,34 +17,29 @@ func funcs() template.FuncMap {
 		"joinvt":     JoinVT,
 		"joinv":      JoinV,
 		"join":       Join,
+		"vt":         VT,
 		"sequence":   Sequence,
 	}
+}
+
+// Identifier from the string avoiding the builtins
+func Identifier(s string) string {
+	if builtins[s] != "" {
+		return builtins[s]
+	}
+	return s
 }
 
 // Capitalize helper
 func Capitalize(s string) string {
 	s = snaker.SnakeToCamelIdentifier(snaker.CamelToSnake(s))
-	if builtins[s] != "" {
-		return builtins[s]
-	}
-	return s
+	return Identifier(s)
 }
 
 // Lowercase fn
 func Lowercase(s string) string {
 	s = strings.ToLower(snaker.SnakeToCamelIdentifier(s))
-	if builtins[s] != "" {
-		return builtins[s]
-	}
-	return s
-}
-
-// Name from the string avoiding the builtins
-func Name(s string) string {
-	if builtins[s] != "" {
-		return builtins[s]
-	}
-	return s
+	return Identifier(s)
 }
 
 // Variable creates a short variable from the string
@@ -65,11 +60,20 @@ func Pointer(s string) string {
 	return "*" + strings.TrimLeft(s, "*")
 }
 
+// VT turns a vartype into a string
+func VT(vt Vartype) string {
+	name := Identifier(vt.Var)
+	if vt.Optional {
+		return name + " " + Pointer(vt.Type)
+	}
+	return name + " " + vt.Type
+}
+
 // JoinVT joins vartypes var and type
 func JoinVT(vts []Vartype) string {
 	var a []string
 	for _, vt := range vts {
-		a = append(a, vt.Var+" "+vt.Type)
+		a = append(a, VT(vt))
 	}
 	return strings.Join(a, ", ")
 }
@@ -78,7 +82,7 @@ func JoinVT(vts []Vartype) string {
 func JoinV(vts []Vartype) string {
 	var a []string
 	for _, vt := range vts {
-		a = append(a, vt.Var)
+		a = append(a, Identifier(vt.Var))
 	}
 	return strings.Join(a, ", ")
 }

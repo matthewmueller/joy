@@ -118,6 +118,27 @@ func (tr *Translator) functions(d defs.Functioner) (jsast.INode, error) {
 		}
 	}
 
+	// initialize result identifiers to their zero value
+	// if there are any
+	if n.Type != nil && n.Type.Results != nil {
+		var vars []jsast.VariableDeclarator
+		for _, field := range n.Type.Results.List {
+			for _, name := range field.Names {
+				zero, err := tr.defaultValue(d, sp, field.Type)
+				if err != nil {
+					return nil, errors.Wrapf(err, "error getting fn result zero value")
+				}
+				vars = append(vars, jsast.CreateVariableDeclarator(
+					jsast.CreateIdentifier(name.Name),
+					zero,
+				))
+			}
+		}
+		if len(vars) > 0 {
+			body = append(body, jsast.CreateVariableDeclaration("var", vars...))
+		}
+	}
+
 	// create the body
 	for _, stmt := range n.Body.List {
 		jsStmt, e := tr.statement(d, sp, stmt)
@@ -2555,19 +2576,48 @@ func (tr *Translator) maybeJSRewrite(d def.Definition, sp *scope.Scope, n *ast.C
 	}
 
 	// find the corresponding declaration (if there is one)
-	def, err := tr.index.DefinitionOf(d.Path(), id)
+	df, err := tr.index.DefinitionOf(d.Path(), id)
 	if err != nil {
 		return nil, err
-	} else if def == nil {
+	} else if df == nil {
 		return nil, nil
 	}
 
-	fn, ok := def.(defs.Functioner)
-	if !ok {
-		return nil, nil
+	// TODO: cleanup
+	var rewrite def.Rewrite
+	switch t := df.(type) {
+	case defs.Methoder:
+		rewrite = t.Rewrite()
+		if rewrite != nil {
+			stct := t.Recv()
+			ifaces, err := stct.Implements()
+			if err != nil {
+				return nil, err
+			}
+			for _, iface := range ifaces {
+				method := iface.FindMethod(id.Name)
+				if method != nil && method.RewriteFunction() != nil {
+					return nil, fmt.Errorf("interface (%s) with method rewrite (%s) conflicts with struct method rewrite (%s)", iface.ID(), method.RewriteFunction().ID(), t.ID())
+				}
+			}
+		}
+	case defs.Functioner:
+		rewrite = t.Rewrite()
+	case defs.Interfacer:
+		// TODO: optimize
+		methods := t.ImplementedBy(id.Name)
+		var m defs.Methoder
+		for _, method := range methods {
+			rw := method.Rewrite()
+			if rw != nil && rewrite != nil && rw.Expression() != rewrite.Expression() {
+				return nil, fmt.Errorf("interface(%s) has conflicting rewrite expressions (%s -> '%s', %s -> '%s')", t.ID(), method.ID(), rw.Expression(), m.ID(), rewrite.Expression())
+			}
+			m = method
+			rewrite = rw
+		}
 	}
 
-	expr, e := tr.Rewrite(fn.Rewrite(), d, sp, n.Fun, n.Args...)
+	expr, e := tr.Rewrite(rewrite, d, sp, n.Fun, n.Args...)
 	if e != nil {
 		return nil, e
 	} else if expr == nil {

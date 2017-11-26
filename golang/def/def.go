@@ -51,4 +51,5 @@ type FunctionResult interface {
 type InterfaceMethod interface {
 	OriginalName() string
 	Name() string
+	RewriteFunction() Definition
 }

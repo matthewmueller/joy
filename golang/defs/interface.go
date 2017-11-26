@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/fatih/structtag"
+	"github.com/pkg/errors"
 
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/index"
@@ -26,14 +27,16 @@ type Interfacer interface {
 }
 
 var _ Interfacer = (*interfaces)(nil)
+var _ def.InterfaceMethod = (*method)(nil)
 
 type interfaces struct {
 	exported   bool
 	path       string
 	name       string
 	id         string
+	deps       []def.Definition
 	index      *index.Index
-	methods    []def.InterfaceMethod
+	methods    []*method
 	node       *ast.TypeSpec
 	kind       *types.Interface
 	processed  bool
@@ -42,8 +45,9 @@ type interfaces struct {
 }
 
 type method struct {
-	name string
-	tag  *structtag.Tag
+	name            string
+	tag             *structtag.Tag
+	rewriteFunction def.Definition
 }
 
 func (m *method) OriginalName() string {
@@ -57,6 +61,10 @@ func (m *method) Name() string {
 	return m.name
 }
 
+func (m *method) RewriteFunction() def.Definition {
+	return m.rewriteFunction
+}
+
 // Interface fn
 func Interface(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n *ast.TypeSpec) (def.Definition, error) {
 	obj := info.ObjectOf(n.Name)
@@ -65,13 +73,14 @@ func Interface(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n 
 	id := strings.Join(idParts, " ")
 
 	// get the methods
-	var methods []def.InterfaceMethod
+	var methods []*method
 	iface := n.Type.(*ast.InterfaceType)
 	for _, m := range iface.Methods.List {
 		tag, err := util.JSTag(m.Doc)
 		if err != nil {
 			return nil, err
 		}
+
 		for _, id := range m.Names {
 			methods = append(methods, &method{
 				name: id.Name,
@@ -107,6 +116,7 @@ func (d *interfaces) process() (err error) {
 	// copy state into function
 	d.processed = true
 	d.imports = state.imports
+	d.deps = state.deps
 
 	return nil
 }
@@ -114,9 +124,11 @@ func (d *interfaces) process() (err error) {
 // interfaces don't include dependencies on their own
 func (d *interfaces) Dependencies() (deps []def.Definition, err error) {
 	if !d.processed {
-		d.process()
+		if e := d.process(); e != nil {
+			return deps, errors.Wrap(e, "error processing")
+		}
 	}
-	return deps, nil
+	return d.deps, nil
 }
 
 func (d *interfaces) ID() string {
@@ -196,8 +208,11 @@ func (d *interfaces) FromRuntime() bool {
 	return false
 }
 
-func (d *interfaces) Methods() []def.InterfaceMethod {
-	return d.methods
+func (d *interfaces) Methods() (methods []def.InterfaceMethod) {
+	for _, method := range d.methods {
+		methods = append(methods, method)
+	}
+	return methods
 }
 
 func (d *interfaces) FindMethod(name string) def.InterfaceMethod {

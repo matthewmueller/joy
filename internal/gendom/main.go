@@ -15,7 +15,7 @@ import (
 func main() {
 	log.SetHandler(text.New(os.Stderr))
 
-	dom := path.Join("data", "browser.webidl.xml")
+	dom := path.Join("inputs", "browser.webidl.xml")
 	src, err := ioutil.ReadFile(dom)
 	if err != nil {
 		log.WithError(err).Fatalf("error reading file")
@@ -26,6 +26,13 @@ func main() {
 		log.WithError(err).Fatalf("error generating dom")
 	}
 
-	log.Infof("got files %+v", files)
-	// log.Infof("data path %s", data)
+	for _, file := range files {
+		outpath := path.Join("dom", file.Name)
+		if e := os.MkdirAll(path.Dir(outpath), os.ModePerm); e != nil {
+			log.WithError(e).Fatalf("error making directory")
+		}
+		if e := ioutil.WriteFile(outpath, []byte(file.Source), os.ModePerm); e != nil {
+			log.WithError(e).Fatalf("error writing file")
+		}
+	}
 }

@@ -10,7 +10,6 @@ import (
 
 	"github.com/matthewmueller/golly/golang/def"
 	"github.com/matthewmueller/golly/golang/index"
-	"github.com/matthewmueller/golly/golang/util"
 
 	"golang.org/x/tools/go/loader"
 )
@@ -23,7 +22,7 @@ type Structer interface {
 	Fields() []*field
 	Field(name string) *field
 	Methods() []def.Definition
-	Implements() ([]def.Definition, error)
+	Implements() ([]Interfacer, error)
 }
 
 var _ Structer = (*structdef)(nil)
@@ -178,7 +177,7 @@ func (d *structdef) Methods() (methods []def.Definition) {
 }
 
 // Implements function
-func (d *structdef) Implements() (defs []def.Definition, err error) {
+func (d *structdef) Implements() (ifaces []Interfacer, err error) {
 	for _, def := range d.index.All() {
 		iface, ok := def.(Interfacer)
 		if !ok {
@@ -188,14 +187,28 @@ func (d *structdef) Implements() (defs []def.Definition, err error) {
 		structType := types.NewPointer(d.Type())
 		ifaceType, ok := iface.Type().(*types.Interface)
 		if !ok {
-			return defs, errors.New("interface type not an interface")
+			return ifaces, errors.New("interface type not an interface")
 		}
 
 		if types.Implements(structType, ifaceType) {
-			defs = append(defs, iface)
+			ifaces = append(ifaces, iface)
 		}
 	}
 
-	defs = util.Unique(defs)
-	return defs, nil
+	ifaces = uniqueInterfaces(ifaces)
+	return ifaces, nil
+}
+
+func uniqueInterfaces(defs []Interfacer) []Interfacer {
+	u := make([]Interfacer, 0, len(defs))
+	seen := make(map[string]bool)
+
+	for _, def := range defs {
+		if _, ok := seen[def.ID()]; !ok {
+			seen[def.ID()] = true
+			u = append(u, def)
+		}
+	}
+
+	return u
 }
