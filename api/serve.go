@@ -39,8 +39,6 @@ const html = `<!doctype html>
 func Serve(ctx context.Context, settings *ServeSettings) error {
 	log.SetHandler(text.New(os.Stderr))
 
-	// gosrc := path.Join(os.Getenv("GOPATH"), "src")
-
 	// build
 	c := compiler.New()
 	index, graph, err := c.Parse(settings.Packages...)

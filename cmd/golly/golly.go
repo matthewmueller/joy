@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"os/signal"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
@@ -19,7 +20,7 @@ import (
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
 	"github.com/matthewmueller/golly/api"
-	"github.com/matthewmueller/golly/golang"
+	"github.com/matthewmueller/golly/internal/compiler"
 	"github.com/pkg/errors"
 )
 
@@ -99,8 +100,8 @@ func build(ctx context.Context) error {
 	}
 
 	// start := time.Now()
-	compiler := golang.New()
-	files, e := compiler.Compile(packages...)
+	c := compiler.New()
+	files, e := c.Compile(packages...)
 	if e != nil {
 		return errors.Wrap(e, "error building packages")
 	}
@@ -156,14 +157,38 @@ func signalContext(ctx context.Context, sig ...os.Signal) context.Context {
 // Sourced from:
 // https://github.com/mitchellh/gox/blob/c9740af9c6574448fd48eb30a71f964014c7a837/go.go#L123
 func getMains(packages []string) ([]string, error) {
-	// pwd, err := os.Getwd()
-	// if err != nil {
-	// 	return nil, err
-	// }
+	pwd, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
 
 	goSrc, err := util.GoSourcePath()
 	if err != nil {
 		return nil, err
+	}
+
+	for i, pkg := range packages {
+		if filepath.Ext(pkg) != "" {
+			pkg = path.Dir(pkg)
+		}
+
+		// absolute => relative
+		if pkg[0] == filepath.Separator {
+			rel, err := filepath.Rel(pwd, pkg)
+			if err != nil {
+				return nil, errors.Wrapf(err, "couldn't get relative path")
+			}
+			pkg = rel
+		}
+
+		// relative
+		if pkg[0] == '.' && pkg[1] == filepath.Separator {
+			packages[i] = pkg
+			continue
+		}
+
+		pkg = "." + string(filepath.Separator) + pkg
+		packages[i] = pkg
 	}
 
 	goCmd, err := exec.LookPath("go")

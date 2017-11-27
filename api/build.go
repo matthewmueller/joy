@@ -10,6 +10,7 @@ import (
 // BuildSettings struct
 type BuildSettings struct {
 	Packages []string
+	Root string
 }
 
 // Build fn
