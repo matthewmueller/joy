@@ -13,7 +13,6 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/matthewmueller/golly/internal/chrome/downloader"
 	"github.com/matthewmueller/golly/internal/compiler/util"
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
@@ -82,20 +81,20 @@ func run(ctx context.Context) error {
 	}
 	filePath := path.Join(cwd, *runFile)
 
-	root, err := util.GollyPath()
-	if err != nil {
-		return errors.Wrapf(err, "error getting root path")
-	}
+	// root, err := util.GollyPath()
+	// if err != nil {
+	// 	return errors.Wrapf(err, "error getting root path")
+	// }
 
-	chromePath, err := downloader.Find(path.Join(root, "chrome"))
-	if err != nil {
-		return errors.Wrapf(err, "unable to get chrome path")
-	}
-	log.Infof("chromepath=%s", chromePath)
+	// chromePath, err := downloader.Find(path.Join(root, "chrome"))
+	// if err != nil {
+	// 	return errors.Wrapf(err, "unable to get chrome path")
+	// }
+	log.Infof("chromepath=%s", "./node_modules/puppeteer/.local-chromium/mac-515411/chrome-mac/Chromium.app/Contents/MacOS/Chromium")
 	// return errors.New("the Google Chrome path needs to be set")
 
 	result, err := api.Run(ctx, &api.RunSettings{
-		ChromePath: chromePath,
+		ChromePath: "./node_modules/puppeteer/.local-chromium/mac-515411/chrome-mac/Chromium.app/Contents/MacOS/Chromium",
 		FilePath:   filePath,
 	})
 	if err != nil {

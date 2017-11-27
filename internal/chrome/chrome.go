@@ -54,7 +54,6 @@ var defaultFlags = []string{
 	"--disable-translate",
 	"--metrics-recording-only",
 	"--no-first-run",
-	"--remote-debugging-port=0",
 	"--safebrowsing-disable-auto-update",
 
 	"--enable-automation",
@@ -91,6 +90,9 @@ func New(parent context.Context, settings *Settings) (*Chrome, error) {
 	// user data dir
 	tmp := os.TempDir()
 	flags = append(flags, "--user-data-dir="+path.Join(tmp))
+
+	// remote debugging port
+	flags = append(flags, "--remote-debugging-port="+addr.Port())
 
 	// create the command
 	cmd := exec.CommandContext(ctx, settings.ExecutablePath, flags...)
