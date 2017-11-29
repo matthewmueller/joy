@@ -1,14 +1,13 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/66-iface-rewrites"] = (function() {
-function main () {
-var doc = document;
-console.log(doc.nodeName);
-};
-return {
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/66-iface-rewrites"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/66-iface-rewrites"] = (function() {
+		function main () {
+			var doc = document;
+			console.log(doc.nodeName)
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/66-iface-rewrites"].main();
 })()

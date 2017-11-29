@@ -7,106 +7,141 @@ import (
 	"strings"
 )
 
+type generator interface {
+	fmt.Stringer
+	generate(ctx *context) string
+}
+
 // interface compliance
-var _ fmt.Stringer = (*Identifier)(nil)
-var _ fmt.Stringer = (*Literal)(nil)
-var _ fmt.Stringer = (*RegExpLiteral)(nil)
-var _ fmt.Stringer = (*Program)(nil)
+var _ generator = (*Identifier)(nil)
+var _ generator = (*Literal)(nil)
+var _ generator = (*RegExpLiteral)(nil)
+var _ generator = (*Program)(nil)
 
-// var _ fmt.Stringer = (*Function)(nil)
-var _ fmt.Stringer = (*ExpressionStatement)(nil)
+// var _ generator = (*Function)(nil)
+var _ generator = (*ExpressionStatement)(nil)
 
-// var _ fmt.Stringer = (*Directive)(nil)
-var _ fmt.Stringer = (*BlockStatement)(nil)
-var _ fmt.Stringer = (*FunctionBody)(nil)
-var _ fmt.Stringer = (*EmptyStatement)(nil)
+// var _ generator = (*Directive)(nil)
+var _ generator = (*BlockStatement)(nil)
+var _ generator = (*FunctionBody)(nil)
+var _ generator = (*EmptyStatement)(nil)
 
-// var _ fmt.Stringer = (*DebuggerStatement)(nil)
-// var _ fmt.Stringer = (*WithStatement)(nil)
-var _ fmt.Stringer = (*ReturnStatement)(nil)
+// var _ generator = (*DebuggerStatement)(nil)
+// var _ generator = (*WithStatement)(nil)
+var _ generator = (*ReturnStatement)(nil)
 
-// var _ fmt.Stringer = (*LabeledStatement)(nil)
-var _ fmt.Stringer = (*BreakStatement)(nil)
+// var _ generator = (*LabeledStatement)(nil)
+var _ generator = (*BreakStatement)(nil)
 
-// var _ fmt.Stringer = (*ContinueStatement)(nil)
-var _ fmt.Stringer = (*IfStatement)(nil)
+// var _ generator = (*ContinueStatement)(nil)
+var _ generator = (*IfStatement)(nil)
 
-// var _ fmt.Stringer = (*SwitchStatement)(nil)
-// var _ fmt.Stringer = (*SwitchCase)(nil)
-// var _ fmt.Stringer = (*ThrowStatement)(nil)
-// var _ fmt.Stringer = (*TryStatement)(nil)
-// var _ fmt.Stringer = (*CatchClause)(nil)
-// var _ fmt.Stringer = (*WhileStatement)(nil)
-var _ fmt.Stringer = (*ForStatement)(nil)
+// var _ generator = (*SwitchStatement)(nil)
+// var _ generator = (*SwitchCase)(nil)
+// var _ generator = (*ThrowStatement)(nil)
+// var _ generator = (*TryStatement)(nil)
+// var _ generator = (*CatchClause)(nil)
+// var _ generator = (*WhileStatement)(nil)
+var _ generator = (*ForStatement)(nil)
 
-// var _ fmt.Stringer = (*ForInStatement)(nil)
-// var _ fmt.Stringer = (*Declaration)(nil)
-var _ fmt.Stringer = (*FunctionDeclaration)(nil)
-var _ fmt.Stringer = (*VariableDeclarator)(nil)
-var _ fmt.Stringer = (*ThisExpression)(nil)
-var _ fmt.Stringer = (*ArrayExpression)(nil)
-var _ fmt.Stringer = (*ObjectExpression)(nil)
+// var _ generator = (*ForInStatement)(nil)
+// var _ generator = (*Declaration)(nil)
+var _ generator = (*FunctionDeclaration)(nil)
+var _ generator = (*VariableDeclarator)(nil)
+var _ generator = (*ThisExpression)(nil)
+var _ generator = (*ArrayExpression)(nil)
+var _ generator = (*ObjectExpression)(nil)
 
-// var _ fmt.Stringer = (*Property)(nil)
-var _ fmt.Stringer = (*FunctionExpression)(nil)
+// var _ generator = (*Property)(nil)
+var _ generator = (*FunctionExpression)(nil)
 
-// var _ fmt.Stringer = (*UnaryExpression)(nil)
-var _ fmt.Stringer = (*UpdateExpression)(nil)
-var _ fmt.Stringer = (*BinaryExpression)(nil)
-var _ fmt.Stringer = (*AssignmentExpression)(nil)
-var _ fmt.Stringer = (*LogicalExpression)(nil)
-var _ fmt.Stringer = (*MemberExpression)(nil)
+// var _ generator = (*UnaryExpression)(nil)
+var _ generator = (*UpdateExpression)(nil)
+var _ generator = (*BinaryExpression)(nil)
+var _ generator = (*AssignmentExpression)(nil)
+var _ generator = (*LogicalExpression)(nil)
+var _ generator = (*MemberExpression)(nil)
 
-// var _ fmt.Stringer = (*ConditionalExpression)(nil)
-var _ fmt.Stringer = (*CallExpression)(nil)
-var _ fmt.Stringer = (*NewExpression)(nil)
+// var _ generator = (*ConditionalExpression)(nil)
+var _ generator = (*CallExpression)(nil)
+var _ generator = (*NewExpression)(nil)
 
-var _ fmt.Stringer = (*SequenceExpression)(nil)
-var _ fmt.Stringer = (*AwaitExpression)(nil)
-var _ fmt.Stringer = (*Raw)(nil)
+var _ generator = (*SequenceExpression)(nil)
+var _ generator = (*AwaitExpression)(nil)
+var _ generator = (*Raw)(nil)
 
 // var _ fmt.Stringer = (*Pattern)(nil)
 
-// Assemble JS from the AST
-func Assemble(node interface{}) string {
-	// pretty.Println(node)
-	return stringify(node)
+type context struct {
+	indent int
 }
 
-func stringify(node interface{}) string {
+func indent(n int) string {
+	return strings.Repeat("\t", n)
+}
+
+// Assemble JS from the AST
+func Assemble(p Program) (result string, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = r.(error)
+		}
+	}()
+	return p.String(), nil
+}
+
+func generate(ctx *context, node interface{}) string {
 	if node == nil {
 		return ""
 	}
 
 	// cast to stringer
-	stringer, ok := node.(fmt.Stringer)
+	generator, ok := node.(generator)
 	if !ok {
 		n := node.(INode)
-		panic(fmt.Errorf("%s || %s does not implement stringer", n.Node().Type, reflect.TypeOf(node)))
+		panic(fmt.Errorf("%s || %s does not implement generator", n.Node().Type, reflect.TypeOf(node)))
 	}
 
-	return stringer.String()
+	return generator.generate(ctx)
 }
 
+// String fn
 func (n Program) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n Program) generate(ctx *context) string {
 	var a []string
 	for _, child := range n.Body {
-		a = append(a, stringify(child))
+		a = append(a, generate(ctx, child))
 	}
-	return strings.Join(a, ";\n")
+	return ";" + strings.Join(a, ";\n")
 }
 
+// String fn
 func (n ExpressionStatement) String() string {
-	return stringify(n.Expression)
+	return n.generate(&context{})
 }
 
+// Generate function
+func (n ExpressionStatement) generate(ctx *context) string {
+	return generate(ctx, n.Expression)
+}
+
+// String fn
 func (n CallExpression) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n CallExpression) generate(ctx *context) string {
 	var a []string
 	for _, child := range n.Arguments {
-		a = append(a, stringify(child))
+		a = append(a, generate(ctx, child))
 	}
 
-	c := stringify(n.Callee)
+	c := generate(ctx, n.Callee)
 
 	// call expressions are handled
 	// differently if the callee is
@@ -121,13 +156,19 @@ func (n CallExpression) String() string {
 	}
 }
 
+// String fn
 func (n FunctionExpression) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n FunctionExpression) generate(ctx *context) string {
 	var a []string
 	for _, child := range n.Params {
-		a = append(a, stringify(child))
+		a = append(a, generate(ctx, child))
 	}
 
-	body := stringify(n.Body)
+	body := generate(ctx, n.Body)
 
 	async := ""
 	if n.Async {
@@ -139,20 +180,26 @@ func (n FunctionExpression) String() string {
 		generator = " * "
 	}
 
-	return async + "function" + generator + "(" + strings.Join(a, ", ") + ") {\n" + body + "\n}"
+	return async + "function" + generator + "(" + strings.Join(a, ", ") + ") " + body
 }
 
+// String fn
 func (n FunctionDeclaration) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n FunctionDeclaration) generate(ctx *context) string {
 	var a []string
 	for _, child := range n.Params {
-		a = append(a, stringify(child))
+		a = append(a, generate(ctx, child))
 	}
 
-	body := stringify(n.Body)
+	body := generate(ctx, n.Body)
 
 	name := ""
 	if n.ID != nil {
-		n := stringify(*n.ID)
+		n := generate(ctx, *n.ID)
 		name = " " + n
 	}
 
@@ -166,24 +213,38 @@ func (n FunctionDeclaration) String() string {
 		generator = " *"
 	}
 
-	fn := async + "function" + generator + name + " (" + strings.Join(a, ", ") + ") {\n" + body + "\n}"
+	fn := async + "function" + generator + name + " (" + strings.Join(a, ", ") + ") " + body
 
 	return fn
 }
 
+// String fn
 func (n FunctionBody) String() string {
-
-	var a []string
-	for _, child := range n.Body {
-		a = append(a, stringify(child))
-	}
-
-	return strings.Join(a, ";\n") + ";"
+	return n.generate(&context{})
 }
 
+// Generate function
+func (n FunctionBody) generate(ctx *context) string {
+
+	var a []string
+	ctx.indent++
+	for _, child := range n.Body {
+		a = append(a, indent(ctx.indent)+generate(ctx, child))
+	}
+	ctx.indent--
+
+	return "{\n" + strings.Join(a, ";\n") + "\n" + indent(ctx.indent) + "}"
+}
+
+// String fn
 func (n MemberExpression) String() string {
-	obj := stringify(n.Object)
-	prop := stringify(n.Property)
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n MemberExpression) generate(ctx *context) string {
+	obj := generate(ctx, n.Object)
+	prop := generate(ctx, n.Property)
 
 	// TODO: there maybe quite a few more
 	// cases where we'll want to do this
@@ -201,12 +262,24 @@ func (n MemberExpression) String() string {
 	return obj + "." + prop
 }
 
+// String fn
 func (n Identifier) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n Identifier) generate(ctx *context) string {
 	return n.Name
 }
 
-// TODO: Move this into the syntax itself
+// String fn
 func (n Literal) String() string {
+	return n.generate(&context{})
+}
+
+// TODO: Move thi
+// Generate functions into the syntax itself
+func (n Literal) generate(ctx *context) string {
 	switch t := n.Value.(type) {
 	case string:
 		return t
@@ -223,213 +296,377 @@ func (n Literal) String() string {
 	}
 }
 
+// String fn
 func (n RegExpLiteral) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n RegExpLiteral) generate(ctx *context) string {
 	panic("RegExpLiteral stringer not implemented yet")
 }
 
+// String fn
 func (n VariableDeclaration) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n VariableDeclaration) generate(ctx *context) string {
 	var a []string
 	for _, child := range n.Declarations {
-		a = append(a, stringify(child))
+		a = append(a, generate(ctx, child))
 	}
 	return n.Kind + " " + strings.Join(a, ", ")
 }
 
+// String fn
 func (n VariableDeclarator) String() string {
-	v := stringify(n.ID)
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n VariableDeclarator) generate(ctx *context) string {
+	v := generate(ctx, n.ID)
 	if n.Init == nil {
 		return v
 	}
 
-	x := stringify(n.Init)
+	x := generate(ctx, n.Init)
 	return v + " = " + x
 }
 
+// String fn
 func (n ReturnStatement) String() string {
-	r := stringify(n.Argument)
-	return "return " + r
+	return n.generate(&context{})
 }
 
+// Generate function
+func (n ReturnStatement) generate(ctx *context) string {
+	r := generate(ctx, n.Argument)
+	return "return " + r + ";"
+}
+
+// String fn
 func (n ArrayExpression) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n ArrayExpression) generate(ctx *context) string {
 	var a []string
 	for _, child := range n.Elements {
-		a = append(a, stringify(child))
+		a = append(a, generate(ctx, child))
 	}
 	return "[" + strings.Join(a, ", ") + "]"
 }
 
+// String fn
 func (n BinaryExpression) String() string {
-	l := stringify(n.Left)
-	o := stringify(n.Operator)
-	r := stringify(n.Right)
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n BinaryExpression) generate(ctx *context) string {
+	l := generate(ctx, n.Left)
+	o := generate(ctx, n.Operator)
+	r := generate(ctx, n.Right)
 	return l + " " + o + " " + r
 }
 
+// String fn
 func (n BinaryOperator) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n BinaryOperator) generate(ctx *context) string {
 	return string(n)
 }
 
+// String fn
 func (n EmptyStatement) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n EmptyStatement) generate(ctx *context) string {
 	return ""
 }
 
+// String fn
 func (n ObjectExpression) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n ObjectExpression) generate(ctx *context) string {
 	if len(n.Properties) == 0 {
 		return "{}"
 	}
 
 	var props []string
+	ctx.indent++
 	for _, prop := range n.Properties {
-		k := stringify(prop.Key)
-		v := stringify(prop.Value)
-		props = append(props, "  "+k+": "+v)
+		k := generate(ctx, prop.Key)
+		v := generate(ctx, prop.Value)
+		props = append(props, indent(ctx.indent)+k+": "+v)
 	}
-	return "{\n" + strings.Join(props, ",\n") + "\n}"
+	ctx.indent--
+	return "{\n" + strings.Join(props, ",\n") + "\n" + indent(ctx.indent) + "}"
 }
 
+// String fn
 func (n IfStatement) String() string {
-	t := stringify(n.Test)
-	c := stringify(n.Consequent)
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n IfStatement) generate(ctx *context) string {
+	t := generate(ctx, n.Test)
+	c := generate(ctx, n.Consequent)
 
 	if n.Alternate == nil {
 		return "if (" + t + ") " + c + ""
 	}
-	a := stringify(n.Alternate)
+	a := generate(ctx, n.Alternate)
 
 	return "if (" + t + ") " + c + " else " + a + ""
 }
 
+// String fn
 func (n BlockStatement) String() string {
-	var a []string
-	for _, child := range n.Body {
-		a = append(a, stringify(child))
-	}
-	return "{\n" + strings.Join(a, "\n") + "\n}"
+	return n.generate(&context{})
 }
 
+// Generate function
+func (n BlockStatement) generate(ctx *context) string {
+	var a []string
+	for _, child := range n.Body {
+		ctx.indent++
+		a = append(a, indent(ctx.indent)+generate(ctx, child))
+		ctx.indent--
+	}
+	return "{\n" + strings.Join(a, "\n") + "\n" + indent(ctx.indent) + "}"
+}
+
+// String fn
 func (n LogicalExpression) String() string {
-	l := stringify(n.Left)
-	r := stringify(n.Right)
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n LogicalExpression) generate(ctx *context) string {
+	l := generate(ctx, n.Left)
+	r := generate(ctx, n.Right)
 	return l + " " + string(n.Operator) + " " + r
 }
 
+// String fn
 func (n ForStatement) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n ForStatement) generate(ctx *context) string {
 	var cond []string
 
-	cond = append(cond, stringify(n.Init))
-	cond = append(cond, stringify(n.Test))
-	cond = append(cond, stringify(n.Update))
+	cond = append(cond, generate(ctx, n.Init))
+	cond = append(cond, generate(ctx, n.Test))
+	cond = append(cond, generate(ctx, n.Update))
 
 	// for body
-	body := stringify(n.Body)
+	body := generate(ctx, n.Body)
 	return "for (" + strings.Join(cond, "; ") + ") " + body
 }
 
+// String fn
 func (n UpdateExpression) String() string {
-	x := stringify(n.Argument)
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n UpdateExpression) generate(ctx *context) string {
+	x := generate(ctx, n.Argument)
 	return x + string(n.Operator)
 }
 
+// String fn
 func (n AssignmentExpression) String() string {
-	l := stringify(n.Left)
-	r := stringify(n.Right)
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n AssignmentExpression) generate(ctx *context) string {
+	l := generate(ctx, n.Left)
+	r := generate(ctx, n.Right)
 	return l + " " + string(n.Operator) + " " + r
 }
 
+// String fn
 func (n ThisExpression) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n ThisExpression) generate(ctx *context) string {
 	return "this"
 }
 
+// String fn
 func (n NewExpression) String() string {
-	c := stringify(n.Callee)
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n NewExpression) generate(ctx *context) string {
+	c := generate(ctx, n.Callee)
 
 	var a []string
 	for _, child := range n.Arguments {
-		a = append(a, stringify(child))
+		a = append(a, generate(ctx, child))
 	}
 
 	return "new " + c + "(" + strings.Join(a, ", ") + ")"
 }
 
+// String fn
 func (n BreakStatement) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n BreakStatement) generate(ctx *context) string {
 	return "break"
 }
 
+// String fn
 func (n SequenceExpression) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n SequenceExpression) generate(ctx *context) string {
 	var exprs []string
 	for _, expr := range n.Expressions {
-		exprs = append(exprs, stringify(expr))
+		exprs = append(exprs, generate(ctx, expr))
 	}
 	return strings.Join(exprs, ", ")
 }
 
+// String fn
 func (n ThrowStatement) String() string {
-	return "throw " + stringify(n.Argument)
+	return n.generate(&context{})
 }
 
+// Generate function
+func (n ThrowStatement) generate(ctx *context) string {
+	return "throw " + generate(ctx, n.Argument)
+}
+
+// String fn
 func (n AwaitExpression) String() string {
-	return "await " + stringify(n.Argument)
+	return n.generate(&context{})
 }
 
+// Generate function
+func (n AwaitExpression) generate(ctx *context) string {
+	return "await " + generate(ctx, n.Argument)
+}
+
+// String fn
 func (n Raw) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n Raw) generate(ctx *context) string {
 	return n.Source
 }
 
+// String fn
 func (n MultiStatement) String() string {
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n MultiStatement) generate(ctx *context) string {
 	var a []string
 	for _, stmt := range n.Statements {
-		a = append(a, stringify(stmt))
+		a = append(a, generate(ctx, stmt))
 	}
 	return strings.Join(a, ";\n")
 }
 
+// String fn
 func (n ForInStatement) String() string {
-	left := stringify(n.Left)
-	right := stringify(n.Right)
-	body := stringify(n.Body)
+	return n.generate(&context{})
+}
+
+// Generate function
+func (n ForInStatement) generate(ctx *context) string {
+	left := generate(ctx, n.Left)
+	right := generate(ctx, n.Right)
+	body := generate(ctx, n.Body)
 	return "for (" + left + " in " + right + ") " + body
 }
 
+// String fn
 // func (n DebuggerStatement) String() string {
-// 	return "DebuggerStatement", nil
+// 	return ""
 // }
 
-// func (n WithStatement) String() string {
-// 	return "WithStatement", nil
+// Generate function
+// func (n DebuggerStatement) generate(ctx *context) string {
+// 	return "DebuggerStatement"
 // }
 
-// func (n LabeledStatement) String() string {
-// 	return "LabeledStatement", nil
+// Generate function
+// func (n WithStatement) generate(ctx *context) string {
+// 	return "WithStatement"
 // }
 
-// func (n ContinueStatement) String() string {
-// 	return "ContinueStatement", nil
+// Generate function
+// func (n LabeledStatement) generate(ctx *context) string {
+// 	return "LabeledStatement"
 // }
 
-// func (n IfStatement) String() string {
-// 	return "IfStatement", nil
+// Generate function
+// func (n ContinueStatement) generate(ctx *context) string {
+// 	return "ContinueStatement"
 // }
 
-// func (n SwitchStatement) String() string {
-// 	return "SwitchStatement", nil
+// Generate function
+// func (n IfStatement) generate(ctx *context) string {
+// 	return "IfStatement"
 // }
 
-// func (n ThrowStatement) String() string {
-// 	return "ThrowStatement", nil
+// Generate function
+// func (n SwitchStatement) generate(ctx *context) string {
+// 	return "SwitchStatement"
 // }
 
-// func (n TryStatement) String() string {
-// 	return "TryStatement", nil
+// Generate function
+// func (n ThrowStatement) generate(ctx *context) string {
+// 	return "ThrowStatement"
 // }
 
-// func (n WhileStatement) String() string {
-// 	return "WhileStatement", nil
+// Generate function
+// func (n TryStatement) generate(ctx *context) string {
+// 	return "TryStatement"
 // }
 
-// func (n DoWhileStatement) String() string {
-// 	return "DoWhileStatement", nil
+// Generate function
+// func (n WhileStatement) generate(ctx *context) string {
+// 	return "WhileStatement"
 // }
 
-// func (n Declaration) String() string {
-// 	return "Declaration", nil
+// Generate function
+// func (n DoWhileStatement) generate(ctx *context) string {
+// 	return "DoWhileStatement"
+// }
+
+// Generate function
+// func (n Declaration) generate(ctx *context) string {
+// 	return "Declaration"
 // }

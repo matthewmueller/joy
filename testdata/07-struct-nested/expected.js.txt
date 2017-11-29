@@ -1,34 +1,33 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/07-struct-nested"] = (function() {
-function Phone (o) {
-o = o || {};
-this.Type = o.Type || "";
-this.Number = o.Number || "";
-this.Main = o.Main || false;
-};
-function User (o) {
-o = o || {};
-this.Name = o.Name || "";
-this.Phone = o.Phone || new Phone();
-};
-function main () {
-var user = new User({
-  Name: "Matt",
-  Phone: new Phone({
-  Number: "1234511",
-  Main: false
-})
-});
-console.log(user.Phone.Number);
-user.Phone.Type = "CELL";
-};
-return {
-  Phone: Phone,
-  User: User,
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/07-struct-nested"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/07-struct-nested"] = (function() {
+		function Phone (o) {
+			o = o || {};
+			this.Type = o.Type || "";
+			this.Number = o.Number || "";
+			this.Main = o.Main || false
+		};
+		function User (o) {
+			o = o || {};
+			this.Name = o.Name || "";
+			this.Phone = o.Phone || new Phone()
+		};
+		function main () {
+			var user = new User({
+				Name: "Matt",
+				Phone: new Phone({
+					Number: "1234511",
+					Main: false
+				})
+			});
+			console.log(user.Phone.Number);
+			user.Phone.Type = "CELL"
+		};
+		return {
+			Phone: Phone,
+			User: User,
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/07-struct-nested"].main();
 })()

@@ -1,16 +1,15 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/14-empty-vars"] = (function() {
-function main () {
-var a = [], b = "hey";
-;
-console.log(a);
-console.log(b);
-};
-return {
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/14-empty-vars"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/14-empty-vars"] = (function() {
+		function main () {
+			var a = [], b = "hey";
+			;
+			console.log(a);
+			console.log(b)
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/14-empty-vars"].main();
 })()

@@ -1,59 +1,58 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/34-keyless-fields/dep/dep"] = (function() {
-function Settings (o) {
-o = o || {};
-this.place = o.place || "";
-};
-return {
-  Settings: Settings
-};
-})();
-pkg["github.com/matthewmueller/golly/testdata/34-keyless-fields"] = (function() {
-var dep = pkg["github.com/matthewmueller/golly/testdata/34-keyless-fields/dep/dep"];
-function Phone (o) {
-o = o || {};
-this.Type = o.Type || "";
-this.number = o.number || "";
-};
-function User (o) {
-o = o || {};
-this.name = o.name || "";
-this.Age = o.Age || 0;
-this.phone = o.phone || null;
-this.Settings = o.Settings || null;
-for (var $k in this.Settings || dep.Settings.prototype) {
-this[$k] = this[$k] || (this.Settings || dep.Settings.prototype)[$k]
-};
-this.Settings2 = o.Settings2 || null;
-};
-function main () {
-var settings = new dep.Settings({
-  place: "USA"
-});
-var settings2 = new dep.Settings({
-  place: "EUROPE"
-});
-var phone = new Phone({
-  Type: "Android",
-  number: "8674205"
-});
-var age = 28;
-var u = new User({
-  name: "matt",
-  Age: age,
-  phone: phone,
-  Settings: settings,
-  Settings2: settings2
-});
-console.log(u.name, u.Age, u.phone.number, u.Settings.place, u.Settings2.place);
-};
-return {
-  Phone: Phone,
-  User: User,
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/34-keyless-fields"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/34-keyless-fields/dep/dep"] = (function() {
+		function Settings (o) {
+			o = o || {};
+			this.place = o.place || ""
+		};
+		return {
+			Settings: Settings
+		};
+	})();
+	pkg["github.com/matthewmueller/golly/testdata/34-keyless-fields"] = (function() {
+		var dep = pkg["github.com/matthewmueller/golly/testdata/34-keyless-fields/dep/dep"];
+		function Phone (o) {
+			o = o || {};
+			this.Type = o.Type || "";
+			this.number = o.number || ""
+		};
+		function User (o) {
+			o = o || {};
+			this.name = o.name || "";
+			this.Age = o.Age || 0;
+			this.phone = o.phone || null;
+			this.Settings = o.Settings || null;
+			for (var $k in this.Settings || dep.Settings.prototype) {
+				this[$k] = this[$k] || (this.Settings || dep.Settings.prototype)[$k]
+			};
+			this.Settings2 = o.Settings2 || null
+		};
+		function main () {
+			var settings = new dep.Settings({
+				place: "USA"
+			});
+			var settings2 = new dep.Settings({
+				place: "EUROPE"
+			});
+			var phone = new Phone({
+				Type: "Android",
+				number: "8674205"
+			});
+			var age = 28;
+			var u = new User({
+				name: "matt",
+				Age: age,
+				phone: phone,
+				Settings: settings,
+				Settings2: settings2
+			});
+			console.log(u.name, u.Age, u.phone.number, u.Settings.place, u.Settings2.place)
+		};
+		return {
+			Phone: Phone,
+			User: User,
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/34-keyless-fields"].main();
 })()

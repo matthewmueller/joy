@@ -1,29 +1,28 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/06-structs"] = (function() {
-function Document (o) {
-o = o || {};
-this.version = o.version || 0;
-};
-Document.prototype.GetElementByID = function(id) {
-return "#" + id;
-};
-function New () {
-return new Document({
-  version: 1
-});
-};
-function main () {
-var doc = New();
-var el = doc.GetElementByID.bind(doc)("canvas");
-console.log("got element " + el);
-};
-return {
-  Document: Document,
-  New: New,
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/06-structs"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/06-structs"] = (function() {
+		function Document (o) {
+			o = o || {};
+			this.version = o.version || 0
+		};
+		Document.prototype.GetElementByID = function(id) {
+			return "#" + id;
+		};
+		function New () {
+			return new Document({
+				version: 1
+			});
+		};
+		function main () {
+			var doc = New();
+			var el = doc.GetElementByID.bind(doc)("canvas");
+			console.log("got element " + el)
+		};
+		return {
+			Document: Document,
+			New: New,
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/06-structs"].main();
 })()

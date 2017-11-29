@@ -1,26 +1,25 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/12-maps"] = (function() {
-function main () {
-var names = {
-  "a": "a",
-  "b": "b"
-};
-var nested = {
-  "a": {
-  "a": "a"
-},
-  "b": {
-  "b": "b"
-}
-};
-console.log(names["a"]);
-console.log(nested["b"]["b"]);
-};
-return {
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/12-maps"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/12-maps"] = (function() {
+		function main () {
+			var names = {
+				"a": "a",
+				"b": "b"
+			};
+			var nested = {
+				"a": {
+					"a": "a"
+				},
+				"b": {
+					"b": "b"
+				}
+			};
+			console.log(names["a"]);
+			console.log(nested["b"]["b"])
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/12-maps"].main();
 })()

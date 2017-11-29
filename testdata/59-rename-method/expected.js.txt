@@ -1,24 +1,23 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/59-rename-method/dep"] = (function() {
-function test () {
-var items = [];
-return items.concat("a", "b", "c");
-};
-return {
-  test: test
-};
-})();
-pkg["github.com/matthewmueller/golly/testdata/59-rename-method"] = (function() {
-var dep = pkg["github.com/matthewmueller/golly/testdata/59-rename-method/dep"];
-function main () {
-console.log(typeof dep.test);
-console.log(dep.test());
-};
-return {
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/59-rename-method"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/59-rename-method/dep"] = (function() {
+		function test () {
+			var items = [];
+			return items.concat("a", "b", "c");
+		};
+		return {
+			test: test
+		};
+	})();
+	pkg["github.com/matthewmueller/golly/testdata/59-rename-method"] = (function() {
+		var dep = pkg["github.com/matthewmueller/golly/testdata/59-rename-method/dep"];
+		function main () {
+			console.log(typeof dep.test);
+			console.log(dep.test())
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/59-rename-method"].main();
 })()

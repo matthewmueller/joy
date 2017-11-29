@@ -1,15 +1,14 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/13-simple-raw"] = (function() {
-function main () {
-var x = 15;
-x += 5;
-console.log(x);
-};
-return {
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/13-simple-raw"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/13-simple-raw"] = (function() {
+		function main () {
+			var x = 15;
+			x += 5;
+			console.log(x)
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/13-simple-raw"].main();
 })()

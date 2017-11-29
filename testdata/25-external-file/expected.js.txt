@@ -1,26 +1,25 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/25-external-file/fetch.js"] = (function() {
-return function fetch(url) {
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/25-external-file/fetch.js"] = (function() {
+		return function fetch(url) {
   return 'Google'
 }
-;
-})();
-pkg["github.com/matthewmueller/golly/testdata/25-external-file"] = (function() {
-function call () {
-var fetch = pkg["github.com/matthewmueller/golly/testdata/25-external-file/fetch.js"];
-return fetch;
-};
-function main () {
-var fetch = call();
-;
-var res = fetch("http://google.com");
-console.log(res);
-};
-return {
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/25-external-file"].main();
+
+	})();
+	pkg["github.com/matthewmueller/golly/testdata/25-external-file"] = (function() {
+		function call () {
+			var fetch = pkg["github.com/matthewmueller/golly/testdata/25-external-file/fetch.js"];
+			return fetch;
+		};
+		function main () {
+			var fetch = call();
+			;
+			var res = fetch("http://google.com");
+			console.log(res)
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/25-external-file"].main();
 })()

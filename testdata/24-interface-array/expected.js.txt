@@ -1,18 +1,17 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/24-interface-array"] = (function() {
-function document (o) {
-o = o || {};
-this.Fonts = o.Fonts || [];
-};
-function main () {
-var doc = new document({});
-console.log(doc.Fonts);
-};
-return {
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/24-interface-array"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/24-interface-array"] = (function() {
+		function document (o) {
+			o = o || {};
+			this.Fonts = o.Fonts || []
+		};
+		function main () {
+			var doc = new document({});
+			console.log(doc.Fonts)
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/24-interface-array"].main();
 })()
