@@ -1,28 +1,27 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/62-rename-interface-methods"] = (function() {
-page.prototype.render = function() {
-return "page!";
-};
-function page (o) {
-o = o || {};
-};
-function newiface () {
-return new page({});
-};
-function newpage () {
-return new page({});
-};
-function main () {
-var p = newpage();
-console.log(p.render.bind(p)());
-var i = newiface();
-console.log(i.render());
-};
-return {
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/62-rename-interface-methods"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/62-rename-interface-methods"] = (function() {
+		page.prototype.render = function() {
+			return "page!";
+		};
+		function page (o) {
+			o = o || {}
+		};
+		function newiface () {
+			return new page({});
+		};
+		function newpage () {
+			return new page({});
+		};
+		function main () {
+			var p = newpage();
+			console.log(p.render.bind(p)());
+			var i = newiface();
+			console.log(i.render())
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/62-rename-interface-methods"].main();
 })()

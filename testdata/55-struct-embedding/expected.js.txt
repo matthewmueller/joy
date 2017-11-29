@@ -1,59 +1,58 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/55-struct-embedding"] = (function() {
-entity.prototype.Entity = function() {
-var t = this;
-return "ent";
-};
-dog.prototype.Legs = function() {
-var d = this;
-return 4;
-};
-animal.prototype.Name = function() {
-var a = this;
-return "animal";
-};
-thing.prototype.Type = function() {
-var t = this;
-return 1;
-};
-function entity (o) {
-o = o || {};
-};
-function thing (o) {
-o = o || {};
-};
-function animal (o) {
-o = o || {};
-this.kind = o.kind || "";
-this.thing = o.thing || null;
-for (var $k in this.thing || thing.prototype) {
-this[$k] = this[$k] || (this.thing || thing.prototype)[$k]
-};
-this.entity = o.entity || new entity();
-for (var $k in this.entity || entity.prototype) {
-this[$k] = this[$k] || (this.entity || entity.prototype)[$k]
-};
-};
-function dog (o) {
-o = o || {};
-this.animal = o.animal || null;
-for (var $k in this.animal || animal.prototype) {
-this[$k] = this[$k] || (this.animal || animal.prototype)[$k]
-};
-};
-function main () {
-var d = new dog({
-  animal: new animal({
-  kind: "sloth"
-})
-});
-console.log(d.Name.bind(d)(), d.Legs.bind(d)(), d.kind, d.Type.bind(d)(), d.Entity.bind(d)());
-};
-return {
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/55-struct-embedding"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/55-struct-embedding"] = (function() {
+		entity.prototype.Entity = function() {
+			var t = this;
+			return "ent";
+		};
+		dog.prototype.Legs = function() {
+			var d = this;
+			return 4;
+		};
+		animal.prototype.Name = function() {
+			var a = this;
+			return "animal";
+		};
+		thing.prototype.Type = function() {
+			var t = this;
+			return 1;
+		};
+		function entity (o) {
+			o = o || {}
+		};
+		function thing (o) {
+			o = o || {}
+		};
+		function animal (o) {
+			o = o || {};
+			this.kind = o.kind || "";
+			this.thing = o.thing || null;
+			for (var $k in this.thing || thing.prototype) {
+				this[$k] = this[$k] || (this.thing || thing.prototype)[$k]
+			};
+			this.entity = o.entity || new entity();
+			for (var $k in this.entity || entity.prototype) {
+				this[$k] = this[$k] || (this.entity || entity.prototype)[$k]
+			}
+		};
+		function dog (o) {
+			o = o || {};
+			this.animal = o.animal || null;
+			for (var $k in this.animal || animal.prototype) {
+				this[$k] = this[$k] || (this.animal || animal.prototype)[$k]
+			}
+		};
+		function main () {
+			var d = new dog({
+				animal: new animal({
+					kind: "sloth"
+				})
+			});
+			console.log(d.Name.bind(d)(), d.Legs.bind(d)(), d.kind, d.Type.bind(d)(), d.Entity.bind(d)())
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/55-struct-embedding"].main();
 })()

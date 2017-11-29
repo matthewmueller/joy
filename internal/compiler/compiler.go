@@ -330,7 +330,6 @@ func (c *Compiler) Assemble(idx *index.Index, g *graph.Graph) (scripts []*script
 
 		// put everything together into a JS program
 		prog := jsast.CreateProgram(
-			jsast.CreateEmptyStatement(),
 			jsast.CreateExpressionStatement(
 				jsast.CreateCallExpression(
 					jsast.CreateFunctionExpression(nil, []jsast.IPattern{},
@@ -341,22 +340,20 @@ func (c *Compiler) Assemble(idx *index.Index, g *graph.Graph) (scripts []*script
 			),
 		)
 
+		code, err := jsast.Assemble(prog)
+		if err != nil {
+			return scripts, errors.Wrapf(err, "unable to assemble AST for %s", file.path)
+		}
+
 		scripts = append(scripts, script.New(
 			file.path, // TODO
 			file.path,
-			prog.String(),
+			code,
 		))
 	}
 
 	return scripts, nil
 }
-
-// Compile a series of packages
-//
-// packages should be fullpaths to the files or packages
-// func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err error) {
-
-// }
 
 // Prunes the definitions. Right now this means:
 // - remove any method that doesn't have a receiver present

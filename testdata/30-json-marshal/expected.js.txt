@@ -1,29 +1,28 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/30-json-marshal"] = (function() {
-function Person (o) {
-o = o || {};
-this.name = o.name || "";
-this.age = o.age || 0;
-};
-function main () {
-var $bytes = (function(v) {
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/30-json-marshal"] = (function() {
+		function Person (o) {
+			o = o || {};
+			this.name = o.name || "";
+			this.age = o.age || 0
+		};
+		function main () {
+			var $bytes = (function(v) {
   try { return [ JSON.stringify(v), null ]  }
   catch (e) { return [ null, e ] }
 })(new Person({
-  name: "Matt",
-  age: 28
+	name: "Matt",
+	age: 28
 })), bytes = $bytes[0], err = $bytes[1];
-if (err != null) {
-throw err
-};
-console.log(bytes);
-};
-return {
-  Person: Person,
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/30-json-marshal"].main();
+			if (err != null) {
+				throw err
+			};
+			console.log(bytes)
+		};
+		return {
+			Person: Person,
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/30-json-marshal"].main();
 })()

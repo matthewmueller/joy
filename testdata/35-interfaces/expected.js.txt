@@ -1,28 +1,27 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/35-interfaces"] = (function() {
-function component (o) {
-o = o || {};
-this.component = o.component || "";
-};
-function New (name) {
-return new component({
-  component: name
-});
-};
-component.prototype.String = function() {
-var c = this;
-return c.component;
-};
-function main () {
-var c = New("awesomeness");
-console.log(c.String());
-};
-return {
-  New: New,
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/35-interfaces"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/35-interfaces"] = (function() {
+		function component (o) {
+			o = o || {};
+			this.component = o.component || ""
+		};
+		function New (name) {
+			return new component({
+				component: name
+			});
+		};
+		component.prototype.String = function() {
+			var c = this;
+			return c.component;
+		};
+		function main () {
+			var c = New("awesomeness");
+			console.log(c.String())
+		};
+		return {
+			New: New,
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/35-interfaces"].main();
 })()

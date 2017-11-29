@@ -1,15 +1,14 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/53-rename-variables"] = (function() {
-var body = document.body.nodeName;
-function main () {
-console.log(body);
-};
-return {
-  body: body,
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/53-rename-variables"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/53-rename-variables"] = (function() {
+		var body = document.body.nodeName;
+		function main () {
+			console.log(body)
+		};
+		return {
+			body: body,
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/53-rename-variables"].main();
 })()

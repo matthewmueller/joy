@@ -1,25 +1,24 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/15-append"] = (function() {
-function Node (o) {
-o = o || {};
-this.NodeName = o.NodeName || "";
-};
-function main () {
-var nodes = [];
-nodes = nodes.concat(new Node({
-  NodeName: "div"
-}), new Node({
-  NodeName: "strong"
-}));
-console.log(nodes[0].NodeName);
-console.log(nodes[1].NodeName);
-};
-return {
-  Node: Node,
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/15-append"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/15-append"] = (function() {
+		function Node (o) {
+			o = o || {};
+			this.NodeName = o.NodeName || ""
+		};
+		function main () {
+			var nodes = [];
+			nodes = nodes.concat(new Node({
+				NodeName: "div"
+			}), new Node({
+				NodeName: "strong"
+			}));
+			console.log(nodes[0].NodeName);
+			console.log(nodes[1].NodeName)
+		};
+		return {
+			Node: Node,
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/15-append"].main();
 })()

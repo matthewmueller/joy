@@ -1,17 +1,16 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/43-var-function"] = (function() {
-function tester () {
-return "hi world";
-};
-var test = tester();
-function main () {
-console.log(test);
-};
-return {
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/golly/testdata/43-var-function"].main();
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/43-var-function"] = (function() {
+		function tester () {
+			return "hi world";
+		};
+		var test = tester();
+		function main () {
+			console.log(test)
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/43-var-function"].main();
 })()
