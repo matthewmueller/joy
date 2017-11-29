@@ -133,8 +133,6 @@ func (d *dict) Generate() (string, error) {
 	}
 
 	return gen.Generate("dictionary/"+d.data.Name, data, `
-		package {{ .Package }}
-
 		type {{ .Name }} struct {
 			{{ range .Embeds }}
 			{{ . }}

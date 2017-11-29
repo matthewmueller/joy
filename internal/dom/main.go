@@ -50,7 +50,7 @@ func generate(dir string) error {
 	// 	return err
 	// }
 
-	xml, err := ioutil.ReadFile(path.Join(dirname, "inputs", "browser.webidl.xml"))
+	xml, err := ioutil.ReadFile(path.Join(dirname, "inputs", "sample.xml"))
 	if err != nil {
 		return err
 	}
@@ -85,40 +85,39 @@ func generate(dir string) error {
 	}
 
 	// generate the packages
-	cliques := g.Cliques()
-	for _, clique := range cliques {
-		if len(clique) == 1 {
-			name := clique[0].ID()
-			pkgname := gen.Lowercase(name)
-			def := index[name]
-			def.SetPackage(pkgname)
-			def.SetFile(pkgname)
-			continue
-		}
+	// pkgs := map[string]def.Definition{}
+	// cliques := g.Cliques()
+	// for _, clique := range cliques {
+	// 	if len(clique) == 1 {
+	// 		name := clique[0].ID()
+	// 		pkgname := gen.Lowercase(name)
+	// 		pkgs[pkgname] = index[name]
+	// 		continue
+	// 	}
 
-		pkgname := ""
-		for _, def := range clique {
-			if cliqueNames[def.ID()] != "" {
-				pkgname = cliqueNames[def.ID()]
-				break
-			}
-		}
-		if pkgname == "" {
-			var ids []string
-			for _, def := range clique {
-				ids = append(ids, def.ID())
-			}
-			return fmt.Errorf("group name not defined for this clique: %s", strings.Join(ids, ", "))
-		}
+	// 	pkgname := ""
+	// 	for _, def := range clique {
+	// 		if cliqueNames[def.ID()] != "" {
+	// 			pkgname = cliqueNames[def.ID()]
+	// 			break
+	// 		}
+	// 	}
+	// 	if pkgname == "" {
+	// 		var ids []string
+	// 		for _, def := range clique {
+	// 			ids = append(ids, def.ID())
+	// 		}
+	// 		return fmt.Errorf("group name not defined for this clique: %s", strings.Join(ids, ", "))
+	// 	}
 
-		for _, def := range clique {
-			name := def.ID()
-			filename := gen.Lowercase(name)
-			def := index[name]
-			def.SetPackage(pkgname)
-			def.SetFile(filename)
-		}
-	}
+	// 	for _, def := range clique {
+	// 		name := def.ID()
+	// 		filename := gen.Lowercase(name)
+	// 		def := index[name]
+	// 		def.SetPackage(pkgname)
+	// 		def.SetFile(filename)
+	// 	}
+	// }
 
 	// accurate length
 	var defs []def.Definition
@@ -129,56 +128,65 @@ func generate(dir string) error {
 			defs = append(defs, def)
 		}
 	}
-	l := len(defs)
+	// l := len(defs)
 
 	// write first so we have all the files present
-	for i, def := range defs {
-		// if !strings.Contains(def.GetPackage(), "window") {
-		// 	continue
-		// }
-
+	var codes []string
+	for _, def := range defs {
 		code, err := def.Generate()
 		if err != nil {
 			return errors.Wrapf(err, "error generating %s", def.ID())
 		}
 
-		pkgpath := path.Join(dir, def.GetPackage())
-		if err := os.MkdirAll(pkgpath, 0755); err != nil {
-			return errors.Wrapf(err, "error mkdir")
-		}
+		codes = append(codes, code)
 
-		if err := ioutil.WriteFile(path.Join(pkgpath, def.GetFile()+".go"), []byte(code), 0644); err != nil {
-			return errors.Wrapf(err, "error writefile")
-		}
-
-		log.Infof("generated %s (%d/%d)", def.ID(), i, l)
-	}
-
-	// format and link all the packages up
-	for i, def := range defs {
-		// if !strings.Contains(def.GetPackage(), "window") {
-		// 	continue
+		// pkgpath := path.Join(dir, def.GetPackage())
+		// if err := os.MkdirAll(pkgpath, 0755); err != nil {
+		// 	return errors.Wrapf(err, "error mkdir")
 		// }
 
-		filepath := path.Join(dir, def.GetPackage(), def.GetFile()+".go")
+		// if err := ioutil.WriteFile(path.Join(pkgpath, def.GetFile()+".go"), []byte(code), 0644); err != nil {
+		// 	return errors.Wrapf(err, "error writefile")
+		// }
 
-		buf, err := ioutil.ReadFile(filepath)
-		if err != nil {
-			return errors.Wrapf(err, "error reading file")
-		}
-
-		code, err := gen.Format(string(buf))
-		if err != nil {
-			return errors.Wrapf(err, "error formatting %s", def.ID())
-		}
-
-		// overwrite
-		if err := ioutil.WriteFile(filepath, []byte(code), 0644); err != nil {
-			return errors.Wrapf(err, "error writefile")
-		}
-
-		log.Infof("formatted %s (%d/%d)", def.ID(), i, l)
+		// log.Infof("generated %s (%d/%d)", def.ID(), i, l)
 	}
+
+	output := "package window\n\n" + strings.Join(codes, "\n\n")
+	formatted, err := gen.Format(string(output))
+	if err != nil {
+		fmt.Println(output)
+		return errors.Wrapf(err, "error formatting")
+	}
+
+	fmt.Println(formatted)
+
+	// format and link all the packages up
+	// for i, def := range defs {
+	// 	filepath := path.Join(dir, def.GetPackage(), def.GetFile()+".go")
+
+	// 	buf, err := ioutil.ReadFile(filepath)
+	// 	if err != nil {
+	// 		return errors.Wrapf(err, "error reading file")
+	// 	}
+
+	// 	code, err := gen.Format(string(buf))
+	// 	if err != nil {
+	// 		return errors.Wrapf(err, "error formatting %s", def.ID())
+	// 	}
+
+	// 	f, err := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY, 0666)
+	// 	if err != nil {
+	// 		return errors.Wrapf(err, "error opening file %s", filepath)
+	// 	}
+	// 	defer f.Close()
+
+	// 	if _, err = f.WriteString(code); err != nil {
+	// 		return errors.Wrapf(err, "error writing file")
+	// 	}
+
+	// 	log.Infof("formatted %s (%d/%d)", def.ID(), i, l)
+	// }
 
 	return nil
 }

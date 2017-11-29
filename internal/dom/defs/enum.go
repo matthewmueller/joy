@@ -83,8 +83,6 @@ func (d *enum) Generate() (string, error) {
 	}
 
 	return gen.Generate("enum/"+d.data.Name, data, `
-		package {{ .Package }}
-
 		type {{ .Name }} string
 	`)
 }

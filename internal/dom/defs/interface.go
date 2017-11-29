@@ -340,8 +340,6 @@ func (d *iface) Generate() (string, error) {
 	}
 
 	return gen.Generate("interface/"+d.data.Name, data, `
-		package {{ .Package }}
-		
 		{{ if .Constructor.Name -}}
 		// {{ .Constructor.Name }} fn
 		func {{ .Constructor.Name }}({{ joinvt .Constructor.Params }}) {{ .Type }} {
@@ -454,8 +452,6 @@ func (d *iface) generateInterface() (string, error) {
 	}
 
 	return gen.Generate("interface/"+d.data.Name, data, `
-		package {{ .Package }}
-		
 		// js:"{{ .Name }},omit"
 		type {{ .Name }} interface {
 			{{- range .Extends }}
