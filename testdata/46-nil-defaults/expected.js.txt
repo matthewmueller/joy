@@ -1,9 +1,6 @@
 ;(function() {
 	var pkg = {};
 	pkg["github.com/matthewmueller/golly/testdata/46-nil-defaults/element"] = (function() {
-		function attrs (o) {
-			o = o || {}
-		};
 		element.prototype.Attrs = function() {
 			var c = this;
 			return c.attrs;

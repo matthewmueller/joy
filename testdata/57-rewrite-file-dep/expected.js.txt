@@ -74,10 +74,6 @@
 
 	})();
 	pkg["github.com/matthewmueller/golly/testdata/57-rewrite-file-dep"] = (function() {
-		function Repo (o) {
-			o = o || {};
-			this.name = o.name || ""
-		};
 		async function main () {
 			var $response = await (async function (unfetch, url) {
 		try {
@@ -113,7 +109,6 @@ if (e != null) {
 			}
 		};
 		return {
-			Repo: Repo,
 			main: main
 		};
 	})();

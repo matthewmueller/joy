@@ -10,10 +10,6 @@
 				component: com
 			});
 		};
-		function Props (o) {
-			o = o || {};
-			this.Location = o.Location || ""
-		};
 		function Page (o) {
 			o = o || {};
 			this.props = o.props || null
@@ -57,14 +53,13 @@
 			return "<" + e.name + ">" + children.join("") + "</" + e.name + ">";
 		};
 		function main () {
-			var c = New(new Props({
+			var c = New({
 				Location: "mars"
-			}));
+			});
 			console.log(c.String())
 		};
 		return {
 			NewComponent: NewComponent,
-			Props: Props,
 			Page: Page,
 			New: New,
 			Element: Element,

@@ -150,6 +150,22 @@ func structType(ctx *context, n *ast.StructType) error {
 		}
 	}
 
+	// get all the struct methods
+	// TODO: store this as state
+	var methods []def.Definition
+	for _, def := range ctx.idx.All() {
+		method, ok := def.(Methoder)
+		if !ok {
+			continue
+		}
+		if ctx.d.ID() == method.Recv().ID() {
+			methods = append(methods, method)
+		}
+	}
+	if len(methods) == 0 {
+		ctx.state.omit = true
+	}
+
 	// stct, ok := ctx.d.(Structer)
 	// if !ok {
 	// 	return errors.New("process/structType: expected struct type to be a structer")

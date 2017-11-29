@@ -22,19 +22,12 @@
 			this.first = o.first || null;
 			this.last = o.last || null
 		};
-		function Thing (o) {
-			o = o || {};
-			this.Subthing = o.Subthing || null;
-			for (var $k in this.Subthing || Subthing.prototype) {
-				this[$k] = this[$k] || (this.Subthing || Subthing.prototype)[$k]
-			}
-		};
 		function stringer (o) {
 			o = o || {};
 			this.value = o.value || ""
 		};
 		function main () {
-			var s = new Thing({
+			var s = {
 				Subthing: new Subthing({
 					first: new stringer({
 						value: "matt"
@@ -43,12 +36,11 @@
 						value: "mueller"
 					})
 				})
-			});
+			};
 			console.log(s.Subthing.Name.bind(s.Subthing)())
 		};
 		return {
 			Subthing: Subthing,
-			Thing: Thing,
 			main: main
 		};
 	})();

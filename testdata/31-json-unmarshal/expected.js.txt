@@ -1,16 +1,14 @@
 ;(function() {
 	var pkg = {};
 	pkg["github.com/matthewmueller/golly/testdata/31-json-unmarshal"] = (function() {
-		function Person (o) {
-			o = o || {};
-			this.name = o.name || "";
-			this.age = o.age || 0
-		};
 		function follows (p) {
 			console.log(p.name)
 		};
 		function main () {
-			var p = new Person();
+			var p = {
+				name: "",
+				age: 0
+			};
 			var e = (function(data, v) {
   try {
     var o = JSON.parse(data)
@@ -24,7 +22,6 @@ if (e != null) {
 			follows(p)
 		};
 		return {
-			Person: Person,
 			main: main
 		};
 	})();

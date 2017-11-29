@@ -123,7 +123,7 @@ func (d *structdef) Omitted() bool {
 	if d.tag != nil && d.tag.HasOption("omit") {
 		return true
 	}
-	return false
+	return d.omit
 }
 
 func (d *structdef) Gen() *ast.GenDecl {

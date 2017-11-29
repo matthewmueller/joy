@@ -13,14 +13,10 @@
 	})();
 	pkg["github.com/matthewmueller/golly/testdata/21-packages/one"] = (function() {
 		var zarg = pkg["github.com/matthewmueller/golly/testdata/21-packages/dep"];
-		function test (o) {
-			o = o || {};
-			this.String = o.String || ""
-		};
 		function main () {
-			var t = new test({
+			var t = {
 				String: "hi"
-			});
+			};
 			console.log(zarg.Dep("one") + t.String)
 		};
 		return {

@@ -74,10 +74,6 @@
 
 	})();
 	pkg["github.com/matthewmueller/golly/testdata/45-external-fetch/fetch"] = (function() {
-		function Options (o) {
-			o = o || {};
-			this.Method = o.Method || ""
-		};
 		var unfetch = pkg["github.com/matthewmueller/golly/testdata/45-external-fetch/fetch/unfetch.js"];
 		async function Fetch (url, options) {
 			
@@ -91,20 +87,15 @@
 			return [null, null];
 		};
 		return {
-			Options: Options,
 			Fetch: Fetch
 		};
 	})();
 	pkg["github.com/matthewmueller/golly/testdata/45-external-fetch"] = (function() {
 		var fetch = pkg["github.com/matthewmueller/golly/testdata/45-external-fetch/fetch"];
-		function Repo (o) {
-			o = o || {};
-			this.name = o.name || ""
-		};
 		async function test () {
-			var $response = await fetch.Fetch("https://api.github.com/users/matthewmueller/repos", new fetch.Options({
+			var $response = await fetch.Fetch("https://api.github.com/users/matthewmueller/repos", {
 				Method: "GET"
-			})), response = $response[0], err = $response[1];
+			}), response = $response[0], err = $response[1];
 			if (err != null) {
 				console.log(err)
 				return ;
@@ -132,7 +123,6 @@ if (e != null) {
 			await test()
 		};
 		return {
-			Repo: Repo,
 			main: main
 		};
 	})();

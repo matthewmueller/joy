@@ -1,17 +1,13 @@
 ;(function() {
 	var pkg = {};
 	pkg["github.com/matthewmueller/golly/testdata/16-range"] = (function() {
-		function Node (o) {
-			o = o || {};
-			this.NodeName = o.NodeName || ""
-		};
 		function main () {
 			var nodes = [];
-			nodes = nodes.concat(new Node({
+			nodes = nodes.concat({
 				NodeName: "div"
-			}), new Node({
+			}, {
 				NodeName: "strong"
-			}));
+			});
 			for (var i = 0, node; i < nodes.length; i++) {
 				var node = nodes[i]
 				console.log(i)
@@ -22,7 +18,6 @@
 			}
 		};
 		return {
-			Node: Node,
 			main: main
 		};
 	})();

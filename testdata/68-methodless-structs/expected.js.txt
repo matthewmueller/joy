@@ -1,0 +1,19 @@
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/68-methodless-structs"] = (function() {
+		function main () {
+			var o = {
+				a: "hi",
+				b: 0,
+				c: {
+					d: 0
+				}
+			};
+			console.log(o.a, o.b, o.c.d)
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/68-methodless-structs"].main();
+})()

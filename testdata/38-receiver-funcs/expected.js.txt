@@ -9,23 +9,15 @@
 			o = o || {};
 			this.name = o.name || ""
 		};
-		function Thing (o) {
-			o = o || {};
-			this.subthing = o.subthing || null;
-			for (var $k in this.subthing || subthing.prototype) {
-				this[$k] = this[$k] || (this.subthing || subthing.prototype)[$k]
-			}
-		};
 		function main () {
-			var s = new Thing({
+			var s = {
 				subthing: new subthing({
 					name: "matt"
 				})
-			});
+			};
 			console.log(s.subthing.Name.bind(s.subthing)())
 		};
 		return {
-			Thing: Thing,
 			main: main
 		};
 	})();

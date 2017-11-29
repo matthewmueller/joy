@@ -1,22 +1,16 @@
 ;(function() {
 	var pkg = {};
 	pkg["github.com/matthewmueller/golly/testdata/09-zero-values"] = (function() {
-		function Phone (o) {
-			o = o || {};
-			this.Type = o.Type || "";
-			this.Number = o.Number || ""
-		};
-		function User (o) {
-			o = o || {};
-			this.FirstName = o.FirstName || "";
-			this.LastName = o.LastName || "";
-			this.Age = o.Age || 0;
-			this.Phone = o.Phone || new Phone()
-		};
 		function main () {
-			var user = new User({
-				FirstName: "Tobi"
-			});
+			var user = {
+				FirstName: "Tobi",
+				LastName: "",
+				Age: 0,
+				Phone: {
+					Type: "",
+					Number: ""
+				}
+			};
 			console.log(user.FirstName);
 			console.log(user.LastName);
 			console.log(user.Age);
@@ -24,8 +18,6 @@
 			console.log(user.Phone.Number)
 		};
 		return {
-			Phone: Phone,
-			User: User,
 			main: main
 		};
 	})();

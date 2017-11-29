@@ -1877,7 +1877,21 @@ func (tr *Translator) compositeLiteral(d def.Definition, sp *scope.Scope, n *ast
 		return nil, err
 	}
 
-	if t, ok := def.(defs.Typer); ok {
+	switch t := def.(type) {
+	// handle structs
+	case defs.Structer:
+		if len(t.Methods()) > 0 {
+			return tr.jsNewFunction(d, sp, n)
+		}
+
+		existingKVs, err := tr.getKeyValues(d, sp, n)
+		if err != nil {
+			return nil, errors.Wrapf(err, "structToObjectLiteral: error getting key values in")
+		}
+
+		return tr.structToObjectLiteral(d, sp, t, existingKVs)
+	// handle type A map[string]string
+	case defs.Typer:
 		x, e := t.Transform(n)
 		if e != nil {
 			return nil, e
@@ -1941,6 +1955,38 @@ func (tr *Translator) jsNewFunction(d def.Definition, sp *scope.Scope, n *ast.Co
 		fn,
 		[]jsast.IExpression{jsast.CreateObjectExpression(props)},
 	), nil
+}
+
+// this is a special case where we have no methods, we can turn this into an object literal
+func (tr *Translator) structToObjectLiteral(d def.Definition, sp *scope.Scope, stct defs.Structer, existing map[string]ast.Expr) (j jsast.IExpression, err error) {
+	if existing == nil {
+		existing = map[string]ast.Expr{}
+	}
+
+	var props []jsast.Property
+	for _, field := range stct.Fields() {
+		key := field.Name()
+		id := jsast.CreateIdentifier(key)
+
+		// use the passed in value
+		if existing[key] != nil {
+			x, err := tr.expression(d, sp, existing[key])
+			if err != nil {
+				return nil, errors.Wrapf(err, "structToObjectLiteral: can't convert into expression")
+			}
+			props = append(props, jsast.CreateProperty(id, x, "init"))
+			continue
+		}
+
+		// get the default value to initialize the rest
+		value, e := tr.defaultValue(d, sp, field.Type())
+		if e != nil {
+			return nil, e
+		}
+		props = append(props, jsast.CreateProperty(id, value, "init"))
+	}
+
+	return jsast.CreateObjectExpression(props), nil
 }
 
 func (tr *Translator) jsArrayExpression(d def.Definition, sp *scope.Scope, n *ast.CompositeLit) (j jsast.ArrayExpression, err error) {
@@ -2462,18 +2508,18 @@ func (tr *Translator) defaultValue(d def.Definition, sp *scope.Scope, expr ast.E
 				return nil, err
 			}
 
-			if def != nil {
-				if def.Kind() == "INTERFACE" {
-					return jsast.Null, nil
+			switch t := def.(type) {
+			case defs.Interfacer:
+				return jsast.Null, nil
+			case defs.Typer:
+				x, e := t.Transform(expr)
+				if e != nil {
+					return nil, e
 				}
-
-				// Transform types
-				if ty, ok := def.(defs.Typer); ok {
-					x, e := ty.Transform(expr)
-					if e != nil {
-						return nil, e
-					}
-					return tr.expression(d, sp, x)
+				return tr.expression(d, sp, x)
+			case defs.Structer:
+				if len(t.Methods()) == 0 {
+					return tr.structToObjectLiteral(d, sp, t, nil)
 				}
 			}
 
