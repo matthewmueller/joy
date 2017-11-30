@@ -12,6 +12,19 @@ var _ blob.Blob = (*File)(nil)
 type File struct {
 }
 
+// MsClose fn
+// js:"msClose"
+func (*File) MsClose() {
+	js.Rewrite("$_.msClose()")
+}
+
+// MsDetachStream fn
+// js:"msDetachStream"
+func (*File) MsDetachStream() (i interface{}) {
+	js.Rewrite("$_.msDetachStream()")
+	return i
+}
+
 // Slice fn
 // js:"slice"
 func (*File) Slice(start *int64, end *int64, contentType *string) (b blob.Blob) {

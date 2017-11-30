@@ -1,0 +1,3 @@
+package mediakeysessiontype
+
+type MediaKeySessionType string

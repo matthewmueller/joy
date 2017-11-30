@@ -1,0 +1,3 @@
+package scopedcredentialtype
+
+type ScopedCredentialType string

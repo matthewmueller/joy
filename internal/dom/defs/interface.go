@@ -80,9 +80,8 @@ func (d *iface) Type(caller string) (string, error) {
 		return "", errors.Wrapf(err, "implemented by")
 	}
 
-	// log.Infof("d.pkg=%s caller=%s len(imps)=%d", d.pkg, caller, len(imps))
 	if caller == d.pkg || d.pkg == "" {
-		if len(imps) > 0 {
+		if len(imps) > 0 || d.data.NoInterfaceObject {
 			return gen.Capitalize(d.data.Name), nil
 		}
 		return gen.Pointer(gen.Capitalize(d.data.Name)), nil

@@ -51,7 +51,7 @@ func generate(dir string) error {
 	// 	return err
 	// }
 
-	xml, err := ioutil.ReadFile(path.Join(dirname, "inputs", "sample.xml"))
+	xml, err := ioutil.ReadFile(path.Join(dirname, "inputs", "browser.webidl.xml"))
 	if err != nil {
 		return err
 	}

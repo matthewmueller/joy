@@ -1,0 +1,3 @@
+package idbrequestreadystate
+
+type IDBRequestReadyState string

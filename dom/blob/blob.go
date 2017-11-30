@@ -4,6 +4,14 @@ package blob
 // js:"Blob"
 type Blob interface {
 
+	// MsClose
+	// js:"msClose"
+	MsClose()
+
+	// MsDetachStream
+	// js:"msDetachStream"
+	MsDetachStream() (i interface{})
+
 	// Slice
 	// js:"slice"
 	Slice(start *int64, end *int64, contentType *string) (b Blob)

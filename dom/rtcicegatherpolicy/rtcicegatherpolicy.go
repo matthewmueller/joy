@@ -1,0 +1,3 @@
+package rtcicegatherpolicy
+
+type RTCIceGatherPolicy string

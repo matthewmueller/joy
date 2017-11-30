@@ -3,7 +3,6 @@ package defs
 import (
 	"strings"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/index"
 	"github.com/matthewmueller/golly/internal/dom/raw"
@@ -109,7 +108,7 @@ func (d *method) generate(recv Interface) (string, error) {
 	}
 
 	for _, param := range d.data.Params {
-		t, err := d.index.Coerce(d.pkg, param.Type)
+		t, err := d.index.Coerce(recv.GetPackage(), param.Type)
 		if err != nil {
 			return "", errors.Wrapf(err, "error coercing param")
 		}
@@ -120,10 +119,6 @@ func (d *method) generate(recv Interface) (string, error) {
 			Type:     t,
 		})
 	}
-
-	log.Infof("recv=%s name=%s pkg=%s type=%s", recv.GetPackage(), d.data.Name, d.pkg, d.data.Type)
-	// if d.data.Name == "slice" {
-	// }
 
 	t, e := d.index.Coerce(recv.GetPackage(), d.data.Type)
 	if e != nil {
@@ -211,7 +206,7 @@ func (d *method) generateInterface(recv Interface) (string, error) {
 	if e != nil {
 		return "", e
 	}
-	log.Infof("recv=%s name=%s type=%s t=%s", recv.GetPackage(), d.data.Name, d.data.Type, t)
+
 	data.Result = gen.Vartype{
 		Var:  gen.Variable(t),
 		Type: t,
