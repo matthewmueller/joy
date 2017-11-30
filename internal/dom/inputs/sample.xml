@@ -3,8 +3,6 @@
     <interface name="Event" extends="Object">
       <constants>
       </constants>
-      <constructor>
-      </constructor>
       <methods>
         <method name="preventDefault" type="void"/>
         <method name="stopImmediatePropagation" type="void"/>
@@ -15,16 +13,12 @@
       </properties>
     </interface>
     <interface name="UIEvent" extends="Event">
-      <constructor>
-      </constructor>
       <methods>
       </methods>
       <properties>
       </properties>
     </interface>
     <interface name="MouseEvent" extends="UIEvent">
-      <constructor>
-      </constructor>
       <methods>
       </methods>
       <properties>
@@ -42,11 +36,6 @@
         <method name="dispatchEvent" type="boolean">
           <param name="evt" type="Event"/>
         </method>
-        <method name="removeEventListener" type="void">
-          <param name="type" type="DOMString"/>
-          <param name="listener" type="EventListener"/>
-          <param name="useCapture" type="boolean"/>
-        </method>
       </methods>
     </interface>
     <interface name="Node" extends="EventTarget">
@@ -55,7 +44,7 @@
       <methods>
       </methods>
       <properties>
-        <property name="childNodes" read-only="1" type="NodeList"/>
+        <property name="childNodes" read-only="1" type="sequence&lt;Node&gt;"/>
         <property name="firstChild" read-only="1" type="Node"/>
         <property name="lastChild" read-only="1" type="Node"/>
         <property name="nextSibling" read-only="1" type="Node"/>
@@ -73,6 +62,7 @@
       <methods>
       </methods>
       <properties>
+        <property name="document" property-descriptor-not-configurable="1" read-only="1" type="Document" unforgeable="1"/>  
       </properties>
     </interface>
     <interface name="Document" extends="Node">
@@ -133,4 +123,13 @@
       </methods>
     </interface>
   </mixin-interfaces>
+  <callback-interfaces>
+    <interface name="EventListener" extends="Object">
+      <methods>
+        <method name="handleEvent" type="void">
+          <param name="evt" type="Event"/>
+        </method>
+      </methods>
+    </interface>
+  </callback-interfaces>
 </webidl-xml>

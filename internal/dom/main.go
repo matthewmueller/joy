@@ -152,14 +152,24 @@ func generate(dir string) error {
 		// log.Infof("generated %s (%d/%d)", def.ID(), i, l)
 	}
 
-	output := "package window\n\n" + strings.Join(codes, "\n\n")
+	// outpath := path.Join(dir, "window")
+	// if err := os.MkdirAll(outpath, 0755); err != nil {
+	// 	return errors.Wrapf(err, "error mkdir")
+	// }
+
+	output := "package dom\n\n" + strings.Join(codes, "\n\n")
 	formatted, err := gen.Format(string(output))
 	if err != nil {
-		fmt.Println(output)
+		if e := ioutil.WriteFile(path.Join(dir, "dom.go"), []byte(output), 0644); e != nil {
+			return errors.Wrapf(e, "error writing dom.go")
+		}
 		return errors.Wrapf(err, "error formatting")
 	}
 
-	fmt.Println(formatted)
+	if e := ioutil.WriteFile(path.Join(dir, "dom.go"), []byte(formatted), 0644); e != nil {
+		return errors.Wrapf(e, "error writing dom.go")
+	}
+	// fmt.Println(formatted)
 
 	// format and link all the packages up
 	// for i, def := range defs {

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/dom"
+	dom "github.com/matthewmueller/golly/dom"
 )
 
 func main() {
@@ -24,4 +24,7 @@ func main() {
 	a := q.(*dom.HTMLAnchorElement)
 
 	println(a.Href())
+	// for _, node := range a.ChildNodes() {
+	// 	println("value %s", node.NodeValue())
+	// }
 }
