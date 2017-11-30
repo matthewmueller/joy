@@ -108,7 +108,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 		Result  gen.Vartype
 		Comment string
 	}{
-		Recv:    gen.Pointer(recv.Name()),
+		Recv:    gen.Pointer(gen.Capitalize(recv.Name())),
 		Name:    d.data.Name,
 		Comment: d.data.Comment,
 	}

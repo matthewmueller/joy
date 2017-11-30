@@ -19,11 +19,16 @@ func NewInterface(index index.Index, data *raw.Interface) Interface {
 		index: index,
 	}
 
+	methodMap := map[string]bool{}
 	for _, method := range data.Methods {
+		methodMap[method.Name] = true
 		d.methods = append(d.methods, NewMethod(index, method, d))
 	}
 
 	for _, property := range data.Properties {
+		if methodMap[property.Name] {
+			property.Name = "get" + property.Name
+		}
 		d.properties = append(d.properties, NewProperty(index, property, d))
 	}
 
@@ -281,8 +286,15 @@ func (d *iface) Generate() (string, error) {
 	}
 	data.Type = t
 
+	methodMap := map[string]bool{}
+
 	// add the methods of this struct
 	for _, method := range d.Methods() {
+		if methodMap[method.Name()] {
+			continue
+		}
+		methodMap[method.Name()] = true
+
 		m, err := method.GenerateAs(d)
 		if err != nil {
 			return "", errors.Wrapf(err, "error generating method %s", method.ID())
@@ -292,6 +304,11 @@ func (d *iface) Generate() (string, error) {
 
 	// add the properties of this struct
 	for _, property := range d.Properties() {
+		if methodMap[property.Name()] {
+			continue
+		}
+		methodMap[property.Name()] = true
+
 		m, err := property.GenerateAs(d)
 		if err != nil {
 			return "", errors.Wrapf(err, "error generating property %s", property.ID())
@@ -312,6 +329,11 @@ func (d *iface) Generate() (string, error) {
 		}
 
 		for _, method := range t.Methods() {
+			if methodMap[method.Name()] {
+				continue
+			}
+			methodMap[method.Name()] = true
+
 			m, err := method.GenerateAs(d)
 			if err != nil {
 				return "", errors.Wrapf(err, "error generating method")
@@ -320,6 +342,11 @@ func (d *iface) Generate() (string, error) {
 		}
 
 		for _, property := range t.Properties() {
+			if methodMap[property.Name()] {
+				continue
+			}
+			methodMap[property.Name()] = true
+
 			m, err := property.GenerateAs(d)
 			if err != nil {
 				return "", errors.Wrapf(err, "error generating property")
@@ -339,6 +366,11 @@ func (d *iface) Generate() (string, error) {
 		case Interface:
 			data.Implements = append(data.Implements, t.Name())
 			for _, method := range t.Methods() {
+				if methodMap[method.Name()] {
+					continue
+				}
+				methodMap[method.Name()] = true
+
 				m, err := method.GenerateAs(d)
 				if err != nil {
 					return "", errors.Wrapf(err, "error generating method %s", method.ID())
@@ -346,6 +378,11 @@ func (d *iface) Generate() (string, error) {
 				data.Methods = append(data.Methods, m)
 			}
 			for _, property := range t.Properties() {
+				if methodMap[property.Name()] {
+					continue
+				}
+				methodMap[property.Name()] = true
+
 				m, err := property.GenerateAs(d)
 				if err != nil {
 					return "", errors.Wrapf(err, "error generating property %s", property.ID())
@@ -363,6 +400,11 @@ func (d *iface) Generate() (string, error) {
 				case Interface:
 					data.Implements = append(data.Implements, t.Name())
 					for _, method := range t.Methods() {
+						if methodMap[method.Name()] {
+							continue
+						}
+						methodMap[method.Name()] = true
+
 						m, err := method.GenerateAs(d)
 						if err != nil {
 							return "", errors.Wrapf(err, "error generating method %s", method.ID())
@@ -370,6 +412,11 @@ func (d *iface) Generate() (string, error) {
 						data.Methods = append(data.Methods, m)
 					}
 					for _, property := range t.Properties() {
+						if methodMap[property.Name()] {
+							continue
+						}
+						methodMap[property.Name()] = true
+
 						m, err := property.GenerateAs(d)
 						if err != nil {
 							return "", errors.Wrapf(err, "error generating property %s", property.ID())
@@ -413,13 +460,13 @@ func (d *iface) Generate() (string, error) {
 		}
 	}
 
+	// {{ if .Constructor.Name -}}
+	// // {{ .Constructor.Name }} fn
+	// func {{ .Constructor.Name }}({{ joinvt .Constructor.Params }}) {{ .Type }} {
+	// 	return &{{ capitalize .Name }}{}
+	// }
+	// {{- end }}
 	return gen.Generate("struct/"+d.data.Name, data, `
-		{{ if .Constructor.Name -}}
-		// {{ .Constructor.Name }} fn
-		func {{ .Constructor.Name }}({{ joinvt .Constructor.Params }}) {{ .Type }} {
-			return &{{ capitalize .Name }}{}
-		}
-		{{- end }}
 
 		{{ range .Implements -}}
 		var _ {{ . }} = (*{{ capitalize $.Name }})(nil)

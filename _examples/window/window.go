@@ -5,11 +5,11 @@ import (
 )
 
 func main() {
-	w := dom.New()
+	w := dom.Window{}
 	doc := w.Document()
 	println(doc.NodeName())
 
-	html := doc.DocumentElement().(dom.HTMLElement)
+	html := doc.DocumentElement().(*dom.HTMLHTMLElement)
 
 	html.AddEventListener("click", func(evt dom.Event) {
 		evt.PreventDefault()
