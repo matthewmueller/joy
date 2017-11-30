@@ -1,17 +1,20 @@
 package main
 
 import (
-	dom "github.com/matthewmueller/golly/dom"
+	"github.com/matthewmueller/golly/dom/event"
+	"github.com/matthewmueller/golly/dom/htmlanchorelement"
+	"github.com/matthewmueller/golly/dom/htmlhtmlelement"
+	"github.com/matthewmueller/golly/dom/window"
 )
 
 func main() {
-	w := dom.Window{}
+	w := window.Window{}
 	doc := w.Document()
 	println(doc.NodeName())
 
-	html := doc.DocumentElement().(*dom.HTMLHTMLElement)
+	html := doc.DocumentElement().(*htmlhtmlelement.HTMLHTMLElement)
 
-	html.AddEventListener("click", func(evt dom.Event) {
+	html.AddEventListener("click", func(evt event.Event) {
 		evt.PreventDefault()
 		evt.StopImmediatePropagation()
 		println(evt.Type())
@@ -21,7 +24,7 @@ func main() {
 	if q != nil {
 		println(q)
 	}
-	a := q.(*dom.HTMLAnchorElement)
+	a := q.(*htmlanchorelement.HTMLAnchorElement)
 
 	println(a.Href())
 	// for _, node := range a.ChildNodes() {

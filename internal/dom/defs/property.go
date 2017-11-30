@@ -23,7 +23,7 @@ func NewProperty(index index.Index, data *raw.Property, receiver Interface) Prop
 
 // Property interface
 type Property interface {
-	GenerateInterface() (string, error)
+	GenerateInterfaceAs(recv Interface) (string, error)
 	GenerateAs(recv Interface) (string, error)
 
 	def.Definition
@@ -119,7 +119,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 			return "", err
 		}
 
-		t, err := def.Type(d.pkg)
+		t, err := def.Type(recv.GetPackage())
 		if err != nil {
 			return "", errors.Wrapf(err, "error getting type")
 		}
@@ -133,7 +133,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 			Type:     t,
 		}
 	} else {
-		t, err := d.index.Coerce(d.pkg, d.data.Type)
+		t, err := d.index.Coerce(recv.GetPackage(), d.data.Type)
 		if err != nil {
 			return "", errors.Wrapf(err, "error coercing")
 		}
@@ -194,6 +194,14 @@ func (d *prop) generate(recv Interface) (string, error) {
 }
 
 func (d *prop) GenerateInterface() (string, error) {
+	return d.generateInterface(d.recv)
+}
+
+func (d *prop) GenerateInterfaceAs(recv Interface) (string, error) {
+	return d.generateInterface(recv)
+}
+
+func (d *prop) generateInterface(recv Interface) (string, error) {
 	data := struct {
 		Name    string
 		Result  gen.Vartype
@@ -209,7 +217,7 @@ func (d *prop) GenerateInterface() (string, error) {
 			return "", err
 		}
 
-		t, err := def.Type(d.pkg)
+		t, err := def.Type(recv.GetPackage())
 		if err != nil {
 			return "", errors.Wrapf(err, "error getting type")
 		}
@@ -224,7 +232,7 @@ func (d *prop) GenerateInterface() (string, error) {
 			Type:     t,
 		}
 	} else {
-		t, err := d.index.Coerce(d.pkg, d.data.Type)
+		t, err := d.index.Coerce(recv.GetPackage(), d.data.Type)
 		if err != nil {
 			return "", errors.Wrapf(err, "error coercing")
 		}

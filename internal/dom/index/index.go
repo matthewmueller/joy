@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/pkg/errors"
 )
@@ -60,7 +61,7 @@ var overrides = map[string]string{
 
 	"EventHandler": "EventHandler",
 
-	"RequestInfo": "*Request",
+	"RequestInfo": "*request.Request",
 
 	"function": "func()",
 	"Function": "func()",
@@ -96,6 +97,7 @@ func (i Index) Coerce(pkgname, kind string) (string, error) {
 
 	def := i.Find(kind)
 	if def != nil {
+		log.Infof("coerce=%s kind=%s pkgname=%s", def.ID(), def.Kind(), pkgname)
 		t, err := def.Type(pkgname)
 		if err != nil {
 			return kind, errors.Wrapf(err, "error getting type")

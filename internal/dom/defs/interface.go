@@ -79,6 +79,8 @@ func (d *iface) Type(caller string) (string, error) {
 	if err != nil {
 		return "", errors.Wrapf(err, "implemented by")
 	}
+
+	// log.Infof("d.pkg=%s caller=%s len(imps)=%d", d.pkg, caller, len(imps))
 	if caller == d.pkg || d.pkg == "" {
 		if len(imps) > 0 {
 			return gen.Capitalize(d.data.Name), nil
@@ -86,9 +88,10 @@ func (d *iface) Type(caller string) (string, error) {
 		return gen.Pointer(gen.Capitalize(d.data.Name)), nil
 	}
 
-	if len(imps) > 0 {
+	if len(imps) > 0 || d.data.NoInterfaceObject {
 		return d.pkg + "." + gen.Capitalize(d.data.Name), nil
 	}
+
 	return gen.Pointer(d.pkg + "." + gen.Capitalize(d.data.Name)), nil
 }
 
@@ -364,7 +367,12 @@ func (d *iface) Generate() (string, error) {
 	for _, ancestor := range ancestors {
 		switch t := ancestor.(type) {
 		case Interface:
-			data.Implements = append(data.Implements, t.Name())
+			kind, err := t.Type(d.pkg)
+			if err != nil {
+				return "", errors.Wrapf(err, "error getting implements type")
+			}
+			data.Implements = append(data.Implements, kind)
+
 			for _, method := range t.Methods() {
 				if methodMap[method.Name()] {
 					continue
@@ -398,7 +406,12 @@ func (d *iface) Generate() (string, error) {
 			for _, def := range imps {
 				switch t := def.(type) {
 				case Interface:
-					data.Implements = append(data.Implements, t.Name())
+					kind, err := t.Type(d.pkg)
+					if err != nil {
+						return "", errors.Wrapf(err, "error getting implements type")
+					}
+					data.Implements = append(data.Implements, kind)
+
 					for _, method := range t.Methods() {
 						if methodMap[method.Name()] {
 							continue
@@ -526,7 +539,7 @@ func (d *iface) generateInterface() (string, error) {
 		}
 
 		for _, method := range t.Methods() {
-			m, err := method.GenerateInterface()
+			m, err := method.GenerateInterfaceAs(d)
 			if err != nil {
 				return "", errors.Wrapf(err, "error generating method")
 			}
@@ -534,7 +547,7 @@ func (d *iface) generateInterface() (string, error) {
 		}
 
 		for _, property := range t.Properties() {
-			m, err := property.GenerateInterface()
+			m, err := property.GenerateInterfaceAs(d)
 			if err != nil {
 				return "", errors.Wrapf(err, "error generating property")
 			}
@@ -544,7 +557,7 @@ func (d *iface) generateInterface() (string, error) {
 
 	// handle methods
 	for _, method := range d.Methods() {
-		m, err := method.GenerateInterface()
+		m, err := method.GenerateInterfaceAs(d)
 		if err != nil {
 			return "", errors.Wrapf(err, "error generating method")
 		}
@@ -553,7 +566,7 @@ func (d *iface) generateInterface() (string, error) {
 
 	// handle properties
 	for _, property := range d.Properties() {
-		m, err := property.GenerateInterface()
+		m, err := property.GenerateInterfaceAs(d)
 		if err != nil {
 			return "", errors.Wrapf(err, "error generating property")
 		}

@@ -3,6 +3,7 @@ package defs
 import (
 	"strings"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/golly/internal/dom/def"
 	"github.com/matthewmueller/golly/internal/dom/index"
 	"github.com/matthewmueller/golly/internal/dom/raw"
@@ -23,8 +24,7 @@ func NewMethod(index index.Index, data *raw.Method, receiver Interface) Method {
 
 // Method interface
 type Method interface {
-	GenerateInterface() (string, error)
-	// GenerateRewrite() (string, error)
+	GenerateInterfaceAs(recv Interface) (string, error)
 	GenerateAs(recv Interface) (string, error)
 
 	def.Definition
@@ -121,7 +121,11 @@ func (d *method) generate(recv Interface) (string, error) {
 		})
 	}
 
-	t, e := d.index.Coerce(d.pkg, d.data.Type)
+	log.Infof("recv=%s name=%s pkg=%s type=%s", recv.GetPackage(), d.data.Name, d.pkg, d.data.Type)
+	// if d.data.Name == "slice" {
+	// }
+
+	t, e := d.index.Coerce(recv.GetPackage(), d.data.Type)
 	if e != nil {
 		return "", e
 	}
@@ -172,6 +176,14 @@ func (d *method) generate(recv Interface) (string, error) {
 }
 
 func (d *method) GenerateInterface() (string, error) {
+	return d.generateInterface(d.recv)
+}
+
+func (d *method) GenerateInterfaceAs(recv Interface) (string, error) {
+	return d.generateInterface(recv)
+}
+
+func (d *method) generateInterface(recv Interface) (string, error) {
 	data := struct {
 		Name    string
 		Params  []gen.Vartype
@@ -183,7 +195,7 @@ func (d *method) GenerateInterface() (string, error) {
 	}
 
 	for _, param := range d.data.Params {
-		t, err := d.index.Coerce(d.pkg, param.Type)
+		t, err := d.index.Coerce(recv.GetPackage(), param.Type)
 		if err != nil {
 			return "", errors.Wrapf(err, "error coercing param")
 		}
@@ -195,10 +207,11 @@ func (d *method) GenerateInterface() (string, error) {
 		})
 	}
 
-	t, e := d.index.Coerce(d.pkg, d.data.Type)
+	t, e := d.index.Coerce(recv.GetPackage(), d.data.Type)
 	if e != nil {
 		return "", e
 	}
+	log.Infof("recv=%s name=%s type=%s t=%s", recv.GetPackage(), d.data.Name, d.data.Type, t)
 	data.Result = gen.Vartype{
 		Var:  gen.Variable(t),
 		Type: t,

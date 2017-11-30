@@ -104,6 +104,11 @@
         <property name="scrollTop" type="long"/>
       </properties>
     </interface>
+    <interface name="HTMLHtmlElement" extends="HTMLElement">
+      <element name="html" namespace="HTML"/>
+      <properties>
+      </properties>
+    </interface>
     <interface name="HTMLAnchorElement" extends="HTMLElement">
       <anonymous-content-attributes>
       </anonymous-content-attributes>
@@ -111,6 +116,27 @@
       </methods>
       <properties>
         <property name="href" content-attribute="href" content-attribute-reflects="1" content-attribute-value-syntax="url" stringifier="1" type="DOMString"/>
+      </properties>
+    </interface>
+    <interface name="Blob" extends="Object">
+      <constructor/>
+      <methods>
+        <method name="slice" type="Blob">
+          <param name="start" default="0" optional="1" type="long long"/>
+          <param name="end" default="0" optional="1" type="long long"/>
+          <param name="contentType" optional="1" type="DOMString"/>
+        </method>
+      </methods>
+      <properties>
+        <property name="size" read-only="1" type="unsigned long long"/>
+        <property name="type" read-only="1" type="DOMString"/>
+      </properties>
+    </interface>
+    <interface name="File" extends="Blob">
+      <properties>
+        <property name="lastModifiedDate" read-only="1" type="any"/>
+        <property name="name" read-only="1" type="DOMString"/>
+        <property name="webkitRelativePath" read-only="1" type="DOMString"/>
       </properties>
     </interface>
   </interfaces>
