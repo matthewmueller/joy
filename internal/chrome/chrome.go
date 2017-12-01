@@ -206,6 +206,17 @@ func (t *Target) Run(source string) (result string, err error) {
 			for _, arg := range msg.Args {
 				line = append(line, strings.TrimSpace(formatValue(arg)))
 			}
+
+			// TODO: finish support for fmt.Printf("hi %s, mars")
+			// if len(line) > 1 {
+			// 	var args []interface{}
+			// 	for i := 1; i < len(line); i++ {
+			// 		args = append(args, line[i])
+			// 	}
+			// 	lines = append(lines, fmt.Sprintf(line[0], args...))
+			// 	continue
+			// }
+
 			lines = append(lines, strings.Join(line, " "))
 		}
 	}()

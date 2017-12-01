@@ -5217,7 +5217,8 @@
         <property name="validationMessage" read-only="1" type="DOMString"/>
         <property name="validity" read-only="1" type="ValidityState"/>
         <property name="value" type="DOMString"/>
-        <property name="valueAsDate" type="Date"/>
+        <!-- TODO: add this one back in once we have time.Time support -->
+        <!-- <property name="valueAsDate" type="Date"/> -->
         <property name="valueAsNumber" type="double"/>
         <property name="vspace" content-attribute="vspace" content-attribute-reflects="1" content-attribute-value-syntax="non_negative_integer" type="long"/>
         <property name="webkitdirectory" content-attribute="webkitdirectory" content-attribute-boolean="1" content-attribute-reflects="1" type="boolean"/>

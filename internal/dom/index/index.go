@@ -65,7 +65,7 @@ var overrides = map[string]string{
 	"function": "func()",
 	"Function": "func()",
 
-	"Date": "time.Time",
+	// "Date": "time.Time",
 
 	"WebKitEntry[]": "[]*WebKitEntry",
 }

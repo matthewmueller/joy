@@ -1,0 +1,13 @@
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/70-stdlib"] = (function() {
+		function main () {
+			console.log.apply(console.log, ["hi", "mars"]);
+			console.log.apply(console.log, ["hi %s"].concat(["mars"]))
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/70-stdlib"].main();
+})()

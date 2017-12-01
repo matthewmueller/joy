@@ -102,7 +102,7 @@ var stdlib = map[string]bool{
 	"errors":               true,
 	"expvar":               false,
 	"flag":                 false,
-	"fmt":                  false,
+	"fmt":                  true,
 	"go/ast":               false,
 	"go/build":             false,
 	"go/constant":          false,

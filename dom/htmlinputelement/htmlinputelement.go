@@ -1,8 +1,6 @@
 package htmlinputelement
 
 import (
-	"time"
-
 	"github.com/matthewmueller/golly/dom/childnode"
 	"github.com/matthewmueller/golly/dom/clientrect"
 	"github.com/matthewmueller/golly/dom/clientrectlist"
@@ -991,19 +989,6 @@ func (*HTMLInputElement) Value() (value string) {
 // js:"value"
 func (*HTMLInputElement) SetValue(value string) {
 	js.Rewrite("$_.value = $1", value)
-}
-
-// ValueAsDate prop
-// js:"valueAsDate"
-func (*HTMLInputElement) ValueAsDate() (valueAsDate time.Time) {
-	js.Rewrite("$_.valueAsDate")
-	return valueAsDate
-}
-
-// SetValueAsDate prop
-// js:"valueAsDate"
-func (*HTMLInputElement) SetValueAsDate(valueAsDate time.Time) {
-	js.Rewrite("$_.valueAsDate = $1", valueAsDate)
 }
 
 // ValueAsNumber prop Returns the input field value as a number.

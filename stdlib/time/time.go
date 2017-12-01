@@ -5,7 +5,7 @@ import (
 )
 
 // Time struct
-type Time struct{}
+// type Time struct{}
 
 // A Duration represents the elapsed time between two instants
 // as an int64 nanosecond count. The representation limits the

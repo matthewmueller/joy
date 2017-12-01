@@ -1,0 +1,2 @@
+hi mars
+hi %s mars
