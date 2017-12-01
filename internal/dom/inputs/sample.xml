@@ -1,0 +1,161 @@
+<webidl-xml name="Microsoft Edge Platform" original-file="browser.webidl" xmlns="http://schemas.microsoft.com/ie/webidl-xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.microsoft.com/ie/webidl-xml webidl-xml-schema.xsd">
+  <interfaces>
+    <interface name="Event" extends="Object">
+      <constants>
+      </constants>
+      <methods>
+        <method name="preventDefault" type="void"/>
+        <method name="stopImmediatePropagation" type="void"/>
+        <method name="stopPropagation" type="void"/>
+      </methods>
+      <properties>
+        <property name="type" read-only="1" type="DOMString"/>
+      </properties>
+    </interface>
+    <interface name="UIEvent" extends="Event">
+      <methods>
+      </methods>
+      <properties>
+      </properties>
+    </interface>
+    <interface name="MouseEvent" extends="UIEvent">
+      <methods>
+      </methods>
+      <properties>
+        <property name="x" read-only="1" type="long"/>
+        <property name="y" read-only="1" type="long"/>
+      </properties>
+    </interface>
+    <interface name="EventTarget" extends="Object">
+      <methods>
+        <method name="addEventListener" type="void">
+          <param name="type" type="DOMString"/>
+          <param name="listener" type="EventListener"/>
+          <param name="useCapture" type="boolean"/>
+        </method>
+        <method name="dispatchEvent" type="boolean">
+          <param name="evt" type="Event"/>
+        </method>
+      </methods>
+    </interface>
+    <interface name="Node" extends="EventTarget">
+      <constants>
+      </constants>
+      <methods>
+      </methods>
+      <properties>
+        <property name="childNodes" read-only="1" type="sequence&lt;Node&gt;"/>
+        <property name="firstChild" read-only="1" type="Node"/>
+        <property name="lastChild" read-only="1" type="Node"/>
+        <property name="nextSibling" read-only="1" type="Node"/>
+        <property name="nodeName" read-only="1" type="DOMString"/>
+        <property name="nodeType" read-only="1" type="unsigned short"/>
+        <property name="nodeValue" nullable="1" treat-null-as="EmptyString" type="DOMString"/>
+      </properties>
+    </interface>
+    <interface name="window" extends="EventTarget" implicit-this="1" primary-global="Window">
+      <constructor />
+      <anonymous-methods>
+      </anonymous-methods>
+      <events>
+      </events>
+      <methods>
+      </methods>
+      <properties>
+        <property name="document" property-descriptor-not-configurable="1" read-only="1" type="Document" unforgeable="1"/>  
+      </properties>
+    </interface>
+    <interface name="Document" extends="Node">
+      <anonymous-methods>
+      </anonymous-methods>
+      <events>
+      </events>
+      <implements>NodeSelector</implements>
+      <methods>
+      </methods>
+      <properties>
+        <property name="documentElement" read-only="1" type="Element"/>
+      </properties>
+    </interface>
+    <interface name="HTMLDocument" extends="Document"/>
+    <interface name="HTMLElement" extends="Element">
+      <methods>
+        <method name="blur" type="void"/>
+        <method name="focus" type="void"/>
+      </methods>
+      <properties>
+      </properties>
+    </interface>
+    <interface name="Element" extends="Node">
+      <anonymous-content-attributes>
+      </anonymous-content-attributes>
+      <events>
+      </events>
+      <implements>NodeSelector</implements>
+      <methods>
+      </methods>
+      <properties>
+        <property name="className" content-attribute="class" content-attribute-reflects="1" content-attribute-value-syntax="space_separated_tokens" type="DOMString"/>
+        <property name="id" content-attribute="id" content-attribute-reflects="1" type="DOMString"/>
+        <property name="innerHTML" treat-null-as="EmptyString" type="DOMString"/>
+        <property name="outerHTML" treat-null-as="EmptyString" type="DOMString"/>
+        <property name="scrollHeight" read-only="1" type="long"/>
+        <property name="scrollLeft" type="long"/>
+        <property name="scrollTop" type="long"/>
+      </properties>
+    </interface>
+    <interface name="HTMLHtmlElement" extends="HTMLElement">
+      <element name="html" namespace="HTML"/>
+      <properties>
+      </properties>
+    </interface>
+    <interface name="HTMLAnchorElement" extends="HTMLElement">
+      <anonymous-content-attributes>
+      </anonymous-content-attributes>
+      <methods>
+      </methods>
+      <properties>
+        <property name="href" content-attribute="href" content-attribute-reflects="1" content-attribute-value-syntax="url" stringifier="1" type="DOMString"/>
+      </properties>
+    </interface>
+    <interface name="Blob" extends="Object">
+      <constructor/>
+      <methods>
+        <method name="slice" type="Blob">
+          <param name="start" default="0" optional="1" type="long long"/>
+          <param name="end" default="0" optional="1" type="long long"/>
+          <param name="contentType" optional="1" type="DOMString"/>
+        </method>
+      </methods>
+      <properties>
+        <property name="size" read-only="1" type="unsigned long long"/>
+        <property name="type" read-only="1" type="DOMString"/>
+      </properties>
+    </interface>
+    <interface name="File" extends="Blob">
+      <properties>
+        <property name="lastModifiedDate" read-only="1" type="any"/>
+        <property name="name" read-only="1" type="DOMString"/>
+        <property name="webkitRelativePath" read-only="1" type="DOMString"/>
+      </properties>
+    </interface>
+  </interfaces>
+  <mixin-interfaces>
+    <interface name="NodeSelector" extends="Object" no-interface-object="1">
+      <methods>
+        <method name="querySelector" type="Element">
+          <param name="selectors" type="DOMString"/>
+        </method>
+      </methods>
+    </interface>
+  </mixin-interfaces>
+  <callback-interfaces>
+    <interface name="EventListener" extends="Object">
+      <methods>
+        <method name="handleEvent" type="void">
+          <param name="evt" type="Event"/>
+        </method>
+      </methods>
+    </interface>
+  </callback-interfaces>
+</webidl-xml>

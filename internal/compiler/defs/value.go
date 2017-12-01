@@ -5,9 +5,9 @@ import (
 	"go/types"
 	"strings"
 
-	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/internal/compiler/def"
 	"github.com/matthewmueller/golly/internal/compiler/index"
+	"github.com/matthewmueller/golly/internal/compiler/util"
 
 	"golang.org/x/tools/go/loader"
 )
@@ -15,8 +15,11 @@ import (
 // Valuer interface
 type Valuer interface {
 	def.Definition
-	Node() *ast.ValueSpec
+
+	Params() []string
 	Rewrite() def.Rewrite
+	IsVariadic() bool
+	Node() *ast.ValueSpec
 }
 
 var _ Valuer = (*values)(nil)
@@ -36,7 +39,7 @@ type values struct {
 	imports   map[string]string
 	async     bool
 	omit      bool
-	tag       *structtag.Tag
+	tag       util.JSTag
 }
 
 // Value fn
@@ -92,8 +95,8 @@ func (d *values) ID() string {
 }
 
 func (d *values) Name() string {
-	if d.tag != nil {
-		return d.tag.Name
+	if d.tag.Rename != "" {
+		return d.tag.Rename
 	}
 	return d.name
 }
@@ -127,7 +130,7 @@ func (d *values) Exported() bool {
 }
 
 func (d *values) Omitted() bool {
-	if d.tag != nil && d.tag.HasOption("omit") {
+	if d.tag.Omit {
 		return true
 	}
 	return d.omit
@@ -152,4 +155,16 @@ func (d *values) FromRuntime() bool {
 // Rewrite fn
 func (d *values) Rewrite() def.Rewrite {
 	return d.rewrite
+}
+
+// TODO: these are only needed to be able
+// to rewrite
+func (d *values) IsVariadic() bool {
+	return false
+}
+
+// TODO: these are only needed to be able
+// to rewrite
+func (d *values) Params() (params []string) {
+	return params
 }

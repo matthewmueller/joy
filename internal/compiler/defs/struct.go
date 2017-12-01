@@ -6,10 +6,9 @@ import (
 	"go/types"
 	"strings"
 
-	"github.com/fatih/structtag"
-
 	"github.com/matthewmueller/golly/internal/compiler/def"
 	"github.com/matthewmueller/golly/internal/compiler/index"
+	"github.com/matthewmueller/golly/internal/compiler/util"
 
 	"golang.org/x/tools/go/loader"
 )
@@ -36,7 +35,7 @@ type structdef struct {
 	gen       *ast.GenDecl
 	node      *ast.TypeSpec
 	kind      types.Type
-	tag       *structtag.Tag
+	tag       util.JSTag
 	fields    []*field
 	deps      []def.Definition
 	processed bool
@@ -97,8 +96,8 @@ func (d *structdef) ID() string {
 }
 
 func (d *structdef) Name() string {
-	if d.tag != nil {
-		return d.tag.Name
+	if d.tag.Rename != "" {
+		return d.tag.Rename
 	}
 	return d.name
 }
@@ -120,7 +119,7 @@ func (d *structdef) Exported() bool {
 }
 
 func (d *structdef) Omitted() bool {
-	if d.tag != nil && d.tag.HasOption("omit") {
+	if d.tag.Omit {
 		return true
 	}
 	return d.omit

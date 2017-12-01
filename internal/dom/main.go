@@ -37,6 +37,7 @@ var cliqueNames = map[string]string{
 	"SVGUseElement":        "svguseelement",
 	"WebKitFileSystem":     "webkitfilesytem",
 	"AudioNode":            "audionode",
+	"Element":              "element",
 }
 
 func generate(dir string) error {
@@ -90,9 +91,8 @@ func generate(dir string) error {
 		if len(clique) == 1 {
 			name := clique[0].ID()
 			pkgname := gen.Lowercase(name)
-			def := index[name]
-			def.SetPackage(pkgname)
-			def.SetFile(pkgname)
+			index[name].SetPackage(pkgname)
+			index[name].SetFile(pkgname)
 			continue
 		}
 
@@ -111,7 +111,9 @@ func generate(dir string) error {
 			return fmt.Errorf("group name not defined for this clique: %s", strings.Join(ids, ", "))
 		}
 
+		log.Infof("clique %s", pkgname)
 		for _, def := range clique {
+			log.Infof("- %s", def.ID())
 			name := def.ID()
 			filename := gen.Lowercase(name)
 			def := index[name]
@@ -133,14 +135,13 @@ func generate(dir string) error {
 
 	// write first so we have all the files present
 	for i, def := range defs {
-		// if !strings.Contains(def.GetPackage(), "window") {
-		// 	continue
-		// }
-
 		code, err := def.Generate()
 		if err != nil {
 			return errors.Wrapf(err, "error generating %s", def.ID())
 		}
+
+		// add the package name at the top
+		code = "package " + def.GetPackage() + "\n\n" + code
 
 		pkgpath := path.Join(dir, def.GetPackage())
 		if err := os.MkdirAll(pkgpath, 0755); err != nil {
@@ -154,12 +155,27 @@ func generate(dir string) error {
 		log.Infof("generated %s (%d/%d)", def.ID(), i, l)
 	}
 
+	// outpath := path.Join(dir, "window")
+	// if err := os.MkdirAll(outpath, 0755); err != nil {
+	// 	return errors.Wrapf(err, "error mkdir")
+	// }
+
+	// output := "package dom\n\n" + strings.Join(codes, "\n\n")
+	// formatted, err := gen.Format(string(output))
+	// if err != nil {
+	// 	if e := ioutil.WriteFile(path.Join(dir, "dom.go"), []byte(output), 0644); e != nil {
+	// 		return errors.Wrapf(e, "error writing dom.go")
+	// 	}
+	// 	return errors.Wrapf(err, "error formatting")
+	// }
+
+	// if e := ioutil.WriteFile(path.Join(dir, "dom.go"), []byte(formatted), 0644); e != nil {
+	// 	return errors.Wrapf(e, "error writing dom.go")
+	// }
+	// fmt.Println(formatted)
+
 	// format and link all the packages up
 	for i, def := range defs {
-		// if !strings.Contains(def.GetPackage(), "window") {
-		// 	continue
-		// }
-
 		filepath := path.Join(dir, def.GetPackage(), def.GetFile()+".go")
 
 		buf, err := ioutil.ReadFile(filepath)
@@ -172,9 +188,8 @@ func generate(dir string) error {
 			return errors.Wrapf(err, "error formatting %s", def.ID())
 		}
 
-		// overwrite
 		if err := ioutil.WriteFile(filepath, []byte(code), 0644); err != nil {
-			return errors.Wrapf(err, "error writefile")
+			return errors.Wrapf(err, "error writing formatted file")
 		}
 
 		log.Infof("formatted %s (%d/%d)", def.ID(), i, l)

@@ -2024,7 +2024,9 @@
           <param name="errorCallback" optional="1" type="DecodeErrorCallback"/>
         </method>
         <method name="resume" type="Promise&lt;void&gt;"/>
-        <method name="suspend" type="Promise&lt;void&gt;"/>
+        <method name="suspend" type="Promise&lt;void&gt;">
+          <param name="suspendTime" type="double"/>
+        </method>
       </methods>
       <properties>
         <property name="currentTime" read-only="1" type="double"/>
@@ -2162,7 +2164,7 @@
     </interface>
     <interface name="BeforeUnloadEvent" extends="Event">
       <properties>
-        <property name="returnValue" nullable="1" type="DOMString"/>
+        <property name="returnValue" nullable="1" type="boolean"/>
       </properties>
     </interface>
     <interface name="BiquadFilterNode" extends="AudioNode">
@@ -4873,7 +4875,7 @@
       <implements>GetSVGDocument</implements>
       <properties>
         <property name="height" content-attribute="height" content-attribute-reflects="1" content-attribute-value-syntax="non_negative_integer" type="DOMString"/>
-        <property name="hidden" content-attribute="hidden" content-attribute-enum-values="false true" content-attribute-reflects="1" content-attribute-value-syntax="enum" type="DOMString"/>
+        <property name="hidden" content-attribute="hidden" content-attribute-enum-values="false true" content-attribute-reflects="1" content-attribute-value-syntax="enum" type="boolean"/>
         <property name="msPlayToDisabled" content-attribute="x-ms-playtodisabled" content-attribute-boolean="1" content-attribute-reflects="1" type="boolean"/>
         <property name="msPlayToPreferredSourceUri" content-attribute="x-ms-playtopreferredsourceuri" content-attribute-reflects="1" content-attribute-value-syntax="url" type="DOMString"/>
         <property name="msPlayToPrimary" content-attribute="x-ms-playtoprimary" content-attribute-boolean="1" content-attribute-reflects="1" type="boolean"/>
@@ -4921,7 +4923,7 @@
     </interface>
     <interface name="HTMLFormControlsCollection" extends="HTMLCollection">
       <methods>
-        <method name="namedItem" getter="1" nullable="1" type="(HTMLCollection or Element)">
+        <method name="namedItem" getter="1" nullable="1" type="Element">
           <param name="name" type="DOMString"/>
         </method>
       </methods>
@@ -11031,7 +11033,7 @@
       </anonymous-content-attributes>
       <element name="tspan" namespace="SVG"/>
     </interface>
-    <interface name="SVGUnitTypes" extends="Object" static="1">
+    <interface name="SVGUnitTypes" extends="Object" static="1" no-interface-object="1">
       <constants>
         <constant name="SVG_UNIT_TYPE_OBJECTBOUNDINGBOX" type="unsigned short" value="2"/>
         <constant name="SVG_UNIT_TYPE_UNKNOWN" type="unsigned short" value="0"/>
@@ -13153,7 +13155,6 @@
     </interface>
     <interface name="ChildNode" extends="Object" no-interface-object="1">
       <methods>
-        <method name="remove" type="void"/>
       </methods>
     </interface>
     <interface name="DocumentEvent" extends="Object" no-interface-object="1">

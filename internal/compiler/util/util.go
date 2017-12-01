@@ -1,18 +1,19 @@
 package util
 
 import (
-	"errors"
 	"fmt"
 	"go/ast"
 	"os"
 	"path"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/internal/compiler/def"
+	"github.com/pkg/errors"
 )
 
 var gollyPath string
@@ -63,42 +64,79 @@ func RuntimePath() (string, error) {
 	return runtimePkg, nil
 }
 
-// JSTag parses a js tag if there is one
-func JSTag(n *ast.CommentGroup) (*structtag.Tag, error) {
+// JSTag struct
+type JSTag struct {
+	Rename  string
+	Omit    bool
+	Async   bool
+	Rewrite string
+}
+
+// JSTagFromComment parses a js tag if there is one
+func JSTagFromComment(n *ast.CommentGroup) (tag JSTag, err error) {
 	if n == nil {
-		return nil, nil
+		return tag, nil
 	}
 
 	comments := n.List
 	for _, comment := range comments {
-		if !strings.Contains(comment.Text, "js:") {
-			continue
+		text := strings.TrimLeft(comment.Text, "/ ")
+
+		if strings.HasPrefix(text, "js:") {
+			t, err := JSTagFromString(text)
+			if err != nil {
+				return tag, errors.Wrapf(err, "error getting tag")
+			}
+			tag.Rename = t.Rename
+			tag.Async = t.Async
+			tag.Omit = t.Omit
 		}
 
-		jstag, err := JSTagFromString(comment.Text[2:])
-		if err != nil {
-			return nil, err
+		if strings.HasPrefix(text, "jsrewrite:") {
+			t, err := JSTagFromString(text)
+			if err != nil {
+				return tag, errors.Wrapf(err, "error getting tag")
+			}
+			tag.Rewrite = t.Rewrite
 		}
-
-		return jstag, nil
 	}
 
-	return nil, nil
+	return tag, nil
 }
 
 // JSTagFromString parse tag
-func JSTagFromString(tag string) (*structtag.Tag, error) {
-	tags, err := structtag.Parse(tag)
+func JSTagFromString(tagstring string) (tag JSTag, err error) {
+	tags, err := structtag.Parse(tagstring)
 	if err != nil {
-		return nil, err
+		return tag, err
+	} else if tags == nil {
+		return tag, nil
 	}
 
-	jstag, err := tags.Get("js")
-	if err != nil && err.Error() != "tag does not exist" {
-		return nil, err
+	js, err := tags.Get("js")
+	if err == nil {
+		tag.Rename = js.Name
+		tag.Omit = js.HasOption("omit")
+		tag.Async = js.HasOption("async")
 	}
 
-	return jstag, nil
+	// TODO: fix this hacky code
+	// structtag treats "," as options (rightfully so)
+	// but that'll break functions with parameters
+	rewrite, err := tags.Get("jsrewrite")
+	if err == nil {
+		fulltag := rewrite.String()
+		fulltag = fulltag[len("jsrewrite:"):]
+
+		unquoted, err := strconv.Unquote(fulltag)
+		if err != nil {
+			return tag, err
+		}
+
+		tag.Rewrite = unquoted
+	}
+
+	return tag, nil
 }
 
 // GetIdentifier gets rightmost identifier if there is one
@@ -237,10 +275,6 @@ func ExprToString(n ast.Node) (string, error) {
 	case *ast.InterfaceType:
 		return "interface{}", nil
 	default:
-		// log.Warnf("exprToString: unhandled %T", n)
-		// return "", nil
-		_, file, line, _ := runtime.Caller(2)
-		log.Warnf("file=%s line=%d", file, line)
 		return "", fmt.Errorf("util/ExprToString: unhandled %T", n)
 	}
 }

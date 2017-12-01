@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/matthewmueller/golly/internal/compiler/defs"
 	"github.com/matthewmueller/golly/internal/compiler/util"
 
 	"github.com/apex/log"
@@ -23,8 +22,8 @@ func (tr *Translator) Rewrite(rewrite def.Rewrite, def def.Definition, sp *scope
 		return nil, nil
 	}
 
+	rewritee := rewrite.Rewritee()
 	expr := rewrite.Expression()
-	d := rewrite.Definition()
 	vars := rewrite.Vars()
 
 	// handle the caller
@@ -38,12 +37,28 @@ func (tr *Translator) Rewrite(rewrite def.Rewrite, def def.Definition, sp *scope
 	// get the top function params
 	argmap := map[string]int{}
 	last := -1
-	if fn, ok := d.(defs.Functioner); ok {
-		for i, param := range fn.Params() {
-			log.Debugf("fn=%s param=%s", fn.ID(), param)
-			argmap[param] = i
-			last = i
+	for i, param := range rewritee.Params() {
+		log.Debugf("fn=%s param=%s", rewritee.ID(), param)
+		argmap[param] = i
+		last = i
+	}
+
+	// we may still have $1 even if we have no vars
+	// in that case, we'll use the parameters
+	if len(vars) == 0 {
+		for i, arg := range args {
+			// handle any other argument
+			v, e := tr.expression(def, sp, arg)
+			if e != nil {
+				return nil, e
+			}
+			value, ok := v.(fmt.Stringer)
+			if !ok {
+				return nil, errors.New("translator/rewrite: expected argument to be a stringer")
+			}
+			expr = strings.Replace(expr, "$"+strconv.Itoa(i+1), value.String(), -1)
 		}
+		return jsast.CreateRaw(expr), nil
 	}
 
 	// handle the arguments
@@ -69,7 +84,7 @@ func (tr *Translator) Rewrite(rewrite def.Rewrite, def def.Definition, sp *scope
 		}
 
 		// handle variadic arguments
-		if nth == last && rewrite.Variadic() {
+		if nth == last && rewritee.IsVariadic() {
 			arr := []string{}
 			for _, arg := range args[nth:] {
 				v, e := tr.expression(def, sp, arg)

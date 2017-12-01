@@ -47,33 +47,6 @@ func (d *cb) Kind() string {
 }
 
 func (d *cb) Type(caller string) (string, error) {
-	return d.Generate()
-}
-
-func (d *cb) SetPackage(pkg string) {
-	d.pkg = pkg
-}
-func (d *cb) GetPackage() string {
-	return d.pkg
-}
-
-func (d *cb) SetFile(file string) {
-	d.file = file
-}
-func (d *cb) GetFile() string {
-	return d.file
-}
-
-func (d *cb) Dependencies() (defs []def.Definition, err error) {
-	for _, param := range d.data.Params {
-		if def := d.index.Find(param.Type); def != nil {
-			defs = append(defs, def)
-		}
-	}
-	return defs, nil
-}
-
-func (d *cb) Generate() (string, error) {
 	data := struct {
 		Params []gen.Vartype
 		Result gen.Vartype
@@ -105,4 +78,31 @@ func (d *cb) Generate() (string, error) {
 	}
 
 	return gen.Generate("callback_fn/"+d.data.Name, data, `func ({{ joinvt .Params }}) ({{ vt .Result }})`)
+}
+
+func (d *cb) SetPackage(pkg string) {
+	d.pkg = pkg
+}
+func (d *cb) GetPackage() string {
+	return d.pkg
+}
+
+func (d *cb) SetFile(file string) {
+	d.file = file
+}
+func (d *cb) GetFile() string {
+	return d.file
+}
+
+func (d *cb) Dependencies() (defs []def.Definition, err error) {
+	for _, param := range d.data.Params {
+		if def := d.index.Find(param.Type); def != nil {
+			defs = append(defs, def)
+		}
+	}
+	return defs, nil
+}
+
+func (d *cb) Generate() (string, error) {
+	return "", nil
 }

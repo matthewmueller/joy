@@ -23,8 +23,7 @@ func NewProperty(index index.Index, data *raw.Property, receiver Interface) Prop
 
 // Property interface
 type Property interface {
-	GenerateInterface() (string, error)
-	GenerateRewrite() (string, error)
+	GenerateInterfaceAs(recv Interface) (string, error)
 	GenerateAs(recv Interface) (string, error)
 
 	def.Definition
@@ -109,7 +108,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 		Result  gen.Vartype
 		Comment string
 	}{
-		Recv:    gen.Pointer(recv.Name()),
+		Recv:    gen.Pointer(gen.Capitalize(recv.Name())),
 		Name:    d.data.Name,
 		Comment: d.data.Comment,
 	}
@@ -120,7 +119,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 			return "", err
 		}
 
-		t, err := def.Type(d.pkg)
+		t, err := def.Type(recv.GetPackage())
 		if err != nil {
 			return "", errors.Wrapf(err, "error getting type")
 		}
@@ -134,7 +133,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 			Type:     t,
 		}
 	} else {
-		t, err := d.index.Coerce(d.pkg, d.data.Type)
+		t, err := d.index.Coerce(recv.GetPackage(), d.data.Type)
 		if err != nil {
 			return "", errors.Wrapf(err, "error coercing")
 		}
@@ -152,6 +151,8 @@ func (d *prop) generate(recv Interface) (string, error) {
 
 	if async && data.Result.Type == "" {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
+			// {{ capitalize .Name }} prop {{ .Comment }}
+			// js:"{{ .Name }}"
 			func ({{ .Recv }}) {{ capitalize .Name }}() {
 				js.Rewrite("await $_.{{ .Name }}")
 			}
@@ -163,6 +164,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 	} else {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
 		// {{ capitalize .Name }} prop {{ .Comment }}
+		// js:"{{ .Name }}"
 		func ({{ .Recv }}) {{ capitalize .Name }}() ({{ .Result.Var }} {{ .Result.Type }}) {
 			js.Rewrite("$_.{{ .Name }}")
 			return {{ .Result.Var }}
@@ -176,7 +178,8 @@ func (d *prop) generate(recv Interface) (string, error) {
 
 	if !d.data.ReadOnly {
 		setter, e := gen.Generate("property_setter/"+d.data.Name, data, `
-		// {{ capitalize .Name }} prop {{ .Comment }}
+		// Set{{ capitalize .Name }} prop {{ .Comment }}
+		// js:"{{ .Name }}"
 		func ({{ .Recv }}) Set{{ capitalize .Name }} ({{ .Result.Var }} {{ .Result.Type }}) {
 			js.Rewrite("$_.{{ .Name }} = $1", {{ .Result.Var }})
 		}
@@ -191,6 +194,14 @@ func (d *prop) generate(recv Interface) (string, error) {
 }
 
 func (d *prop) GenerateInterface() (string, error) {
+	return d.generateInterface(d.recv)
+}
+
+func (d *prop) GenerateInterfaceAs(recv Interface) (string, error) {
+	return d.generateInterface(recv)
+}
+
+func (d *prop) generateInterface(recv Interface) (string, error) {
 	data := struct {
 		Name    string
 		Result  gen.Vartype
@@ -206,7 +217,7 @@ func (d *prop) GenerateInterface() (string, error) {
 			return "", err
 		}
 
-		t, err := def.Type(d.pkg)
+		t, err := def.Type(recv.GetPackage())
 		if err != nil {
 			return "", errors.Wrapf(err, "error getting type")
 		}
@@ -221,7 +232,7 @@ func (d *prop) GenerateInterface() (string, error) {
 			Type:     t,
 		}
 	} else {
-		t, err := d.index.Coerce(d.pkg, d.data.Type)
+		t, err := d.index.Coerce(recv.GetPackage(), d.data.Type)
 		if err != nil {
 			return "", errors.Wrapf(err, "error coercing")
 		}
@@ -240,7 +251,8 @@ func (d *prop) GenerateInterface() (string, error) {
 	if async && data.Result.Type == "" {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
 			// {{ capitalize .Name }} prop
-			// js:"{{ .Name }},rewrite={{ lowercase .Name }}"
+			// js:"{{ .Name }}"
+			// jsrewrite:"await $_.{{ .Name }}"
 			{{ capitalize .Name }}()
 		`)
 		if e != nil {
@@ -250,7 +262,8 @@ func (d *prop) GenerateInterface() (string, error) {
 	} else {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
 		// {{ capitalize .Name }} prop {{ .Comment }}
-		// js:"{{ .Name }},rewrite={{ lowercase .Name }}"
+		// js:"{{ .Name }}"
+		// jsrewrite:"$_.{{ .Name }}"
 		{{ capitalize .Name }}() ({{ .Result.Var }} {{ .Result.Type }})
 		`)
 		if e != nil {
@@ -261,99 +274,10 @@ func (d *prop) GenerateInterface() (string, error) {
 
 	if !d.data.ReadOnly {
 		setter, e := gen.Generate("property_setter/"+d.data.Name, data, `
-		// {{ capitalize .Name }} prop {{ .Comment }}
-		// js:"set{{ .Name }},rewrite=set{{ lowercase .Name }}"
+		// Set{{ capitalize .Name }} prop {{ .Comment }}
+		// js:"{{ .Name }}"
+		// jsrewrite:"$_.{{ .Name }} = $1"
 		Set{{ capitalize .Name }} ({{ .Result.Var }} {{ .Result.Type }})
-		`)
-		if e != nil {
-			return "", e
-		}
-		results = append(results, setter)
-	}
-
-	return strings.Join(results, "\n"), nil
-}
-
-func (d *prop) GenerateRewrite() (string, error) {
-	data := struct {
-		Recv    string
-		Name    string
-		Result  gen.Vartype
-		Comment string
-	}{
-		Recv:    gen.Pointer(d.recv.Name()),
-		Name:    d.data.Name,
-		Comment: d.data.Comment,
-	}
-
-	if d.data.Type == "EventHandler" {
-		def, err := d.findEvent(d.data.EventHandler)
-		if err != nil {
-			return "", err
-		}
-
-		t, err := def.Type(d.pkg)
-		if err != nil {
-			return "", errors.Wrapf(err, "error getting type")
-		}
-
-		// event handlers are functions
-		// TODO: this seems fragile
-		t = "func(" + t + ")"
-
-		data.Result = gen.Vartype{
-			Var:      gen.Lowercase(d.data.Name),
-			Optional: d.data.Nullable,
-			Type:     t,
-		}
-	} else {
-		t, err := d.index.Coerce(d.pkg, d.data.Type)
-		if err != nil {
-			return "", errors.Wrapf(err, "error coercing")
-		}
-
-		data.Result = gen.Vartype{
-			Var:  gen.Identifier(d.data.Name),
-			Type: t,
-		}
-	}
-
-	// only one known instance of this (property that returns a Promise that returns undefined)
-	// so we'll just special case this for now
-	async := strings.Contains(d.data.Type, "Promise<")
-	results := []string{}
-
-	if async && data.Result.Type == "" {
-		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
-			// {{ lowercase .Name }} prop
-			func {{ lowercase .Name }}() {
-
-			}
-		`)
-		if e != nil {
-			return "", e
-		}
-		results = append(results, getter)
-	} else {
-		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
-		// {{ lowercase .Name }} prop {{ .Comment }}
-		func {{ lowercase .Name }}() ({{ vt .Result }}) {
-			js.Rewrite("$_.{{ .Name }}")
-			return {{ .Result.Var }}
-		}
-		`)
-		if e != nil {
-			return "", e
-		}
-		results = append(results, getter)
-	}
-
-	if !d.data.ReadOnly {
-		setter, e := gen.Generate("property_setter/"+d.data.Name, data, `
-		// set{{ lowercase .Name }} prop {{ .Comment }}
-		func set{{ lowercase .Name }} ({{ vt .Result }}) {
-			js.Rewrite("$_.{{ .Name }} = {{ .Result.Var }}")
-		}
 		`)
 		if e != nil {
 			return "", e

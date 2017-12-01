@@ -6,7 +6,6 @@ import (
 	"go/types"
 	"strings"
 
-	"github.com/fatih/structtag"
 	"github.com/pkg/errors"
 
 	"github.com/matthewmueller/golly/internal/compiler/def"
@@ -45,9 +44,28 @@ type interfaces struct {
 }
 
 type method struct {
-	name            string
-	tag             *structtag.Tag
-	rewriteFunction def.Definition
+	id       string
+	name     string
+	node     ast.Expr
+	tag      util.JSTag
+	rewrite  def.Rewrite
+	params   []string
+	variadic bool
+}
+
+func interfaceMethod(d Interfacer, m *method) (*method, error) {
+	if m.tag.Rewrite != "" {
+		m.rewrite = &rewrite{
+			rewritee: m,
+			expr:     m.tag.Rewrite,
+		}
+	}
+
+	return m, nil
+}
+
+func (m *method) ID() string {
+	return m.id
 }
 
 func (m *method) OriginalName() string {
@@ -55,14 +73,22 @@ func (m *method) OriginalName() string {
 }
 
 func (m *method) Name() string {
-	if m.tag != nil {
-		return m.tag.Name
+	if m.tag.Rename != "" {
+		return m.tag.Rename
 	}
 	return m.name
 }
 
-func (m *method) RewriteFunction() def.Definition {
-	return m.rewriteFunction
+func (m *method) Params() []string {
+	return m.params
+}
+
+func (m *method) IsVariadic() bool {
+	return m.variadic
+}
+
+func (m *method) Rewrite() def.Rewrite {
+	return m.rewrite
 }
 
 // Interface fn
@@ -76,16 +102,30 @@ func Interface(index *index.Index, info *loader.PackageInfo, gn *ast.GenDecl, n 
 	var methods []*method
 	iface := n.Type.(*ast.InterfaceType)
 	for _, m := range iface.Methods.List {
-		tag, err := util.JSTag(m.Doc)
+		tag, err := util.JSTagFromComment(m.Doc)
 		if err != nil {
 			return nil, err
 		}
 
-		for _, id := range m.Names {
-			methods = append(methods, &method{
-				name: id.Name,
+		// x, err := util.ExprToString(m)
+		// if err != nil {
+		// 	return nil, errors.Wrapf(err, "expression")
+		// }
+
+		// log.Infof("Type=%+v", m)
+
+		for _, ident := range m.Names {
+			method, err := interfaceMethod(nil, &method{
+				id:   id + " " + ident.Name,
+				name: ident.Name,
+				node: m.Type,
 				tag:  tag,
 			})
+			if err != nil {
+				return nil, errors.Wrapf(err, "error setting up interface method")
+			}
+
+			methods = append(methods, method)
 		}
 	}
 

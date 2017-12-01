@@ -1,0 +1,3 @@
+package rtcicecandidatetype
+
+type RTCIceCandidateType string

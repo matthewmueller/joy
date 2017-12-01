@@ -19,11 +19,16 @@ func NewInterface(index index.Index, data *raw.Interface) Interface {
 		index: index,
 	}
 
+	methodMap := map[string]bool{}
 	for _, method := range data.Methods {
+		methodMap[method.Name] = true
 		d.methods = append(d.methods, NewMethod(index, method, d))
 	}
 
 	for _, property := range data.Properties {
+		if methodMap[property.Name] {
+			property.Name = "get" + property.Name
+		}
 		d.properties = append(d.properties, NewProperty(index, property, d))
 	}
 
@@ -36,6 +41,8 @@ type Interface interface {
 	Properties() []Property
 	Methods() []Method
 	FindEvent(name string) (def.Definition, error)
+	Ancestors() (ancestors []def.Definition, err error)
+	Implements() (defs []def.Definition, err error)
 
 	def.Definition
 }
@@ -72,16 +79,18 @@ func (d *iface) Type(caller string) (string, error) {
 	if err != nil {
 		return "", errors.Wrapf(err, "implemented by")
 	}
+
 	if caller == d.pkg || d.pkg == "" {
-		if len(imps) > 0 {
+		if len(imps) > 0 || d.data.NoInterfaceObject {
 			return gen.Capitalize(d.data.Name), nil
 		}
 		return gen.Pointer(gen.Capitalize(d.data.Name)), nil
 	}
 
-	if len(imps) > 0 {
+	if len(imps) > 0 || d.data.NoInterfaceObject {
 		return d.pkg + "." + gen.Capitalize(d.data.Name), nil
 	}
+
 	return gen.Pointer(d.pkg + "." + gen.Capitalize(d.data.Name)), nil
 }
 
@@ -120,7 +129,7 @@ func (d *iface) ImplementedBy() (imps []def.Definition, err error) {
 
 	for _, def := range d.index {
 		if t, ok := def.(*iface); ok {
-			parents, err := t.Parents()
+			parents, err := t.Ancestors()
 			if err != nil {
 				return imps, err
 			}
@@ -209,30 +218,57 @@ func (d *iface) Dependencies() (defs []def.Definition, err error) {
 	return defs, nil
 }
 
+func (d *iface) Ancestors() (ancestors []def.Definition, err error) {
+	if d.data.Extends != "" && d.data.Extends != "Object" {
+		def := d.index.Find(d.data.Extends)
+		if def == nil {
+			return ancestors, fmt.Errorf("extends '%s' not found", d.data.Extends)
+		}
+		ancestors = append(ancestors, def)
+
+		switch t := def.(type) {
+		case Interface:
+			a, err := t.Ancestors()
+			if err != nil {
+				return ancestors, errors.Wrapf(err, "error getting ancestors")
+			}
+			ancestors = append(ancestors, a...)
+		}
+	}
+
+	return ancestors, nil
+}
+
+// Implements
+func (d *iface) Implements() (defs []def.Definition, err error) {
+	for _, imp := range d.data.Implements {
+		def := d.index.Find(imp)
+		if def == nil {
+			return defs, fmt.Errorf("implements '%s' not found", imp)
+		}
+		defs = append(defs, def)
+	}
+
+	return defs, nil
+}
+
 // Generate fn
 func (d *iface) Generate() (string, error) {
 	imps, err := d.ImplementedBy()
 	if err != nil {
 		return "", errors.Wrap(err, "implemented by")
 	}
+
 	// ignore for now
-	if len(imps) > 0 {
+	if len(imps) > 0 || d.data.NoInterfaceObject {
 		return d.generateInterface()
-		// log.Infof("use interface=%s", d.Name())
-		// return gen.Generate("interface/"+d.data.Name, data, `
-		// package {{ .Package }}
-
-		// type {{ .Name }} interface {
-
-		// }
-		// `)
 	}
 
 	data := struct {
 		Package     string
 		Name        string
 		Type        string
-		Extends     []string
+		Implements  []string
 		Methods     []string
 		Properties  []string
 		Constructor struct {
@@ -245,19 +281,6 @@ func (d *iface) Generate() (string, error) {
 		Name:    d.data.Name,
 	}
 
-	// Handle extends
-	parents, err := d.Parents()
-	if err != nil {
-		return "", errors.Wrapf(err, "error getting parents")
-	}
-	for _, parent := range parents {
-		t, err := parent.Type(d.pkg)
-		if err != nil {
-			return "", errors.Wrapf(err, "parent type")
-		}
-		data.Extends = append(data.Extends, t)
-	}
-
 	// Get the type
 	t, err := d.Type(d.pkg)
 	if err != nil {
@@ -265,7 +288,37 @@ func (d *iface) Generate() (string, error) {
 	}
 	data.Type = t
 
-	// handle the implements too
+	methodMap := map[string]bool{}
+
+	// add the methods of this struct
+	for _, method := range d.Methods() {
+		if methodMap[method.Name()] {
+			continue
+		}
+		methodMap[method.Name()] = true
+
+		m, err := method.GenerateAs(d)
+		if err != nil {
+			return "", errors.Wrapf(err, "error generating method %s", method.ID())
+		}
+		data.Methods = append(data.Methods, m)
+	}
+
+	// add the properties of this struct
+	for _, property := range d.Properties() {
+		if methodMap[property.Name()] {
+			continue
+		}
+		methodMap[property.Name()] = true
+
+		m, err := property.GenerateAs(d)
+		if err != nil {
+			return "", errors.Wrapf(err, "error generating property %s", property.ID())
+		}
+		data.Properties = append(data.Properties, m)
+	}
+
+	// handle the implements of this struct
 	for _, imp := range d.data.Implements {
 		def := d.index.Find(imp)
 		if def == nil {
@@ -278,6 +331,11 @@ func (d *iface) Generate() (string, error) {
 		}
 
 		for _, method := range t.Methods() {
+			if methodMap[method.Name()] {
+				continue
+			}
+			methodMap[method.Name()] = true
+
 			m, err := method.GenerateAs(d)
 			if err != nil {
 				return "", errors.Wrapf(err, "error generating method")
@@ -286,6 +344,11 @@ func (d *iface) Generate() (string, error) {
 		}
 
 		for _, property := range t.Properties() {
+			if methodMap[property.Name()] {
+				continue
+			}
+			methodMap[property.Name()] = true
+
 			m, err := property.GenerateAs(d)
 			if err != nil {
 				return "", errors.Wrapf(err, "error generating property")
@@ -294,24 +357,94 @@ func (d *iface) Generate() (string, error) {
 		}
 	}
 
-	// handle methods
-	for _, method := range d.Methods() {
-		m, err := method.Generate()
-		if err != nil {
-			return "", errors.Wrapf(err, "error generating method")
+	// Handle extends and implements for all ancestors
+	// TODO: cleanup this is a total mess
+	ancestors, err := d.Ancestors()
+	if err != nil {
+		return "", errors.Wrapf(err, "generating ancestors")
+	}
+	for _, ancestor := range ancestors {
+		switch t := ancestor.(type) {
+		case Interface:
+			kind, err := t.Type(d.pkg)
+			if err != nil {
+				return "", errors.Wrapf(err, "error getting implements type")
+			}
+			data.Implements = append(data.Implements, kind)
+
+			for _, method := range t.Methods() {
+				if methodMap[method.Name()] {
+					continue
+				}
+				methodMap[method.Name()] = true
+
+				m, err := method.GenerateAs(d)
+				if err != nil {
+					return "", errors.Wrapf(err, "error generating method %s", method.ID())
+				}
+				data.Methods = append(data.Methods, m)
+			}
+			for _, property := range t.Properties() {
+				if methodMap[property.Name()] {
+					continue
+				}
+				methodMap[property.Name()] = true
+
+				m, err := property.GenerateAs(d)
+				if err != nil {
+					return "", errors.Wrapf(err, "error generating property %s", property.ID())
+				}
+				data.Properties = append(data.Properties, m)
+			}
+
+			// also implement all implementations that the ancestors implement
+			imps, err := t.Implements()
+			if err != nil {
+				return "", errors.Wrapf(err, "error getting implements for interface %s", d.ID())
+			}
+			for _, def := range imps {
+				switch t := def.(type) {
+				case Interface:
+					kind, err := t.Type(d.pkg)
+					if err != nil {
+						return "", errors.Wrapf(err, "error getting implements type")
+					}
+					data.Implements = append(data.Implements, kind)
+
+					for _, method := range t.Methods() {
+						if methodMap[method.Name()] {
+							continue
+						}
+						methodMap[method.Name()] = true
+
+						m, err := method.GenerateAs(d)
+						if err != nil {
+							return "", errors.Wrapf(err, "error generating method %s", method.ID())
+						}
+						data.Methods = append(data.Methods, m)
+					}
+					for _, property := range t.Properties() {
+						if methodMap[property.Name()] {
+							continue
+						}
+						methodMap[property.Name()] = true
+
+						m, err := property.GenerateAs(d)
+						if err != nil {
+							return "", errors.Wrapf(err, "error generating property %s", property.ID())
+						}
+						data.Properties = append(data.Properties, m)
+					}
+				default:
+					return "", fmt.Errorf("unhandled ancestor type %T for %s", t, d.ID())
+				}
+			}
+		default:
+			return "", fmt.Errorf("unhandled ancestor type %T for %s", t, d.ID())
 		}
-		data.Methods = append(data.Methods, m)
 	}
 
-	// handle properties
-	for _, property := range d.Properties() {
-		m, err := property.Generate()
-		if err != nil {
-			return "", errors.Wrapf(err, "error generating property")
-		}
-		data.Properties = append(data.Properties, m)
-	}
-
+	// handle the constructor if there is one
 	if d.data.Constructor != nil {
 		data.Constructor.Rewrite = d.data.Name
 
@@ -339,9 +472,17 @@ func (d *iface) Generate() (string, error) {
 		}
 	}
 
-	return gen.Generate("interface/"+d.data.Name, data, `
-		package {{ .Package }}
-		
+	// {{ if .Constructor.Name -}}
+	// // {{ .Constructor.Name }} fn
+	// func {{ .Constructor.Name }}({{ joinvt .Constructor.Params }}) {{ .Type }} {
+	// 	return &{{ capitalize .Name }}{}
+	// }
+	// {{- end }}
+	return gen.Generate("struct/"+d.data.Name, data, `
+		{{ range .Implements -}}
+		var _ {{ . }} = (*{{ capitalize $.Name }})(nil)
+		{{ end }}
+
 		{{ if .Constructor.Name -}}
 		// {{ .Constructor.Name }} fn
 		func {{ .Constructor.Name }}({{ joinvt .Constructor.Params }}) {{ .Type }} {
@@ -353,9 +494,6 @@ func (d *iface) Generate() (string, error) {
 		// {{ capitalize .Name }} struct
 		// js:"{{ capitalize .Name }},omit"
 		type {{ capitalize .Name }} struct {
-			{{- range .Extends }}
-			{{ . }}
-			{{- end }}
 		}
 
 		{{ range .Methods -}}
@@ -407,7 +545,7 @@ func (d *iface) generateInterface() (string, error) {
 		}
 
 		for _, method := range t.Methods() {
-			m, err := method.GenerateInterface()
+			m, err := method.GenerateInterfaceAs(d)
 			if err != nil {
 				return "", errors.Wrapf(err, "error generating method")
 			}
@@ -415,7 +553,7 @@ func (d *iface) generateInterface() (string, error) {
 		}
 
 		for _, property := range t.Properties() {
-			m, err := property.GenerateInterface()
+			m, err := property.GenerateInterfaceAs(d)
 			if err != nil {
 				return "", errors.Wrapf(err, "error generating property")
 			}
@@ -425,38 +563,25 @@ func (d *iface) generateInterface() (string, error) {
 
 	// handle methods
 	for _, method := range d.Methods() {
-		m, err := method.GenerateInterface()
+		m, err := method.GenerateInterfaceAs(d)
 		if err != nil {
 			return "", errors.Wrapf(err, "error generating method")
 		}
 		data.Methods = append(data.Methods, m)
-
-		r, err := method.GenerateRewrite()
-		if err != nil {
-			return "", errors.Wrapf(err, "error generating rewrite")
-		}
-		data.Rewrites = append(data.Rewrites, r)
 	}
 
 	// handle properties
 	for _, property := range d.Properties() {
-		m, err := property.GenerateInterface()
+		m, err := property.GenerateInterfaceAs(d)
 		if err != nil {
 			return "", errors.Wrapf(err, "error generating property")
 		}
 		data.Properties = append(data.Properties, m)
-
-		r, err := property.GenerateRewrite()
-		if err != nil {
-			return "", errors.Wrapf(err, "error generating rewrite")
-		}
-		data.Rewrites = append(data.Rewrites, r)
 	}
 
 	return gen.Generate("interface/"+d.data.Name, data, `
-		package {{ .Package }}
-		
-		// js:"{{ .Name }},omit"
+		// {{ .Name }} interface
+		// js:"{{ .Name }}"
 		type {{ .Name }} interface {
 			{{- range .Extends }}
 			{{ . }}
@@ -470,10 +595,6 @@ func (d *iface) generateInterface() (string, error) {
 			{{ . }}
 			{{- end }}
 		}
-
-		{{ range .Rewrites -}}
-		{{ . }}
-		{{- end }}
 	`)
 }
 

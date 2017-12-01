@@ -1,0 +1,3 @@
+package pushencryptionkeyname
+
+type PushEncryptionKeyName string

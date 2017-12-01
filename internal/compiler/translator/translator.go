@@ -72,16 +72,6 @@ func (tr *Translator) Translate(d def.Definition) (jsast.INode, error) {
 	}
 }
 
-// // Function fn
-// func (tr *Translator) Function(d defs.Functioner, sp *scope.Scope) (jsast.INode, error) {
-// 	n, ok := d.Node().(*ast.FuncDecl)
-// 	if !ok {
-// 		return nil, errors.New("Function: expected def.Function's node to be an *ast.FuncDecl")
-// 	}
-
-// 	return tr.funcDecl(d, sp, n)
-// }
-
 // Function fn
 func (tr *Translator) functions(d defs.Functioner) (jsast.INode, error) {
 	n := d.Node()
@@ -2642,24 +2632,30 @@ func (tr *Translator) maybeJSRewrite(d def.Definition, sp *scope.Scope, n *ast.C
 			}
 			for _, iface := range ifaces {
 				method := iface.FindMethod(id.Name)
-				if method != nil && method.RewriteFunction() != nil {
-					return nil, fmt.Errorf("interface (%s) with method rewrite (%s) conflicts with struct method rewrite (%s)", iface.ID(), method.RewriteFunction().ID(), t.ID())
+				if method != nil && method.Rewrite() != nil && rewrite.Expression() != method.Rewrite().Expression() {
+					return nil, fmt.Errorf("method(%s) has conflicting rewrite expression (%s -> '%s', %s -> '%s')", id.Name, t.ID(), rewrite.Expression(), method.ID(), method.Rewrite().Expression())
 				}
 			}
 		}
 	case defs.Functioner:
 		rewrite = t.Rewrite()
 	case defs.Interfacer:
+		var m def.ID
+
+		if method := t.FindMethod(id.Name); method != nil {
+			rewrite = method.Rewrite()
+			m = method
+		}
+
 		// TODO: optimize
 		methods := t.ImplementedBy(id.Name)
-		var m defs.Methoder
 		for _, method := range methods {
 			rw := method.Rewrite()
 			if rw != nil && rewrite != nil && rw.Expression() != rewrite.Expression() {
 				return nil, fmt.Errorf("interface(%s) has conflicting rewrite expressions (%s -> '%s', %s -> '%s')", t.ID(), method.ID(), rw.Expression(), m.ID(), rewrite.Expression())
 			}
-			m = method
 			rewrite = rw
+			m = method
 		}
 	}
 
