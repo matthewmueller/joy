@@ -1,3 +1,0 @@
-package rtcstatsicecandidatetype
-
-type RTCStatsIceCandidateType string

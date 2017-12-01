@@ -1,3 +1,0 @@
-package paymentshippingtype
-
-type PaymentShippingType string

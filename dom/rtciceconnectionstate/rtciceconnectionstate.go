@@ -1,3 +1,0 @@
-package rtciceconnectionstate
-
-type RTCIceConnectionState string

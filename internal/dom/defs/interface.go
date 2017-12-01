@@ -479,10 +479,16 @@ func (d *iface) Generate() (string, error) {
 	// }
 	// {{- end }}
 	return gen.Generate("struct/"+d.data.Name, data, `
-
 		{{ range .Implements -}}
 		var _ {{ . }} = (*{{ capitalize $.Name }})(nil)
 		{{ end }}
+
+		{{ if .Constructor.Name -}}
+		// {{ .Constructor.Name }} fn
+		func {{ .Constructor.Name }}({{ joinvt .Constructor.Params }}) {{ .Type }} {
+			return &{{ capitalize .Name }}{}
+		}
+		{{- end }}
 
 		// {{ capitalize .Name }} struct
 		// js:"{{ capitalize .Name }},omit"
