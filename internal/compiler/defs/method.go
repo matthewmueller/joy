@@ -5,7 +5,6 @@ import (
 	"go/types"
 	"strings"
 
-	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/internal/compiler/def"
 	"github.com/matthewmueller/golly/internal/compiler/index"
 	"github.com/matthewmueller/golly/internal/compiler/util"
@@ -34,7 +33,7 @@ type methods struct {
 	async     bool
 	processed bool
 	deps      []def.Definition
-	tag       *structtag.Tag
+	tag       util.JSTag
 	runtime   bool
 	imports   map[string]string
 	rewrite   def.Rewrite
@@ -118,7 +117,7 @@ func Method(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (def.
 		fromRuntime = true
 	}
 
-	tag, e := util.JSTag(n.Doc)
+	tag, e := util.JSTagFromComment(n.Doc)
 	if e != nil {
 		return nil, e
 	}
@@ -162,7 +161,7 @@ func (d *methods) process() (err error) {
 	d.rewrite = state.rewrite
 	d.rename = state.rename
 
-	if d.tag == nil {
+	if d.tag.Rename == "" {
 		d.tag = state.tag
 	}
 
@@ -196,8 +195,8 @@ func (d *methods) ID() string {
 }
 
 func (d *methods) Name() string {
-	if d.tag != nil {
-		return d.tag.Name
+	if d.tag.Rename != "" {
+		return d.tag.Rename
 	}
 	if d.rename != "" {
 		return d.rename
@@ -218,7 +217,7 @@ func (d *methods) Exported() bool {
 }
 
 func (d *methods) Omitted() bool {
-	if d.tag != nil && d.tag.HasOption("omit") {
+	if d.tag.Omit {
 		return true
 	}
 

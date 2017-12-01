@@ -252,6 +252,7 @@ func (d *prop) generateInterface(recv Interface) (string, error) {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
 			// {{ capitalize .Name }} prop
 			// js:"{{ .Name }}"
+			// jsrewrite:"await $_.{{ .Name }}"
 			{{ capitalize .Name }}()
 		`)
 		if e != nil {
@@ -262,6 +263,7 @@ func (d *prop) generateInterface(recv Interface) (string, error) {
 		getter, e := gen.Generate("property_getter/"+d.data.Name, data, `
 		// {{ capitalize .Name }} prop {{ .Comment }}
 		// js:"{{ .Name }}"
+		// jsrewrite:"$_.{{ .Name }}"
 		{{ capitalize .Name }}() ({{ .Result.Var }} {{ .Result.Type }})
 		`)
 		if e != nil {
@@ -274,6 +276,7 @@ func (d *prop) generateInterface(recv Interface) (string, error) {
 		setter, e := gen.Generate("property_setter/"+d.data.Name, data, `
 		// Set{{ capitalize .Name }} prop {{ .Comment }}
 		// js:"{{ .Name }}"
+		// jsrewrite:"$_.{{ .Name }} = $1"
 		Set{{ capitalize .Name }} ({{ .Result.Var }} {{ .Result.Type }})
 		`)
 		if e != nil {

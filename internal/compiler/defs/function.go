@@ -7,7 +7,6 @@ import (
 
 	"golang.org/x/tools/go/loader"
 
-	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/internal/compiler/def"
 	"github.com/matthewmueller/golly/internal/compiler/index"
 	"github.com/matthewmueller/golly/internal/compiler/util"
@@ -35,7 +34,7 @@ type functions struct {
 	kind      types.Type
 	node      *ast.FuncDecl
 	exported  bool
-	tag       *structtag.Tag
+	tag       util.JSTag
 	runtime   bool
 	processed bool
 	deps      []def.Definition
@@ -126,7 +125,7 @@ func Function(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (de
 		fromRuntime = true
 	}
 
-	tag, e := util.JSTag(n.Doc)
+	tag, e := util.JSTagFromComment(n.Doc)
 	if e != nil {
 		return nil, e
 	}
@@ -164,7 +163,7 @@ func (d *functions) process() (err error) {
 	d.rewrite = state.rewrite
 	d.rename = state.rename
 
-	if d.tag == nil {
+	if d.tag.Rename == "" {
 		d.tag = state.tag
 	}
 
@@ -176,8 +175,8 @@ func (d *functions) ID() string {
 }
 
 func (d *functions) Name() string {
-	if d.tag != nil {
-		return d.tag.Name
+	if d.tag.Rename != "" {
+		return d.tag.Rename
 	}
 	if d.rename != "" {
 		return d.rename
@@ -210,7 +209,7 @@ func (d *functions) Exported() bool {
 }
 
 func (d *functions) Omitted() bool {
-	if d.tag != nil && d.tag.HasOption("omit") {
+	if d.tag.Omit {
 		return true
 	}
 	return d.omit

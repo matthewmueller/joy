@@ -1,0 +1,15 @@
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/golly/testdata/69-dom-iface-rewrites"] = (function() {
+		function main () {
+			var w = window;
+			var doc = w.document;
+			var html = doc.documentElement;
+			console.log(html.tagName)
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/golly/testdata/69-dom-iface-rewrites"].main();
+})()

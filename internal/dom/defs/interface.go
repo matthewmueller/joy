@@ -486,6 +486,7 @@ func (d *iface) Generate() (string, error) {
 		{{ if .Constructor.Name -}}
 		// {{ .Constructor.Name }} fn
 		func {{ .Constructor.Name }}({{ joinvt .Constructor.Params }}) {{ .Type }} {
+			js.Rewrite("{{ .Constructor.Rewrite }}")
 			return &{{ capitalize .Name }}{}
 		}
 		{{- end }}

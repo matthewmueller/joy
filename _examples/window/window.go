@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	w := window.Window{}
+	w := window.New()
 	doc := w.Document()
 	println(doc.NodeName())
 

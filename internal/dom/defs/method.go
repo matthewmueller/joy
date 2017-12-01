@@ -212,17 +212,39 @@ func (d *method) generateInterface(recv Interface) (string, error) {
 		Type: t,
 	}
 
+	async := strings.Contains(d.data.Type, "Promise<")
+
 	if t == "" {
+		if async {
+			return gen.Generate("method/"+d.data.Name, data, `
+				// {{ capitalize .Name }} {{ .Comment }}
+				// js:"{{ .Name }}"
+				// jsrewrite:"await $_.{{ .Name }}({{ len .Params | sequence | join }})"
+				{{ capitalize .Name }}({{ joinvt .Params }})
+			`)
+		}
+
 		return gen.Generate("method/"+d.data.Name, data, `
 			// {{ capitalize .Name }} {{ .Comment }}
 			// js:"{{ .Name }}"
+			// jsrewrite:"$_.{{ .Name }}({{ len .Params | sequence | join }})"
 			{{ capitalize .Name }}({{ joinvt .Params }})
+		`)
+	}
+
+	if async {
+		return gen.Generate("method/"+d.data.Name, data, `
+			// {{ capitalize .Name }} {{ .Comment }}
+			// js:"{{ .Name }}"
+			// jsrewrite:"await $_.{{ .Name }}({{ len .Params | sequence | join }})"
+			{{ capitalize .Name }}({{ joinvt .Params }}) ({{ vt .Result }})
 		`)
 	}
 
 	return gen.Generate("method/"+d.data.Name, data, `
 		// {{ capitalize .Name }} {{ .Comment }}
 		// js:"{{ .Name }}"
+		// jsrewrite:"$_.{{ .Name }}({{ len .Params | sequence | join }})"
 		{{ capitalize .Name }}({{ joinvt .Params }}) ({{ vt .Result }})
 	`)
 }

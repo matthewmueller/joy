@@ -1,9 +1,13 @@
 ;(function() {
 	var pkg = {};
 	pkg["github.com/matthewmueller/golly/testdata/66-iface-rewrites"] = (function() {
+		function window (o) {
+			o = o || {}
+		};
 		function main () {
 			var doc = document;
-			console.log(doc.nodeName)
+			console.log(doc.nodeName);
+			doc.textContent = "hi"
 		};
 		return {
 			main: main

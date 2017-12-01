@@ -11,14 +11,13 @@ var _ def.Rewrite = (*rewrite)(nil)
 var _ def.RewriteVariable = (*variable)(nil)
 
 type rewrite struct {
-	def      def.Definition
+	rewritee def.Rewritee
 	expr     string
-	vars     []def.RewriteVariable
-	variadic bool
+	vars     []def.RewriteVariable // variables passed into js.Rewrite(expr, <variables>)
 }
 
-func (r *rewrite) Definition() def.Definition {
-	return r.def
+func (r *rewrite) Rewritee() def.Rewritee {
+	return r.rewritee
 }
 
 func (r *rewrite) Expression() string {
@@ -27,10 +26,6 @@ func (r *rewrite) Expression() string {
 
 func (r *rewrite) Vars() []def.RewriteVariable {
 	return r.vars
-}
-
-func (r *rewrite) Variadic() bool {
-	return r.variadic
 }
 
 type variable struct {

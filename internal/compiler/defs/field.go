@@ -3,20 +3,20 @@ package defs
 import (
 	"go/ast"
 
-	"github.com/fatih/structtag"
+	"github.com/matthewmueller/golly/internal/compiler/util"
 )
 
 // field of a struct
 type field struct {
 	name     string
-	tag      *structtag.Tag
+	tag      util.JSTag
 	kind     ast.Expr
 	embedded bool
 }
 
 func (f *field) Name() string {
-	if f.tag != nil {
-		return f.tag.Name
+	if f.tag.Rename != "" {
+		return f.tag.Rename
 	}
 	return f.name
 }

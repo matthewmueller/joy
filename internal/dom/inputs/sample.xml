@@ -53,7 +53,7 @@
         <property name="nodeValue" nullable="1" treat-null-as="EmptyString" type="DOMString"/>
       </properties>
     </interface>
-    <interface name="Window" extends="EventTarget" implicit-this="1" primary-global="Window">
+    <interface name="window" extends="EventTarget" implicit-this="1" primary-global="Window">
       <constructor />
       <anonymous-methods>
       </anonymous-methods>

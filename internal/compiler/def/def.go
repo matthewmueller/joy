@@ -5,9 +5,15 @@ import (
 	"go/types"
 )
 
+// ID interface
+type ID interface {
+	ID() string
+}
+
 // Definition interface
 type Definition interface {
-	ID() string
+	ID
+
 	Path() string
 	Name() string
 	OriginalName() string
@@ -26,12 +32,19 @@ type Field interface {
 	Type() ast.Expr
 }
 
+// Rewritee is the original method or function getting rewritten
+type Rewritee interface {
+	ID() string
+	Params() []string
+	Rewrite() Rewrite
+	IsVariadic() bool
+}
+
 // Rewrite interface
 type Rewrite interface {
-	Definition() Definition
+	Rewritee() Rewritee
 	Expression() string
 	Vars() []RewriteVariable
-	Variadic() bool
 }
 
 // RewriteVariable interface
@@ -49,7 +62,8 @@ type FunctionResult interface {
 
 // InterfaceMethod interface
 type InterfaceMethod interface {
+	Rewritee
+
 	OriginalName() string
 	Name() string
-	RewriteFunction() Definition
 }

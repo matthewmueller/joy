@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/apex/log"
-	"github.com/fatih/structtag"
 	"github.com/matthewmueller/golly/internal/compiler/def"
 	"github.com/matthewmueller/golly/internal/compiler/index"
 	"github.com/matthewmueller/golly/internal/compiler/util"
@@ -21,7 +20,7 @@ type context struct {
 
 type state struct {
 	imports map[string]string
-	tag     *structtag.Tag
+	tag     util.JSTag
 	deps    []def.Definition
 	rewrite def.Rewrite
 	fields  []*field
@@ -74,7 +73,7 @@ func process(idx *index.Index, d def.Definition, n ast.Node) (st *state, err err
 }
 
 func funcDecl(ctx *context, n *ast.FuncDecl) error {
-	tag, e := util.JSTag(n.Doc)
+	tag, e := util.JSTagFromComment(n.Doc)
 	if e != nil {
 		return e
 	}
@@ -85,7 +84,7 @@ func funcDecl(ctx *context, n *ast.FuncDecl) error {
 		ctx.state.tag = tag
 	}
 
-	if tag != nil && tag.HasOption("async") {
+	if tag.Async {
 		ctx.state.async = true
 	}
 
@@ -97,7 +96,7 @@ func funcDecl(ctx *context, n *ast.FuncDecl) error {
 }
 
 func genDecl(ctx *context, n *ast.GenDecl) error {
-	tag, e := util.JSTag(n.Doc)
+	tag, e := util.JSTagFromComment(n.Doc)
 	if e != nil {
 		return e
 	}
@@ -433,10 +432,9 @@ func jsRewrite(ctx *context, n *ast.CallExpr) error {
 
 	// if it's a function/method, we'll also want to
 	// check if it has variadic arguments
-	var variadic bool
-	fn, isFn := ctx.d.(Functioner)
-	if isFn {
-		variadic = fn.IsVariadic()
+	rewritee, isFn := ctx.d.(def.Rewritee)
+	if !isFn {
+		return fmt.Errorf("expected a rewritee but received a %T", ctx.d)
 	}
 
 	var expr string
@@ -476,10 +474,9 @@ func jsRewrite(ctx *context, n *ast.CallExpr) error {
 	}
 
 	ctx.state.rewrite = &rewrite{
-		def:      ctx.d,
+		rewritee: rewritee,
 		expr:     expr,
 		vars:     vars,
-		variadic: variadic,
 	}
 
 	// omit func decl in any rewritten expression
