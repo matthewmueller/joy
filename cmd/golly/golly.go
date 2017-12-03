@@ -13,20 +13,20 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/matthewmueller/golly/internal/chrome"
-	"github.com/matthewmueller/golly/internal/compiler/util"
+	"github.com/matthewmueller/joy/internal/chrome"
+	"github.com/matthewmueller/joy/internal/compiler/util"
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
-	"github.com/matthewmueller/golly/api"
-	"github.com/matthewmueller/golly/internal/compiler"
+	"github.com/matthewmueller/joy/api"
+	"github.com/matthewmueller/joy/internal/compiler"
 	"github.com/pkg/errors"
 )
 
 var (
-	cli  = kingpin.New("golly", "Go to Javascript compiler")
+	cli  = kingpin.New("joy", "Go to Javascript compiler")
 	root = cli.Flag("root", "package root").String()
 
 	buildCmd      = cli.Command("build", "build the packages")
@@ -82,7 +82,7 @@ func run(ctx context.Context) error {
 	}
 	filePath := path.Join(cwd, *runFile)
 
-	root, err := util.GollyPath()
+	root, err := util.JoyPath()
 	if err != nil {
 		return errors.Wrapf(err, "error getting root path")
 	}

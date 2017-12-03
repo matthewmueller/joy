@@ -1,11 +1,11 @@
 package avtrack
 
 import (
-	"github.com/matthewmueller/golly/dom/appendmode"
-	"github.com/matthewmueller/golly/dom/msstream"
-	"github.com/matthewmueller/golly/dom/timeranges"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/appendmode"
+	"github.com/matthewmueller/joy/dom/msstream"
+	"github.com/matthewmueller/joy/dom/timeranges"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.EventTarget = (*SourceBuffer)(nil)

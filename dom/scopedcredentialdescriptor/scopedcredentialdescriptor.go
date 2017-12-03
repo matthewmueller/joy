@@ -1,8 +1,8 @@
 package scopedcredentialdescriptor
 
 import (
-	"github.com/matthewmueller/golly/dom/scopedcredentialtype"
-	"github.com/matthewmueller/golly/dom/transport"
+	"github.com/matthewmueller/joy/dom/scopedcredentialtype"
+	"github.com/matthewmueller/joy/dom/transport"
 )
 
 type ScopedCredentialDescriptor struct {

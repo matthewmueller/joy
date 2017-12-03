@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/38-receiver-funcs"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/38-receiver-funcs"] = (function() {
 		subthing.prototype.Name = function() {
 			var s = this;
 			return s.name;
@@ -21,5 +21,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/38-receiver-funcs"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/38-receiver-funcs"].main();
 })()

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/testdata/46-nil-defaults/element"
+	"github.com/matthewmueller/joy/testdata/46-nil-defaults/element"
 )
 
 // var _ element.Element = (*Page)(nil)

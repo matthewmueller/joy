@@ -1,14 +1,14 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/25-external-file/fetch.js"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/25-external-file/fetch.js"] = (function() {
 		return function fetch(url) {
   return 'Google'
 }
 
 	})();
-	pkg["github.com/matthewmueller/golly/testdata/25-external-file"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/25-external-file"] = (function() {
 		function call () {
-			var fetch = pkg["github.com/matthewmueller/golly/testdata/25-external-file/fetch.js"];
+			var fetch = pkg["github.com/matthewmueller/joy/testdata/25-external-file/fetch.js"];
 			return fetch;
 		};
 		function main () {
@@ -21,5 +21,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/25-external-file"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/25-external-file"].main();
 })()

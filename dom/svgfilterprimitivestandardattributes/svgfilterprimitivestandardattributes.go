@@ -1,8 +1,8 @@
 package svgfilterprimitivestandardattributes
 
 import (
-	"github.com/matthewmueller/golly/dom/svganimatedlength"
-	"github.com/matthewmueller/golly/dom/svganimatedstring"
+	"github.com/matthewmueller/joy/dom/svganimatedlength"
+	"github.com/matthewmueller/joy/dom/svganimatedstring"
 )
 
 // SVGFilterPrimitiveStandardAttributes interface

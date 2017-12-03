@@ -1,8 +1,8 @@
 package performanceresourcetiming
 
 import (
-	"github.com/matthewmueller/golly/dom/performanceentry"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/performanceentry"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ performanceentry.PerformanceEntry = (*PerformanceResourceTiming)(nil)

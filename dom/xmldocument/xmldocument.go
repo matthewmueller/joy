@@ -1,12 +1,12 @@
 package xmldocument
 
 import (
-	"github.com/matthewmueller/golly/dom/htmlallcollection"
-	"github.com/matthewmueller/golly/dom/location"
-	"github.com/matthewmueller/golly/dom/visibilitystate"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/dom/xpathnsresolver"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/htmlallcollection"
+	"github.com/matthewmueller/joy/dom/location"
+	"github.com/matthewmueller/joy/dom/visibilitystate"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/dom/xpathnsresolver"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.Document = (*XMLDocument)(nil)

@@ -1,10 +1,10 @@
 package rtcpeerconnectioniceevent
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcicecandidate"
-	"github.com/matthewmueller/golly/dom/rtcpeerconnectioniceeventinit"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/rtcicecandidate"
+	"github.com/matthewmueller/joy/dom/rtcpeerconnectioniceeventinit"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.Event = (*RTCPeerConnectionIceEvent)(nil)

@@ -1,10 +1,10 @@
 package pushmanager
 
 import (
-	"github.com/matthewmueller/golly/dom/pushpermissionstate"
-	"github.com/matthewmueller/golly/dom/pushsubscription"
-	"github.com/matthewmueller/golly/dom/pushsubscriptionoptionsinit"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/pushpermissionstate"
+	"github.com/matthewmueller/joy/dom/pushsubscription"
+	"github.com/matthewmueller/joy/dom/pushsubscriptionoptionsinit"
+	"github.com/matthewmueller/joy/js"
 )
 
 // PushManager struct

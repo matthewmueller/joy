@@ -1,13 +1,13 @@
 package webauthentication
 
 import (
-	"github.com/matthewmueller/golly/dom/account"
-	"github.com/matthewmueller/golly/dom/assertionoptions"
-	"github.com/matthewmueller/golly/dom/scopedcredentialinfo"
-	"github.com/matthewmueller/golly/dom/scopedcredentialoptions"
-	"github.com/matthewmueller/golly/dom/scopedcredentialparameters"
-	"github.com/matthewmueller/golly/dom/webauthnassertion"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/account"
+	"github.com/matthewmueller/joy/dom/assertionoptions"
+	"github.com/matthewmueller/joy/dom/scopedcredentialinfo"
+	"github.com/matthewmueller/joy/dom/scopedcredentialoptions"
+	"github.com/matthewmueller/joy/dom/scopedcredentialparameters"
+	"github.com/matthewmueller/joy/dom/webauthnassertion"
+	"github.com/matthewmueller/joy/js"
 )
 
 // WebAuthentication struct

@@ -1,9 +1,9 @@
 package preact
 
 import (
-	"github.com/matthewmueller/golly/dom/document"
-	"github.com/matthewmueller/golly/js"
-	"github.com/matthewmueller/golly/vdom"
+	"github.com/matthewmueller/joy/dom/document"
+	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/vdom"
 )
 
 // var preact = js.RawFile("./preact.js")

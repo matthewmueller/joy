@@ -1,6 +1,6 @@
 package windowsessionstorage
 
-import "github.com/matthewmueller/golly/dom/storage"
+import "github.com/matthewmueller/joy/dom/storage"
 
 // WindowSessionStorage interface
 // js:"WindowSessionStorage"

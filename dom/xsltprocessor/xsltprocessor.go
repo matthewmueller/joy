@@ -1,8 +1,8 @@
 package xsltprocessor
 
 import (
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 // New fn

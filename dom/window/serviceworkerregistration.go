@@ -1,11 +1,11 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/getnotificationoptions"
-	"github.com/matthewmueller/golly/dom/notificationoptions"
-	"github.com/matthewmueller/golly/dom/pushmanager"
-	"github.com/matthewmueller/golly/dom/syncmanager"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/getnotificationoptions"
+	"github.com/matthewmueller/joy/dom/notificationoptions"
+	"github.com/matthewmueller/joy/dom/pushmanager"
+	"github.com/matthewmueller/joy/dom/syncmanager"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ EventTarget = (*ServiceWorkerRegistration)(nil)

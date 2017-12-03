@@ -1,6 +1,6 @@
 package intersectionobserverinit
 
-import "github.com/matthewmueller/golly/dom/window"
+import "github.com/matthewmueller/joy/dom/window"
 
 type IntersectionObserverInit struct {
 	root       *window.Element

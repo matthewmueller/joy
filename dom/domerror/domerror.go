@@ -1,6 +1,6 @@
 package domerror
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // DOMError struct
 // js:"DOMError,omit"

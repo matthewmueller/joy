@@ -1,8 +1,8 @@
 package webkitdirectoryreader
 
 import (
-	"github.com/matthewmueller/golly/dom/domerror"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/domerror"
+	"github.com/matthewmueller/joy/js"
 )
 
 // WebKitDirectoryReader struct

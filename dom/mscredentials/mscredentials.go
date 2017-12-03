@@ -1,12 +1,12 @@
 package mscredentials
 
 import (
-	"github.com/matthewmueller/golly/dom/msaccountinfo"
-	"github.com/matthewmueller/golly/dom/msassertion"
-	"github.com/matthewmueller/golly/dom/mscredentialfilter"
-	"github.com/matthewmueller/golly/dom/mscredentialparameters"
-	"github.com/matthewmueller/golly/dom/mssignatureparameters"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/msaccountinfo"
+	"github.com/matthewmueller/joy/dom/msassertion"
+	"github.com/matthewmueller/joy/dom/mscredentialfilter"
+	"github.com/matthewmueller/joy/dom/mscredentialparameters"
+	"github.com/matthewmueller/joy/dom/mssignatureparameters"
+	"github.com/matthewmueller/joy/js"
 )
 
 // MSCredentials struct

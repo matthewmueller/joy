@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/53-rename-variables"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/53-rename-variables"] = (function() {
 		var body = document.body.nodeName;
 		function main () {
 			console.log(body)
@@ -10,5 +10,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/53-rename-variables"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/53-rename-variables"].main();
 })()

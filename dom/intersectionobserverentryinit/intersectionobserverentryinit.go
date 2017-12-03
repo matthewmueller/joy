@@ -1,8 +1,8 @@
 package intersectionobserverentryinit
 
 import (
-	"github.com/matthewmueller/golly/dom/domrectinit"
-	"github.com/matthewmueller/golly/dom/window"
+	"github.com/matthewmueller/joy/dom/domrectinit"
+	"github.com/matthewmueller/joy/dom/window"
 )
 
 type IntersectionObserverEntryInit struct {

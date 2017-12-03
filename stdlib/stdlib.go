@@ -19,7 +19,7 @@ func Supports(importPath string) (alias string, err error) {
 
 	if val, ok := stdlib[importPath]; ok {
 		if !val {
-			return "", fmt.Errorf("the '%s' package is not supported in golly yet", importPath)
+			return "", fmt.Errorf("the '%s' package is not supported in joy yet", importPath)
 		}
 
 		return path.Join(stdlibPath, importPath), nil

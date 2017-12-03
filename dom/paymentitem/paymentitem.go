@@ -1,6 +1,6 @@
 package paymentitem
 
-import "github.com/matthewmueller/golly/dom/paymentcurrencyamount"
+import "github.com/matthewmueller/joy/dom/paymentcurrencyamount"
 
 type PaymentItem struct {
 	amount  *paymentcurrencyamount.PaymentCurrencyAmount

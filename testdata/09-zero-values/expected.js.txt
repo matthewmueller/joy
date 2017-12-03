@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/09-zero-values"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/09-zero-values"] = (function() {
 		function main () {
 			var user = {
 				FirstName: "Tobi",
@@ -21,5 +21,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/09-zero-values"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/09-zero-values"].main();
 })()

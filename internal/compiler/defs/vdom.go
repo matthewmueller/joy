@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/golly/internal/compiler/util"
+	"github.com/matthewmueller/joy/internal/compiler/util"
 	"github.com/pkg/errors"
 )
 

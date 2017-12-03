@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/46-nil-defaults/element"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/46-nil-defaults/element"] = (function() {
 		element.prototype.Attrs = function() {
 			var c = this;
 			return c.attrs;
@@ -28,8 +28,8 @@
 			New: New
 		};
 	})();
-	pkg["github.com/matthewmueller/golly/testdata/46-nil-defaults"] = (function() {
-		var element = pkg["github.com/matthewmueller/golly/testdata/46-nil-defaults/element"];
+	pkg["github.com/matthewmueller/joy/testdata/46-nil-defaults"] = (function() {
+		var element = pkg["github.com/matthewmueller/joy/testdata/46-nil-defaults/element"];
 		function main () {
 			var el = element.New("header", element.New("strong", null));
 			console.log(el.Render());
@@ -39,5 +39,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/46-nil-defaults"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/46-nil-defaults"].main();
 })()

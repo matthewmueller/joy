@@ -1,6 +1,6 @@
 package window
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 var _ UIEvent = (*MSManipulationEvent)(nil)
 var _ Event = (*MSManipulationEvent)(nil)

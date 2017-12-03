@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/testdata/27-global-fetch/promise"
+	"github.com/matthewmueller/joy/testdata/27-global-fetch/promise"
 )
 
 // Fetch fn

@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/mediakeysystemconfiguration"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/mediakeysystemconfiguration"
+	"github.com/matthewmueller/joy/js"
 )
 
 // MediaKeySystemAccess struct

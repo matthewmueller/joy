@@ -1,9 +1,9 @@
 package rtcicetransportstatechangedevent
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcicetransportstate"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/rtcicetransportstate"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.Event = (*RTCIceTransportStateChangedEvent)(nil)

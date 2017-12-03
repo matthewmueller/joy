@@ -1,6 +1,6 @@
 package paymentshippingoption
 
-import "github.com/matthewmueller/golly/dom/paymentcurrencyamount"
+import "github.com/matthewmueller/joy/dom/paymentcurrencyamount"
 
 type PaymentShippingOption struct {
 	amount   *paymentcurrencyamount.PaymentCurrencyAmount

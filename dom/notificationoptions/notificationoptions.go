@@ -1,6 +1,6 @@
 package notificationoptions
 
-import "github.com/matthewmueller/golly/dom/notificationdirection"
+import "github.com/matthewmueller/joy/dom/notificationdirection"
 
 type NotificationOptions struct {
 	body *string

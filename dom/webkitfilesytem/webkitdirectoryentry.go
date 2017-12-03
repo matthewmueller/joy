@@ -1,8 +1,8 @@
 package webkitfilesytem
 
 import (
-	"github.com/matthewmueller/golly/dom/webkitdirectoryreader"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/webkitdirectoryreader"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ WebKitEntry = (*WebKitDirectoryEntry)(nil)

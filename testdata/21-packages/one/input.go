@@ -1,7 +1,7 @@
 package main
 
 import (
-	zarg "github.com/matthewmueller/golly/testdata/21-packages/dep"
+	zarg "github.com/matthewmueller/joy/testdata/21-packages/dep"
 )
 
 type test struct {

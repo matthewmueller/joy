@@ -1,9 +1,9 @@
 package rtcdtmftonechangeevent
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcdtmftonechangeeventinit"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/rtcdtmftonechangeeventinit"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.Event = (*RTCDTMFToneChangeEvent)(nil)

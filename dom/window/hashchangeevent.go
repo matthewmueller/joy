@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/hashchangeeventinit"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/hashchangeeventinit"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ Event = (*HashChangeEvent)(nil)

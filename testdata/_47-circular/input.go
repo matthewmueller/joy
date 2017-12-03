@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/testdata/47-circular/element"
+	"github.com/matthewmueller/joy/testdata/47-circular/element"
 )
 
 type page struct {

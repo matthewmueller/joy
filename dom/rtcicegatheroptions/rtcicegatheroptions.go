@@ -1,9 +1,9 @@
 package rtcicegatheroptions
 
 import (
-	"github.com/matthewmueller/golly/dom/msportrange"
-	"github.com/matthewmueller/golly/dom/rtcicegatherpolicy"
-	"github.com/matthewmueller/golly/dom/rtciceserver"
+	"github.com/matthewmueller/joy/dom/msportrange"
+	"github.com/matthewmueller/joy/dom/rtcicegatherpolicy"
+	"github.com/matthewmueller/joy/dom/rtciceserver"
 )
 
 type RTCIceGatherOptions struct {

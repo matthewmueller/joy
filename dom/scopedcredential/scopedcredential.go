@@ -1,8 +1,8 @@
 package scopedcredential
 
 import (
-	"github.com/matthewmueller/golly/dom/scopedcredentialtype"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/scopedcredentialtype"
+	"github.com/matthewmueller/joy/js"
 )
 
 // ScopedCredential struct

@@ -1,7 +1,7 @@
 package dep
 
 import (
-	"github.com/matthewmueller/golly/testdata/21-packages/deepdep"
+	"github.com/matthewmueller/joy/testdata/21-packages/deepdep"
 )
 
 // A var

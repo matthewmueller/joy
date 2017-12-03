@@ -1,10 +1,10 @@
 package msfidocredentialassertion
 
 import (
-	"github.com/matthewmueller/golly/dom/msassertion"
-	"github.com/matthewmueller/golly/dom/mscredentialtype"
-	"github.com/matthewmueller/golly/dom/mstransporttype"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/msassertion"
+	"github.com/matthewmueller/joy/dom/mscredentialtype"
+	"github.com/matthewmueller/joy/dom/mstransporttype"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ msassertion.MSAssertion = (*MSFIDOCredentialAssertion)(nil)

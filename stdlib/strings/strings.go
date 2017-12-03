@@ -1,7 +1,7 @@
 package strings
 
 import (
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/js"
 )
 
 // Join concatenates the elements of a to create a single string. The separator string

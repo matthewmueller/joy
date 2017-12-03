@@ -1,12 +1,12 @@
 package response
 
 import (
-	"github.com/matthewmueller/golly/dom/blob"
-	"github.com/matthewmueller/golly/dom/headers"
-	"github.com/matthewmueller/golly/dom/readablestream"
-	"github.com/matthewmueller/golly/dom/responseinit"
-	"github.com/matthewmueller/golly/dom/responsetype"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/blob"
+	"github.com/matthewmueller/joy/dom/headers"
+	"github.com/matthewmueller/joy/dom/readablestream"
+	"github.com/matthewmueller/joy/dom/responseinit"
+	"github.com/matthewmueller/joy/dom/responsetype"
+	"github.com/matthewmueller/joy/js"
 )
 
 // New fn

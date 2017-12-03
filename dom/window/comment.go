@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/childnode"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/childnode"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ CharacterData = (*Comment)(nil)

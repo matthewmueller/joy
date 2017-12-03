@@ -1,14 +1,14 @@
 package paymentrequest
 
 import (
-	"github.com/matthewmueller/golly/dom/paymentaddress"
-	"github.com/matthewmueller/golly/dom/paymentdetails"
-	"github.com/matthewmueller/golly/dom/paymentmethoddata"
-	"github.com/matthewmueller/golly/dom/paymentoptions"
-	"github.com/matthewmueller/golly/dom/paymentresponse"
-	"github.com/matthewmueller/golly/dom/paymentshippingtype"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/paymentaddress"
+	"github.com/matthewmueller/joy/dom/paymentdetails"
+	"github.com/matthewmueller/joy/dom/paymentmethoddata"
+	"github.com/matthewmueller/joy/dom/paymentoptions"
+	"github.com/matthewmueller/joy/dom/paymentresponse"
+	"github.com/matthewmueller/joy/dom/paymentshippingtype"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.EventTarget = (*PaymentRequest)(nil)

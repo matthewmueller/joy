@@ -1,6 +1,6 @@
 package texttrack
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // TextTrackCueList struct
 // js:"TextTrackCueList,omit"

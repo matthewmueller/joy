@@ -1,8 +1,8 @@
 package msblobbuilder
 
 import (
-	"github.com/matthewmueller/golly/dom/blob"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/blob"
+	"github.com/matthewmueller/joy/js"
 )
 
 // New fn

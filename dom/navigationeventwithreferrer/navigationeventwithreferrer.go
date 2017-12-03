@@ -1,6 +1,6 @@
 package navigationeventwithreferrer
 
-import "github.com/matthewmueller/golly/dom/navigationevent"
+import "github.com/matthewmueller/joy/dom/navigationevent"
 
 // NavigationEventWithReferrer interface
 // js:"NavigationEventWithReferrer"

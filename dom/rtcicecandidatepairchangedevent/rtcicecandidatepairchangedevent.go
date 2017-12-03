@@ -1,9 +1,9 @@
 package rtcicecandidatepairchangedevent
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcicecandidatepair"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/rtcicecandidatepair"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.Event = (*RTCIceCandidatePairChangedEvent)(nil)

@@ -1,10 +1,10 @@
 package unviewablecontentidentifiedevent
 
 import (
-	"github.com/matthewmueller/golly/dom/navigationevent"
-	"github.com/matthewmueller/golly/dom/navigationeventwithreferrer"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/navigationevent"
+	"github.com/matthewmueller/joy/dom/navigationeventwithreferrer"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ navigationeventwithreferrer.NavigationEventWithReferrer = (*UnviewableContentIdentifiedEvent)(nil)

@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/golly/internal/compiler/defs"
-	"github.com/matthewmueller/golly/internal/compiler/index"
-	"github.com/matthewmueller/golly/internal/compiler/util"
+	"github.com/matthewmueller/joy/internal/compiler/defs"
+	"github.com/matthewmueller/joy/internal/compiler/index"
+	"github.com/matthewmueller/joy/internal/compiler/util"
 	"golang.org/x/tools/go/loader"
 )
 
@@ -34,7 +34,7 @@ func New(program *loader.Program) (idx *index.Index, err error) {
 	}
 
 	for _, info := range program.AllPackages {
-		// ignore the golly/js package path
+		// ignore the joy/js package path
 		if info.Pkg.Path() == jsPath {
 			continue
 		}

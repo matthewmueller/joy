@@ -1,15 +1,15 @@
 package rtcicegatherer
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcicecandidatedictionary"
-	"github.com/matthewmueller/golly/dom/rtcicecomponent"
-	"github.com/matthewmueller/golly/dom/rtcicegathererevent"
-	"github.com/matthewmueller/golly/dom/rtcicegatheroptions"
-	"github.com/matthewmueller/golly/dom/rtciceparameters"
-	"github.com/matthewmueller/golly/dom/rtcstatsprovider"
-	"github.com/matthewmueller/golly/dom/rtcstatsreport"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/rtcicecandidatedictionary"
+	"github.com/matthewmueller/joy/dom/rtcicecomponent"
+	"github.com/matthewmueller/joy/dom/rtcicegathererevent"
+	"github.com/matthewmueller/joy/dom/rtcicegatheroptions"
+	"github.com/matthewmueller/joy/dom/rtciceparameters"
+	"github.com/matthewmueller/joy/dom/rtcstatsprovider"
+	"github.com/matthewmueller/joy/dom/rtcstatsreport"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ rtcstatsprovider.RTCStatsProvider = (*RTCIceGatherer)(nil)

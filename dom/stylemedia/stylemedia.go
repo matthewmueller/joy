@@ -1,6 +1,6 @@
 package stylemedia
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // StyleMedia struct
 // js:"StyleMedia,omit"

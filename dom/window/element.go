@@ -1,10 +1,10 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/clientrect"
-	"github.com/matthewmueller/golly/dom/clientrectlist"
-	"github.com/matthewmueller/golly/dom/domtokenlist"
-	"github.com/matthewmueller/golly/dom/mszoomtooptions"
+	"github.com/matthewmueller/joy/dom/clientrect"
+	"github.com/matthewmueller/joy/dom/clientrectlist"
+	"github.com/matthewmueller/joy/dom/domtokenlist"
+	"github.com/matthewmueller/joy/dom/mszoomtooptions"
 )
 
 // Element interface

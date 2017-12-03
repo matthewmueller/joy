@@ -1,6 +1,6 @@
 package svganimatedpoints
 
-import "github.com/matthewmueller/golly/dom/svgpointlist"
+import "github.com/matthewmueller/joy/dom/svgpointlist"
 
 // SVGAnimatedPoints interface
 // js:"SVGAnimatedPoints"

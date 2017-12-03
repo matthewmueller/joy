@@ -1,6 +1,6 @@
 package msfidosignature
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // MSFIDOSignature struct
 // js:"MSFIDOSignature,omit"

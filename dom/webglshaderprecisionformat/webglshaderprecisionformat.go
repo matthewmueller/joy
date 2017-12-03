@@ -1,6 +1,6 @@
 package webglshaderprecisionformat
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // WebGLShaderPrecisionFormat struct
 // js:"WebGLShaderPrecisionFormat,omit"

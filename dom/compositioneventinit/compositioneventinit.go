@@ -1,6 +1,6 @@
 package compositioneventinit
 
-import "github.com/matthewmueller/golly/dom/window"
+import "github.com/matthewmueller/joy/dom/window"
 
 type CompositionEventInit struct {
 	*window.UIEventInit

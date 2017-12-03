@@ -1,6 +1,6 @@
 package deferredpermissionrequest
 
-import "github.com/matthewmueller/golly/dom/mswebviewpermissiontype"
+import "github.com/matthewmueller/joy/dom/mswebviewpermissiontype"
 
 // DeferredPermissionRequest interface
 // js:"DeferredPermissionRequest"

@@ -1,8 +1,8 @@
 package url
 
 import (
-	"github.com/matthewmueller/golly/dom/objecturloptions"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/objecturloptions"
+	"github.com/matthewmueller/joy/js"
 )
 
 // New fn

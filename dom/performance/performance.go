@@ -1,9 +1,9 @@
 package performance
 
 import (
-	"github.com/matthewmueller/golly/dom/performancenavigation"
-	"github.com/matthewmueller/golly/dom/performancetiming"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/performancenavigation"
+	"github.com/matthewmueller/joy/dom/performancetiming"
+	"github.com/matthewmueller/joy/js"
 )
 
 // Performance struct

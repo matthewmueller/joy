@@ -1,8 +1,8 @@
 package filelist
 
 import (
-	"github.com/matthewmueller/golly/dom/file"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/file"
+	"github.com/matthewmueller/joy/js"
 )
 
 // FileList struct

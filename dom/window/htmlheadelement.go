@@ -1,13 +1,13 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/childnode"
-	"github.com/matthewmueller/golly/dom/clientrect"
-	"github.com/matthewmueller/golly/dom/clientrectlist"
-	"github.com/matthewmueller/golly/dom/domstringmap"
-	"github.com/matthewmueller/golly/dom/domtokenlist"
-	"github.com/matthewmueller/golly/dom/mszoomtooptions"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/childnode"
+	"github.com/matthewmueller/joy/dom/clientrect"
+	"github.com/matthewmueller/joy/dom/clientrectlist"
+	"github.com/matthewmueller/joy/dom/domstringmap"
+	"github.com/matthewmueller/joy/dom/domtokenlist"
+	"github.com/matthewmueller/joy/dom/mszoomtooptions"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ HTMLElement = (*HTMLHeadElement)(nil)

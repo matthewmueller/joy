@@ -1,12 +1,12 @@
 package audionode
 
 import (
-	"github.com/matthewmueller/golly/dom/channelcountmode"
-	"github.com/matthewmueller/golly/dom/channelinterpretation"
-	"github.com/matthewmueller/golly/dom/distancemodeltype"
-	"github.com/matthewmueller/golly/dom/panningmodeltype"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/channelcountmode"
+	"github.com/matthewmueller/joy/dom/channelinterpretation"
+	"github.com/matthewmueller/joy/dom/distancemodeltype"
+	"github.com/matthewmueller/joy/dom/panningmodeltype"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ AudioNode = (*PannerNode)(nil)

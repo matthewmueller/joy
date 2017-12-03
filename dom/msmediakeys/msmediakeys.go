@@ -1,8 +1,8 @@
 package msmediakeys
 
 import (
-	"github.com/matthewmueller/golly/dom/msmediakeysession"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/msmediakeysession"
+	"github.com/matthewmueller/joy/js"
 )
 
 // New fn

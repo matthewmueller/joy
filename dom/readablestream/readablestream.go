@@ -1,8 +1,8 @@
 package readablestream
 
 import (
-	"github.com/matthewmueller/golly/dom/readablestreamreader"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/readablestreamreader"
+	"github.com/matthewmueller/joy/js"
 )
 
 // ReadableStream struct

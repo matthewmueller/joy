@@ -1,8 +1,8 @@
 package gamepadeventinit
 
 import (
-	"github.com/matthewmueller/golly/dom/eventinit"
-	"github.com/matthewmueller/golly/dom/gamepad"
+	"github.com/matthewmueller/joy/dom/eventinit"
+	"github.com/matthewmueller/joy/dom/gamepad"
 )
 
 type GamepadEventInit struct {

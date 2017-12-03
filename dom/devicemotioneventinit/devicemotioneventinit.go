@@ -1,9 +1,9 @@
 package devicemotioneventinit
 
 import (
-	"github.com/matthewmueller/golly/dom/deviceaccelerationdict"
-	"github.com/matthewmueller/golly/dom/devicerotationratedict"
-	"github.com/matthewmueller/golly/dom/eventinit"
+	"github.com/matthewmueller/joy/dom/deviceaccelerationdict"
+	"github.com/matthewmueller/joy/dom/devicerotationratedict"
+	"github.com/matthewmueller/joy/dom/eventinit"
 )
 
 type DeviceMotionEventInit struct {

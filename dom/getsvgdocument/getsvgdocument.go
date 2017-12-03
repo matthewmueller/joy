@@ -1,6 +1,6 @@
 package getsvgdocument
 
-import "github.com/matthewmueller/golly/dom/window"
+import "github.com/matthewmueller/joy/dom/window"
 
 // GetSVGDocument interface
 // js:"GetSVGDocument"

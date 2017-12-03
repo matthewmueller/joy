@@ -1,8 +1,8 @@
 package clientrectlist
 
 import (
-	"github.com/matthewmueller/golly/dom/clientrect"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/clientrect"
+	"github.com/matthewmueller/joy/js"
 )
 
 // ClientRectList struct

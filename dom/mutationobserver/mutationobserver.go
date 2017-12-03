@@ -1,10 +1,10 @@
 package mutationobserver
 
 import (
-	"github.com/matthewmueller/golly/dom/mutationobserverinit"
-	"github.com/matthewmueller/golly/dom/mutationrecord"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/mutationobserverinit"
+	"github.com/matthewmueller/joy/dom/mutationrecord"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 // New fn

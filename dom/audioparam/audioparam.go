@@ -1,6 +1,6 @@
 package audioparam
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // AudioParam struct
 // js:"AudioParam,omit"

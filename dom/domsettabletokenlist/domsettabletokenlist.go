@@ -1,8 +1,8 @@
 package domsettabletokenlist
 
 import (
-	"github.com/matthewmueller/golly/dom/domtokenlist"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/domtokenlist"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ domtokenlist.DOMTokenList = (*DOMSettableTokenList)(nil)

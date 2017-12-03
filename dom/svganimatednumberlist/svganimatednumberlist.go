@@ -1,8 +1,8 @@
 package svganimatednumberlist
 
 import (
-	"github.com/matthewmueller/golly/dom/svgnumberlist"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/svgnumberlist"
+	"github.com/matthewmueller/joy/js"
 )
 
 // SVGAnimatedNumberList struct

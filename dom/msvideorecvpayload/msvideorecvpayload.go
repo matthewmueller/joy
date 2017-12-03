@@ -1,8 +1,8 @@
 package msvideorecvpayload
 
 import (
-	"github.com/matthewmueller/golly/dom/msvideopayload"
-	"github.com/matthewmueller/golly/dom/msvideoresolutiondistribution"
+	"github.com/matthewmueller/joy/dom/msvideopayload"
+	"github.com/matthewmueller/joy/dom/msvideoresolutiondistribution"
 )
 
 type MSVideoRecvPayload struct {

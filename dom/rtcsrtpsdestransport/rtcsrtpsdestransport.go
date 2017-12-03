@@ -1,10 +1,10 @@
 package rtcsrtpsdestransport
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcicetransport"
-	"github.com/matthewmueller/golly/dom/rtcsrtpsdesparameters"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/rtcicetransport"
+	"github.com/matthewmueller/joy/dom/rtcsrtpsdesparameters"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.EventTarget = (*RTCSrtpSdesTransport)(nil)

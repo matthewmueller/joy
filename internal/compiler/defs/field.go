@@ -3,7 +3,7 @@ package defs
 import (
 	"go/ast"
 
-	"github.com/matthewmueller/golly/internal/compiler/util"
+	"github.com/matthewmueller/joy/internal/compiler/util"
 )
 
 // field of a struct

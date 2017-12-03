@@ -1,12 +1,12 @@
 package audionode
 
 import (
-	"github.com/matthewmueller/golly/dom/audioparam"
-	"github.com/matthewmueller/golly/dom/biquadfiltertype"
-	"github.com/matthewmueller/golly/dom/channelcountmode"
-	"github.com/matthewmueller/golly/dom/channelinterpretation"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/audioparam"
+	"github.com/matthewmueller/joy/dom/biquadfiltertype"
+	"github.com/matthewmueller/joy/dom/channelcountmode"
+	"github.com/matthewmueller/joy/dom/channelinterpretation"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ AudioNode = (*BiquadFilterNode)(nil)

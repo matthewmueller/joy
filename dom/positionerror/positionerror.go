@@ -1,6 +1,6 @@
 package positionerror
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // PositionError struct
 // js:"PositionError,omit"

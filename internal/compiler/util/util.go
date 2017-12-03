@@ -12,28 +12,28 @@ import (
 
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
-	"github.com/matthewmueller/golly/internal/compiler/def"
+	"github.com/matthewmueller/joy/internal/compiler/def"
 	"github.com/pkg/errors"
 )
 
-var gollyPath string
+var joyPath string
 var goSourcePath string
 var runtimePkg string
 var jsSourcePkg string
 var vdomSourcePkg string
 
-// GollyPath absolute path
-func GollyPath() (string, error) {
-	if gollyPath != "" {
-		return gollyPath, nil
+// JoyPath absolute path
+func JoyPath() (string, error) {
+	if joyPath != "" {
+		return joyPath, nil
 	}
 
 	_, file, _, ok := runtime.Caller(0)
 	if !ok {
-		return "", errors.New("unable to get the golly source root")
+		return "", errors.New("unable to get the joy source root")
 	}
 	root := path.Dir(path.Dir(path.Dir(path.Dir(file))))
-	gollyPath = root
+	joyPath = root
 	return root, nil
 }
 
@@ -43,7 +43,7 @@ func RuntimePath() (string, error) {
 		return runtimePkg, nil
 	}
 
-	root, e := GollyPath()
+	root, e := JoyPath()
 	if e != nil {
 		return "", e
 	}
@@ -300,7 +300,7 @@ func JSSourcePath() (string, error) {
 		return jsSourcePkg, nil
 	}
 
-	root, e := GollyPath()
+	root, e := JoyPath()
 	if e != nil {
 		return "", e
 	}
@@ -327,7 +327,7 @@ func VDOMSourcePath() (string, error) {
 		return vdomSourcePkg, nil
 	}
 
-	root, e := GollyPath()
+	root, e := JoyPath()
 	if e != nil {
 		return "", e
 	}

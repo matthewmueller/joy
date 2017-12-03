@@ -1,6 +1,6 @@
 package svgstringlist
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // SVGStringList struct
 // js:"SVGStringList,omit"

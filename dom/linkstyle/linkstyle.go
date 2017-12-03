@@ -1,6 +1,6 @@
 package linkstyle
 
-import "github.com/matthewmueller/golly/dom/window"
+import "github.com/matthewmueller/joy/dom/window"
 
 // LinkStyle interface
 // js:"LinkStyle"

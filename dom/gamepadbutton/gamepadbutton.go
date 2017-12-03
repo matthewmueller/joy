@@ -1,6 +1,6 @@
 package gamepadbutton
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // GamepadButton struct
 // js:"GamepadButton,omit"

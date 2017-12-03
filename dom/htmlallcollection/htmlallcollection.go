@@ -1,6 +1,6 @@
 package htmlallcollection
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // HTMLAllCollection struct
 // js:"HTMLAllCollection,omit"

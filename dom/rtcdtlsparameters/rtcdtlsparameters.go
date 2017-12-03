@@ -1,8 +1,8 @@
 package rtcdtlsparameters
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcdtlsfingerprint"
-	"github.com/matthewmueller/golly/dom/rtcdtlsrole"
+	"github.com/matthewmueller/joy/dom/rtcdtlsfingerprint"
+	"github.com/matthewmueller/joy/dom/rtcdtlsrole"
 )
 
 type RTCDtlsParameters struct {

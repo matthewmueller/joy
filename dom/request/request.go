@@ -1,17 +1,17 @@
 package request
 
 import (
-	"github.com/matthewmueller/golly/dom/blob"
-	"github.com/matthewmueller/golly/dom/headers"
-	"github.com/matthewmueller/golly/dom/referrerpolicy"
-	"github.com/matthewmueller/golly/dom/requestcache"
-	"github.com/matthewmueller/golly/dom/requestcredentials"
-	"github.com/matthewmueller/golly/dom/requestdestination"
-	"github.com/matthewmueller/golly/dom/requestinit"
-	"github.com/matthewmueller/golly/dom/requestmode"
-	"github.com/matthewmueller/golly/dom/requestredirect"
-	"github.com/matthewmueller/golly/dom/requesttype"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/blob"
+	"github.com/matthewmueller/joy/dom/headers"
+	"github.com/matthewmueller/joy/dom/referrerpolicy"
+	"github.com/matthewmueller/joy/dom/requestcache"
+	"github.com/matthewmueller/joy/dom/requestcredentials"
+	"github.com/matthewmueller/joy/dom/requestdestination"
+	"github.com/matthewmueller/joy/dom/requestinit"
+	"github.com/matthewmueller/joy/dom/requestmode"
+	"github.com/matthewmueller/joy/dom/requestredirect"
+	"github.com/matthewmueller/joy/dom/requesttype"
+	"github.com/matthewmueller/joy/js"
 )
 
 // New fn

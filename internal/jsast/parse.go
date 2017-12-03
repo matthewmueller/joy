@@ -6,7 +6,7 @@ package jsast
 
 // 	"github.com/apex/log"
 // 	"github.com/dop251/goja"
-// 	"github.com/matthewmueller/golly/bindata"
+// 	"github.com/matthewmueller/joy/bindata"
 // 	"github.com/pkg/errors"
 // )
 

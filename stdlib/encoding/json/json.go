@@ -1,6 +1,6 @@
 package json
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // Marshal a struct into JSON
 func Marshal(v interface{}) ([]byte, error) {

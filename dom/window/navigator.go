@@ -1,20 +1,20 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/confirmsitespecificexceptionsinformation"
-	"github.com/matthewmueller/golly/dom/exceptioninformation"
-	"github.com/matthewmueller/golly/dom/gamepad"
-	"github.com/matthewmueller/golly/dom/gamepadinputemulationtype"
-	"github.com/matthewmueller/golly/dom/geolocation"
-	"github.com/matthewmueller/golly/dom/mediakeysystemconfiguration"
-	"github.com/matthewmueller/golly/dom/mediastreamconstraints"
-	"github.com/matthewmueller/golly/dom/mediastreamerror"
-	"github.com/matthewmueller/golly/dom/mimetypearray"
-	"github.com/matthewmueller/golly/dom/pluginarray"
-	"github.com/matthewmueller/golly/dom/storeexceptionsinformation"
-	"github.com/matthewmueller/golly/dom/storesitespecificexceptionsinformation"
-	"github.com/matthewmueller/golly/dom/webauthentication"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/confirmsitespecificexceptionsinformation"
+	"github.com/matthewmueller/joy/dom/exceptioninformation"
+	"github.com/matthewmueller/joy/dom/gamepad"
+	"github.com/matthewmueller/joy/dom/gamepadinputemulationtype"
+	"github.com/matthewmueller/joy/dom/geolocation"
+	"github.com/matthewmueller/joy/dom/mediakeysystemconfiguration"
+	"github.com/matthewmueller/joy/dom/mediastreamconstraints"
+	"github.com/matthewmueller/joy/dom/mediastreamerror"
+	"github.com/matthewmueller/joy/dom/mimetypearray"
+	"github.com/matthewmueller/joy/dom/pluginarray"
+	"github.com/matthewmueller/joy/dom/storeexceptionsinformation"
+	"github.com/matthewmueller/joy/dom/storesitespecificexceptionsinformation"
+	"github.com/matthewmueller/joy/dom/webauthentication"
+	"github.com/matthewmueller/joy/js"
 )
 
 // Navigator struct

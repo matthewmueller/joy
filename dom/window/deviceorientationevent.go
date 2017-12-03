@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/deviceorientationeventinit"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/deviceorientationeventinit"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ Event = (*DeviceOrientationEvent)(nil)

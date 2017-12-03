@@ -1,6 +1,6 @@
 package webgltexture
 
-import "github.com/matthewmueller/golly/dom/webglobject"
+import "github.com/matthewmueller/joy/dom/webglobject"
 
 var _ webglobject.WebGLObject = (*WebGLTexture)(nil)
 

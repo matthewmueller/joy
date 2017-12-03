@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/matthewmueller/golly/internal/chrome"
+	"github.com/matthewmueller/joy/internal/chrome"
 )
 
 // RunSettings struct

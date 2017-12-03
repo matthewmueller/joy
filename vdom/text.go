@@ -1,6 +1,6 @@
 package vdom
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // Text struct
 // js:"text,omit"

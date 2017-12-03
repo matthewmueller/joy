@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/14-empty-vars"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/14-empty-vars"] = (function() {
 		function main () {
 			var a = [], b = "hey";
 			;
@@ -11,5 +11,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/14-empty-vars"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/14-empty-vars"].main();
 })()

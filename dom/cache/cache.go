@@ -1,10 +1,10 @@
 package cache
 
 import (
-	"github.com/matthewmueller/golly/dom/cachequeryoptions"
-	"github.com/matthewmueller/golly/dom/request"
-	"github.com/matthewmueller/golly/dom/response"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/cachequeryoptions"
+	"github.com/matthewmueller/joy/dom/request"
+	"github.com/matthewmueller/joy/dom/response"
+	"github.com/matthewmueller/joy/js"
 )
 
 // Cache struct

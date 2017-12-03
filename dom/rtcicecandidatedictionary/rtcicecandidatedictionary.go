@@ -1,9 +1,9 @@
 package rtcicecandidatedictionary
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcicecandidatetype"
-	"github.com/matthewmueller/golly/dom/rtciceprotocol"
-	"github.com/matthewmueller/golly/dom/rtcicetcpcandidatetype"
+	"github.com/matthewmueller/joy/dom/rtcicecandidatetype"
+	"github.com/matthewmueller/joy/dom/rtciceprotocol"
+	"github.com/matthewmueller/joy/dom/rtcicetcpcandidatetype"
 )
 
 type RTCIceCandidateDictionary struct {

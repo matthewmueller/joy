@@ -1,10 +1,10 @@
 package permissionrequest
 
 import (
-	"github.com/matthewmueller/golly/dom/deferredpermissionrequest"
-	"github.com/matthewmueller/golly/dom/mswebviewpermissionstate"
-	"github.com/matthewmueller/golly/dom/mswebviewpermissiontype"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/deferredpermissionrequest"
+	"github.com/matthewmueller/joy/dom/mswebviewpermissionstate"
+	"github.com/matthewmueller/joy/dom/mswebviewpermissiontype"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ deferredpermissionrequest.DeferredPermissionRequest = (*PermissionRequest)(nil)

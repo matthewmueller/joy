@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/golly/internal/compiler/graph"
+	"github.com/matthewmueller/joy/internal/compiler/graph"
 )
 
 var _ graph.Node = (*testNode)(nil)

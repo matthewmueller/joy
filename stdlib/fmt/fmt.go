@@ -1,7 +1,7 @@
 package fmt
 
 import (
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/js"
 )
 
 // Println formats using the default formats for its operands and writes to standard output.

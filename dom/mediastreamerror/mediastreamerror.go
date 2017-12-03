@@ -1,6 +1,6 @@
 package mediastreamerror
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // MediaStreamError struct
 // js:"MediaStreamError,omit"

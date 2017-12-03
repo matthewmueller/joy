@@ -1,6 +1,6 @@
 package storage
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // Storage struct
 // js:"Storage,omit"

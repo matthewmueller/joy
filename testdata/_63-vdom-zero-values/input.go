@@ -4,9 +4,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/matthewmueller/golly/dom/document"
-	"github.com/matthewmueller/golly/vdom"
-	"github.com/matthewmueller/golly/vdom/h/strong"
+	"github.com/matthewmueller/joy/dom/document"
+	"github.com/matthewmueller/joy/vdom"
+	"github.com/matthewmueller/joy/vdom/h/strong"
 )
 
 // User struct

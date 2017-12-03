@@ -1,10 +1,10 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/clientrect"
-	"github.com/matthewmueller/golly/dom/clientrectlist"
-	"github.com/matthewmueller/golly/dom/expandgranularity"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/clientrect"
+	"github.com/matthewmueller/joy/dom/clientrectlist"
+	"github.com/matthewmueller/joy/dom/expandgranularity"
+	"github.com/matthewmueller/joy/js"
 )
 
 // Range struct

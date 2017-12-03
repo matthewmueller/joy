@@ -1,6 +1,6 @@
 package svgangle
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // SVGAngle struct
 // js:"SVGAngle,omit"

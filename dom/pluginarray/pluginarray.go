@@ -1,8 +1,8 @@
 package pluginarray
 
 import (
-	"github.com/matthewmueller/golly/dom/mimetype"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/mimetype"
+	"github.com/matthewmueller/joy/js"
 )
 
 // PluginArray struct

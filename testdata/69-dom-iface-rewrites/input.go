@@ -1,6 +1,6 @@
 package main
 
-import "github.com/matthewmueller/golly/dom/window"
+import "github.com/matthewmueller/joy/dom/window"
 
 func main() {
 	w := window.New()

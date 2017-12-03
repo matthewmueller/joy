@@ -1,6 +1,6 @@
 package mediaerror
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // MediaError struct
 // js:"MediaError,omit"

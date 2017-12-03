@@ -1,6 +1,6 @@
 package runtime
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // Chan struct
 type Chan struct {

@@ -1,9 +1,9 @@
 package performancenavigationtiming
 
 import (
-	"github.com/matthewmueller/golly/dom/navigationtype"
-	"github.com/matthewmueller/golly/dom/performanceentry"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/navigationtype"
+	"github.com/matthewmueller/joy/dom/performanceentry"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ performanceentry.PerformanceEntry = (*PerformanceNavigationTiming)(nil)

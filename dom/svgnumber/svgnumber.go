@@ -1,6 +1,6 @@
 package svgnumber
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // SVGNumber struct
 // js:"SVGNumber,omit"

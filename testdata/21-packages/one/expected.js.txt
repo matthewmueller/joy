@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/21-packages/dep"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/21-packages/dep"] = (function() {
 		function another () {
 			return "another";
 		};
@@ -11,8 +11,8 @@
 			Dep: Dep
 		};
 	})();
-	pkg["github.com/matthewmueller/golly/testdata/21-packages/one"] = (function() {
-		var zarg = pkg["github.com/matthewmueller/golly/testdata/21-packages/dep"];
+	pkg["github.com/matthewmueller/joy/testdata/21-packages/one"] = (function() {
+		var zarg = pkg["github.com/matthewmueller/joy/testdata/21-packages/dep"];
 		function main () {
 			var t = {
 				String: "hi"
@@ -23,5 +23,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/21-packages/one"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/21-packages/one"].main();
 })()

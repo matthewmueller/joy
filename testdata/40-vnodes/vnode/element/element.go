@@ -3,7 +3,7 @@ package element
 import (
 	"strings"
 
-	"github.com/matthewmueller/golly/testdata/40-vnodes/vnode"
+	"github.com/matthewmueller/joy/testdata/40-vnodes/vnode"
 )
 
 // enforce VNode type

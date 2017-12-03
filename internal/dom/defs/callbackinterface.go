@@ -3,10 +3,10 @@ package defs
 import (
 	"fmt"
 
-	"github.com/matthewmueller/golly/internal/dom/def"
-	"github.com/matthewmueller/golly/internal/dom/index"
-	"github.com/matthewmueller/golly/internal/dom/raw"
-	"github.com/matthewmueller/golly/internal/gen"
+	"github.com/matthewmueller/joy/internal/dom/def"
+	"github.com/matthewmueller/joy/internal/dom/index"
+	"github.com/matthewmueller/joy/internal/dom/raw"
+	"github.com/matthewmueller/joy/internal/gen"
 )
 
 var _ CallbackInterface = (*cbiface)(nil)

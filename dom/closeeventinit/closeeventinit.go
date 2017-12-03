@@ -1,6 +1,6 @@
 package closeeventinit
 
-import "github.com/matthewmueller/golly/dom/eventinit"
+import "github.com/matthewmueller/joy/dom/eventinit"
 
 type CloseEventInit struct {
 	*eventinit.EventInit

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/dom/document"
-	"github.com/matthewmueller/golly/jsx"
-	"github.com/matthewmueller/golly/_examples/hn/app"
-	"github.com/matthewmueller/golly/_examples/hn/preact"
+	"github.com/matthewmueller/joy/dom/document"
+	"github.com/matthewmueller/joy/jsx"
+	"github.com/matthewmueller/joy/_examples/hn/app"
+	"github.com/matthewmueller/joy/_examples/hn/preact"
 )
 
 func main() {

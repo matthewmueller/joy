@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/matthewmueller/golly/internal/chrome"
+	"github.com/matthewmueller/joy/internal/chrome"
 	"github.com/stretchr/testify/assert"
 )
 

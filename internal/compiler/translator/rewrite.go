@@ -6,12 +6,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/matthewmueller/golly/internal/compiler/util"
+	"github.com/matthewmueller/joy/internal/compiler/util"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/golly/internal/compiler/def"
-	"github.com/matthewmueller/golly/internal/compiler/scope"
-	"github.com/matthewmueller/golly/internal/jsast"
+	"github.com/matthewmueller/joy/internal/compiler/def"
+	"github.com/matthewmueller/joy/internal/compiler/scope"
+	"github.com/matthewmueller/joy/internal/jsast"
 	"github.com/pkg/errors"
 )
 

@@ -1,18 +1,18 @@
 package mswebviewelement
 
 import (
-	"github.com/matthewmueller/golly/dom/childnode"
-	"github.com/matthewmueller/golly/dom/clientrect"
-	"github.com/matthewmueller/golly/dom/clientrectlist"
-	"github.com/matthewmueller/golly/dom/deferredpermissionrequest"
-	"github.com/matthewmueller/golly/dom/domstringmap"
-	"github.com/matthewmueller/golly/dom/domtokenlist"
-	"github.com/matthewmueller/golly/dom/focusnavigationorigin"
-	"github.com/matthewmueller/golly/dom/mswebviewsettings"
-	"github.com/matthewmueller/golly/dom/mszoomtooptions"
-	"github.com/matthewmueller/golly/dom/navigationreason"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/childnode"
+	"github.com/matthewmueller/joy/dom/clientrect"
+	"github.com/matthewmueller/joy/dom/clientrectlist"
+	"github.com/matthewmueller/joy/dom/deferredpermissionrequest"
+	"github.com/matthewmueller/joy/dom/domstringmap"
+	"github.com/matthewmueller/joy/dom/domtokenlist"
+	"github.com/matthewmueller/joy/dom/focusnavigationorigin"
+	"github.com/matthewmueller/joy/dom/mswebviewsettings"
+	"github.com/matthewmueller/joy/dom/mszoomtooptions"
+	"github.com/matthewmueller/joy/dom/navigationreason"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.HTMLElement = (*MSHTMLWebViewElement)(nil)

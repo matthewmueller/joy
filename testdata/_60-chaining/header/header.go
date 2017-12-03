@@ -3,11 +3,11 @@ package header
 import (
 	"strconv"
 
-	"github.com/matthewmueller/golly/vdom"
-	"github.com/matthewmueller/golly/vdom/h/strong"
+	"github.com/matthewmueller/joy/vdom"
+	"github.com/matthewmueller/joy/vdom/h/strong"
 )
 
-// import "github.com/matthewmueller/golly/js"
+// import "github.com/matthewmueller/joy/js"
 
 // header struct
 type header struct {

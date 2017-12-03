@@ -1,6 +1,6 @@
 package extensionscriptapis
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // ExtensionScriptApis struct
 // js:"ExtensionScriptApis,omit"

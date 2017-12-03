@@ -1,9 +1,9 @@
 package msappasyncoperation
 
 import (
-	"github.com/matthewmueller/golly/dom/domerror"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/domerror"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.EventTarget = (*MSAppAsyncOperation)(nil)

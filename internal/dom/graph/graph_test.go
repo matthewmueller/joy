@@ -3,7 +3,7 @@ package graph_test
 import (
 	"testing"
 
-	"github.com/matthewmueller/golly/internal/dom/graph"
+	"github.com/matthewmueller/joy/internal/dom/graph"
 	"github.com/stretchr/testify/assert"
 )
 

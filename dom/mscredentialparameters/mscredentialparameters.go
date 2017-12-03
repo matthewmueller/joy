@@ -1,6 +1,6 @@
 package mscredentialparameters
 
-import "github.com/matthewmueller/golly/dom/mscredentialtype"
+import "github.com/matthewmueller/joy/dom/mscredentialtype"
 
 type MSCredentialParameters struct {
 	kind *mscredentialtype.MSCredentialType

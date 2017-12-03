@@ -1,16 +1,16 @@
 package htmlmediaelement
 
 import (
-	"github.com/matthewmueller/golly/dom/avtrack"
-	"github.com/matthewmueller/golly/dom/mediaencryptedevent"
-	"github.com/matthewmueller/golly/dom/mediaerror"
-	"github.com/matthewmueller/golly/dom/msgraphicstrust"
-	"github.com/matthewmueller/golly/dom/msmediakeyneededevent"
-	"github.com/matthewmueller/golly/dom/msmediakeys"
-	"github.com/matthewmueller/golly/dom/texttrack"
-	"github.com/matthewmueller/golly/dom/texttracklist"
-	"github.com/matthewmueller/golly/dom/timeranges"
-	"github.com/matthewmueller/golly/dom/window"
+	"github.com/matthewmueller/joy/dom/avtrack"
+	"github.com/matthewmueller/joy/dom/mediaencryptedevent"
+	"github.com/matthewmueller/joy/dom/mediaerror"
+	"github.com/matthewmueller/joy/dom/msgraphicstrust"
+	"github.com/matthewmueller/joy/dom/msmediakeyneededevent"
+	"github.com/matthewmueller/joy/dom/msmediakeys"
+	"github.com/matthewmueller/joy/dom/texttrack"
+	"github.com/matthewmueller/joy/dom/texttracklist"
+	"github.com/matthewmueller/joy/dom/timeranges"
+	"github.com/matthewmueller/joy/dom/window"
 )
 
 // HTMLMediaElement interface

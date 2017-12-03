@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/dom/document"
-	"github.com/matthewmueller/golly/testdata/60-chaining/header"
-	"github.com/matthewmueller/golly/testdata/60-chaining/preact"
-	"github.com/matthewmueller/golly/vdom"
-	"github.com/matthewmueller/golly/vdom/h/strong"
+	"github.com/matthewmueller/joy/dom/document"
+	"github.com/matthewmueller/joy/testdata/60-chaining/header"
+	"github.com/matthewmueller/joy/testdata/60-chaining/preact"
+	"github.com/matthewmueller/joy/vdom"
+	"github.com/matthewmueller/joy/vdom/h/strong"
 )
 
 // - type-safe props + state

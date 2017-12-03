@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/js"
 )
 
 var fn = js.RawFile("./fn.js")

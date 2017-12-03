@@ -1,6 +1,6 @@
 package msbasereader
 
-import "github.com/matthewmueller/golly/dom/window"
+import "github.com/matthewmueller/joy/dom/window"
 
 // MSBaseReader interface
 // js:"MSBaseReader"

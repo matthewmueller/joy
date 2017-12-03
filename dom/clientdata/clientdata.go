@@ -1,6 +1,6 @@
 package clientdata
 
-import "github.com/matthewmueller/golly/dom/webauthnextensions"
+import "github.com/matthewmueller/joy/dom/webauthnextensions"
 
 type ClientData struct {
 	challenge    string

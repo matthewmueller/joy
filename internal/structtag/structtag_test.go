@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/golly/internal/structtag"
+	"github.com/matthewmueller/joy/internal/structtag"
 )
 
 func TestParse(t *testing.T) {

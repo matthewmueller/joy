@@ -1,6 +1,6 @@
 package rtcsessiondescriptioninit
 
-import "github.com/matthewmueller/golly/dom/rtcsdptype"
+import "github.com/matthewmueller/joy/dom/rtcsdptype"
 
 type RTCSessionDescriptionInit struct {
 	sdp  *string

@@ -1,10 +1,10 @@
 package webkitfileentry
 
 import (
-	"github.com/matthewmueller/golly/dom/domerror"
-	"github.com/matthewmueller/golly/dom/file"
-	"github.com/matthewmueller/golly/dom/webkitfilesytem"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/domerror"
+	"github.com/matthewmueller/joy/dom/file"
+	"github.com/matthewmueller/joy/dom/webkitfilesytem"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ webkitfilesytem.WebKitEntry = (*WebKitFileEntry)(nil)

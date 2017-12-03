@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/internal/runtime"] = (function() {
+	pkg["github.com/matthewmueller/joy/internal/runtime"] = (function() {
 		function Chan (o) {
 			o = o || {};
 			this.capacity = o.capacity || 0;
@@ -84,8 +84,8 @@ self.catch = p.catch.bind(p)
 			Deferred: Deferred
 		};
 	})();
-	pkg["github.com/matthewmueller/golly/testdata/23-goroutine-basic"] = (function() {
-		var runtime = pkg["github.com/matthewmueller/golly/internal/runtime"];
+	pkg["github.com/matthewmueller/joy/testdata/23-goroutine-basic"] = (function() {
+		var runtime = pkg["github.com/matthewmueller/joy/internal/runtime"];
 		async function main () {
 			var ch = new runtime.Channel();
 			(async function(msg) {
@@ -97,5 +97,5 @@ self.catch = p.catch.bind(p)
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/23-goroutine-basic"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/23-goroutine-basic"].main();
 })()

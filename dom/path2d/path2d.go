@@ -1,6 +1,6 @@
 package path2d
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // New fn
 func New(path *Path2d) *Path2d {

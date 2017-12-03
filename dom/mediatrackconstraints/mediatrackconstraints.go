@@ -1,6 +1,6 @@
 package mediatrackconstraints
 
-import "github.com/matthewmueller/golly/dom/mediatrackconstraintset"
+import "github.com/matthewmueller/joy/dom/mediatrackconstraintset"
 
 type MediaTrackConstraints struct {
 	*mediatrackconstraintset.MediaTrackConstraintSet

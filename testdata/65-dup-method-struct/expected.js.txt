@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/65-dup-method-struct"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/65-dup-method-struct"] = (function() {
 		function main () {
 			var w = window;
 			var doc = document;
@@ -10,5 +10,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/65-dup-method-struct"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/65-dup-method-struct"].main();
 })()

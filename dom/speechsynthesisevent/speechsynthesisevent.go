@@ -1,9 +1,9 @@
 package speechsynthesisevent
 
 import (
-	"github.com/matthewmueller/golly/dom/speechsynthesiseventinit"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/speechsynthesiseventinit"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.Event = (*SpeechSynthesisEvent)(nil)

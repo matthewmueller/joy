@@ -1,9 +1,9 @@
 package pushsubscription
 
 import (
-	"github.com/matthewmueller/golly/dom/pushencryptionkeyname"
-	"github.com/matthewmueller/golly/dom/pushsubscriptionoptions"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/pushencryptionkeyname"
+	"github.com/matthewmueller/joy/dom/pushsubscriptionoptions"
+	"github.com/matthewmueller/joy/js"
 )
 
 // PushSubscription struct

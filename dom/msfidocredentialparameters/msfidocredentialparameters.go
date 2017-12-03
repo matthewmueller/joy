@@ -1,6 +1,6 @@
 package msfidocredentialparameters
 
-import "github.com/matthewmueller/golly/dom/mscredentialparameters"
+import "github.com/matthewmueller/joy/dom/mscredentialparameters"
 
 type MSFIDOCredentialParameters struct {
 	*mscredentialparameters.MSCredentialParameters

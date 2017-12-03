@@ -1,6 +1,6 @@
 package windowlocalstorage
 
-import "github.com/matthewmueller/golly/dom/storage"
+import "github.com/matthewmueller/joy/dom/storage"
 
 // WindowLocalStorage interface
 // js:"WindowLocalStorage"

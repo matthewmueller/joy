@@ -1,6 +1,6 @@
 package webkitfilesytem
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // WebKitFileSystem struct
 // js:"WebKitFileSystem,omit"

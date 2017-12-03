@@ -1,6 +1,6 @@
 package svgmatrix
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // SVGMatrix struct
 // js:"SVGMatrix,omit"

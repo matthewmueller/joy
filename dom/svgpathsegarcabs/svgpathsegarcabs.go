@@ -1,8 +1,8 @@
 package svgpathsegarcabs
 
 import (
-	"github.com/matthewmueller/golly/dom/svgpathseg"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/svgpathseg"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ svgpathseg.SVGPathSeg = (*SVGPathSegArcAbs)(nil)

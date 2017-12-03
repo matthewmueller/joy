@@ -1,6 +1,6 @@
 package imagedata
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // New fn
 func New(width uint, height uint) *ImageData {

@@ -1,6 +1,6 @@
 package deviceacceleration
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // DeviceAcceleration struct
 // js:"DeviceAcceleration,omit"

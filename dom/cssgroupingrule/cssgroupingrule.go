@@ -1,6 +1,6 @@
 package cssgroupingrule
 
-import "github.com/matthewmueller/golly/dom/window"
+import "github.com/matthewmueller/joy/dom/window"
 
 // CSSGroupingRule interface
 // js:"CSSGroupingRule"

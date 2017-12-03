@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/progresseventinit"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/progresseventinit"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ Event = (*ProgressEvent)(nil)

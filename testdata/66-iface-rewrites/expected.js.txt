@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/66-iface-rewrites"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/66-iface-rewrites"] = (function() {
 		function window (o) {
 			o = o || {}
 		};
@@ -13,5 +13,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/66-iface-rewrites"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/66-iface-rewrites"].main();
 })()

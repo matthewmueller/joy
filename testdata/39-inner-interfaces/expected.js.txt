@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/39-inner-interfaces"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/39-inner-interfaces"] = (function() {
 		stringer.prototype.String = function() {
 			var s = this;
 			return s.value;
@@ -44,5 +44,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/39-inner-interfaces"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/39-inner-interfaces"].main();
 })()

@@ -1,6 +1,6 @@
 package formdata
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // New fn
 func New() *FormData {

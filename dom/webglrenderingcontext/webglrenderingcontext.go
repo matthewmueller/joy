@@ -1,19 +1,19 @@
 package webglrenderingcontext
 
 import (
-	"github.com/matthewmueller/golly/dom/htmlcanvaselement"
-	"github.com/matthewmueller/golly/dom/imagedata"
-	"github.com/matthewmueller/golly/dom/webglactiveinfo"
-	"github.com/matthewmueller/golly/dom/webglbuffer"
-	"github.com/matthewmueller/golly/dom/webglcontextattributes"
-	"github.com/matthewmueller/golly/dom/webglframebuffer"
-	"github.com/matthewmueller/golly/dom/webglprogram"
-	"github.com/matthewmueller/golly/dom/webglrenderbuffer"
-	"github.com/matthewmueller/golly/dom/webglshader"
-	"github.com/matthewmueller/golly/dom/webglshaderprecisionformat"
-	"github.com/matthewmueller/golly/dom/webgltexture"
-	"github.com/matthewmueller/golly/dom/webgluniformlocation"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/htmlcanvaselement"
+	"github.com/matthewmueller/joy/dom/imagedata"
+	"github.com/matthewmueller/joy/dom/webglactiveinfo"
+	"github.com/matthewmueller/joy/dom/webglbuffer"
+	"github.com/matthewmueller/joy/dom/webglcontextattributes"
+	"github.com/matthewmueller/joy/dom/webglframebuffer"
+	"github.com/matthewmueller/joy/dom/webglprogram"
+	"github.com/matthewmueller/joy/dom/webglrenderbuffer"
+	"github.com/matthewmueller/joy/dom/webglshader"
+	"github.com/matthewmueller/joy/dom/webglshaderprecisionformat"
+	"github.com/matthewmueller/joy/dom/webgltexture"
+	"github.com/matthewmueller/joy/dom/webgluniformlocation"
+	"github.com/matthewmueller/joy/js"
 )
 
 // WebGLRenderingContext struct

@@ -1,9 +1,9 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/datatransfer"
-	"github.com/matthewmueller/golly/dom/file"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/datatransfer"
+	"github.com/matthewmueller/joy/dom/file"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ MouseEvent = (*DragEvent)(nil)

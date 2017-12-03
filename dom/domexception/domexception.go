@@ -1,6 +1,6 @@
 package domexception
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // DOMException struct
 // js:"DOMException,omit"

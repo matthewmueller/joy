@@ -1,9 +1,9 @@
 package permissionrequestedevent
 
 import (
-	"github.com/matthewmueller/golly/dom/permissionrequest"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/permissionrequest"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.Event = (*PermissionRequestedEvent)(nil)

@@ -1,10 +1,10 @@
 package geolocation
 
 import (
-	"github.com/matthewmueller/golly/dom/position"
-	"github.com/matthewmueller/golly/dom/positionerror"
-	"github.com/matthewmueller/golly/dom/positionoptions"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/position"
+	"github.com/matthewmueller/joy/dom/positionerror"
+	"github.com/matthewmueller/joy/dom/positionoptions"
+	"github.com/matthewmueller/joy/js"
 )
 
 // Geolocation struct

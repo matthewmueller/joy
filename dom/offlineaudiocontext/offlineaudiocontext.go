@@ -1,16 +1,16 @@
 package offlineaudiocontext
 
 import (
-	"github.com/matthewmueller/golly/dom/audiobuffer"
-	"github.com/matthewmueller/golly/dom/audiocontextstate"
-	"github.com/matthewmueller/golly/dom/audiolistener"
-	"github.com/matthewmueller/golly/dom/audionode"
-	"github.com/matthewmueller/golly/dom/htmlmediaelement"
-	"github.com/matthewmueller/golly/dom/offlineaudiocompletionevent"
-	"github.com/matthewmueller/golly/dom/periodicwave"
-	"github.com/matthewmueller/golly/dom/periodicwaveconstraints"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/audiobuffer"
+	"github.com/matthewmueller/joy/dom/audiocontextstate"
+	"github.com/matthewmueller/joy/dom/audiolistener"
+	"github.com/matthewmueller/joy/dom/audionode"
+	"github.com/matthewmueller/joy/dom/htmlmediaelement"
+	"github.com/matthewmueller/joy/dom/offlineaudiocompletionevent"
+	"github.com/matthewmueller/joy/dom/periodicwave"
+	"github.com/matthewmueller/joy/dom/periodicwaveconstraints"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ audionode.AudioContext = (*OfflineAudioContext)(nil)

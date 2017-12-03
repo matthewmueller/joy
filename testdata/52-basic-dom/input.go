@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/dom/htmlbodyelement"
-	"github.com/matthewmueller/golly/dom/window"
+	"github.com/matthewmueller/joy/dom/htmlbodyelement"
+	"github.com/matthewmueller/joy/dom/window"
 )
 
 func main() {

@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/speechsynthesisvoice"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/speechsynthesisvoice"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ EventTarget = (*SpeechSynthesis)(nil)

@@ -1,10 +1,10 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/svganimatedtransformlist"
-	"github.com/matthewmueller/golly/dom/svgmatrix"
-	"github.com/matthewmueller/golly/dom/svgrect"
-	"github.com/matthewmueller/golly/dom/svgstringlist"
+	"github.com/matthewmueller/joy/dom/svganimatedtransformlist"
+	"github.com/matthewmueller/joy/dom/svgmatrix"
+	"github.com/matthewmueller/joy/dom/svgrect"
+	"github.com/matthewmueller/joy/dom/svgstringlist"
 )
 
 // SVGGraphicsElement interface

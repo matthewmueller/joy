@@ -1,6 +1,6 @@
 package mimetype
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // Plugin struct
 // js:"Plugin,omit"
