@@ -2,7 +2,7 @@ package preact
 
 import (
 	"github.com/matthewmueller/joy/dom/document"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 	"github.com/matthewmueller/joy/vdom"
 )
 
@@ -30,7 +30,7 @@ func (c *Component) ForceUpdate() {
 
 // Render the component
 func Render(component vdom.Component, el *document.Node) {
-	js.Rewrite("$1.render($2, $3)", js.RawFile("./preact.js"), component, el)
+	macro.Rewrite("$1.render($2, $3)", macro.RawFile("./preact.js"), component, el)
 }
 
 // String turns the component into a string

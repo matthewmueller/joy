@@ -8,7 +8,7 @@ import (
 	"github.com/matthewmueller/joy/dom/rtcstatsprovider"
 	"github.com/matthewmueller/joy/dom/rtcstatsreport"
 	"github.com/matthewmueller/joy/dom/window"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 var _ rtcstatsprovider.RTCStatsProvider = (*RTCDtlsTransport)(nil)
@@ -16,7 +16,7 @@ var _ window.EventTarget = (*RTCDtlsTransport)(nil)
 
 // New fn
 func New(transport *rtcicetransport.RTCIceTransport) *RTCDtlsTransport {
-	js.Rewrite("RTCDtlsTransport")
+	macro.Rewrite("RTCDtlsTransport")
 	return &RTCDtlsTransport{}
 }
 
@@ -28,105 +28,105 @@ type RTCDtlsTransport struct {
 // GetLocalParameters fn
 // js:"getLocalParameters"
 func (*RTCDtlsTransport) GetLocalParameters() (r *rtcdtlsparameters.RTCDtlsParameters) {
-	js.Rewrite("$_.getLocalParameters()")
+	macro.Rewrite("$_.getLocalParameters()")
 	return r
 }
 
 // GetRemoteCertificates fn
 // js:"getRemoteCertificates"
 func (*RTCDtlsTransport) GetRemoteCertificates() (b [][]byte) {
-	js.Rewrite("$_.getRemoteCertificates()")
+	macro.Rewrite("$_.getRemoteCertificates()")
 	return b
 }
 
 // GetRemoteParameters fn
 // js:"getRemoteParameters"
 func (*RTCDtlsTransport) GetRemoteParameters() (r *rtcdtlsparameters.RTCDtlsParameters) {
-	js.Rewrite("$_.getRemoteParameters()")
+	macro.Rewrite("$_.getRemoteParameters()")
 	return r
 }
 
 // Start fn
 // js:"start"
 func (*RTCDtlsTransport) Start(remoteParameters *rtcdtlsparameters.RTCDtlsParameters) {
-	js.Rewrite("$_.start($1)", remoteParameters)
+	macro.Rewrite("$_.start($1)", remoteParameters)
 }
 
 // Stop fn
 // js:"stop"
 func (*RTCDtlsTransport) Stop() {
-	js.Rewrite("$_.stop()")
+	macro.Rewrite("$_.stop()")
 }
 
 // GetStats fn
 // js:"getStats"
 func (*RTCDtlsTransport) GetStats() (r *rtcstatsreport.RTCStatsReport) {
-	js.Rewrite("await $_.getStats()")
+	macro.Rewrite("await $_.getStats()")
 	return r
 }
 
 // MsGetStats fn
 // js:"msGetStats"
 func (*RTCDtlsTransport) MsGetStats() (r *rtcstatsreport.RTCStatsReport) {
-	js.Rewrite("await $_.msGetStats()")
+	macro.Rewrite("await $_.msGetStats()")
 	return r
 }
 
 // AddEventListener fn
 // js:"addEventListener"
 func (*RTCDtlsTransport) AddEventListener(kind string, listener func(evt window.Event), useCapture bool) {
-	js.Rewrite("$_.addEventListener($1, $2, $3)", kind, listener, useCapture)
+	macro.Rewrite("$_.addEventListener($1, $2, $3)", kind, listener, useCapture)
 }
 
 // DispatchEvent fn
 // js:"dispatchEvent"
 func (*RTCDtlsTransport) DispatchEvent(evt window.Event) (b bool) {
-	js.Rewrite("$_.dispatchEvent($1)", evt)
+	macro.Rewrite("$_.dispatchEvent($1)", evt)
 	return b
 }
 
 // RemoveEventListener fn
 // js:"removeEventListener"
 func (*RTCDtlsTransport) RemoveEventListener(kind string, listener func(evt window.Event), useCapture bool) {
-	js.Rewrite("$_.removeEventListener($1, $2, $3)", kind, listener, useCapture)
+	macro.Rewrite("$_.removeEventListener($1, $2, $3)", kind, listener, useCapture)
 }
 
 // Ondtlsstatechange prop
 // js:"ondtlsstatechange"
 func (*RTCDtlsTransport) Ondtlsstatechange() (ondtlsstatechange func(*rtcdtlstransportstatechangedevent.RTCDtlsTransportStateChangedEvent)) {
-	js.Rewrite("$_.ondtlsstatechange")
+	macro.Rewrite("$_.ondtlsstatechange")
 	return ondtlsstatechange
 }
 
 // SetOndtlsstatechange prop
 // js:"ondtlsstatechange"
 func (*RTCDtlsTransport) SetOndtlsstatechange(ondtlsstatechange func(*rtcdtlstransportstatechangedevent.RTCDtlsTransportStateChangedEvent)) {
-	js.Rewrite("$_.ondtlsstatechange = $1", ondtlsstatechange)
+	macro.Rewrite("$_.ondtlsstatechange = $1", ondtlsstatechange)
 }
 
 // Onerror prop
 // js:"onerror"
 func (*RTCDtlsTransport) Onerror() (onerror func(window.Event)) {
-	js.Rewrite("$_.onerror")
+	macro.Rewrite("$_.onerror")
 	return onerror
 }
 
 // SetOnerror prop
 // js:"onerror"
 func (*RTCDtlsTransport) SetOnerror(onerror func(window.Event)) {
-	js.Rewrite("$_.onerror = $1", onerror)
+	macro.Rewrite("$_.onerror = $1", onerror)
 }
 
 // State prop
 // js:"state"
 func (*RTCDtlsTransport) State() (state *rtcdtlstransportstate.RTCDtlsTransportState) {
-	js.Rewrite("$_.state")
+	macro.Rewrite("$_.state")
 	return state
 }
 
 // Transport prop
 // js:"transport"
 func (*RTCDtlsTransport) Transport() (transport *rtcicetransport.RTCIceTransport) {
-	js.Rewrite("$_.transport")
+	macro.Rewrite("$_.transport")
 	return transport
 }

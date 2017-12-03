@@ -7,7 +7,7 @@ import (
 	"github.com/matthewmueller/joy/vdom/h/strong"
 )
 
-// import "github.com/matthewmueller/joy/js"
+// import "github.com/matthewmueller/joy/macro"
 
 // header struct
 type header struct {

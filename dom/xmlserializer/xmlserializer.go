@@ -2,12 +2,12 @@ package xmlserializer
 
 import (
 	"github.com/matthewmueller/joy/dom/window"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // New fn
 func New() *XMLSerializer {
-	js.Rewrite("XMLSerializer")
+	macro.Rewrite("XMLSerializer")
 	return &XMLSerializer{}
 }
 
@@ -19,6 +19,6 @@ type XMLSerializer struct {
 // SerializeToString fn
 // js:"serializeToString"
 func (*XMLSerializer) SerializeToString(target window.Node) (s string) {
-	js.Rewrite("$_.serializeToString($1)", target)
+	macro.Rewrite("$_.serializeToString($1)", target)
 	return s
 }

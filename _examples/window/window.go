@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/matthewmueller/joy/dom/htmlanchorelement"
 	"github.com/matthewmueller/joy/dom/htmlhtmlelement"
 	"github.com/matthewmueller/joy/dom/websocket"
 	"github.com/matthewmueller/joy/dom/window"
@@ -25,11 +24,12 @@ func main() {
 	if q != nil {
 		println(q)
 	}
-	a := q.(*htmlanchorelement.HTMLAnchorElement)
+	// a := q.(*htmlanchorelement.HTMLAnchorElement)
 
-	println(a.Href())
+	// println(a.Href())
 
-	x := xmlhttprequest.XMLHTTPRequest{}
+	x := xmlhttprequest.New()
+	println(x)
 	x.Open("get", "http://google.com", nil, nil, nil)
 	x.Send(nil)
 

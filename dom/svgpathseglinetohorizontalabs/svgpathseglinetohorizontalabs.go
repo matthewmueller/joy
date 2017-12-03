@@ -2,7 +2,7 @@ package svgpathseglinetohorizontalabs
 
 import (
 	"github.com/matthewmueller/joy/dom/svgpathseg"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 var _ svgpathseg.SVGPathSeg = (*SVGPathSegLinetoHorizontalAbs)(nil)
@@ -15,26 +15,26 @@ type SVGPathSegLinetoHorizontalAbs struct {
 // X prop
 // js:"x"
 func (*SVGPathSegLinetoHorizontalAbs) X() (x float32) {
-	js.Rewrite("$_.x")
+	macro.Rewrite("$_.x")
 	return x
 }
 
 // SetX prop
 // js:"x"
 func (*SVGPathSegLinetoHorizontalAbs) SetX(x float32) {
-	js.Rewrite("$_.x = $1", x)
+	macro.Rewrite("$_.x = $1", x)
 }
 
 // PathSegType prop
 // js:"pathSegType"
 func (*SVGPathSegLinetoHorizontalAbs) PathSegType() (pathSegType uint8) {
-	js.Rewrite("$_.pathSegType")
+	macro.Rewrite("$_.pathSegType")
 	return pathSegType
 }
 
 // PathSegTypeAsLetter prop
 // js:"pathSegTypeAsLetter"
 func (*SVGPathSegLinetoHorizontalAbs) PathSegTypeAsLetter() (pathSegTypeAsLetter string) {
-	js.Rewrite("$_.pathSegTypeAsLetter")
+	macro.Rewrite("$_.pathSegTypeAsLetter")
 	return pathSegTypeAsLetter
 }

@@ -2,12 +2,12 @@ package msgesture
 
 import (
 	"github.com/matthewmueller/joy/dom/window"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // New fn
 func New() *MSGesture {
-	js.Rewrite("MSGesture")
+	macro.Rewrite("MSGesture")
 	return &MSGesture{}
 }
 
@@ -19,24 +19,24 @@ type MSGesture struct {
 // AddPointer fn
 // js:"addPointer"
 func (*MSGesture) AddPointer(pointerId int) {
-	js.Rewrite("$_.addPointer($1)", pointerId)
+	macro.Rewrite("$_.addPointer($1)", pointerId)
 }
 
 // Stop fn
 // js:"stop"
 func (*MSGesture) Stop() {
-	js.Rewrite("$_.stop()")
+	macro.Rewrite("$_.stop()")
 }
 
 // Target prop
 // js:"target"
 func (*MSGesture) Target() (target window.Element) {
-	js.Rewrite("$_.target")
+	macro.Rewrite("$_.target")
 	return target
 }
 
 // SetTarget prop
 // js:"target"
 func (*MSGesture) SetTarget(target window.Element) {
-	js.Rewrite("$_.target = $1", target)
+	macro.Rewrite("$_.target = $1", target)
 }

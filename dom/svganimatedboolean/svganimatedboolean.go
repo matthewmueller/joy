@@ -1,6 +1,6 @@
 package svganimatedboolean
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // SVGAnimatedBoolean struct
 // js:"SVGAnimatedBoolean,omit"
@@ -10,19 +10,19 @@ type SVGAnimatedBoolean struct {
 // AnimVal prop
 // js:"animVal"
 func (*SVGAnimatedBoolean) AnimVal() (animVal bool) {
-	js.Rewrite("$_.animVal")
+	macro.Rewrite("$_.animVal")
 	return animVal
 }
 
 // BaseVal prop
 // js:"baseVal"
 func (*SVGAnimatedBoolean) BaseVal() (baseVal bool) {
-	js.Rewrite("$_.baseVal")
+	macro.Rewrite("$_.baseVal")
 	return baseVal
 }
 
 // SetBaseVal prop
 // js:"baseVal"
 func (*SVGAnimatedBoolean) SetBaseVal(baseVal bool) {
-	js.Rewrite("$_.baseVal = $1", baseVal)
+	macro.Rewrite("$_.baseVal = $1", baseVal)
 }

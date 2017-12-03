@@ -2,7 +2,7 @@ package position
 
 import (
 	"github.com/matthewmueller/joy/dom/coordinates"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // Position struct
@@ -13,13 +13,13 @@ type Position struct {
 // Coords prop
 // js:"coords"
 func (*Position) Coords() (coords *coordinates.Coordinates) {
-	js.Rewrite("$_.coords")
+	macro.Rewrite("$_.coords")
 	return coords
 }
 
 // Timestamp prop
 // js:"timestamp"
 func (*Position) Timestamp() (timestamp int) {
-	js.Rewrite("$_.timestamp")
+	macro.Rewrite("$_.timestamp")
 	return timestamp
 }

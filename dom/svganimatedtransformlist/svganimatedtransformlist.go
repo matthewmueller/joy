@@ -2,7 +2,7 @@ package svganimatedtransformlist
 
 import (
 	"github.com/matthewmueller/joy/dom/svgtransformlist"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // SVGAnimatedTransformList struct
@@ -13,13 +13,13 @@ type SVGAnimatedTransformList struct {
 // AnimVal prop
 // js:"animVal"
 func (*SVGAnimatedTransformList) AnimVal() (animVal *svgtransformlist.SVGTransformList) {
-	js.Rewrite("$_.animVal")
+	macro.Rewrite("$_.animVal")
 	return animVal
 }
 
 // BaseVal prop
 // js:"baseVal"
 func (*SVGAnimatedTransformList) BaseVal() (baseVal *svgtransformlist.SVGTransformList) {
-	js.Rewrite("$_.baseVal")
+	macro.Rewrite("$_.baseVal")
 	return baseVal
 }

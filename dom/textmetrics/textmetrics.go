@@ -1,6 +1,6 @@
 package textmetrics
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // TextMetrics struct
 // js:"TextMetrics,omit"
@@ -10,6 +10,6 @@ type TextMetrics struct {
 // Width prop
 // js:"width"
 func (*TextMetrics) Width() (width float32) {
-	js.Rewrite("$_.width")
+	macro.Rewrite("$_.width")
 	return width
 }

@@ -4,7 +4,7 @@ import (
 	"github.com/matthewmueller/joy/dom/msassertion"
 	"github.com/matthewmueller/joy/dom/mscredentialtype"
 	"github.com/matthewmueller/joy/dom/mstransporttype"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 var _ msassertion.MSAssertion = (*MSFIDOCredentialAssertion)(nil)
@@ -17,41 +17,41 @@ type MSFIDOCredentialAssertion struct {
 // Algorithm prop
 // js:"algorithm"
 func (*MSFIDOCredentialAssertion) Algorithm() (algorithm interface{}) {
-	js.Rewrite("$_.algorithm")
+	macro.Rewrite("$_.algorithm")
 	return algorithm
 }
 
 // Attestation prop
 // js:"attestation"
 func (*MSFIDOCredentialAssertion) Attestation() (attestation bool) {
-	js.Rewrite("$_.attestation")
+	macro.Rewrite("$_.attestation")
 	return attestation
 }
 
 // PublicKey prop
 // js:"publicKey"
 func (*MSFIDOCredentialAssertion) PublicKey() (publicKey string) {
-	js.Rewrite("$_.publicKey")
+	macro.Rewrite("$_.publicKey")
 	return publicKey
 }
 
 // TransportHints prop
 // js:"transportHints"
 func (*MSFIDOCredentialAssertion) TransportHints() (transportHints []*mstransporttype.MSTransportType) {
-	js.Rewrite("$_.transportHints")
+	macro.Rewrite("$_.transportHints")
 	return transportHints
 }
 
 // ID prop
 // js:"id"
 func (*MSFIDOCredentialAssertion) ID() (id string) {
-	js.Rewrite("$_.id")
+	macro.Rewrite("$_.id")
 	return id
 }
 
 // Type prop
 // js:"type"
 func (*MSFIDOCredentialAssertion) Type() (kind *mscredentialtype.MSCredentialType) {
-	js.Rewrite("$_.type")
+	macro.Rewrite("$_.type")
 	return kind
 }

@@ -1,6 +1,6 @@
 package pushsubscriptionoptions
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // PushSubscriptionOptions struct
 // js:"PushSubscriptionOptions,omit"
@@ -10,13 +10,13 @@ type PushSubscriptionOptions struct {
 // ApplicationServerKey prop
 // js:"applicationServerKey"
 func (*PushSubscriptionOptions) ApplicationServerKey() (applicationServerKey []byte) {
-	js.Rewrite("$_.applicationServerKey")
+	macro.Rewrite("$_.applicationServerKey")
 	return applicationServerKey
 }
 
 // UserVisibleOnly prop
 // js:"userVisibleOnly"
 func (*PushSubscriptionOptions) UserVisibleOnly() (userVisibleOnly bool) {
-	js.Rewrite("$_.userVisibleOnly")
+	macro.Rewrite("$_.userVisibleOnly")
 	return userVisibleOnly
 }

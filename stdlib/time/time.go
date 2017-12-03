@@ -1,7 +1,7 @@
 package time
 
 import (
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // Time struct
@@ -30,30 +30,30 @@ import (
 
 // Millisecond const
 var Millisecond = func() int {
-	js.Rewrite("1")
+	macro.Rewrite("1")
 	return 1000 * 1000 * 1
 }()
 
 // Second const
 var Second = func() int {
-	js.Rewrite("1000")
+	macro.Rewrite("1000")
 	return 1000 * 1000 * 1000 * 1
 }()
 
 // Minute const
 var Minute = func() int {
-	js.Rewrite("60000")
+	macro.Rewrite("60000")
 	return 60 * 1000 * 1000 * 1000 * 1
 }()
 
 // Hour const
 var Hour = func() int {
-	js.Rewrite("3600000")
+	macro.Rewrite("3600000")
 	return 60 * 60 * 1000 * 1000 * 1000 * 1
 }()
 
 // Sleep pauses the current goroutine for at least the duration d.
 // A negative or zero duration causes Sleep to return immediately.
 func Sleep(d int) {
-	js.Rewrite("await new Promise(function(resolve, reject) { setTimeout(resolve, $1) })", d)
+	macro.Rewrite("await new Promise(function(resolve, reject) { setTimeout(resolve, $1) })", d)
 }

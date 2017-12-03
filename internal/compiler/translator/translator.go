@@ -2551,7 +2551,7 @@ func (tr *Translator) maybeJSRaw(d def.Definition, sp *scope.Scope, cx *ast.Call
 		return nil, nil
 	}
 
-	if x.Name != "js" {
+	if x.Name != "macro" {
 		return nil, nil
 	}
 
@@ -2606,7 +2606,7 @@ func (tr *Translator) jsRaw(d def.Definition, sp *scope.Scope, cx *ast.CallExpr)
 func (tr *Translator) maybeJSRewrite(d def.Definition, sp *scope.Scope, n *ast.CallExpr) (jsast.IExpression, error) {
 	id, err := util.GetIdentifier(n.Fun)
 	if err != nil {
-		return nil, errors.Wrap(err, "js.rewrite")
+		return nil, errors.Wrap(err, "macro.rewrite")
 	} else if id == nil {
 		return nil, nil
 	}

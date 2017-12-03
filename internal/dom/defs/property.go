@@ -154,7 +154,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 			// {{ capitalize .Name }} prop {{ .Comment }}
 			// js:"{{ .Name }}"
 			func ({{ .Recv }}) {{ capitalize .Name }}() {
-				js.Rewrite("await $_.{{ .Name }}")
+				macro.Rewrite("await $_.{{ .Name }}")
 			}
 		`)
 		if e != nil {
@@ -166,7 +166,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 		// {{ capitalize .Name }} prop {{ .Comment }}
 		// js:"{{ .Name }}"
 		func ({{ .Recv }}) {{ capitalize .Name }}() ({{ .Result.Var }} {{ .Result.Type }}) {
-			js.Rewrite("$_.{{ .Name }}")
+			macro.Rewrite("$_.{{ .Name }}")
 			return {{ .Result.Var }}
 		}
 		`)
@@ -181,7 +181,7 @@ func (d *prop) generate(recv Interface) (string, error) {
 		// Set{{ capitalize .Name }} prop {{ .Comment }}
 		// js:"{{ .Name }}"
 		func ({{ .Recv }}) Set{{ capitalize .Name }} ({{ .Result.Var }} {{ .Result.Type }}) {
-			js.Rewrite("$_.{{ .Name }} = $1", {{ .Result.Var }})
+			macro.Rewrite("$_.{{ .Name }} = $1", {{ .Result.Var }})
 		}
 		`)
 		if e != nil {

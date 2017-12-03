@@ -2,7 +2,7 @@ package svganimatedrect
 
 import (
 	"github.com/matthewmueller/joy/dom/svgrect"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // SVGAnimatedRect struct
@@ -13,13 +13,13 @@ type SVGAnimatedRect struct {
 // AnimVal prop
 // js:"animVal"
 func (*SVGAnimatedRect) AnimVal() (animVal *svgrect.SVGRect) {
-	js.Rewrite("$_.animVal")
+	macro.Rewrite("$_.animVal")
 	return animVal
 }
 
 // BaseVal prop
 // js:"baseVal"
 func (*SVGAnimatedRect) BaseVal() (baseVal *svgrect.SVGRect) {
-	js.Rewrite("$_.baseVal")
+	macro.Rewrite("$_.baseVal")
 	return baseVal
 }

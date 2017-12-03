@@ -2,7 +2,7 @@ package svganimatedlength
 
 import (
 	"github.com/matthewmueller/joy/dom/svglength"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // SVGAnimatedLength struct
@@ -13,13 +13,13 @@ type SVGAnimatedLength struct {
 // AnimVal prop
 // js:"animVal"
 func (*SVGAnimatedLength) AnimVal() (animVal *svglength.SVGLength) {
-	js.Rewrite("$_.animVal")
+	macro.Rewrite("$_.animVal")
 	return animVal
 }
 
 // BaseVal prop
 // js:"baseVal"
 func (*SVGAnimatedLength) BaseVal() (baseVal *svglength.SVGLength) {
-	js.Rewrite("$_.baseVal")
+	macro.Rewrite("$_.baseVal")
 	return baseVal
 }

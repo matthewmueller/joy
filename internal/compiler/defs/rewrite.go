@@ -13,7 +13,7 @@ var _ def.RewriteVariable = (*variable)(nil)
 type rewrite struct {
 	rewritee def.Rewritee
 	expr     string
-	vars     []def.RewriteVariable // variables passed into js.Rewrite(expr, <variables>)
+	vars     []def.RewriteVariable // variables passed into macro.Rewrite(expr, <variables>)
 }
 
 func (r *rewrite) Rewritee() def.Rewritee {

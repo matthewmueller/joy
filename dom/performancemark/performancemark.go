@@ -2,7 +2,7 @@ package performancemark
 
 import (
 	"github.com/matthewmueller/joy/dom/performanceentry"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 var _ performanceentry.PerformanceEntry = (*PerformanceMark)(nil)
@@ -15,27 +15,27 @@ type PerformanceMark struct {
 // Duration prop
 // js:"duration"
 func (*PerformanceMark) Duration() (duration int) {
-	js.Rewrite("$_.duration")
+	macro.Rewrite("$_.duration")
 	return duration
 }
 
 // EntryType prop
 // js:"entryType"
 func (*PerformanceMark) EntryType() (entryType string) {
-	js.Rewrite("$_.entryType")
+	macro.Rewrite("$_.entryType")
 	return entryType
 }
 
 // Name prop
 // js:"name"
 func (*PerformanceMark) Name() (name string) {
-	js.Rewrite("$_.name")
+	macro.Rewrite("$_.name")
 	return name
 }
 
 // StartTime prop
 // js:"startTime"
 func (*PerformanceMark) StartTime() (startTime int) {
-	js.Rewrite("$_.startTime")
+	macro.Rewrite("$_.startTime")
 	return startTime
 }

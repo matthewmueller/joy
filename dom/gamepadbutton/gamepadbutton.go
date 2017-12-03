@@ -1,6 +1,6 @@
 package gamepadbutton
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // GamepadButton struct
 // js:"GamepadButton,omit"
@@ -10,13 +10,13 @@ type GamepadButton struct {
 // Pressed prop
 // js:"pressed"
 func (*GamepadButton) Pressed() (pressed bool) {
-	js.Rewrite("$_.pressed")
+	macro.Rewrite("$_.pressed")
 	return pressed
 }
 
 // Value prop
 // js:"value"
 func (*GamepadButton) Value() (value float32) {
-	js.Rewrite("$_.value")
+	macro.Rewrite("$_.value")
 	return value
 }

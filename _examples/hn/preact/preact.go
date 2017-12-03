@@ -2,11 +2,11 @@ package preact
 
 import (
 	"github.com/matthewmueller/joy/dom/document"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 	"github.com/matthewmueller/joy/jsx"
 )
 
-var preact = js.RawFile("./preact.js")
+var preact = macro.RawFile("./preact.js")
 
 var _ jsx.Node = (*Component)(nil)
 
@@ -32,5 +32,5 @@ func (c *Component) ForceUpdate() {
 
 // Render the component
 func Render(component jsx.Node, el *document.Node) {
-	js.Rewrite("$1.render($2, $3)", preact, component, el)
+	macro.Rewrite("$1.render($2, $3)", preact, component, el)
 }

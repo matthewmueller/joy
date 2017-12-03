@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // Document interface
@@ -18,12 +18,12 @@ type document struct {
 
 // js:"nodeName"
 func (d *document) NodeName() string {
-	js.Rewrite("$_.nodeName")
+	macro.Rewrite("$_.nodeName")
 	return ""
 }
 
 func (d *document) TextContext(text string) {
-	js.Rewrite("$_.textContent = $1")
+	macro.Rewrite("$_.textContent = $1")
 }
 
 type window struct {
@@ -31,17 +31,17 @@ type window struct {
 
 // js:"nodeName"
 func (d *window) NodeName() string {
-	js.Rewrite("$_.nodeName")
+	macro.Rewrite("$_.nodeName")
 	return ""
 }
 
 func (d *window) TextContext(text string) {
-	js.Rewrite("$_.textContent = $1")
+	macro.Rewrite("$_.textContent = $1")
 }
 
 // New fn
 func New() (doc Document) {
-	js.Rewrite("document")
+	macro.Rewrite("document")
 	return &window{}
 }
 

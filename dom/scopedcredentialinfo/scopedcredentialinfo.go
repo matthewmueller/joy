@@ -3,7 +3,7 @@ package scopedcredentialinfo
 import (
 	"github.com/matthewmueller/joy/dom/cryptokey"
 	"github.com/matthewmueller/joy/dom/scopedcredential"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // ScopedCredentialInfo struct
@@ -14,13 +14,13 @@ type ScopedCredentialInfo struct {
 // Credential prop
 // js:"credential"
 func (*ScopedCredentialInfo) Credential() (credential *scopedcredential.ScopedCredential) {
-	js.Rewrite("$_.credential")
+	macro.Rewrite("$_.credential")
 	return credential
 }
 
 // PublicKey prop
 // js:"publicKey"
 func (*ScopedCredentialInfo) PublicKey() (publicKey *cryptokey.CryptoKey) {
-	js.Rewrite("$_.publicKey")
+	macro.Rewrite("$_.publicKey")
 	return publicKey
 }

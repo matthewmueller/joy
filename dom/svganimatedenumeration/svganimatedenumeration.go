@@ -1,6 +1,6 @@
 package svganimatedenumeration
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // SVGAnimatedEnumeration struct
 // js:"SVGAnimatedEnumeration,omit"
@@ -10,19 +10,19 @@ type SVGAnimatedEnumeration struct {
 // AnimVal prop
 // js:"animVal"
 func (*SVGAnimatedEnumeration) AnimVal() (animVal uint8) {
-	js.Rewrite("$_.animVal")
+	macro.Rewrite("$_.animVal")
 	return animVal
 }
 
 // BaseVal prop
 // js:"baseVal"
 func (*SVGAnimatedEnumeration) BaseVal() (baseVal uint8) {
-	js.Rewrite("$_.baseVal")
+	macro.Rewrite("$_.baseVal")
 	return baseVal
 }
 
 // SetBaseVal prop
 // js:"baseVal"
 func (*SVGAnimatedEnumeration) SetBaseVal(baseVal uint8) {
-	js.Rewrite("$_.baseVal = $1", baseVal)
+	macro.Rewrite("$_.baseVal = $1", baseVal)
 }

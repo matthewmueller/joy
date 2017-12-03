@@ -2,7 +2,7 @@ package svgpathseglinetorel
 
 import (
 	"github.com/matthewmueller/joy/dom/svgpathseg"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 var _ svgpathseg.SVGPathSeg = (*SVGPathSegLinetoRel)(nil)
@@ -15,39 +15,39 @@ type SVGPathSegLinetoRel struct {
 // X prop
 // js:"x"
 func (*SVGPathSegLinetoRel) X() (x float32) {
-	js.Rewrite("$_.x")
+	macro.Rewrite("$_.x")
 	return x
 }
 
 // SetX prop
 // js:"x"
 func (*SVGPathSegLinetoRel) SetX(x float32) {
-	js.Rewrite("$_.x = $1", x)
+	macro.Rewrite("$_.x = $1", x)
 }
 
 // Y prop
 // js:"y"
 func (*SVGPathSegLinetoRel) Y() (y float32) {
-	js.Rewrite("$_.y")
+	macro.Rewrite("$_.y")
 	return y
 }
 
 // SetY prop
 // js:"y"
 func (*SVGPathSegLinetoRel) SetY(y float32) {
-	js.Rewrite("$_.y = $1", y)
+	macro.Rewrite("$_.y = $1", y)
 }
 
 // PathSegType prop
 // js:"pathSegType"
 func (*SVGPathSegLinetoRel) PathSegType() (pathSegType uint8) {
-	js.Rewrite("$_.pathSegType")
+	macro.Rewrite("$_.pathSegType")
 	return pathSegType
 }
 
 // PathSegTypeAsLetter prop
 // js:"pathSegTypeAsLetter"
 func (*SVGPathSegLinetoRel) PathSegTypeAsLetter() (pathSegTypeAsLetter string) {
-	js.Rewrite("$_.pathSegTypeAsLetter")
+	macro.Rewrite("$_.pathSegTypeAsLetter")
 	return pathSegTypeAsLetter
 }

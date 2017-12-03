@@ -4,7 +4,7 @@ import (
 	"github.com/matthewmueller/joy/dom/deferredpermissionrequest"
 	"github.com/matthewmueller/joy/dom/mswebviewpermissionstate"
 	"github.com/matthewmueller/joy/dom/mswebviewpermissiontype"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 var _ deferredpermissionrequest.DeferredPermissionRequest = (*PermissionRequest)(nil)
@@ -17,45 +17,45 @@ type PermissionRequest struct {
 // Defer fn
 // js:"defer"
 func (*PermissionRequest) Defer() {
-	js.Rewrite("$_.defer()")
+	macro.Rewrite("$_.defer()")
 }
 
 // Allow fn
 // js:"allow"
 func (*PermissionRequest) Allow() {
-	js.Rewrite("$_.allow()")
+	macro.Rewrite("$_.allow()")
 }
 
 // Deny fn
 // js:"deny"
 func (*PermissionRequest) Deny() {
-	js.Rewrite("$_.deny()")
+	macro.Rewrite("$_.deny()")
 }
 
 // State prop
 // js:"state"
 func (*PermissionRequest) State() (state *mswebviewpermissionstate.MSWebViewPermissionState) {
-	js.Rewrite("$_.state")
+	macro.Rewrite("$_.state")
 	return state
 }
 
 // ID prop
 // js:"id"
 func (*PermissionRequest) ID() (id uint) {
-	js.Rewrite("$_.id")
+	macro.Rewrite("$_.id")
 	return id
 }
 
 // Type prop
 // js:"type"
 func (*PermissionRequest) Type() (kind *mswebviewpermissiontype.MSWebViewPermissionType) {
-	js.Rewrite("$_.type")
+	macro.Rewrite("$_.type")
 	return kind
 }
 
 // URI prop
 // js:"uri"
 func (*PermissionRequest) URI() (uri string) {
-	js.Rewrite("$_.uri")
+	macro.Rewrite("$_.uri")
 	return uri
 }

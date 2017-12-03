@@ -1,6 +1,6 @@
 package runtime
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // Chan struct
 type Chan struct {
@@ -19,7 +19,7 @@ type send struct {
 // Deferred fn
 // TODO: cleanup
 func Deferred() interface{} {
-	js.Raw(`
+	macro.Raw(`
 if (!(this instanceof Deferred)) return new Deferred()
 var self = this
 
@@ -31,7 +31,7 @@ var p = new Promise(function(resolve, reject) {
 self.then = p.then.bind(p)
 self.catch = p.catch.bind(p)
 `)
-	return js.Raw(`self`)
+	return macro.Raw(`self`)
 }
 
 // Channel function
@@ -44,7 +44,7 @@ func Channel(capacity int) *Chan {
 // Send on the channel
 func (c *Chan) Send(value interface{}) interface{} {
 	if c.closed {
-		return js.Raw(`Promise.reject(new Error('send on a closed channel'))`)
+		return macro.Raw(`Promise.reject(new Error('send on a closed channel'))`)
 	}
 
 	// recv pending
@@ -52,14 +52,14 @@ func (c *Chan) Send(value interface{}) interface{} {
 		recv := c.recvs[0]
 		_ = recv
 		c.recvs = c.recvs[1:]
-		js.Raw(`recv.resolve(value)`)
-		return js.Raw(`Promise.resolve()`)
+		macro.Raw(`recv.resolve(value)`)
+		return macro.Raw(`Promise.resolve()`)
 	}
 
 	// room in buffer
 	if len(c.values) < c.capacity {
 		c.values = append(c.values, value)
-		return js.Raw(`Promise.resolve()`)
+		return macro.Raw(`Promise.resolve()`)
 	}
 
 	// no recv pending, block
@@ -80,7 +80,7 @@ func (c *Chan) Recv() interface{} {
 		value := c.values[0]
 		_ = value
 		c.values = c.values[1:]
-		return js.Raw(`Promise.resolve(value)`)
+		return macro.Raw(`Promise.resolve(value)`)
 	}
 
 	// unblock pending sends
@@ -90,17 +90,17 @@ func (c *Chan) Recv() interface{} {
 		c.sends = c.sends[1:]
 
 		if c.closed {
-			js.Raw(`send.promise.reject(new Error('send on closed channel'))`)
-			return js.Raw(`Promise.resolve()`)
+			macro.Raw(`send.promise.reject(new Error('send on closed channel'))`)
+			return macro.Raw(`Promise.resolve()`)
 		}
 
-		js.Raw(`send.promise.resolve()`)
-		return js.Raw(`Promise.resolve(send.value)`)
+		macro.Raw(`send.promise.resolve()`)
+		return macro.Raw(`Promise.resolve(send.value)`)
 	}
 
 	// closed
 	if c.closed {
-		return js.Raw(`Promise.resolve()`)
+		return macro.Raw(`Promise.resolve()`)
 	}
 
 	// no values, block

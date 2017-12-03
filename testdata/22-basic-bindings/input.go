@@ -1,13 +1,13 @@
 package main
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // definition
 func definition(a string, b int) ([]string, error) {
 	var arr []string
 	var err error
 	arr = append(arr, "5")
-	js.Raw(`
+	macro.Raw(`
 		var c = String(parseInt(a) + b)
 		arr.push(c)
 		`)

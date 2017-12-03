@@ -3,7 +3,7 @@ package header
 import (
 	"strconv"
 
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 	"github.com/matthewmueller/joy/vdom"
 	"github.com/matthewmueller/joy/vdom/h/h3"
 )
@@ -49,7 +49,7 @@ type MouseEvent struct {
 
 // OnClick fn
 func (d *Header) OnClick(e interface{}) {
-	println(js.Raw("e.type"))
+	println(macro.Raw("e.type"))
 	d.SetState(&state{
 		count: d.state.count + 1,
 	})

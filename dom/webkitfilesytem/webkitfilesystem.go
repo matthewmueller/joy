@@ -1,6 +1,6 @@
 package webkitfilesytem
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // WebKitFileSystem struct
 // js:"WebKitFileSystem,omit"
@@ -10,13 +10,13 @@ type WebKitFileSystem struct {
 // Name prop
 // js:"name"
 func (*WebKitFileSystem) Name() (name string) {
-	js.Rewrite("$_.name")
+	macro.Rewrite("$_.name")
 	return name
 }
 
 // Root prop
 // js:"root"
 func (*WebKitFileSystem) Root() (root *WebKitDirectoryEntry) {
-	js.Rewrite("$_.root")
+	macro.Rewrite("$_.root")
 	return root
 }

@@ -1,6 +1,6 @@
 package vdom
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // Text struct
 // js:"text,omit"
@@ -13,7 +13,7 @@ type Text struct {
 
 // S creates a string
 func S(value string) *Text {
-	js.Rewrite("$1", value)
+	macro.Rewrite("$1", value)
 	return &Text{
 		value: value,
 	}

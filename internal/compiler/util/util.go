@@ -304,7 +304,7 @@ func JSSourcePath() (string, error) {
 	if e != nil {
 		return "", e
 	}
-	runtimePath := path.Join(root, "js")
+	runtimePath := path.Join(root, "macro")
 
 	gosrc, e := GoSourcePath()
 	if e != nil {

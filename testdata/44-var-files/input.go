@@ -1,16 +1,16 @@
 package main
 
 import (
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
-var fn = js.RawFile("./fn.js")
+var fn = macro.RawFile("./fn.js")
 
 func main() {
 	println(test("hello world"))
 }
 
 func test(msg string) string {
-	js.Rewrite("$1($2)", fn, msg)
+	macro.Rewrite("$1($2)", fn, msg)
 	return ""
 }

@@ -1,6 +1,6 @@
 package msstream
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // MSStream struct
 // js:"MSStream,omit"
@@ -10,19 +10,19 @@ type MSStream struct {
 // MsClose fn
 // js:"msClose"
 func (*MSStream) MsClose() {
-	js.Rewrite("$_.msClose()")
+	macro.Rewrite("$_.msClose()")
 }
 
 // MsDetachStream fn
 // js:"msDetachStream"
 func (*MSStream) MsDetachStream() (i interface{}) {
-	js.Rewrite("$_.msDetachStream()")
+	macro.Rewrite("$_.msDetachStream()")
 	return i
 }
 
 // Type prop
 // js:"type"
 func (*MSStream) Type() (kind string) {
-	js.Rewrite("$_.type")
+	macro.Rewrite("$_.type")
 	return kind
 }

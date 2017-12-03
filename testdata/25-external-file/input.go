@@ -1,15 +1,15 @@
 package main
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 func call() interface{} {
-	fetch := js.RawFile(`./fetch.js`)
+	fetch := macro.RawFile(`./fetch.js`)
 	return fetch
 }
 
 func main() {
 	fetch := call()
 	_ = fetch
-	res := js.Raw(`fetch("http://google.com")`)
+	res := macro.Raw(`fetch("http://google.com")`)
 	println(res)
 }

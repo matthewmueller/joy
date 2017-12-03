@@ -1,6 +1,6 @@
 package main
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // Document struct
 // js:"document,omit"
@@ -10,13 +10,13 @@ type Document struct {
 // NodeName fn
 // js:"nodeName"
 func (d *Document) NodeName() string {
-	js.Rewrite("$_.nodeName")
+	macro.Rewrite("$_.nodeName")
 	return ""
 }
 
 // New fn
 func New() *Window {
-	js.Rewrite("window")
+	macro.Rewrite("window")
 	return &Window{}
 }
 
@@ -27,7 +27,7 @@ type Window struct {
 
 // Document fn
 func (w *Window) Document() *Document {
-	js.Rewrite("document")
+	macro.Rewrite("document")
 	return &Document{}
 }
 

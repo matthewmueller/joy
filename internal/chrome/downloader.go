@@ -28,8 +28,8 @@ var downloadURLs = map[string]string{
 	"win64": "%s/chromium-browser-snapshots/Win_x64/%s/chrome-win32.zip",
 }
 
-// Find locally or remotely
-func Find(dir string) (string, error) {
+// Exists checks if chrome exists on our system or not
+func Exists(dir string) (string, error) {
 	filepath, err := chromiumPath(dir)
 	if err != nil {
 		return "", errors.Wrapf(err, "error getting chromium path")
@@ -39,15 +39,11 @@ func Find(dir string) (string, error) {
 		return filepath, nil
 	}
 
-	if err := download(dir); err != nil {
-		return "", errors.Wrapf(err, "error downloading")
-	}
-
-	return filepath, nil
+	return "", nil
 }
 
 // Download path
-func download(dir string) error {
+func Download(dir string) error {
 	var url, platform string
 
 	switch runtime.GOOS {

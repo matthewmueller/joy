@@ -1,4 +1,4 @@
-package js
+package macro
 
 // RawFile inlines a JS file
 func RawFile(filepath string) interface{} {

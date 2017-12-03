@@ -1,9 +1,9 @@
 package strconv
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // Itoa is shorthand for FormatInt(int64(i), 10).
 func Itoa(i int) string {
-	js.Rewrite("String($1)", i)
+	macro.Rewrite("String($1)", i)
 	return ""
 }

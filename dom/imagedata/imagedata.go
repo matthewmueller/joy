@@ -1,10 +1,10 @@
 package imagedata
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // New fn
 func New(width uint, height uint) *ImageData {
-	js.Rewrite("ImageData")
+	macro.Rewrite("ImageData")
 	return &ImageData{}
 }
 
@@ -16,20 +16,20 @@ type ImageData struct {
 // Data prop
 // js:"data"
 func (*ImageData) Data() (data []uint8) {
-	js.Rewrite("$_.data")
+	macro.Rewrite("$_.data")
 	return data
 }
 
 // Height prop
 // js:"height"
 func (*ImageData) Height() (height uint) {
-	js.Rewrite("$_.height")
+	macro.Rewrite("$_.height")
 	return height
 }
 
 // Width prop
 // js:"width"
 func (*ImageData) Width() (width uint) {
-	js.Rewrite("$_.width")
+	macro.Rewrite("$_.width")
 	return width
 }

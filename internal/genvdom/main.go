@@ -181,7 +181,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 	"github.com/matthewmueller/joy/vdom"
 )
 
@@ -203,7 +203,7 @@ type Props struct {
 
 // New fn
 func New(props *Props, children ...vdom.Child) *{{ $c }} {
-	js.Rewrite("$1('{{ .Tag }}', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
+	macro.Rewrite("$1('{{ .Tag }}', $2 ? $2.JSON() : {}, $3)", vdom.Pragma(), props, children)
 	if props == nil {
 		props = &Props{attrs: map[string]interface{}{}}
 	}
@@ -248,14 +248,14 @@ func (s *{{ $c }}) String() string {
 {{- $al := lowercase $attr -}}
 // {{ $ac }} fn
 func {{ $ac }}({{ $al }} string) *Props {
-	js.Rewrite("$1().Set('{{ $al }}', $2)", js.Runtime("Map", "Set", "JSON"), {{ $al }})
+	macro.Rewrite("$1().Set('{{ $al }}', $2)", js.Runtime("Map", "Set", "JSON"), {{ $al }})
 	p := &Props{attrs: map[string]interface{}{}}
 	return p.{{ $ac }}({{ $al }})
 }
 
 // {{ $ac }} fn
 func (p *Props) {{ $ac }}({{ $al }} string) *Props {
-	js.Rewrite("$_.Set('{{ $al }}', $1)", {{ $al }})
+	macro.Rewrite("$_.Set('{{ $al }}', $1)", {{ $al }})
 	p.attrs["{{ $attr }}"] = {{ $al }}
 	return p
 }
@@ -263,14 +263,14 @@ func (p *Props) {{ $ac }}({{ $al }} string) *Props {
 
 // Attr fn
 func Attr(key string, value interface{}) *Props {
-	js.Rewrite("$1().Set($2, $3)", js.Runtime("Map", "Set", "JSON"), key, value)
+	macro.Rewrite("$1().Set($2, $3)", js.Runtime("Map", "Set", "JSON"), key, value)
 	p := &Props{attrs: map[string]interface{}{}}
 	return p.Attr(key, value)
 }
 
 // Attr fn
 func (p *Props) Attr(key string, value interface{}) *Props {
-	js.Rewrite("$_.Set($1, $2)", key, value)
+	macro.Rewrite("$_.Set($1, $2)", key, value)
 	p.attrs[key] = value
 	return p
 }

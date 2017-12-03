@@ -2,7 +2,7 @@ package svganimatednumberlist
 
 import (
 	"github.com/matthewmueller/joy/dom/svgnumberlist"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // SVGAnimatedNumberList struct
@@ -13,13 +13,13 @@ type SVGAnimatedNumberList struct {
 // AnimVal prop
 // js:"animVal"
 func (*SVGAnimatedNumberList) AnimVal() (animVal *svgnumberlist.SVGNumberList) {
-	js.Rewrite("$_.animVal")
+	macro.Rewrite("$_.animVal")
 	return animVal
 }
 
 // BaseVal prop
 // js:"baseVal"
 func (*SVGAnimatedNumberList) BaseVal() (baseVal *svgnumberlist.SVGNumberList) {
-	js.Rewrite("$_.baseVal")
+	macro.Rewrite("$_.baseVal")
 	return baseVal
 }

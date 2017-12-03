@@ -226,11 +226,11 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 	switch cx {
 	case "js.Runtime":
 		return jsRuntime(ctx, n)
-	case "js.RawFile":
+	case "macro.RawFile":
 		return jsFile(ctx, n)
-	case "js.Rewrite":
+	case "macro.Rewrite":
 		return jsRewrite(ctx, n)
-	case "js.Raw":
+	case "macro.Raw":
 		return jsRaw(ctx, n)
 	case "vdom.Use":
 		return vdomUse(ctx, n)

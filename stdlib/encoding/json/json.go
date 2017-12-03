@@ -1,10 +1,10 @@
 package json
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // Marshal a struct into JSON
 func Marshal(v interface{}) ([]byte, error) {
-	js.Rewrite(`(function(v) {
+	macro.Rewrite(`(function(v) {
   try { return [ JSON.stringify(v), null ]  }
   catch (e) { return [ null, e ] }
 })($1)`, v)
@@ -14,7 +14,7 @@ func Marshal(v interface{}) ([]byte, error) {
 // Unmarshal a struct into JSON
 // TODO: create & use object.assign runtime
 func Unmarshal(data []byte, v interface{}) error {
-	js.Rewrite(`(function(data, v) {
+	macro.Rewrite(`(function(data, v) {
   try {
     var o = JSON.parse(data)
     for (var k in o) v[k] = o[k]

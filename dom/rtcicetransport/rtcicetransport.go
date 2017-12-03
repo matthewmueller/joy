@@ -13,7 +13,7 @@ import (
 	"github.com/matthewmueller/joy/dom/rtcstatsprovider"
 	"github.com/matthewmueller/joy/dom/rtcstatsreport"
 	"github.com/matthewmueller/joy/dom/window"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 var _ rtcstatsprovider.RTCStatsProvider = (*RTCIceTransport)(nil)
@@ -21,7 +21,7 @@ var _ window.EventTarget = (*RTCIceTransport)(nil)
 
 // New fn
 func New() *RTCIceTransport {
-	js.Rewrite("RTCIceTransport")
+	macro.Rewrite("RTCIceTransport")
 	return &RTCIceTransport{}
 }
 
@@ -33,138 +33,138 @@ type RTCIceTransport struct {
 // AddRemoteCandidate fn
 // js:"addRemoteCandidate"
 func (*RTCIceTransport) AddRemoteCandidate(remoteCandidate interface{}) {
-	js.Rewrite("$_.addRemoteCandidate($1)", remoteCandidate)
+	macro.Rewrite("$_.addRemoteCandidate($1)", remoteCandidate)
 }
 
 // CreateAssociatedTransport fn
 // js:"createAssociatedTransport"
 func (*RTCIceTransport) CreateAssociatedTransport() (r *RTCIceTransport) {
-	js.Rewrite("$_.createAssociatedTransport()")
+	macro.Rewrite("$_.createAssociatedTransport()")
 	return r
 }
 
 // GetNominatedCandidatePair fn
 // js:"getNominatedCandidatePair"
 func (*RTCIceTransport) GetNominatedCandidatePair() (r *rtcicecandidatepair.RTCIceCandidatePair) {
-	js.Rewrite("$_.getNominatedCandidatePair()")
+	macro.Rewrite("$_.getNominatedCandidatePair()")
 	return r
 }
 
 // GetRemoteCandidates fn
 // js:"getRemoteCandidates"
 func (*RTCIceTransport) GetRemoteCandidates() (r []*rtcicecandidatedictionary.RTCIceCandidateDictionary) {
-	js.Rewrite("$_.getRemoteCandidates()")
+	macro.Rewrite("$_.getRemoteCandidates()")
 	return r
 }
 
 // GetRemoteParameters fn
 // js:"getRemoteParameters"
 func (*RTCIceTransport) GetRemoteParameters() (r *rtciceparameters.RTCIceParameters) {
-	js.Rewrite("$_.getRemoteParameters()")
+	macro.Rewrite("$_.getRemoteParameters()")
 	return r
 }
 
 // SetRemoteCandidates fn
 // js:"setRemoteCandidates"
 func (*RTCIceTransport) SetRemoteCandidates(remoteCandidates []*rtcicecandidatedictionary.RTCIceCandidateDictionary) {
-	js.Rewrite("$_.setRemoteCandidates($1)", remoteCandidates)
+	macro.Rewrite("$_.setRemoteCandidates($1)", remoteCandidates)
 }
 
 // Start fn
 // js:"start"
 func (*RTCIceTransport) Start(gatherer *rtcicegatherer.RTCIceGatherer, remoteParameters *rtciceparameters.RTCIceParameters, role *rtcicerole.RTCIceRole) {
-	js.Rewrite("$_.start($1, $2, $3)", gatherer, remoteParameters, role)
+	macro.Rewrite("$_.start($1, $2, $3)", gatherer, remoteParameters, role)
 }
 
 // Stop fn
 // js:"stop"
 func (*RTCIceTransport) Stop() {
-	js.Rewrite("$_.stop()")
+	macro.Rewrite("$_.stop()")
 }
 
 // GetStats fn
 // js:"getStats"
 func (*RTCIceTransport) GetStats() (r *rtcstatsreport.RTCStatsReport) {
-	js.Rewrite("await $_.getStats()")
+	macro.Rewrite("await $_.getStats()")
 	return r
 }
 
 // MsGetStats fn
 // js:"msGetStats"
 func (*RTCIceTransport) MsGetStats() (r *rtcstatsreport.RTCStatsReport) {
-	js.Rewrite("await $_.msGetStats()")
+	macro.Rewrite("await $_.msGetStats()")
 	return r
 }
 
 // AddEventListener fn
 // js:"addEventListener"
 func (*RTCIceTransport) AddEventListener(kind string, listener func(evt window.Event), useCapture bool) {
-	js.Rewrite("$_.addEventListener($1, $2, $3)", kind, listener, useCapture)
+	macro.Rewrite("$_.addEventListener($1, $2, $3)", kind, listener, useCapture)
 }
 
 // DispatchEvent fn
 // js:"dispatchEvent"
 func (*RTCIceTransport) DispatchEvent(evt window.Event) (b bool) {
-	js.Rewrite("$_.dispatchEvent($1)", evt)
+	macro.Rewrite("$_.dispatchEvent($1)", evt)
 	return b
 }
 
 // RemoveEventListener fn
 // js:"removeEventListener"
 func (*RTCIceTransport) RemoveEventListener(kind string, listener func(evt window.Event), useCapture bool) {
-	js.Rewrite("$_.removeEventListener($1, $2, $3)", kind, listener, useCapture)
+	macro.Rewrite("$_.removeEventListener($1, $2, $3)", kind, listener, useCapture)
 }
 
 // Component prop
 // js:"component"
 func (*RTCIceTransport) Component() (component *rtcicecomponent.RTCIceComponent) {
-	js.Rewrite("$_.component")
+	macro.Rewrite("$_.component")
 	return component
 }
 
 // IceGatherer prop
 // js:"iceGatherer"
 func (*RTCIceTransport) IceGatherer() (iceGatherer *rtcicegatherer.RTCIceGatherer) {
-	js.Rewrite("$_.iceGatherer")
+	macro.Rewrite("$_.iceGatherer")
 	return iceGatherer
 }
 
 // Oncandidatepairchange prop
 // js:"oncandidatepairchange"
 func (*RTCIceTransport) Oncandidatepairchange() (oncandidatepairchange func(*rtcicecandidatepairchangedevent.RTCIceCandidatePairChangedEvent)) {
-	js.Rewrite("$_.oncandidatepairchange")
+	macro.Rewrite("$_.oncandidatepairchange")
 	return oncandidatepairchange
 }
 
 // SetOncandidatepairchange prop
 // js:"oncandidatepairchange"
 func (*RTCIceTransport) SetOncandidatepairchange(oncandidatepairchange func(*rtcicecandidatepairchangedevent.RTCIceCandidatePairChangedEvent)) {
-	js.Rewrite("$_.oncandidatepairchange = $1", oncandidatepairchange)
+	macro.Rewrite("$_.oncandidatepairchange = $1", oncandidatepairchange)
 }
 
 // Onicestatechange prop
 // js:"onicestatechange"
 func (*RTCIceTransport) Onicestatechange() (onicestatechange func(*rtcicetransportstatechangedevent.RTCIceTransportStateChangedEvent)) {
-	js.Rewrite("$_.onicestatechange")
+	macro.Rewrite("$_.onicestatechange")
 	return onicestatechange
 }
 
 // SetOnicestatechange prop
 // js:"onicestatechange"
 func (*RTCIceTransport) SetOnicestatechange(onicestatechange func(*rtcicetransportstatechangedevent.RTCIceTransportStateChangedEvent)) {
-	js.Rewrite("$_.onicestatechange = $1", onicestatechange)
+	macro.Rewrite("$_.onicestatechange = $1", onicestatechange)
 }
 
 // Role prop
 // js:"role"
 func (*RTCIceTransport) Role() (role *rtcicerole.RTCIceRole) {
-	js.Rewrite("$_.role")
+	macro.Rewrite("$_.role")
 	return role
 }
 
 // State prop
 // js:"state"
 func (*RTCIceTransport) State() (state *rtcicetransportstate.RTCIceTransportState) {
-	js.Rewrite("$_.state")
+	macro.Rewrite("$_.state")
 	return state
 }

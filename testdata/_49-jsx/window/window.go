@@ -1,6 +1,6 @@
 package window
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // EventTarget interface
 type EventTarget interface {
@@ -56,15 +56,15 @@ type event struct {
 }
 
 func (*event) PreventDefault() {
-	js.Rewrite("$_.preventDefault()")
+	macro.Rewrite("$_.preventDefault()")
 }
 
 func (*event) StopImmediatePropagation() {
-	js.Rewrite("$_.stopImmediatePropagation()")
+	macro.Rewrite("$_.stopImmediatePropagation()")
 }
 
 func (*event) Type() string {
-	js.Rewrite("$_.type")
+	macro.Rewrite("$_.type")
 	return ""
 }
 
@@ -77,13 +77,13 @@ type Window struct {
 
 // New window
 func New() *Window {
-	js.Rewrite("window")
+	macro.Rewrite("window")
 	return &Window{}
 }
 
 // Document fn
 func (w *Window) Document() Document {
-	js.Rewrite("$_.document")
+	macro.Rewrite("$_.document")
 	return NewDocument()
 }
 
@@ -98,7 +98,7 @@ type Document interface {
 }
 
 func documentElement() Element {
-	js.Rewrite("$_.documentElement")
+	macro.Rewrite("$_.documentElement")
 	return NewHTMLHTMLElement()
 }
 
@@ -116,19 +116,19 @@ type HTMLDocument struct {
 
 // NewDocument fn
 func NewDocument() *HTMLDocument {
-	js.Rewrite("document")
+	macro.Rewrite("document")
 	return &HTMLDocument{}
 }
 
 // DocumentElement fn
 func (h *HTMLDocument) DocumentElement() Element {
-	js.Rewrite("$_.documentElement")
+	macro.Rewrite("$_.documentElement")
 	return NewHTMLHTMLElement()
 }
 
 // Body fn
 func (h *HTMLDocument) Body() Element {
-	js.Rewrite("$_.body")
+	macro.Rewrite("$_.body")
 	return nil
 }
 
@@ -159,7 +159,7 @@ func (h *HTMLDocument) NodeType() int8 {
 
 // NodeName fn
 func (h *HTMLDocument) NodeName() string {
-	js.Rewrite("$_.nodeName")
+	macro.Rewrite("$_.nodeName")
 	return "#document"
 }
 
@@ -193,7 +193,7 @@ func NewHTMLHTMLElement(children ...Node) *HTMLHTMLElement {
 
 // AddEventListener fn
 func (h *HTMLHTMLElement) AddEventListener(kind string, fn func(e Event), capture bool) {
-	js.Rewrite("$_.addEventListener($1, $2, $3)", kind, fn, capture)
+	macro.Rewrite("$_.addEventListener($1, $2, $3)", kind, fn, capture)
 }
 
 // DispatchEvent fn
@@ -228,7 +228,7 @@ func (h *HTMLHTMLElement) NodeType() int8 {
 
 // NodeName fn
 func (h *HTMLHTMLElement) NodeName() string {
-	js.Rewrite("$_.nodeName")
+	macro.Rewrite("$_.nodeName")
 	return "HTML"
 }
 
@@ -249,7 +249,7 @@ func (h *HTMLHTMLElement) ID() string {
 
 // InnerHTML fn
 func (h *HTMLHTMLElement) InnerHTML() string {
-	js.Rewrite("$_.innerHTML")
+	macro.Rewrite("$_.innerHTML")
 	return ""
 }
 
@@ -284,7 +284,7 @@ func (h *HTMLHTMLElement) Blur() {
 }
 
 func (h *HTMLHTMLElement) QuerySelector(selector string) Element {
-	js.Rewrite("$_.querySelector($1)", selector)
+	macro.Rewrite("$_.querySelector($1)", selector)
 	return NewHTMLAnchorElement()
 }
 
@@ -316,7 +316,7 @@ func NewHTMLAnchorElement() *HTMLAnchorElement {
 
 // AddEventListener fn
 func (h *HTMLAnchorElement) AddEventListener(kind string, fn func(e Event), capture bool) {
-	js.Rewrite("$_.addEventListener($1, $2, $3)", kind, fn, capture)
+	macro.Rewrite("$_.addEventListener($1, $2, $3)", kind, fn, capture)
 }
 
 // DispatchEvent fn
@@ -351,7 +351,7 @@ func (h *HTMLAnchorElement) NodeType() int8 {
 
 // NodeName fn
 func (h *HTMLAnchorElement) NodeName() string {
-	js.Rewrite("$_.nodeName")
+	macro.Rewrite("$_.nodeName")
 	return "HTML"
 }
 
@@ -372,7 +372,7 @@ func (h *HTMLAnchorElement) ID() string {
 
 // InnerHTML fn
 func (h *HTMLAnchorElement) InnerHTML() string {
-	js.Rewrite("$_.innerHTML")
+	macro.Rewrite("$_.innerHTML")
 	return ""
 }
 
@@ -408,12 +408,12 @@ func (h *HTMLAnchorElement) Blur() {
 
 // QuerySelector fn
 func (h *HTMLAnchorElement) QuerySelector(selector string) Element {
-	js.Rewrite("$_.querySelector($1)", selector)
+	macro.Rewrite("$_.querySelector($1)", selector)
 	return nil
 }
 
 // Href string
 func (H *HTMLAnchorElement) Href() string {
-	js.Rewrite("$_.href")
+	macro.Rewrite("$_.href")
 	return "www.google.com"
 }

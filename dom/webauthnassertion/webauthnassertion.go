@@ -2,7 +2,7 @@ package webauthnassertion
 
 import (
 	"github.com/matthewmueller/joy/dom/scopedcredential"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // WebAuthnAssertion struct
@@ -13,27 +13,27 @@ type WebAuthnAssertion struct {
 // AuthenticatorData prop
 // js:"authenticatorData"
 func (*WebAuthnAssertion) AuthenticatorData() (authenticatorData []byte) {
-	js.Rewrite("$_.authenticatorData")
+	macro.Rewrite("$_.authenticatorData")
 	return authenticatorData
 }
 
 // ClientData prop
 // js:"clientData"
 func (*WebAuthnAssertion) ClientData() (clientData []byte) {
-	js.Rewrite("$_.clientData")
+	macro.Rewrite("$_.clientData")
 	return clientData
 }
 
 // Credential prop
 // js:"credential"
 func (*WebAuthnAssertion) Credential() (credential *scopedcredential.ScopedCredential) {
-	js.Rewrite("$_.credential")
+	macro.Rewrite("$_.credential")
 	return credential
 }
 
 // Signature prop
 // js:"signature"
 func (*WebAuthnAssertion) Signature() (signature []byte) {
-	js.Rewrite("$_.signature")
+	macro.Rewrite("$_.signature")
 	return signature
 }

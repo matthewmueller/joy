@@ -1,6 +1,6 @@
 package mediaerror
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 // MediaError struct
 // js:"MediaError,omit"
@@ -10,13 +10,13 @@ type MediaError struct {
 // Code prop
 // js:"code"
 func (*MediaError) Code() (code int8) {
-	js.Rewrite("$_.code")
+	macro.Rewrite("$_.code")
 	return code
 }
 
 // MsExtendedCode prop
 // js:"msExtendedCode"
 func (*MediaError) MsExtendedCode() (msExtendedCode int) {
-	js.Rewrite("$_.msExtendedCode")
+	macro.Rewrite("$_.msExtendedCode")
 	return msExtendedCode
 }

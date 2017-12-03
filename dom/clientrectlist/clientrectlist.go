@@ -2,7 +2,7 @@ package clientrectlist
 
 import (
 	"github.com/matthewmueller/joy/dom/clientrect"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // ClientRectList struct
@@ -13,13 +13,13 @@ type ClientRectList struct {
 // Item fn
 // js:"item"
 func (*ClientRectList) Item(index uint) (c *clientrect.ClientRect) {
-	js.Rewrite("$_.item($1)", index)
+	macro.Rewrite("$_.item($1)", index)
 	return c
 }
 
 // Length prop
 // js:"length"
 func (*ClientRectList) Length() (length uint) {
-	js.Rewrite("$_.length")
+	macro.Rewrite("$_.length")
 	return length
 }

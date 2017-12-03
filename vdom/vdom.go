@@ -41,7 +41,7 @@ type Node interface {
 
 // Render the component
 // func Render(component Child, parent *document.Node, merge *document.Node) {
-// 	js.Rewrite("$1.render($2, $3, $4)", File(), component, parent, merge)
+// 	macro.Rewrite("$1.render($2, $3, $4)", File(), component, parent, merge)
 // }
 
 // String turns the component into a string

@@ -2,12 +2,12 @@ package domparser
 
 import (
 	"github.com/matthewmueller/joy/dom/window"
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // New fn
 func New() *DOMParser {
-	js.Rewrite("DOMParser")
+	macro.Rewrite("DOMParser")
 	return &DOMParser{}
 }
 
@@ -19,6 +19,6 @@ type DOMParser struct {
 // ParseFromString fn
 // js:"parseFromString"
 func (*DOMParser) ParseFromString(source string, mimeType string) (w window.Document) {
-	js.Rewrite("$_.parseFromString($1, $2)", source, mimeType)
+	macro.Rewrite("$_.parseFromString($1, $2)", source, mimeType)
 	return w
 }

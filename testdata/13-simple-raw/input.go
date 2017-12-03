@@ -1,9 +1,9 @@
 package main
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 func main() {
 	x := 15
-	js.Raw("x += 5")
+	macro.Raw("x += 5")
 	println(x)
 }

@@ -28,3 +28,22 @@ dom:
 	# @go run cmd/joy/joy.go build ./_examples/dom
 	# @go run _examples/dom/dom.go
 .PHONY: dom
+
+# Show source statistics.
+cloc:
+	@cloc -exclude-dir=vendor,node_modules,dom,vdom,chrome .
+.PHONY: cloc
+
+# Show to-do items per file.
+todo:
+	@grep \
+		--exclude-dir=vendor \
+		--exclude-dir=node_modules \
+		--exclude-dir=chrome \
+		--exclude-dir=vdom \
+		--exclude-dir=dom \
+		--exclude=Makefile \
+		--text \
+		--color \
+		-nRo -E ' TODO:.*|SkipNow' .
+.PHONY: todo

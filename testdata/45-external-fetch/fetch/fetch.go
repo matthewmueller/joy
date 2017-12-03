@@ -1,11 +1,11 @@
 package fetch
 
 import (
-	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/macro"
 )
 
 // unfetch
-var unfetch = js.RawFile("./unfetch.js")
+var unfetch = macro.RawFile("./unfetch.js")
 
 // Options struct
 type Options struct {
@@ -14,7 +14,7 @@ type Options struct {
 
 // Fetch fn
 func Fetch(url string, options *Options) (*Response, error) {
-	js.Raw(`
+	macro.Raw(`
 	try {
 		var res = await unfetch(url, options)
 		return [ res, null ]

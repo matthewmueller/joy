@@ -1,11 +1,11 @@
 package main
 
-import "github.com/matthewmueller/joy/js"
+import "github.com/matthewmueller/joy/macro"
 
 func main() {
 	test("hi")
 }
 
 func test(msg string) {
-	js.Rewrite("console.log($1)", msg)
+	macro.Rewrite("console.log($1)", msg)
 }

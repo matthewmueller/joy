@@ -330,7 +330,7 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 				compositeLits = append(compositeLits, kind.String())
 
 			case *ast.CallExpr:
-				// look for js.RawFile(filename)
+				// look for macro.RawFile(filename)
 				file, e := checkJSRawFile(n, declaration.From)
 				if e != nil {
 					err = e
@@ -347,7 +347,7 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 					return true
 				}
 
-				// look for js.Rewrite(expression, variables...)
+				// look for macro.Rewrite(expression, variables...)
 				expr, vars, e := checkJSRewrite(n)
 				if e != nil {
 					err = e
