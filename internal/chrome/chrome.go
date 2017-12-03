@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path"
 	"strconv"
 	"strings"
 	"syscall"
@@ -40,6 +41,31 @@ type Settings struct {
 	Addr           string
 }
 
+var defaultFlags = []string{
+	"--disable-background-networking",
+	"--disable-background-timer-throttling",
+	"--disable-client-side-phishing-detection",
+	"--disable-default-apps",
+	"--disable-extensions",
+	"--disable-hang-monitor",
+	"--disable-popup-blocking",
+	"--disable-prompt-on-repost",
+	"--disable-sync",
+	"--disable-translate",
+	"--metrics-recording-only",
+	"--no-first-run",
+	"--safebrowsing-disable-auto-update",
+
+	"--enable-automation",
+	"--password-store=basic",
+	"--use-mock-keychain",
+
+	"--headless",
+	"--disable-gpu",
+	"--hide-scrollbars",
+	"--mute-audio",
+}
+
 var errStopped = errors.New("stopped")
 
 // New chrome
@@ -58,10 +84,15 @@ func New(parent context.Context, settings *Settings) (*Chrome, error) {
 	// default flags
 	flags := append(
 		settings.Flags,
-		"--headless",
-		"--disable-gpu",
-		"--remote-debugging-port="+addr.Port(),
+		defaultFlags...,
 	)
+
+	// user data dir
+	tmp := os.TempDir()
+	flags = append(flags, "--user-data-dir="+path.Join(tmp))
+
+	// remote debugging port
+	flags = append(flags, "--remote-debugging-port="+addr.Port())
 
 	// create the command
 	cmd := exec.CommandContext(ctx, settings.ExecutablePath, flags...)

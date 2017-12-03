@@ -13,6 +13,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/matthewmueller/golly/internal/chrome"
 	"github.com/matthewmueller/golly/internal/compiler/util"
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
@@ -81,8 +82,18 @@ func run(ctx context.Context) error {
 	}
 	filePath := path.Join(cwd, *runFile)
 
+	root, err := util.GollyPath()
+	if err != nil {
+		return errors.Wrapf(err, "error getting root path")
+	}
+
+	chromePath, err := chrome.Find(path.Join(root, "chrome"))
+	if err != nil {
+		return errors.Wrapf(err, "unable to get chrome path")
+	}
+
 	result, err := api.Run(ctx, &api.RunSettings{
-		ChromePath: os.Getenv("GOLLY_CHROME_PATH"),
+		ChromePath: chromePath,
 		FilePath:   filePath,
 	})
 	if err != nil {
