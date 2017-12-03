@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/dom/document"
-	"github.com/matthewmueller/golly/testdata/54-basic-jolly/header"
-	"github.com/matthewmueller/golly/testdata/54-basic-jolly/preact"
-	"github.com/matthewmueller/golly/vdom"
-	"github.com/matthewmueller/golly/vdom/h/h2"
+	"github.com/matthewmueller/joy/dom/document"
+	"github.com/matthewmueller/joy/testdata/54-basic-jolly/header"
+	"github.com/matthewmueller/joy/testdata/54-basic-jolly/preact"
+	"github.com/matthewmueller/joy/vdom"
+	"github.com/matthewmueller/joy/vdom/h/h2"
 )
 
 func main() {

@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/34-keyless-fields"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/34-keyless-fields"] = (function() {
 		function main () {
 			var settings = {
 				place: "USA"
@@ -26,5 +26,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/34-keyless-fields"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/34-keyless-fields"].main();
 })()

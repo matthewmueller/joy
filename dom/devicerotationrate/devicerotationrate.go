@@ -1,6 +1,6 @@
 package devicerotationrate
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // DeviceRotationRate struct
 // js:"DeviceRotationRate,omit"

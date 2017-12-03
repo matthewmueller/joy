@@ -1,6 +1,6 @@
 package svgrect
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // SVGRect struct
 // js:"SVGRect,omit"

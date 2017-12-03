@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/51-variadic-rewrite"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/51-variadic-rewrite"] = (function() {
 		var one = "1";
 		function main () {
 			console.log(1, ["b", "c"].map(function(a) { return one + "a" + a }).join(' '));
@@ -10,5 +10,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/51-variadic-rewrite"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/51-variadic-rewrite"].main();
 })()

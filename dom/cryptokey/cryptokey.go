@@ -1,8 +1,8 @@
 package cryptokey
 
 import (
-	"github.com/matthewmueller/golly/dom/keyalgorithm"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/keyalgorithm"
+	"github.com/matthewmueller/joy/js"
 )
 
 // CryptoKey struct

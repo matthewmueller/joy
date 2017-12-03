@@ -1,8 +1,8 @@
 package mediakeymessageeventinit
 
 import (
-	"github.com/matthewmueller/golly/dom/eventinit"
-	"github.com/matthewmueller/golly/dom/mediakeymessagetype"
+	"github.com/matthewmueller/joy/dom/eventinit"
+	"github.com/matthewmueller/joy/dom/mediakeymessagetype"
 )
 
 type MediaKeyMessageEventInit struct {

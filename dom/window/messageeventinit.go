@@ -1,6 +1,6 @@
 package window
 
-import "github.com/matthewmueller/golly/dom/eventinit"
+import "github.com/matthewmueller/joy/dom/eventinit"
 
 type MessageEventInit struct {
 	*eventinit.EventInit

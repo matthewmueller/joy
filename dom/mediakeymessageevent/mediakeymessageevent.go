@@ -1,10 +1,10 @@
 package mediakeymessageevent
 
 import (
-	"github.com/matthewmueller/golly/dom/mediakeymessageeventinit"
-	"github.com/matthewmueller/golly/dom/mediakeymessagetype"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/mediakeymessageeventinit"
+	"github.com/matthewmueller/joy/dom/mediakeymessagetype"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.Event = (*MediaKeyMessageEvent)(nil)

@@ -1,6 +1,6 @@
 package svganimatedboolean
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // SVGAnimatedBoolean struct
 // js:"SVGAnimatedBoolean,omit"

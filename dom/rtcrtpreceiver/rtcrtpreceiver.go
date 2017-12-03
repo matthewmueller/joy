@@ -1,14 +1,14 @@
 package rtcrtpreceiver
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcdtlstransport"
-	"github.com/matthewmueller/golly/dom/rtcrtpcapabilities"
-	"github.com/matthewmueller/golly/dom/rtcrtpcontributingsource"
-	"github.com/matthewmueller/golly/dom/rtcrtpparameters"
-	"github.com/matthewmueller/golly/dom/rtcstatsprovider"
-	"github.com/matthewmueller/golly/dom/rtcstatsreport"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/rtcdtlstransport"
+	"github.com/matthewmueller/joy/dom/rtcrtpcapabilities"
+	"github.com/matthewmueller/joy/dom/rtcrtpcontributingsource"
+	"github.com/matthewmueller/joy/dom/rtcrtpparameters"
+	"github.com/matthewmueller/joy/dom/rtcstatsprovider"
+	"github.com/matthewmueller/joy/dom/rtcstatsreport"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ rtcstatsprovider.RTCStatsProvider = (*RTCRtpReceiver)(nil)

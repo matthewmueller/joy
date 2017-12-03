@@ -1,10 +1,10 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/mediadeviceinfo"
-	"github.com/matthewmueller/golly/dom/mediastreamconstraints"
-	"github.com/matthewmueller/golly/dom/mediatracksupportedconstraints"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/mediadeviceinfo"
+	"github.com/matthewmueller/joy/dom/mediastreamconstraints"
+	"github.com/matthewmueller/joy/dom/mediatracksupportedconstraints"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ EventTarget = (*MediaDevices)(nil)

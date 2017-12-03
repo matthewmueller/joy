@@ -3,8 +3,8 @@ package defs
 import (
 	"go/ast"
 
-	"github.com/matthewmueller/golly/internal/compiler/def"
-	"github.com/matthewmueller/golly/internal/compiler/util"
+	"github.com/matthewmueller/joy/internal/compiler/def"
+	"github.com/matthewmueller/joy/internal/compiler/util"
 )
 
 var _ def.Rewrite = (*rewrite)(nil)

@@ -1,9 +1,9 @@
 package paymentresponse
 
 import (
-	"github.com/matthewmueller/golly/dom/paymentaddress"
-	"github.com/matthewmueller/golly/dom/paymentcomplete"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/paymentaddress"
+	"github.com/matthewmueller/joy/dom/paymentcomplete"
+	"github.com/matthewmueller/joy/js"
 )
 
 // PaymentResponse struct

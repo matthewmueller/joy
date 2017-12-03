@@ -1,6 +1,6 @@
 package focusnavigationeventinit
 
-import "github.com/matthewmueller/golly/dom/eventinit"
+import "github.com/matthewmueller/joy/dom/eventinit"
 
 type FocusNavigationEventInit struct {
 	*eventinit.EventInit

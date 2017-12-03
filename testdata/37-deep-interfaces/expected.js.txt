@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/37-deep-interfaces"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/37-deep-interfaces"] = (function() {
 		vnode.prototype.String = function() {
 			var v = this;
 			return "earth";
@@ -31,5 +31,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/37-deep-interfaces"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/37-deep-interfaces"].main();
 })()

@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 
-	"github.com/matthewmueller/golly/internal/compiler"
-	"github.com/matthewmueller/golly/internal/compiler/script"
+	"github.com/matthewmueller/joy/internal/compiler"
+	"github.com/matthewmueller/joy/internal/compiler/script"
 )
 
 // BuildSettings struct

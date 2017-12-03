@@ -1,8 +1,8 @@
 package rtcicecandidate
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcicecandidateinit"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/rtcicecandidateinit"
+	"github.com/matthewmueller/joy/js"
 )
 
 // New fn

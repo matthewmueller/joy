@@ -1,10 +1,10 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/htmlallcollection"
-	"github.com/matthewmueller/golly/dom/location"
-	"github.com/matthewmueller/golly/dom/visibilitystate"
-	"github.com/matthewmueller/golly/dom/xpathnsresolver"
+	"github.com/matthewmueller/joy/dom/htmlallcollection"
+	"github.com/matthewmueller/joy/dom/location"
+	"github.com/matthewmueller/joy/dom/visibilitystate"
+	"github.com/matthewmueller/joy/dom/xpathnsresolver"
 )
 
 // Document interface

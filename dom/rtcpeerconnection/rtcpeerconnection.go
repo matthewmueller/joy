@@ -1,18 +1,18 @@
 package rtcpeerconnection
 
 import (
-	"github.com/matthewmueller/golly/dom/domerror"
-	"github.com/matthewmueller/golly/dom/mediastreamevent"
-	"github.com/matthewmueller/golly/dom/rtcconfiguration"
-	"github.com/matthewmueller/golly/dom/rtcicecandidate"
-	"github.com/matthewmueller/golly/dom/rtciceconnectionstate"
-	"github.com/matthewmueller/golly/dom/rtcicegatheringstate"
-	"github.com/matthewmueller/golly/dom/rtcofferoptions"
-	"github.com/matthewmueller/golly/dom/rtcpeerconnectioniceevent"
-	"github.com/matthewmueller/golly/dom/rtcsessiondescription"
-	"github.com/matthewmueller/golly/dom/rtcsignalingstate"
-	"github.com/matthewmueller/golly/dom/rtcstatsreport"
-	"github.com/matthewmueller/golly/dom/window"
+	"github.com/matthewmueller/joy/dom/domerror"
+	"github.com/matthewmueller/joy/dom/mediastreamevent"
+	"github.com/matthewmueller/joy/dom/rtcconfiguration"
+	"github.com/matthewmueller/joy/dom/rtcicecandidate"
+	"github.com/matthewmueller/joy/dom/rtciceconnectionstate"
+	"github.com/matthewmueller/joy/dom/rtcicegatheringstate"
+	"github.com/matthewmueller/joy/dom/rtcofferoptions"
+	"github.com/matthewmueller/joy/dom/rtcpeerconnectioniceevent"
+	"github.com/matthewmueller/joy/dom/rtcsessiondescription"
+	"github.com/matthewmueller/joy/dom/rtcsignalingstate"
+	"github.com/matthewmueller/joy/dom/rtcstatsreport"
+	"github.com/matthewmueller/joy/dom/window"
 )
 
 // RTCPeerConnection interface

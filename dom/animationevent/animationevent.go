@@ -1,9 +1,9 @@
 package animationevent
 
 import (
-	"github.com/matthewmueller/golly/dom/animationeventinit"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/animationeventinit"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.Event = (*AnimationEvent)(nil)

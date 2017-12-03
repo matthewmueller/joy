@@ -1,8 +1,8 @@
 package svganimatedpreserveaspectratio
 
 import (
-	"github.com/matthewmueller/golly/dom/svgpreserveaspectratio"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/svgpreserveaspectratio"
+	"github.com/matthewmueller/joy/js"
 )
 
 // SVGAnimatedPreserveAspectRatio struct

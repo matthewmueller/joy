@@ -1,8 +1,8 @@
 package mediadeviceinfo
 
 import (
-	"github.com/matthewmueller/golly/dom/mediadevicekind"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/mediadevicekind"
+	"github.com/matthewmueller/joy/js"
 )
 
 // MediaDeviceInfo struct

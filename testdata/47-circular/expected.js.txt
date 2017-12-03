@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/47-circular/element"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/47-circular/element"] = (function() {
 		function element (o) {
 			o = o || {};
 			this.tag = o.tag || "";
@@ -23,8 +23,8 @@
 			New: New
 		};
 	})();
-	pkg["github.com/matthewmueller/golly/testdata/47-circular"] = (function() {
-		var element = pkg["github.com/matthewmueller/golly/testdata/47-circular/element"];
+	pkg["github.com/matthewmueller/joy/testdata/47-circular"] = (function() {
+		var element = pkg["github.com/matthewmueller/joy/testdata/47-circular/element"];
 		page.prototype.Render = function() {
 			var p = this;
 			return element.New("header", element.New("strong", null)).Render();
@@ -40,5 +40,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/47-circular"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/47-circular"].main();
 })()

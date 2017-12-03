@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/testdata/49-jsx/header"
-	"github.com/matthewmueller/golly/testdata/49-jsx/preact"
-	"github.com/matthewmueller/golly/testdata/49-jsx/window"
-	"github.com/matthewmueller/golly/vdom"
-	"github.com/matthewmueller/golly/vdom/h/h2"
+	"github.com/matthewmueller/joy/testdata/49-jsx/header"
+	"github.com/matthewmueller/joy/testdata/49-jsx/preact"
+	"github.com/matthewmueller/joy/testdata/49-jsx/window"
+	"github.com/matthewmueller/joy/vdom"
+	"github.com/matthewmueller/joy/vdom/h/h2"
 )
 
 func main() {

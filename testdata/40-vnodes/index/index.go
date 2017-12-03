@@ -1,9 +1,9 @@
 package index
 
 import (
-	"github.com/matthewmueller/golly/testdata/40-vnodes/vnode"
-	"github.com/matthewmueller/golly/testdata/40-vnodes/vnode/component"
-	"github.com/matthewmueller/golly/testdata/40-vnodes/vnode/element"
+	"github.com/matthewmueller/joy/testdata/40-vnodes/vnode"
+	"github.com/matthewmueller/joy/testdata/40-vnodes/vnode/component"
+	"github.com/matthewmueller/joy/testdata/40-vnodes/vnode/element"
 )
 
 // Props struct

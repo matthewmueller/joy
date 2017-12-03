@@ -1,9 +1,9 @@
 package datatransferitemlist
 
 import (
-	"github.com/matthewmueller/golly/dom/datatransferitem"
-	"github.com/matthewmueller/golly/dom/file"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/datatransferitem"
+	"github.com/matthewmueller/joy/dom/file"
+	"github.com/matthewmueller/joy/js"
 )
 
 // DataTransferItemList struct

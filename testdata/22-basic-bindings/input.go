@@ -1,6 +1,6 @@
 package main
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // definition
 func definition(a string, b int) ([]string, error) {

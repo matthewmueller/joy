@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/medialist"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/medialist"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ StyleSheet = (*CSSStyleSheet)(nil)

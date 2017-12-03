@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/mediakeysessiontype"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/mediakeysessiontype"
+	"github.com/matthewmueller/joy/js"
 )
 
 // MediaKeys struct

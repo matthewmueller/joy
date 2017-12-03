@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/testdata/21-packages/dep"
+	"github.com/matthewmueller/joy/testdata/21-packages/dep"
 )
 
 func main() {

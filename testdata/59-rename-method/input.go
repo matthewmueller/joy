@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/js"
-	"github.com/matthewmueller/golly/testdata/59-rename-method/dep"
+	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/testdata/59-rename-method/dep"
 )
 
 func main() {

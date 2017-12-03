@@ -3,9 +3,9 @@ package header
 import (
 	"strconv"
 
-	"github.com/matthewmueller/golly/js"
-	"github.com/matthewmueller/golly/vdom"
-	"github.com/matthewmueller/golly/vdom/h/h3"
+	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/vdom"
+	"github.com/matthewmueller/joy/vdom/h/h3"
 )
 
 // Header struct

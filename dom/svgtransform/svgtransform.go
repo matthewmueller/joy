@@ -1,8 +1,8 @@
 package svgtransform
 
 import (
-	"github.com/matthewmueller/golly/dom/svgmatrix"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/svgmatrix"
+	"github.com/matthewmueller/joy/js"
 )
 
 // SVGTransform struct

@@ -1,6 +1,6 @@
 package navigationevent
 
-import "github.com/matthewmueller/golly/dom/window"
+import "github.com/matthewmueller/joy/dom/window"
 
 // NavigationEvent interface
 // js:"NavigationEvent"

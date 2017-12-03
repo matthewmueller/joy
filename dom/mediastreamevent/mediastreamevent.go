@@ -1,9 +1,9 @@
 package mediastreamevent
 
 import (
-	"github.com/matthewmueller/golly/dom/mediastreameventinit"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/mediastreameventinit"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.Event = (*MediaStreamEvent)(nil)

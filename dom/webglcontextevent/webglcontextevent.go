@@ -1,9 +1,9 @@
 package webglcontextevent
 
 import (
-	"github.com/matthewmueller/golly/dom/webglcontexteventinit"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/webglcontexteventinit"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.Event = (*WebGLContextEvent)(nil)

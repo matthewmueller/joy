@@ -1,6 +1,6 @@
 package main
 
-import "github.com/matthewmueller/golly/testdata/64-other-type-defs/dep"
+import "github.com/matthewmueller/joy/testdata/64-other-type-defs/dep"
 
 // String type
 type String string

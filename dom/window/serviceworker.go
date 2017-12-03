@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/serviceworkerstate"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/serviceworkerstate"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ EventTarget = (*ServiceWorker)(nil)

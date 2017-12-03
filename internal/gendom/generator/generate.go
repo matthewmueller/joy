@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/golly/internal/gen"
+	"github.com/matthewmueller/joy/internal/gen"
 	"github.com/tj/go/semaphore"
 )
 

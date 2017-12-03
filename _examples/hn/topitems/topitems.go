@@ -1,9 +1,9 @@
 package topitems
 
 import (
-	"github.com/matthewmueller/golly/jsx"
-	"github.com/matthewmueller/golly/testdata/56-hn-preact/item"
-	"github.com/matthewmueller/golly/testdata/56-hn-preact/preact"
+	"github.com/matthewmueller/joy/jsx"
+	"github.com/matthewmueller/joy/testdata/56-hn-preact/item"
+	"github.com/matthewmueller/joy/testdata/56-hn-preact/preact"
 )
 
 type component struct {

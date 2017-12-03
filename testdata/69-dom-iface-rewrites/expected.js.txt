@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/69-dom-iface-rewrites"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/69-dom-iface-rewrites"] = (function() {
 		function main () {
 			var w = window;
 			var doc = w.document;
@@ -11,5 +11,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/69-dom-iface-rewrites"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/69-dom-iface-rewrites"].main();
 })()

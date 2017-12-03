@@ -9,8 +9,8 @@ import (
 	"golang.org/x/tools/go/loader"
 
 	"github.com/fatih/structtag"
-	"github.com/matthewmueller/golly/internal/compiler/def"
-	"github.com/matthewmueller/golly/internal/compiler/index"
+	"github.com/matthewmueller/joy/internal/compiler/def"
+	"github.com/matthewmueller/joy/internal/compiler/index"
 )
 
 // Typer interface

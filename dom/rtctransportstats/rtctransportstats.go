@@ -1,6 +1,6 @@
 package rtctransportstats
 
-import "github.com/matthewmueller/golly/dom/rtcstats"
+import "github.com/matthewmueller/joy/dom/rtcstats"
 
 type RTCTransportStats struct {
 	*rtcstats.RTCStats

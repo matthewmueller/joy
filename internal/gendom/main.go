@@ -9,7 +9,7 @@ import (
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
-	"github.com/matthewmueller/golly/internal/gendom/generator"
+	"github.com/matthewmueller/joy/internal/gendom/generator"
 )
 
 func main() {

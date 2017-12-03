@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/domerror"
-	"github.com/matthewmueller/golly/dom/idbrequestreadystate"
+	"github.com/matthewmueller/joy/dom/domerror"
+	"github.com/matthewmueller/joy/dom/idbrequestreadystate"
 )
 
 // IDBRequest interface

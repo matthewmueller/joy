@@ -1,9 +1,9 @@
 package audionode
 
 import (
-	"github.com/matthewmueller/golly/dom/channelcountmode"
-	"github.com/matthewmueller/golly/dom/channelinterpretation"
-	"github.com/matthewmueller/golly/dom/window"
+	"github.com/matthewmueller/joy/dom/channelcountmode"
+	"github.com/matthewmueller/joy/dom/channelinterpretation"
+	"github.com/matthewmueller/joy/dom/window"
 )
 
 // AudioNode interface

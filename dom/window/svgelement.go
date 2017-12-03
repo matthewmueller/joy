@@ -1,6 +1,6 @@
 package window
 
-import "github.com/matthewmueller/golly/dom/domstringmap"
+import "github.com/matthewmueller/joy/dom/domstringmap"
 
 // SVGElement interface
 // js:"SVGElement"

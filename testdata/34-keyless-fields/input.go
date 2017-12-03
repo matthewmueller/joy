@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/testdata/34-keyless-fields/dep/dep"
+	"github.com/matthewmueller/joy/testdata/34-keyless-fields/dep/dep"
 )
 
 // Phone struct

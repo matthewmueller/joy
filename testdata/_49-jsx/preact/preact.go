@@ -1,9 +1,9 @@
 package preact
 
 import (
-	"github.com/matthewmueller/golly/js"
-	"github.com/matthewmueller/golly/testdata/49-jsx/window"
-	"github.com/matthewmueller/golly/vdom"
+	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/testdata/49-jsx/window"
+	"github.com/matthewmueller/joy/vdom"
 )
 
 // Render the component

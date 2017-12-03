@@ -1,6 +1,6 @@
 package audiobuffer
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // AudioBuffer struct
 // js:"AudioBuffer,omit"

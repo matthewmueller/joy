@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/dom/htmlanchorelement"
-	"github.com/matthewmueller/golly/dom/htmlhtmlelement"
-	"github.com/matthewmueller/golly/dom/websocket"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/dom/xmlhttprequest"
+	"github.com/matthewmueller/joy/dom/htmlanchorelement"
+	"github.com/matthewmueller/joy/dom/htmlhtmlelement"
+	"github.com/matthewmueller/joy/dom/websocket"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/dom/xmlhttprequest"
 )
 
 func main() {

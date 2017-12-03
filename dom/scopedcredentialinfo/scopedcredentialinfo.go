@@ -1,9 +1,9 @@
 package scopedcredentialinfo
 
 import (
-	"github.com/matthewmueller/golly/dom/cryptokey"
-	"github.com/matthewmueller/golly/dom/scopedcredential"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/cryptokey"
+	"github.com/matthewmueller/joy/dom/scopedcredential"
+	"github.com/matthewmueller/joy/js"
 )
 
 // ScopedCredentialInfo struct

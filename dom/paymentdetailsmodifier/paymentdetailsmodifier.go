@@ -1,6 +1,6 @@
 package paymentdetailsmodifier
 
-import "github.com/matthewmueller/golly/dom/paymentitem"
+import "github.com/matthewmueller/joy/dom/paymentitem"
 
 type PaymentDetailsModifier struct {
 	additionalDisplayItems *[]*paymentitem.PaymentItem

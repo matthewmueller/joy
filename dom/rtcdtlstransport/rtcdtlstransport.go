@@ -1,14 +1,14 @@
 package rtcdtlstransport
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcdtlsparameters"
-	"github.com/matthewmueller/golly/dom/rtcdtlstransportstate"
-	"github.com/matthewmueller/golly/dom/rtcdtlstransportstatechangedevent"
-	"github.com/matthewmueller/golly/dom/rtcicetransport"
-	"github.com/matthewmueller/golly/dom/rtcstatsprovider"
-	"github.com/matthewmueller/golly/dom/rtcstatsreport"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/rtcdtlsparameters"
+	"github.com/matthewmueller/joy/dom/rtcdtlstransportstate"
+	"github.com/matthewmueller/joy/dom/rtcdtlstransportstatechangedevent"
+	"github.com/matthewmueller/joy/dom/rtcicetransport"
+	"github.com/matthewmueller/joy/dom/rtcstatsprovider"
+	"github.com/matthewmueller/joy/dom/rtcstatsreport"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ rtcstatsprovider.RTCStatsProvider = (*RTCDtlsTransport)(nil)

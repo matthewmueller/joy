@@ -1,6 +1,6 @@
 package mswebviewsettings
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // MSWebViewSettings struct
 // js:"MSWebViewSettings,omit"

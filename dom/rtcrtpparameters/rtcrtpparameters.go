@@ -1,11 +1,11 @@
 package rtcrtpparameters
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcdegradationpreference"
-	"github.com/matthewmueller/golly/dom/rtcrtcpparameters"
-	"github.com/matthewmueller/golly/dom/rtcrtpcodecparameters"
-	"github.com/matthewmueller/golly/dom/rtcrtpencodingparameters"
-	"github.com/matthewmueller/golly/dom/rtcrtpheaderextensionparameters"
+	"github.com/matthewmueller/joy/dom/rtcdegradationpreference"
+	"github.com/matthewmueller/joy/dom/rtcrtcpparameters"
+	"github.com/matthewmueller/joy/dom/rtcrtpcodecparameters"
+	"github.com/matthewmueller/joy/dom/rtcrtpencodingparameters"
+	"github.com/matthewmueller/joy/dom/rtcrtpheaderextensionparameters"
 )
 
 type RTCRtpParameters struct {

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/golly/internal/compiler/loader"
+	"github.com/matthewmueller/joy/internal/compiler/loader"
 )
 
 var dirname string

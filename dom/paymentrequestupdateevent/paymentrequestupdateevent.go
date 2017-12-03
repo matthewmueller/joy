@@ -1,10 +1,10 @@
 package paymentrequestupdateevent
 
 import (
-	"github.com/matthewmueller/golly/dom/paymentdetails"
-	"github.com/matthewmueller/golly/dom/paymentrequestupdateeventinit"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/paymentdetails"
+	"github.com/matthewmueller/joy/dom/paymentrequestupdateeventinit"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.Event = (*PaymentRequestUpdateEvent)(nil)

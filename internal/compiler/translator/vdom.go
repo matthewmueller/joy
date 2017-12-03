@@ -5,12 +5,12 @@ import (
 	"go/ast"
 	"strings"
 
-	"github.com/matthewmueller/golly/internal/compiler/def"
-	"github.com/matthewmueller/golly/internal/compiler/defs"
-	"github.com/matthewmueller/golly/internal/compiler/index"
-	"github.com/matthewmueller/golly/internal/compiler/scope"
-	"github.com/matthewmueller/golly/internal/compiler/util"
-	"github.com/matthewmueller/golly/internal/jsast"
+	"github.com/matthewmueller/joy/internal/compiler/def"
+	"github.com/matthewmueller/joy/internal/compiler/defs"
+	"github.com/matthewmueller/joy/internal/compiler/index"
+	"github.com/matthewmueller/joy/internal/compiler/scope"
+	"github.com/matthewmueller/joy/internal/compiler/util"
+	"github.com/matthewmueller/joy/internal/jsast"
 )
 
 func (tr *Translator) maybeVDOMLit(d def.Definition, n *ast.CompositeLit) (jsast.IExpression, error) {

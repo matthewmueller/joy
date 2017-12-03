@@ -9,7 +9,7 @@ import (
 	"runtime"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/golly/internal/dom/index"
+	"github.com/matthewmueller/joy/internal/dom/index"
 )
 
 type task struct {

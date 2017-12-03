@@ -1,6 +1,6 @@
 package domstringlist
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // DOMStringList struct
 // js:"DOMStringList,omit"

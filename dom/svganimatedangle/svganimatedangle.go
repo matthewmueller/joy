@@ -1,8 +1,8 @@
 package svganimatedangle
 
 import (
-	"github.com/matthewmueller/golly/dom/svgangle"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/svgangle"
+	"github.com/matthewmueller/joy/js"
 )
 
 // SVGAnimatedAngle struct

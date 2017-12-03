@@ -1,8 +1,8 @@
 package mediakeysystemconfiguration
 
 import (
-	"github.com/matthewmueller/golly/dom/mediakeysrequirement"
-	"github.com/matthewmueller/golly/dom/mediakeysystemmediacapability"
+	"github.com/matthewmueller/joy/dom/mediakeysrequirement"
+	"github.com/matthewmueller/joy/dom/mediakeysystemmediacapability"
 )
 
 type MediaKeySystemConfiguration struct {

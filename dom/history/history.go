@@ -1,6 +1,6 @@
 package history
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // History struct
 // js:"History,omit"

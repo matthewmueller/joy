@@ -1,6 +1,6 @@
 package validitystate
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // ValidityState struct
 // js:"ValidityState,omit"

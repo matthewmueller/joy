@@ -1,12 +1,12 @@
 package mstransportdiagnosticsstats
 
 import (
-	"github.com/matthewmueller/golly/dom/msiceaddrtype"
-	"github.com/matthewmueller/golly/dom/msicewarningflags"
-	"github.com/matthewmueller/golly/dom/msnetworkinterfacetype"
-	"github.com/matthewmueller/golly/dom/rtciceprotocol"
-	"github.com/matthewmueller/golly/dom/rtcicerole"
-	"github.com/matthewmueller/golly/dom/rtcstats"
+	"github.com/matthewmueller/joy/dom/msiceaddrtype"
+	"github.com/matthewmueller/joy/dom/msicewarningflags"
+	"github.com/matthewmueller/joy/dom/msnetworkinterfacetype"
+	"github.com/matthewmueller/joy/dom/rtciceprotocol"
+	"github.com/matthewmueller/joy/dom/rtcicerole"
+	"github.com/matthewmueller/joy/dom/rtcstats"
 )
 
 type MSTransportDiagnosticsStats struct {

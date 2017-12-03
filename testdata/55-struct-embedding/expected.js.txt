@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/55-struct-embedding"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/55-struct-embedding"] = (function() {
 		entity.prototype.Entity = function() {
 			var t = this;
 			return "ent";
@@ -54,5 +54,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/55-struct-embedding"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/55-struct-embedding"].main();
 })()

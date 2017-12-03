@@ -1,8 +1,8 @@
 package speechsynthesiseventinit
 
 import (
-	"github.com/matthewmueller/golly/dom/eventinit"
-	"github.com/matthewmueller/golly/dom/window"
+	"github.com/matthewmueller/joy/dom/eventinit"
+	"github.com/matthewmueller/joy/dom/window"
 )
 
 type SpeechSynthesisEventInit struct {

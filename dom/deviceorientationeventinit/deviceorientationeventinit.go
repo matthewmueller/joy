@@ -1,6 +1,6 @@
 package deviceorientationeventinit
 
-import "github.com/matthewmueller/golly/dom/eventinit"
+import "github.com/matthewmueller/joy/dom/eventinit"
 
 type DeviceOrientationEventInit struct {
 	*eventinit.EventInit

@@ -1,10 +1,10 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/domstringlist"
-	"github.com/matthewmueller/golly/dom/idbobjectstoreparameters"
-	"github.com/matthewmueller/golly/dom/idbtransactionmode"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/domstringlist"
+	"github.com/matthewmueller/joy/dom/idbobjectstoreparameters"
+	"github.com/matthewmueller/joy/dom/idbtransactionmode"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ EventTarget = (*IDBDatabase)(nil)

@@ -1,6 +1,6 @@
 package barprop
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // BarProp struct
 // js:"BarProp,omit"

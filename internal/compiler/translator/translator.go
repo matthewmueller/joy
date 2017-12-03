@@ -10,16 +10,16 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/matthewmueller/golly/internal/compiler/defs"
-	"github.com/matthewmueller/golly/internal/compiler/util"
+	"github.com/matthewmueller/joy/internal/compiler/defs"
+	"github.com/matthewmueller/joy/internal/compiler/util"
 
 	"golang.org/x/tools/go/loader"
 
-	"github.com/matthewmueller/golly/internal/compiler/db"
-	"github.com/matthewmueller/golly/internal/compiler/def"
-	"github.com/matthewmueller/golly/internal/compiler/index"
-	"github.com/matthewmueller/golly/internal/compiler/scope"
-	"github.com/matthewmueller/golly/internal/jsast"
+	"github.com/matthewmueller/joy/internal/compiler/db"
+	"github.com/matthewmueller/joy/internal/compiler/def"
+	"github.com/matthewmueller/joy/internal/compiler/index"
+	"github.com/matthewmueller/joy/internal/compiler/scope"
+	"github.com/matthewmueller/joy/internal/jsast"
 	"github.com/pkg/errors"
 )
 

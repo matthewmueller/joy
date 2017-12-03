@@ -1,6 +1,6 @@
 package main
 
-import "github.com/matthewmueller/golly/internal/compiler/loader/testdata/dom/window"
+import "github.com/matthewmueller/joy/internal/compiler/loader/testdata/dom/window"
 
 func Element() window.Element {
 	return nil

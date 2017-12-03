@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/mediastreamconstraints"
-	"github.com/matthewmueller/golly/dom/mediastreamerror"
+	"github.com/matthewmueller/joy/dom/mediastreamconstraints"
+	"github.com/matthewmueller/joy/dom/mediastreamerror"
 )
 
 // NavigatorUserMedia interface

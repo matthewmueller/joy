@@ -1,10 +1,10 @@
 package mediasource
 
 import (
-	"github.com/matthewmueller/golly/dom/avtrack"
-	"github.com/matthewmueller/golly/dom/sourcebufferlist"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/avtrack"
+	"github.com/matthewmueller/joy/dom/sourcebufferlist"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.EventTarget = (*MediaSource)(nil)

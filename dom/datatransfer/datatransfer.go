@@ -1,10 +1,10 @@
 package datatransfer
 
 import (
-	"github.com/matthewmueller/golly/dom/datatransferitemlist"
-	"github.com/matthewmueller/golly/dom/domstringlist"
-	"github.com/matthewmueller/golly/dom/filelist"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/datatransferitemlist"
+	"github.com/matthewmueller/joy/dom/domstringlist"
+	"github.com/matthewmueller/joy/dom/filelist"
+	"github.com/matthewmueller/joy/js"
 )
 
 // DataTransfer struct

@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/13-simple-raw"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/13-simple-raw"] = (function() {
 		function main () {
 			var x = 15;
 			x += 5;
@@ -10,5 +10,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/13-simple-raw"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/13-simple-raw"].main();
 })()

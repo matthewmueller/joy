@@ -1,12 +1,12 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/deviceacceleration"
-	"github.com/matthewmueller/golly/dom/deviceaccelerationdict"
-	"github.com/matthewmueller/golly/dom/devicemotioneventinit"
-	"github.com/matthewmueller/golly/dom/devicerotationrate"
-	"github.com/matthewmueller/golly/dom/devicerotationratedict"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/deviceacceleration"
+	"github.com/matthewmueller/joy/dom/deviceaccelerationdict"
+	"github.com/matthewmueller/joy/dom/devicemotioneventinit"
+	"github.com/matthewmueller/joy/dom/devicerotationrate"
+	"github.com/matthewmueller/joy/dom/devicerotationratedict"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ Event = (*DeviceMotionEvent)(nil)

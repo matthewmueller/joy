@@ -5,17 +5,17 @@ import (
 	"sort"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/golly/internal/compiler/def"
-	"github.com/matthewmueller/golly/internal/compiler/defs"
-	"github.com/matthewmueller/golly/internal/compiler/index"
-	"github.com/matthewmueller/golly/internal/compiler/script"
-	"github.com/matthewmueller/golly/internal/compiler/translator"
-	"github.com/matthewmueller/golly/internal/jsast"
+	"github.com/matthewmueller/joy/internal/compiler/def"
+	"github.com/matthewmueller/joy/internal/compiler/defs"
+	"github.com/matthewmueller/joy/internal/compiler/index"
+	"github.com/matthewmueller/joy/internal/compiler/script"
+	"github.com/matthewmueller/joy/internal/compiler/translator"
+	"github.com/matthewmueller/joy/internal/jsast"
 	"github.com/pkg/errors"
 
-	"github.com/matthewmueller/golly/internal/compiler/db"
-	"github.com/matthewmueller/golly/internal/compiler/graph"
-	"github.com/matthewmueller/golly/internal/compiler/loader"
+	"github.com/matthewmueller/joy/internal/compiler/db"
+	"github.com/matthewmueller/joy/internal/compiler/graph"
+	"github.com/matthewmueller/joy/internal/compiler/loader"
 )
 
 // module struct

@@ -1,6 +1,6 @@
 package xmlhttprequesteventtarget
 
-import "github.com/matthewmueller/golly/dom/window"
+import "github.com/matthewmueller/joy/dom/window"
 
 // XMLHTTPRequestEventTarget interface
 // js:"XMLHTTPRequestEventTarget"

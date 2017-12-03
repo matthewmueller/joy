@@ -7,7 +7,7 @@ import (
 	"go/token"
 	"testing"
 
-	"github.com/matthewmueller/golly/internal/compiler/variable"
+	"github.com/matthewmueller/joy/internal/compiler/variable"
 	"github.com/stretchr/testify/assert"
 )
 

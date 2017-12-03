@@ -1,6 +1,6 @@
 package rtcoutboundrtpstreamstats
 
-import "github.com/matthewmueller/golly/dom/rtcrtpstreamstats"
+import "github.com/matthewmueller/joy/dom/rtcrtpstreamstats"
 
 type RTCOutboundRTPStreamStats struct {
 	*rtcrtpstreamstats.RTCRTPStreamStats

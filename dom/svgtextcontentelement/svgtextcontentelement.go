@@ -1,11 +1,11 @@
 package svgtextcontentelement
 
 import (
-	"github.com/matthewmueller/golly/dom/svganimatedenumeration"
-	"github.com/matthewmueller/golly/dom/svganimatedlength"
-	"github.com/matthewmueller/golly/dom/svgpoint"
-	"github.com/matthewmueller/golly/dom/svgrect"
-	"github.com/matthewmueller/golly/dom/window"
+	"github.com/matthewmueller/joy/dom/svganimatedenumeration"
+	"github.com/matthewmueller/joy/dom/svganimatedlength"
+	"github.com/matthewmueller/joy/dom/svgpoint"
+	"github.com/matthewmueller/joy/dom/svgrect"
+	"github.com/matthewmueller/joy/dom/window"
 )
 
 // SVGTextContentElement interface

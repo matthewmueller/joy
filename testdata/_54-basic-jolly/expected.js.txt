@@ -1,7 +1,7 @@
 ;
 (function() {
 var pkg = {};
-pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"] = (function() {
+pkg["github.com/matthewmueller/joy/testdata/54-basic-jolly/preact/preact.js"] = (function() {
 return (function () {
   'use strict'
   function VNode() { }
@@ -611,7 +611,7 @@ return (function () {
 })()
 ;
 })();
-pkg["github.com/matthewmueller/golly/runtime"] = (function() {
+pkg["github.com/matthewmueller/joy/runtime"] = (function() {
 mapper.prototype.JSON = function() {
 var m = this;
 return m.obj;
@@ -632,7 +632,7 @@ return {
   Map: Map
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/header"] = (function() {
+pkg["github.com/matthewmueller/joy/testdata/54-basic-jolly/header"] = (function() {
 function props (o) {
 o = o || {};
 this.title = o.title || "";
@@ -645,9 +645,9 @@ this.count = o.count || 0;
 };
 function Header (o) {
 o = o || {};
-this.Component = o.Component || new pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"].Component();
-for (var $k in this.Component || pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"].Component.prototype) {
-this[$k] = this[$k] || (this.Component || pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"].Component.prototype)[$k]
+this.Component = o.Component || new pkg["github.com/matthewmueller/joy/testdata/54-basic-jolly/preact/preact.js"].Component();
+for (var $k in this.Component || pkg["github.com/matthewmueller/joy/testdata/54-basic-jolly/preact/preact.js"].Component.prototype) {
+this[$k] = this[$k] || (this.Component || pkg["github.com/matthewmueller/joy/testdata/54-basic-jolly/preact/preact.js"].Component.prototype)[$k]
 };
 this.props = o.props || new props();
 this.state = o.state || new state();
@@ -655,11 +655,11 @@ this.state = o.state || new state();
 Header.prototype.render = function() {
 var d = this;
 var children = d.props.children.concat(String(d.state.count));
-return pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"].h('h3', pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', d.props.title).Set("count", d.state.count) ? pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', d.props.title).Set("count", d.state.count).JSON() : {}, [children]);
+return pkg["github.com/matthewmueller/joy/testdata/54-basic-jolly/preact/preact.js"].h('h3', pkg["github.com/matthewmueller/joy/runtime"].Map().Set('class', d.props.title).Set("count", d.state.count) ? pkg["github.com/matthewmueller/joy/runtime"].Map().Set('class', d.props.title).Set("count", d.state.count).JSON() : {}, [children]);
 };
 function New (title) {
 var children = Array.prototype.slice.call(arguments, 1);
-return pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"].h(Header, new props({
+return pkg["github.com/matthewmueller/joy/testdata/54-basic-jolly/preact/preact.js"].h(Header, new props({
   title: title,
   children: children,
   bats: "are crazy"
@@ -670,17 +670,17 @@ return {
   New: New
 };
 })();
-pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly"] = (function() {
-var header = pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/header"];
+pkg["github.com/matthewmueller/joy/testdata/54-basic-jolly"] = (function() {
+var header = pkg["github.com/matthewmueller/joy/testdata/54-basic-jolly/header"];
 function main () {
 ;
-var hdr = pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"].h('h2', pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', "hi") ? pkg["github.com/matthewmueller/golly/runtime"].Map().Set('class', "hi").JSON() : {}, ["yo!", header.New.apply(null, ["lol"].concat("hi!"))]);
-pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly/preact/preact.js"].render(hdr, document.body);
+var hdr = pkg["github.com/matthewmueller/joy/testdata/54-basic-jolly/preact/preact.js"].h('h2', pkg["github.com/matthewmueller/joy/runtime"].Map().Set('class', "hi") ? pkg["github.com/matthewmueller/joy/runtime"].Map().Set('class', "hi").JSON() : {}, ["yo!", header.New.apply(null, ["lol"].concat("hi!"))]);
+pkg["github.com/matthewmueller/joy/testdata/54-basic-jolly/preact/preact.js"].render(hdr, document.body);
 console.log(document.body.innerHTML);
 };
 return {
   main: main
 };
 })();
-return pkg["github.com/matthewmueller/golly/testdata/54-basic-jolly"].main();
+return pkg["github.com/matthewmueller/joy/testdata/54-basic-jolly"].main();
 })()

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/matthewmueller/golly/testdata/57-rewrite-file-dep/fetch"
+	"github.com/matthewmueller/joy/testdata/57-rewrite-file-dep/fetch"
 )
 
 // TODO: move tests off external dependencies

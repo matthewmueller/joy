@@ -1,8 +1,8 @@
 package idbcursor
 
 import (
-	"github.com/matthewmueller/golly/dom/idbcursordirection"
-	"github.com/matthewmueller/golly/dom/window"
+	"github.com/matthewmueller/joy/dom/idbcursordirection"
+	"github.com/matthewmueller/joy/dom/window"
 )
 
 // IDBCursor interface

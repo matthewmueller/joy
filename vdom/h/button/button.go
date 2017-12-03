@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/matthewmueller/golly/js"
-	"github.com/matthewmueller/golly/vdom"
+	"github.com/matthewmueller/joy/js"
+	"github.com/matthewmueller/joy/vdom"
 )
 
 // Button struct

@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/08-struct-nested-array"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/08-struct-nested-array"] = (function() {
 		function main () {
 			var user = {
 				FirstName: "Matt",
@@ -21,5 +21,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/08-struct-nested-array"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/08-struct-nested-array"].main();
 })()

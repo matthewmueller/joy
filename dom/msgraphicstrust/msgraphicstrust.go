@@ -1,6 +1,6 @@
 package msgraphicstrust
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // MSGraphicsTrust struct
 // js:"MSGraphicsTrust,omit"

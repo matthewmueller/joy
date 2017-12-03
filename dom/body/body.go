@@ -1,6 +1,6 @@
 package body
 
-import "github.com/matthewmueller/golly/dom/blob"
+import "github.com/matthewmueller/joy/dom/blob"
 
 // Body interface
 // js:"Body"

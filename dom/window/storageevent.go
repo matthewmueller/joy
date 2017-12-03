@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/storage"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/storage"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ Event = (*StorageEvent)(nil)

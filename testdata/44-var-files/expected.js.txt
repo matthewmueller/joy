@@ -1,13 +1,13 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/44-var-files/fn.js"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/44-var-files/fn.js"] = (function() {
 		return function hi(msg) {
   return msg + '!'
 }
 
 	})();
-	pkg["github.com/matthewmueller/golly/testdata/44-var-files"] = (function() {
-		var fn = pkg["github.com/matthewmueller/golly/testdata/44-var-files/fn.js"];
+	pkg["github.com/matthewmueller/joy/testdata/44-var-files"] = (function() {
+		var fn = pkg["github.com/matthewmueller/joy/testdata/44-var-files/fn.js"];
 		function main () {
 			console.log(fn("hello world"))
 		};
@@ -15,5 +15,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/44-var-files"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/44-var-files"].main();
 })()

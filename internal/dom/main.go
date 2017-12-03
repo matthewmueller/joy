@@ -12,11 +12,11 @@ import (
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
-	"github.com/matthewmueller/golly/internal/dom/curl"
-	"github.com/matthewmueller/golly/internal/dom/def"
-	"github.com/matthewmueller/golly/internal/dom/graph"
-	"github.com/matthewmueller/golly/internal/dom/parser"
-	"github.com/matthewmueller/golly/internal/gen"
+	"github.com/matthewmueller/joy/internal/dom/curl"
+	"github.com/matthewmueller/joy/internal/dom/def"
+	"github.com/matthewmueller/joy/internal/dom/graph"
+	"github.com/matthewmueller/joy/internal/dom/parser"
+	"github.com/matthewmueller/joy/internal/gen"
 	"github.com/pkg/errors"
 )
 

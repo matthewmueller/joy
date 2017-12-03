@@ -1,9 +1,9 @@
 package svgtransformlist
 
 import (
-	"github.com/matthewmueller/golly/dom/svgmatrix"
-	"github.com/matthewmueller/golly/dom/svgtransform"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/svgmatrix"
+	"github.com/matthewmueller/joy/dom/svgtransform"
+	"github.com/matthewmueller/joy/js"
 )
 
 // SVGTransformList struct

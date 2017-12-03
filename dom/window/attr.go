@@ -1,6 +1,6 @@
 package window
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 var _ Node = (*Attr)(nil)
 var _ EventTarget = (*Attr)(nil)

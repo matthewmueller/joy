@@ -1,8 +1,8 @@
 package svganimatedtransformlist
 
 import (
-	"github.com/matthewmueller/golly/dom/svgtransformlist"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/svgtransformlist"
+	"github.com/matthewmueller/joy/js"
 )
 
 // SVGAnimatedTransformList struct

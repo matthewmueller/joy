@@ -1,6 +1,6 @@
 package errors
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // New error from text
 func New(text string) error {

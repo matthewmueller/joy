@@ -1,8 +1,8 @@
 package headers
 
 import (
-	"github.com/matthewmueller/golly/dom/mediakeystatus"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/mediakeystatus"
+	"github.com/matthewmueller/joy/js"
 )
 
 // New fn

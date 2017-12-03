@@ -1,6 +1,6 @@
 package audiolistener
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // AudioListener struct
 // js:"AudioListener,omit"

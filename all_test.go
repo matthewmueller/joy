@@ -1,4 +1,4 @@
-package golly_test
+package joy_test
 
 import (
 	"bytes"
@@ -16,8 +16,8 @@ import (
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
-	"github.com/matthewmueller/golly/api"
-	"github.com/matthewmueller/golly/internal/chrome"
+	"github.com/matthewmueller/joy/api"
+	"github.com/matthewmueller/joy/internal/chrome"
 	"github.com/pkg/errors"
 )
 

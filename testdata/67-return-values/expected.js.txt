@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/67-return-values"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/67-return-values"] = (function() {
 		function test () {
 			var a = "", b = 0, c = 0, t = null;
 			return [a, b, c, t];
@@ -13,5 +13,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/67-return-values"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/67-return-values"].main();
 })()

@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/57-rewrite-file-dep/fetch/unfetch.js"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/57-rewrite-file-dep/fetch/unfetch.js"] = (function() {
 		return function fetch(url, options) {
   options = options || {}
   return new Promise(function(resolve, reject) {
@@ -73,7 +73,7 @@
 }
 
 	})();
-	pkg["github.com/matthewmueller/golly/testdata/57-rewrite-file-dep"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/57-rewrite-file-dep"] = (function() {
 		async function main () {
 			var $response = await (async function (unfetch, url) {
 		try {
@@ -82,7 +82,7 @@
 		} catch (err) {
 			return [ null, err ]
 		}
-	})(pkg["github.com/matthewmueller/golly/testdata/57-rewrite-file-dep/fetch/unfetch.js"], "https://api.github.com/users/matthewmueller/repos")
+	})(pkg["github.com/matthewmueller/joy/testdata/57-rewrite-file-dep/fetch/unfetch.js"], "https://api.github.com/users/matthewmueller/repos")
 	, response = $response[0], err = $response[1];
 			if (err != null) {
 				console.log(err)
@@ -112,5 +112,5 @@ if (e != null) {
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/57-rewrite-file-dep"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/57-rewrite-file-dep"].main();
 })()

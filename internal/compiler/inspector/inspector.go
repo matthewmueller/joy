@@ -16,8 +16,8 @@ import (
 
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
-	"github.com/matthewmueller/golly/internal/compiler/indexer"
-	"github.com/matthewmueller/golly/types"
+	"github.com/matthewmueller/joy/internal/compiler/indexer"
+	"github.com/matthewmueller/joy/types"
 	"golang.org/x/tools/go/loader"
 )
 
@@ -478,9 +478,9 @@ func recurseDeclaration(
 	}
 	visited[d.ID] = true
 
-	// don't include golly/js in the build.
+	// don't include joy/js in the build.
 	// this package contains only compile-time stubs
-	if strings.HasSuffix(d.From, "golly/js") {
+	if strings.HasSuffix(d.From, "joy/js") {
 		return pkgs
 	}
 

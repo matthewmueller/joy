@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/48-func-spread"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/48-func-spread"] = (function() {
 		function aa (o) {
 			o = o || {}
 		};
@@ -29,5 +29,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/48-func-spread"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/48-func-spread"].main();
 })()

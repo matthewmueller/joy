@@ -9,12 +9,12 @@ test:
 
 jsx:
 	@echo "==> Running jsx example..."
-	@go run cmd/golly/golly.go build ./testdata/49-jsx/
+	@go run cmd/joy/joy.go build ./testdata/49-jsx/
 .PHONY: jsx
 
 hn:
 	@echo "==> Running hackernews example..."
-	@go run cmd/golly/golly.go serve ./_examples/hn
+	@go run cmd/joy/joy.go serve ./_examples/hn
 .PHONY: hn
 
 # Install the commands.
@@ -25,6 +25,6 @@ install:
 dom:
 	@go run internal/dom/main.go
 	# @go generate ./internal/gendom/main.go
-	# @go run cmd/golly/golly.go build ./_examples/dom
+	# @go run cmd/joy/joy.go build ./_examples/dom
 	# @go run _examples/dom/dom.go
 .PHONY: dom

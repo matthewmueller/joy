@@ -4,8 +4,8 @@ import (
 	"go/types"
 	"path"
 
-	"github.com/matthewmueller/golly/internal/compiler/def"
-	"github.com/matthewmueller/golly/internal/compiler/util"
+	"github.com/matthewmueller/joy/internal/compiler/def"
+	"github.com/matthewmueller/joy/internal/compiler/util"
 )
 
 // Filer interface

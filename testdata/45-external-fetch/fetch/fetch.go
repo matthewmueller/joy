@@ -1,7 +1,7 @@
 package fetch
 
 import (
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/js"
 )
 
 // unfetch

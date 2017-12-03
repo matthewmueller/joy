@@ -1,21 +1,21 @@
 package svgradialgradientelement
 
 import (
-	"github.com/matthewmueller/golly/dom/childnode"
-	"github.com/matthewmueller/golly/dom/clientrect"
-	"github.com/matthewmueller/golly/dom/clientrectlist"
-	"github.com/matthewmueller/golly/dom/domstringmap"
-	"github.com/matthewmueller/golly/dom/domtokenlist"
-	"github.com/matthewmueller/golly/dom/mszoomtooptions"
-	"github.com/matthewmueller/golly/dom/svganimatedenumeration"
-	"github.com/matthewmueller/golly/dom/svganimatedlength"
-	"github.com/matthewmueller/golly/dom/svganimatedstring"
-	"github.com/matthewmueller/golly/dom/svganimatedtransformlist"
-	"github.com/matthewmueller/golly/dom/svggradientelement"
-	"github.com/matthewmueller/golly/dom/svgunittypes"
-	"github.com/matthewmueller/golly/dom/svgurireference"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/childnode"
+	"github.com/matthewmueller/joy/dom/clientrect"
+	"github.com/matthewmueller/joy/dom/clientrectlist"
+	"github.com/matthewmueller/joy/dom/domstringmap"
+	"github.com/matthewmueller/joy/dom/domtokenlist"
+	"github.com/matthewmueller/joy/dom/mszoomtooptions"
+	"github.com/matthewmueller/joy/dom/svganimatedenumeration"
+	"github.com/matthewmueller/joy/dom/svganimatedlength"
+	"github.com/matthewmueller/joy/dom/svganimatedstring"
+	"github.com/matthewmueller/joy/dom/svganimatedtransformlist"
+	"github.com/matthewmueller/joy/dom/svggradientelement"
+	"github.com/matthewmueller/joy/dom/svgunittypes"
+	"github.com/matthewmueller/joy/dom/svgurireference"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ svggradientelement.SVGGradientElement = (*SVGRadialGradientElement)(nil)

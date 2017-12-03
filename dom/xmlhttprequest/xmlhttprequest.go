@@ -1,10 +1,10 @@
 package xmlhttprequest
 
 import (
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/dom/xmlhttprequestresponsetype"
-	"github.com/matthewmueller/golly/dom/xmlhttprequestupload"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/dom/xmlhttprequestresponsetype"
+	"github.com/matthewmueller/joy/dom/xmlhttprequestupload"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.EventTarget = (*XMLHTTPRequest)(nil)

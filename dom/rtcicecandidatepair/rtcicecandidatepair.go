@@ -1,6 +1,6 @@
 package rtcicecandidatepair
 
-import "github.com/matthewmueller/golly/dom/rtcicecandidatedictionary"
+import "github.com/matthewmueller/joy/dom/rtcicecandidatedictionary"
 
 type RTCIceCandidatePair struct {
 	local  *rtcicecandidatedictionary.RTCIceCandidateDictionary

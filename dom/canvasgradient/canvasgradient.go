@@ -1,6 +1,6 @@
 package canvasgradient
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // CanvasGradient struct
 // js:"CanvasGradient,omit"

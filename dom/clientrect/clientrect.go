@@ -1,6 +1,6 @@
 package clientrect
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // ClientRect struct
 // js:"ClientRect,omit"

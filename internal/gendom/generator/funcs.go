@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/golly/internal/gen"
+	"github.com/matthewmueller/joy/internal/gen"
 )
 
 var resequence = regexp.MustCompile(`sequence<([\w<>]+)>`)

@@ -3,10 +3,10 @@ package app
 import (
 	"strconv"
 
-	"github.com/matthewmueller/golly/jsx"
-	"github.com/matthewmueller/golly/_examples/hn/fetch"
-	"github.com/matthewmueller/golly/_examples/hn/item"
-	"github.com/matthewmueller/golly/_examples/hn/preact"
+	"github.com/matthewmueller/joy/jsx"
+	"github.com/matthewmueller/joy/_examples/hn/fetch"
+	"github.com/matthewmueller/joy/_examples/hn/item"
+	"github.com/matthewmueller/joy/_examples/hn/preact"
 )
 
 var api = "https://hacker-news.firebaseio.com"

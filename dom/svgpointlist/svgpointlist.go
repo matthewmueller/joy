@@ -1,8 +1,8 @@
 package svgpointlist
 
 import (
-	"github.com/matthewmueller/golly/dom/svgpoint"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/svgpoint"
+	"github.com/matthewmueller/joy/js"
 )
 
 // SVGPointList struct

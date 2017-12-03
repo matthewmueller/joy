@@ -1,8 +1,8 @@
 package svgpathseglist
 
 import (
-	"github.com/matthewmueller/golly/dom/svgpathseg"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/svgpathseg"
+	"github.com/matthewmueller/joy/js"
 )
 
 // SVGPathSegList struct

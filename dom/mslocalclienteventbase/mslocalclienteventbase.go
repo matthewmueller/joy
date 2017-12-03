@@ -1,6 +1,6 @@
 package mslocalclienteventbase
 
-import "github.com/matthewmueller/golly/dom/rtcstats"
+import "github.com/matthewmueller/joy/dom/rtcstats"
 
 type MSLocalClientEventBase struct {
 	*rtcstats.RTCStats

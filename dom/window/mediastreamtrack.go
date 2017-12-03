@@ -1,11 +1,11 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/mediastreamtrackstate"
-	"github.com/matthewmueller/golly/dom/mediatrackcapabilities"
-	"github.com/matthewmueller/golly/dom/mediatrackconstraints"
-	"github.com/matthewmueller/golly/dom/mediatracksettings"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/mediastreamtrackstate"
+	"github.com/matthewmueller/joy/dom/mediatrackcapabilities"
+	"github.com/matthewmueller/joy/dom/mediatrackconstraints"
+	"github.com/matthewmueller/joy/dom/mediatracksettings"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ EventTarget = (*MediaStreamTrack)(nil)

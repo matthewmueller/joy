@@ -1,10 +1,10 @@
 package msnavigatordonottrack
 
 import (
-	"github.com/matthewmueller/golly/dom/confirmsitespecificexceptionsinformation"
-	"github.com/matthewmueller/golly/dom/exceptioninformation"
-	"github.com/matthewmueller/golly/dom/storeexceptionsinformation"
-	"github.com/matthewmueller/golly/dom/storesitespecificexceptionsinformation"
+	"github.com/matthewmueller/joy/dom/confirmsitespecificexceptionsinformation"
+	"github.com/matthewmueller/joy/dom/exceptioninformation"
+	"github.com/matthewmueller/joy/dom/storeexceptionsinformation"
+	"github.com/matthewmueller/joy/dom/storesitespecificexceptionsinformation"
 )
 
 // MSNavigatorDoNotTrack interface

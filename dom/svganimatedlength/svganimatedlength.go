@@ -1,8 +1,8 @@
 package svganimatedlength
 
 import (
-	"github.com/matthewmueller/golly/dom/svglength"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/svglength"
+	"github.com/matthewmueller/joy/js"
 )
 
 // SVGAnimatedLength struct

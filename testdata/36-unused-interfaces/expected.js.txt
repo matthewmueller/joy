@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/36-unused-interfaces"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/36-unused-interfaces"] = (function() {
 		function component (o) {
 			o = o || {};
 			this.component = o.component || ""
@@ -23,5 +23,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/36-unused-interfaces"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/36-unused-interfaces"].main();
 })()

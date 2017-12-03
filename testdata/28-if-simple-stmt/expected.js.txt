@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/28-if-simple-stmt"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/28-if-simple-stmt"] = (function() {
 		function test () {
 			return ["", new Error("oh noz")];
 		};
@@ -16,5 +16,5 @@ if (err != null) {
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/28-if-simple-stmt"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/28-if-simple-stmt"].main();
 })()

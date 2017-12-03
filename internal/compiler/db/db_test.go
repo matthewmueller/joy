@@ -11,9 +11,9 @@ package db_test
 
 // 	"github.com/apex/log"
 // 	"github.com/apex/log/handlers/text"
-// 	"github.com/matthewmueller/golly/internal/compiler/db"
-// 	"github.com/matthewmueller/golly/internal/compiler/def/iface"
-// 	"github.com/matthewmueller/golly/internal/compiler/loader"
+// 	"github.com/matthewmueller/joy/internal/compiler/db"
+// 	"github.com/matthewmueller/joy/internal/compiler/def/iface"
+// 	"github.com/matthewmueller/joy/internal/compiler/loader"
 // )
 
 // func Test(t *testing.T) {

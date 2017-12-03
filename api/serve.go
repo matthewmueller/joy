@@ -13,8 +13,8 @@ import (
 	"github.com/apex/log/handlers/text"
 	"github.com/jaschaephraim/lrserver"
 	"github.com/julienschmidt/httprouter"
-	"github.com/matthewmueller/golly/internal/compiler"
-	"github.com/matthewmueller/golly/internal/compiler/util"
+	"github.com/matthewmueller/joy/internal/compiler"
+	"github.com/matthewmueller/joy/internal/compiler/util"
 	"github.com/radovskyb/watcher"
 )
 
@@ -100,7 +100,7 @@ func Serve(ctx context.Context, settings *ServeSettings) error {
 			case <-w.Event:
 				files, err := c.Compile(settings.Packages...)
 				if err != nil {
-					log.WithError(err).Errorf("error compiling golly")
+					log.WithError(err).Errorf("error compiling joy")
 					continue
 				}
 				bundleLock.Lock()

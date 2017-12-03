@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/59-rename-method/dep"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/59-rename-method/dep"] = (function() {
 		function test () {
 			var items = [];
 			return items.concat("a", "b", "c");
@@ -9,8 +9,8 @@
 			test: test
 		};
 	})();
-	pkg["github.com/matthewmueller/golly/testdata/59-rename-method"] = (function() {
-		var dep = pkg["github.com/matthewmueller/golly/testdata/59-rename-method/dep"];
+	pkg["github.com/matthewmueller/joy/testdata/59-rename-method"] = (function() {
+		var dep = pkg["github.com/matthewmueller/joy/testdata/59-rename-method/dep"];
 		function main () {
 			console.log(typeof dep.test);
 			console.log(dep.test())
@@ -19,5 +19,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/59-rename-method"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/59-rename-method"].main();
 })()

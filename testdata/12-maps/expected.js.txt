@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/12-maps"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/12-maps"] = (function() {
 		function main () {
 			var names = {
 				"a": "a",
@@ -21,5 +21,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/12-maps"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/12-maps"].main();
 })()

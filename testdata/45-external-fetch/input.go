@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 
-	"github.com/matthewmueller/golly/testdata/45-external-fetch/fetch"
+	"github.com/matthewmueller/joy/testdata/45-external-fetch/fetch"
 )
 
 func main() {

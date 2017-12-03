@@ -1,10 +1,10 @@
 package idbcursorwithvalue
 
 import (
-	"github.com/matthewmueller/golly/dom/idbcursor"
-	"github.com/matthewmueller/golly/dom/idbcursordirection"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/idbcursor"
+	"github.com/matthewmueller/joy/dom/idbcursordirection"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ idbcursor.IDBCursor = (*IDBCursorWithValue)(nil)

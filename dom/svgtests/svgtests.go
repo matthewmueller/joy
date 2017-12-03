@@ -1,6 +1,6 @@
 package svgtests
 
-import "github.com/matthewmueller/golly/dom/svgstringlist"
+import "github.com/matthewmueller/joy/dom/svgstringlist"
 
 // SVGTests interface
 // js:"SVGTests"

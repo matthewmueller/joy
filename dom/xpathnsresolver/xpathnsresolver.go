@@ -1,6 +1,6 @@
 package xpathnsresolver
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // XPathNSResolver struct
 // js:"XPathNSResolver,omit"

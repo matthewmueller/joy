@@ -1,8 +1,8 @@
 package crypto
 
 import (
-	"github.com/matthewmueller/golly/dom/subtlecrypto"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/subtlecrypto"
+	"github.com/matthewmueller/joy/js"
 )
 
 // Crypto struct

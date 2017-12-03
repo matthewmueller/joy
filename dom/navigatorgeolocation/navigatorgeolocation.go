@@ -1,6 +1,6 @@
 package navigatorgeolocation
 
-import "github.com/matthewmueller/golly/dom/geolocation"
+import "github.com/matthewmueller/joy/dom/geolocation"
 
 // NavigatorGeolocation interface
 // js:"NavigatorGeolocation"

@@ -1,11 +1,11 @@
 package msapp
 
 import (
-	"github.com/matthewmueller/golly/dom/blob"
-	"github.com/matthewmueller/golly/dom/file"
-	"github.com/matthewmueller/golly/dom/msappasyncoperation"
-	"github.com/matthewmueller/golly/dom/msstream"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/blob"
+	"github.com/matthewmueller/joy/dom/file"
+	"github.com/matthewmueller/joy/dom/msappasyncoperation"
+	"github.com/matthewmueller/joy/dom/msstream"
+	"github.com/matthewmueller/joy/js"
 )
 
 // MSApp struct

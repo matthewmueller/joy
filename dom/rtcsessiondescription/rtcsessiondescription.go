@@ -1,9 +1,9 @@
 package rtcsessiondescription
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcsdptype"
-	"github.com/matthewmueller/golly/dom/rtcsessiondescriptioninit"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/rtcsdptype"
+	"github.com/matthewmueller/joy/dom/rtcsessiondescriptioninit"
+	"github.com/matthewmueller/joy/js"
 )
 
 // New fn

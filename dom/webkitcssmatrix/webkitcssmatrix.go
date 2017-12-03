@@ -1,6 +1,6 @@
 package webkitcssmatrix
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // New fn
 func New(text *string) *WebKitCSSMatrix {

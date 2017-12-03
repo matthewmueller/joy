@@ -7,14 +7,14 @@ import (
 	"path/filepath"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/golly/internal/compiler/util"
-	"github.com/matthewmueller/golly/stdlib"
+	"github.com/matthewmueller/joy/internal/compiler/util"
+	"github.com/matthewmueller/joy/stdlib"
 	"github.com/pkg/errors"
 	"golang.org/x/tools/go/loader"
 )
 
 // Load takes full paths to packages and loads them
-// e.g. $GOPATH/src/github.com/matthewmueller/golly/
+// e.g. $GOPATH/src/github.com/matthewmueller/joy/
 func Load(packages ...string) (program *loader.Program, err error) {
 	// defer log.Trace("load").Stop(&err)
 	var conf loader.Config

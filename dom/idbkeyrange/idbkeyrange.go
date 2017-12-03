@@ -1,6 +1,6 @@
 package idbkeyrange
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // IDBKeyRange struct
 // js:"IDBKeyRange,omit"

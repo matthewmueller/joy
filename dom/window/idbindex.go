@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/idbcursordirection"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/idbcursordirection"
+	"github.com/matthewmueller/joy/js"
 )
 
 // IDBIndex struct

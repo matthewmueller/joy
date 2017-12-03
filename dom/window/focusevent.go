@@ -1,6 +1,6 @@
 package window
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 var _ UIEvent = (*FocusEvent)(nil)
 var _ Event = (*FocusEvent)(nil)

@@ -13,8 +13,8 @@ import (
 	"strings"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/golly/internal/compiler/db"
-	"github.com/matthewmueller/golly/types"
+	"github.com/matthewmueller/joy/internal/compiler/db"
+	"github.com/matthewmueller/joy/types"
 	"golang.org/x/tools/go/loader"
 )
 
@@ -401,7 +401,7 @@ func (i *Index) Imports(packagePath string) map[string]string {
 	return i.imports[packagePath]
 }
 
-// Runtime returns a golly runtime declaration using it's name
+// Runtime returns a joy runtime declaration using it's name
 func (i *Index) Runtime(name string) *types.Declaration {
 	return i.runtime[name]
 }

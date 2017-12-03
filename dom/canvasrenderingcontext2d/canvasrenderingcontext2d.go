@@ -1,15 +1,15 @@
 package canvasrenderingcontext2d
 
 import (
-	"github.com/matthewmueller/golly/dom/canvasfillrule"
-	"github.com/matthewmueller/golly/dom/canvasgradient"
-	"github.com/matthewmueller/golly/dom/canvaspattern"
-	"github.com/matthewmueller/golly/dom/htmlcanvaselement"
-	"github.com/matthewmueller/golly/dom/imagedata"
-	"github.com/matthewmueller/golly/dom/path2d"
-	"github.com/matthewmueller/golly/dom/textmetrics"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/canvasfillrule"
+	"github.com/matthewmueller/joy/dom/canvasgradient"
+	"github.com/matthewmueller/joy/dom/canvaspattern"
+	"github.com/matthewmueller/joy/dom/htmlcanvaselement"
+	"github.com/matthewmueller/joy/dom/imagedata"
+	"github.com/matthewmueller/joy/dom/path2d"
+	"github.com/matthewmueller/joy/dom/textmetrics"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 // CanvasRenderingContext2d struct

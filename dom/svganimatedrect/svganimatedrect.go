@@ -1,8 +1,8 @@
 package svganimatedrect
 
 import (
-	"github.com/matthewmueller/golly/dom/svgrect"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/svgrect"
+	"github.com/matthewmueller/joy/js"
 )
 
 // SVGAnimatedRect struct

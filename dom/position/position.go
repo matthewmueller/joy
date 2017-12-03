@@ -1,8 +1,8 @@
 package position
 
 import (
-	"github.com/matthewmueller/golly/dom/coordinates"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/coordinates"
+	"github.com/matthewmueller/joy/js"
 )
 
 // Position struct

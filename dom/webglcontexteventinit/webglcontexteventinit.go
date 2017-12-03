@@ -1,6 +1,6 @@
 package webglcontexteventinit
 
-import "github.com/matthewmueller/golly/dom/eventinit"
+import "github.com/matthewmueller/joy/dom/eventinit"
 
 type WebGLContextEventInit struct {
 	*eventinit.EventInit

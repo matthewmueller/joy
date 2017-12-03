@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/31-json-unmarshal"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/31-json-unmarshal"] = (function() {
 		function follows (p) {
 			console.log(p.name)
 		};
@@ -25,5 +25,5 @@ if (e != null) {
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/31-json-unmarshal"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/31-json-unmarshal"].main();
 })()

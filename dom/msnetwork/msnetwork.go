@@ -1,11 +1,11 @@
 package msnetwork
 
 import (
-	"github.com/matthewmueller/golly/dom/msdelay"
-	"github.com/matthewmueller/golly/dom/msjitter"
-	"github.com/matthewmueller/golly/dom/mspacketloss"
-	"github.com/matthewmueller/golly/dom/msutilization"
-	"github.com/matthewmueller/golly/dom/rtcstats"
+	"github.com/matthewmueller/joy/dom/msdelay"
+	"github.com/matthewmueller/joy/dom/msjitter"
+	"github.com/matthewmueller/joy/dom/mspacketloss"
+	"github.com/matthewmueller/joy/dom/msutilization"
+	"github.com/matthewmueller/joy/dom/rtcstats"
 )
 
 type MSNetwork struct {

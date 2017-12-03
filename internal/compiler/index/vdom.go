@@ -3,7 +3,7 @@ package index
 import (
 	"errors"
 
-	"github.com/matthewmueller/golly/internal/compiler/def"
+	"github.com/matthewmueller/joy/internal/compiler/def"
 )
 
 // SetVDOMPragma sets up JSX

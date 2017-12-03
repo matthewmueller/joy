@@ -1,8 +1,8 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/devicelighteventinit"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/devicelighteventinit"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ Event = (*DeviceLightEvent)(nil)

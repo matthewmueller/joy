@@ -1,20 +1,20 @@
 package svgpolygonelement
 
 import (
-	"github.com/matthewmueller/golly/dom/childnode"
-	"github.com/matthewmueller/golly/dom/clientrect"
-	"github.com/matthewmueller/golly/dom/clientrectlist"
-	"github.com/matthewmueller/golly/dom/domstringmap"
-	"github.com/matthewmueller/golly/dom/domtokenlist"
-	"github.com/matthewmueller/golly/dom/mszoomtooptions"
-	"github.com/matthewmueller/golly/dom/svganimatedtransformlist"
-	"github.com/matthewmueller/golly/dom/svgmatrix"
-	"github.com/matthewmueller/golly/dom/svgpointlist"
-	"github.com/matthewmueller/golly/dom/svgrect"
-	"github.com/matthewmueller/golly/dom/svgstringlist"
-	"github.com/matthewmueller/golly/dom/svgtests"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/childnode"
+	"github.com/matthewmueller/joy/dom/clientrect"
+	"github.com/matthewmueller/joy/dom/clientrectlist"
+	"github.com/matthewmueller/joy/dom/domstringmap"
+	"github.com/matthewmueller/joy/dom/domtokenlist"
+	"github.com/matthewmueller/joy/dom/mszoomtooptions"
+	"github.com/matthewmueller/joy/dom/svganimatedtransformlist"
+	"github.com/matthewmueller/joy/dom/svgmatrix"
+	"github.com/matthewmueller/joy/dom/svgpointlist"
+	"github.com/matthewmueller/joy/dom/svgrect"
+	"github.com/matthewmueller/joy/dom/svgstringlist"
+	"github.com/matthewmueller/joy/dom/svgtests"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.SVGGraphicsElement = (*SVGPolygonElement)(nil)

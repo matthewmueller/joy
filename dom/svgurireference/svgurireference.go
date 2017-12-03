@@ -1,6 +1,6 @@
 package svgurireference
 
-import "github.com/matthewmueller/golly/dom/svganimatedstring"
+import "github.com/matthewmueller/joy/dom/svganimatedstring"
 
 // SVGURIReference interface
 // js:"SVGURIReference"

@@ -1,9 +1,9 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/mediastreamerror"
-	"github.com/matthewmueller/golly/dom/mediastreamerroreventinit"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/mediastreamerror"
+	"github.com/matthewmueller/joy/dom/mediastreamerroreventinit"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ Event = (*MediaStreamErrorEvent)(nil)

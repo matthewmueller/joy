@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/matthewmueller/golly/internal/dom/def"
+	"github.com/matthewmueller/joy/internal/dom/def"
 	"github.com/pkg/errors"
 )
 

@@ -1,9 +1,9 @@
 package msmediakeysession
 
 import (
-	"github.com/matthewmueller/golly/dom/msmediakeyerror"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/msmediakeyerror"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ window.EventTarget = (*MSMediaKeySession)(nil)

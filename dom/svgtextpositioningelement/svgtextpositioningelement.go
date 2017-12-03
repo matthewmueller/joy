@@ -1,9 +1,9 @@
 package svgtextpositioningelement
 
 import (
-	"github.com/matthewmueller/golly/dom/svganimatedlengthlist"
-	"github.com/matthewmueller/golly/dom/svganimatednumberlist"
-	"github.com/matthewmueller/golly/dom/svgtextcontentelement"
+	"github.com/matthewmueller/joy/dom/svganimatedlengthlist"
+	"github.com/matthewmueller/joy/dom/svganimatednumberlist"
+	"github.com/matthewmueller/joy/dom/svgtextcontentelement"
 )
 
 // SVGTextPositioningElement interface

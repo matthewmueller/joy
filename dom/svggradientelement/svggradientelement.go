@@ -1,10 +1,10 @@
 package svggradientelement
 
 import (
-	"github.com/matthewmueller/golly/dom/svganimatedenumeration"
-	"github.com/matthewmueller/golly/dom/svganimatedstring"
-	"github.com/matthewmueller/golly/dom/svganimatedtransformlist"
-	"github.com/matthewmueller/golly/dom/window"
+	"github.com/matthewmueller/joy/dom/svganimatedenumeration"
+	"github.com/matthewmueller/joy/dom/svganimatedstring"
+	"github.com/matthewmueller/joy/dom/svganimatedtransformlist"
+	"github.com/matthewmueller/joy/dom/window"
 )
 
 // SVGGradientElement interface

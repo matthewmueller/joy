@@ -1,10 +1,10 @@
 package csssupportsrule
 
 import (
-	"github.com/matthewmueller/golly/dom/cssconditionrule"
-	"github.com/matthewmueller/golly/dom/cssgroupingrule"
-	"github.com/matthewmueller/golly/dom/window"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/cssconditionrule"
+	"github.com/matthewmueller/joy/dom/cssgroupingrule"
+	"github.com/matthewmueller/joy/dom/window"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ cssconditionrule.CSSConditionRule = (*CSSSupportsRule)(nil)

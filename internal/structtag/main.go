@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/matthewmueller/golly/internal/structtag/calc"
+	"github.com/matthewmueller/joy/internal/structtag/calc"
 )
 
 func main() {

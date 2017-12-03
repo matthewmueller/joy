@@ -1,6 +1,6 @@
 package item
 
-import "github.com/matthewmueller/golly/jsx"
+import "github.com/matthewmueller/joy/jsx"
 
 // Item from hacker news
 type Item struct {

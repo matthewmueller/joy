@@ -1,6 +1,6 @@
 package component
 
-import "github.com/matthewmueller/golly/testdata/40-vnodes/vnode"
+import "github.com/matthewmueller/joy/testdata/40-vnodes/vnode"
 
 // enforce VNode type
 var _ vnode.VNode = (*component)(nil)

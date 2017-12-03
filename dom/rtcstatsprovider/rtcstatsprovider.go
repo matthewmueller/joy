@@ -1,8 +1,8 @@
 package rtcstatsprovider
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcstatsreport"
-	"github.com/matthewmueller/golly/dom/window"
+	"github.com/matthewmueller/joy/dom/rtcstatsreport"
+	"github.com/matthewmueller/joy/dom/window"
 )
 
 // RTCStatsProvider interface

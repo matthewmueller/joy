@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/45-external-fetch/fetch/unfetch.js"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/45-external-fetch/fetch/unfetch.js"] = (function() {
 		return function fetch(url, options) {
   options = options || {}
   return new Promise(function(resolve, reject) {
@@ -73,8 +73,8 @@
 }
 
 	})();
-	pkg["github.com/matthewmueller/golly/testdata/45-external-fetch/fetch"] = (function() {
-		var unfetch = pkg["github.com/matthewmueller/golly/testdata/45-external-fetch/fetch/unfetch.js"];
+	pkg["github.com/matthewmueller/joy/testdata/45-external-fetch/fetch"] = (function() {
+		var unfetch = pkg["github.com/matthewmueller/joy/testdata/45-external-fetch/fetch/unfetch.js"];
 		async function Fetch (url, options) {
 			
 	try {
@@ -90,8 +90,8 @@
 			Fetch: Fetch
 		};
 	})();
-	pkg["github.com/matthewmueller/golly/testdata/45-external-fetch"] = (function() {
-		var fetch = pkg["github.com/matthewmueller/golly/testdata/45-external-fetch/fetch"];
+	pkg["github.com/matthewmueller/joy/testdata/45-external-fetch"] = (function() {
+		var fetch = pkg["github.com/matthewmueller/joy/testdata/45-external-fetch/fetch"];
 		async function test () {
 			var $response = await fetch.Fetch("https://api.github.com/users/matthewmueller/repos", {
 				Method: "GET"
@@ -126,5 +126,5 @@ if (e != null) {
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/45-external-fetch"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/45-external-fetch"].main();
 })()

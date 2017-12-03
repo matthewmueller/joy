@@ -1,10 +1,10 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/domstringlist"
-	"github.com/matthewmueller/golly/dom/idbcursordirection"
-	"github.com/matthewmueller/golly/dom/idbindexparameters"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/domstringlist"
+	"github.com/matthewmueller/joy/dom/idbcursordirection"
+	"github.com/matthewmueller/joy/dom/idbindexparameters"
+	"github.com/matthewmueller/joy/js"
 )
 
 // IDBObjectStore struct

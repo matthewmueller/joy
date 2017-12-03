@@ -1,6 +1,6 @@
 package svgzoomandpan
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // SVGZoomAndPan struct
 // js:"SVGZoomAndPan,omit"

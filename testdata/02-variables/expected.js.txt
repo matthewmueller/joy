@@ -1,6 +1,6 @@
 ;(function() {
 	var pkg = {};
-	pkg["github.com/matthewmueller/golly/testdata/02-variables"] = (function() {
+	pkg["github.com/matthewmueller/joy/testdata/02-variables"] = (function() {
 		function main () {
 			var a = "a";
 			var b = "b", c = "c", d = "d";
@@ -15,5 +15,5 @@
 			main: main
 		};
 	})();
-	return pkg["github.com/matthewmueller/golly/testdata/02-variables"].main();
+	return pkg["github.com/matthewmueller/joy/testdata/02-variables"].main();
 })()

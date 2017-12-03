@@ -1,6 +1,6 @@
 package svganimatedinteger
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // SVGAnimatedInteger struct
 // js:"SVGAnimatedInteger,omit"

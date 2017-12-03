@@ -1,10 +1,10 @@
 package window
 
 import (
-	"github.com/matthewmueller/golly/dom/notificationdirection"
-	"github.com/matthewmueller/golly/dom/notificationoptions"
-	"github.com/matthewmueller/golly/dom/notificationpermission"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/notificationdirection"
+	"github.com/matthewmueller/joy/dom/notificationoptions"
+	"github.com/matthewmueller/joy/dom/notificationpermission"
+	"github.com/matthewmueller/joy/js"
 )
 
 var _ EventTarget = (*Notification)(nil)

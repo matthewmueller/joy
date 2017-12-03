@@ -1,6 +1,6 @@
 package webkitpoint
 
-import "github.com/matthewmueller/golly/js"
+import "github.com/matthewmueller/joy/js"
 
 // New fn
 func New(x *float32, y *float32) *WebKitPoint {

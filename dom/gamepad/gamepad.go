@@ -1,8 +1,8 @@
 package gamepad
 
 import (
-	"github.com/matthewmueller/golly/dom/gamepadbutton"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/gamepadbutton"
+	"github.com/matthewmueller/joy/js"
 )
 
 // Gamepad struct

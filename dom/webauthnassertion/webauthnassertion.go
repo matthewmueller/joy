@@ -1,8 +1,8 @@
 package webauthnassertion
 
 import (
-	"github.com/matthewmueller/golly/dom/scopedcredential"
-	"github.com/matthewmueller/golly/js"
+	"github.com/matthewmueller/joy/dom/scopedcredential"
+	"github.com/matthewmueller/joy/js"
 )
 
 // WebAuthnAssertion struct

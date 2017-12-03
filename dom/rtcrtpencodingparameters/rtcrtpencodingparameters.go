@@ -1,9 +1,9 @@
 package rtcrtpencodingparameters
 
 import (
-	"github.com/matthewmueller/golly/dom/rtcrtpfecparameters"
-	"github.com/matthewmueller/golly/dom/rtcrtprtxparameters"
-	"github.com/matthewmueller/golly/dom/rtcssrcrange"
+	"github.com/matthewmueller/joy/dom/rtcrtpfecparameters"
+	"github.com/matthewmueller/joy/dom/rtcrtprtxparameters"
+	"github.com/matthewmueller/joy/dom/rtcssrcrange"
 )
 
 type RTCRtpEncodingParameters struct {
