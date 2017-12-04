@@ -256,6 +256,7 @@ func (c *Compiler) Assemble(idx *index.Index, g *graph.Graph) (scripts []*script
 			// handle raw files differently
 			if len(module.defs) == 1 &&
 				module.defs[0].Kind() == "FILE" {
+
 				// create: pkg["$dep"] = (function () { $yourPkg })()
 				body = append(body, jsast.CreateExpressionStatement(
 					jsast.CreateAssignmentExpression(

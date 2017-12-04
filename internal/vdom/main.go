@@ -20,6 +20,7 @@ func main() {
 	if err := generate(); err != nil {
 		log.WithError(err).Fatal("error generating")
 	}
+	log.Infof("done")
 }
 
 func generate() error {
@@ -30,7 +31,6 @@ func generate() error {
 	dirname := path.Dir(file)
 
 	vdomPath := path.Join(dirname, "..", "..", "vdom")
-	log.Infof(vdomPath)
 
 	buf, err := ioutil.ReadFile(path.Join(dirname, "inputs", "tags.json"))
 	if err != nil {
@@ -42,9 +42,9 @@ func generate() error {
 			Comment string
 			Attrs   []string
 		}
-		Global []string
-		Events []string
-		Types  map[string]struct {
+		Globals []string
+		Events  []string
+		Types   map[string]struct {
 			Type   string
 			Values []string
 		}
@@ -78,7 +78,7 @@ func generate() error {
 	}
 	for name, kind := range eventmap {
 		if kind == "" {
-			return errors.Wrapf(err, "missed an event in browser apis %s", name)
+			return fmt.Errorf("missed an event in browser apis %s", name)
 		}
 	}
 
@@ -97,8 +97,7 @@ func generate() error {
 			Comment: tag.Comment,
 		}
 
-		attrs := append(tag.Attrs, data.Global...)
-
+		attrs := append(tag.Attrs, data.Globals...)
 		for _, attr := range attrs {
 			parts := strings.Split(attr, ":")
 			key := parts[0]
@@ -124,12 +123,12 @@ func generate() error {
 			})
 		}
 
-		for event, kind := range eventmap {
+		for _, event := range data.Events {
 			d.Attrs = append(d.Attrs, Attr{
 				Key: event,
 				Value: gen.Vartype{
 					Var:  event,
-					Type: kind,
+					Type: eventmap[event],
 				},
 			})
 		}
@@ -254,7 +253,7 @@ func generate() error {
 		}
 	}
 
-	// format all the files now that they're written
+	// form	at all the files now that they're written
 	if err := gen.FormatAll(vdomPath); err != nil {
 		return errors.Wrapf(err, "error formatting vdom/")
 	}

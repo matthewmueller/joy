@@ -29,6 +29,13 @@ dom:
 	# @go run _examples/dom/dom.go
 .PHONY: dom
 
+vdom:
+	@go run internal/vdom/main.go
+	# @go generate ./internal/gendom/main.go
+	# @go run cmd/joy/joy.go build ./_examples/dom
+	# @go run _examples/dom/dom.go
+.PHONY: vdom
+
 # Show source statistics.
 cloc:
 	@cloc -exclude-dir=vendor,node_modules,dom,vdom,chrome .

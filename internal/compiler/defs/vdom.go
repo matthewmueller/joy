@@ -84,7 +84,7 @@ func maybeVDOMCompositLit(ctx *context, n *ast.CompositeLit) error {
 
 	isNode := false
 	for _, iface := range ifaces {
-		if iface.Path() == vdomPath && iface.Name() == "Component" {
+		if iface.Path() == vdomPath && iface.Name() == "Child" {
 			isNode = true
 			break
 		}
@@ -164,7 +164,7 @@ func maybeVDOMFuncDecl(ctx *context, n *ast.FuncDecl) error {
 
 	isComponent := false
 	for _, def := range defs {
-		if def.OriginalName() == "Component" && vdomPath == def.Path() {
+		if def.OriginalName() == "Child" && vdomPath == def.Path() {
 			isComponent = true
 		}
 	}
