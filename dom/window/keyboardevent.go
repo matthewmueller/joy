@@ -7,7 +7,7 @@ var _ Event = (*KeyboardEvent)(nil)
 
 // NewKeyboardEvent fn
 func NewKeyboardEvent(typearg string, eventinitdict *KeyboardEventInit) *KeyboardEvent {
-	macro.Rewrite("KeyboardEvent")
+	macro.Rewrite("new KeyboardEvent($1, $2)", typearg, eventinitdict)
 	return &KeyboardEvent{}
 }
 

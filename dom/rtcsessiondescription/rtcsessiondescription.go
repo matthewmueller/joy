@@ -8,7 +8,7 @@ import (
 
 // New fn
 func New(descriptioninitdict *rtcsessiondescriptioninit.RTCSessionDescriptionInit) *RTCSessionDescription {
-	macro.Rewrite("RTCSessionDescription")
+	macro.Rewrite("new RTCSessionDescription($1)", descriptioninitdict)
 	return &RTCSessionDescription{}
 }
 

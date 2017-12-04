@@ -9,7 +9,7 @@ var _ Event = (*DeviceOrientationEvent)(nil)
 
 // NewDeviceOrientationEvent fn
 func NewDeviceOrientationEvent(typearg string, eventinitdict *deviceorientationeventinit.DeviceOrientationEventInit) *DeviceOrientationEvent {
-	macro.Rewrite("DeviceOrientationEvent")
+	macro.Rewrite("new DeviceOrientationEvent($1, $2)", typearg, eventinitdict)
 	return &DeviceOrientationEvent{}
 }
 

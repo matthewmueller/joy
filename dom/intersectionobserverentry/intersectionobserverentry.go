@@ -9,7 +9,7 @@ import (
 
 // New fn
 func New(intersectionobserverentryinit *intersectionobserverentryinit.IntersectionObserverEntryInit) *IntersectionObserverEntry {
-	macro.Rewrite("IntersectionObserverEntry")
+	macro.Rewrite("new IntersectionObserverEntry($1)", intersectionobserverentryinit)
 	return &IntersectionObserverEntry{}
 }
 

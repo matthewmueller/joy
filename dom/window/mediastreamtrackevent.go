@@ -6,7 +6,7 @@ var _ Event = (*MediaStreamTrackEvent)(nil)
 
 // NewMediaStreamTrackEvent fn
 func NewMediaStreamTrackEvent(typearg string, eventinitdict *MediaStreamTrackEventInit) *MediaStreamTrackEvent {
-	macro.Rewrite("MediaStreamTrackEvent")
+	macro.Rewrite("new MediaStreamTrackEvent($1, $2)", typearg, eventinitdict)
 	return &MediaStreamTrackEvent{}
 }
 

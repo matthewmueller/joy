@@ -9,7 +9,7 @@ import (
 
 // New fn
 func New(callback func(mutations []*mutationrecord.MutationRecord, observer *MutationObserver)) *MutationObserver {
-	macro.Rewrite("MutationObserver")
+	macro.Rewrite("new MutationObserver($1)", callback)
 	return &MutationObserver{}
 }
 

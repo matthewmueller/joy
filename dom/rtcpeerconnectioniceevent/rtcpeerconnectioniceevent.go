@@ -11,7 +11,7 @@ var _ window.Event = (*RTCPeerConnectionIceEvent)(nil)
 
 // New fn
 func New(kind string, eventinitdict *rtcpeerconnectioniceeventinit.RTCPeerConnectionIceEventInit) *RTCPeerConnectionIceEvent {
-	macro.Rewrite("RTCPeerConnectionIceEvent")
+	macro.Rewrite("new RTCPeerConnectionIceEvent($1, $2)", kind, eventinitdict)
 	return &RTCPeerConnectionIceEvent{}
 }
 

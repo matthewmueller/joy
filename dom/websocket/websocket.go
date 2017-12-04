@@ -10,7 +10,7 @@ var _ window.EventTarget = (*WebSocket)(nil)
 
 // New fn
 func New(url string, protocols *interface{}) *WebSocket {
-	macro.Rewrite("WebSocket")
+	macro.Rewrite("new WebSocket($1, $2)", url, protocols)
 	return &WebSocket{}
 }
 

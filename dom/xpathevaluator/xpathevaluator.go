@@ -8,7 +8,7 @@ import (
 
 // New fn
 func New() *XPathEvaluator {
-	macro.Rewrite("XPathEvaluator")
+	macro.Rewrite("new XPathEvaluator()")
 	return &XPathEvaluator{}
 }
 

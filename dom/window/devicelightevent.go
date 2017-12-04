@@ -9,7 +9,7 @@ var _ Event = (*DeviceLightEvent)(nil)
 
 // NewDeviceLightEvent fn
 func NewDeviceLightEvent(typearg string, eventinitdict *devicelighteventinit.DeviceLightEventInit) *DeviceLightEvent {
-	macro.Rewrite("DeviceLightEvent")
+	macro.Rewrite("new DeviceLightEvent($1, $2)", typearg, eventinitdict)
 	return &DeviceLightEvent{}
 }
 

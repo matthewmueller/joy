@@ -11,7 +11,7 @@ import (
 
 // New fn
 func New(body *interface{}, init *responseinit.ResponseInit) *Response {
-	macro.Rewrite("Response")
+	macro.Rewrite("new Response($1, $2)", body, init)
 	return &Response{}
 }
 

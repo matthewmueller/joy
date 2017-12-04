@@ -6,7 +6,7 @@ var _ Event = (*MessageEvent)(nil)
 
 // NewMessageEvent fn
 func NewMessageEvent(typearg string, eventinitdict *MessageEventInit) *MessageEvent {
-	macro.Rewrite("MessageEvent")
+	macro.Rewrite("new MessageEvent($1, $2)", typearg, eventinitdict)
 	return &MessageEvent{}
 }
 

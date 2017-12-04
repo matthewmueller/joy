@@ -6,7 +6,7 @@ var _ EventTarget = (*MediaStream)(nil)
 
 // NewMediaStream fn
 func NewMediaStream(streamortracks *interface{}) *MediaStream {
-	macro.Rewrite("MediaStream")
+	macro.Rewrite("new MediaStream($1)", streamortracks)
 	return &MediaStream{}
 }
 

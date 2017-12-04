@@ -16,7 +16,7 @@ import (
 
 // New fn
 func New(input interface{}, init *requestinit.RequestInit) *Request {
-	macro.Rewrite("Request")
+	macro.Rewrite("new Request($1, $2)", input, init)
 	return &Request{}
 }
 

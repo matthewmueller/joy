@@ -4,7 +4,7 @@ import "github.com/matthewmueller/joy/macro"
 
 // New fn
 func New(path *Path2d) *Path2d {
-	macro.Rewrite("Path2D")
+	macro.Rewrite("new Path2D($1)", path)
 	return &Path2d{}
 }
 

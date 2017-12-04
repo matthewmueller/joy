@@ -15,7 +15,7 @@ var _ window.EventTarget = (*PaymentRequest)(nil)
 
 // New fn
 func New(methoddata []*paymentmethoddata.PaymentMethodData, details *paymentdetails.PaymentDetails, options *paymentoptions.PaymentOptions) *PaymentRequest {
-	macro.Rewrite("PaymentRequest")
+	macro.Rewrite("new PaymentRequest($1, $2, $3)", methoddata, details, options)
 	return &PaymentRequest{}
 }
 

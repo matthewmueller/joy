@@ -11,7 +11,7 @@ var _ window.EventTarget = (*RTCSrtpSdesTransport)(nil)
 
 // New fn
 func New(transport *rtcicetransport.RTCIceTransport, encryptparameters *rtcsrtpsdesparameters.RTCSrtpSdesParameters, decryptparameters *rtcsrtpsdesparameters.RTCSrtpSdesParameters) *RTCSrtpSdesTransport {
-	macro.Rewrite("RTCSrtpSdesTransport")
+	macro.Rewrite("new RTCSrtpSdesTransport($1, $2, $3)", transport, encryptparameters, decryptparameters)
 	return &RTCSrtpSdesTransport{}
 }
 

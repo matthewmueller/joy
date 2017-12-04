@@ -17,7 +17,7 @@ var _ window.EventTarget = (*RTCIceGatherer)(nil)
 
 // New fn
 func New(options *rtcicegatheroptions.RTCIceGatherOptions) *RTCIceGatherer {
-	macro.Rewrite("RTCIceGatherer")
+	macro.Rewrite("new RTCIceGatherer($1)", options)
 	return &RTCIceGatherer{}
 }
 

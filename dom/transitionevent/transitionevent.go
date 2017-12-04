@@ -10,7 +10,7 @@ var _ window.Event = (*TransitionEvent)(nil)
 
 // New fn
 func New(typearg string, eventinitdict *transitioneventinit.TransitionEventInit) *TransitionEvent {
-	macro.Rewrite("TransitionEvent")
+	macro.Rewrite("new TransitionEvent($1, $2)", typearg, eventinitdict)
 	return &TransitionEvent{}
 }
 

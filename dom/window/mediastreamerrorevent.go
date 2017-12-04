@@ -10,7 +10,7 @@ var _ Event = (*MediaStreamErrorEvent)(nil)
 
 // NewMediaStreamErrorEvent fn
 func NewMediaStreamErrorEvent(typearg string, eventinitdict *mediastreamerroreventinit.MediaStreamErrorEventInit) *MediaStreamErrorEvent {
-	macro.Rewrite("MediaStreamErrorEvent")
+	macro.Rewrite("new MediaStreamErrorEvent($1, $2)", typearg, eventinitdict)
 	return &MediaStreamErrorEvent{}
 }
 

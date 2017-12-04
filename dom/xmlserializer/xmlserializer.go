@@ -7,7 +7,7 @@ import (
 
 // New fn
 func New() *XMLSerializer {
-	macro.Rewrite("XMLSerializer")
+	macro.Rewrite("new XMLSerializer()")
 	return &XMLSerializer{}
 }
 

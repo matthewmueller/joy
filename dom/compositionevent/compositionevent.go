@@ -11,7 +11,7 @@ var _ window.Event = (*CompositionEvent)(nil)
 
 // New fn
 func New(typearg string, eventinitdict *compositioneventinit.CompositionEventInit) *CompositionEvent {
-	macro.Rewrite("CompositionEvent")
+	macro.Rewrite("new CompositionEvent($1, $2)", typearg, eventinitdict)
 	return &CompositionEvent{}
 }
 

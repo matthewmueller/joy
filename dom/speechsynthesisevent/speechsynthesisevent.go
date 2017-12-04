@@ -10,7 +10,7 @@ var _ window.Event = (*SpeechSynthesisEvent)(nil)
 
 // New fn
 func New(kind string, eventinitdict *speechsynthesiseventinit.SpeechSynthesisEventInit) *SpeechSynthesisEvent {
-	macro.Rewrite("SpeechSynthesisEvent")
+	macro.Rewrite("new SpeechSynthesisEvent($1, $2)", kind, eventinitdict)
 	return &SpeechSynthesisEvent{}
 }
 

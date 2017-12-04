@@ -7,7 +7,7 @@ import (
 
 // New fn
 func New() *MessageChannel {
-	macro.Rewrite("MessageChannel")
+	macro.Rewrite("new MessageChannel()")
 	return &MessageChannel{}
 }
 

@@ -7,7 +7,7 @@ import (
 
 // New fn
 func New() *DOMParser {
-	macro.Rewrite("DOMParser")
+	macro.Rewrite("new DOMParser()")
 	return &DOMParser{}
 }
 

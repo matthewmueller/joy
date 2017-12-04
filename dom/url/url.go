@@ -7,7 +7,7 @@ import (
 
 // New fn
 func New(url string, base *string) *URL {
-	macro.Rewrite("URL")
+	macro.Rewrite("new URL($1, $2)", url, base)
 	return &URL{}
 }
 

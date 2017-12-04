@@ -10,7 +10,7 @@ var _ window.Event = (*MediaEncryptedEvent)(nil)
 
 // New fn
 func New(kind string, eventinitdict *mediaencryptedeventinit.MediaEncryptedEventInit) *MediaEncryptedEvent {
-	macro.Rewrite("MediaEncryptedEvent")
+	macro.Rewrite("new MediaEncryptedEvent($1, $2)", kind, eventinitdict)
 	return &MediaEncryptedEvent{}
 }
 

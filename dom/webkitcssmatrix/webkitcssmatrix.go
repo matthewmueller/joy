@@ -4,7 +4,7 @@ import "github.com/matthewmueller/joy/macro"
 
 // New fn
 func New(text *string) *WebKitCSSMatrix {
-	macro.Rewrite("WebKitCSSMatrix")
+	macro.Rewrite("new WebKitCSSMatrix($1)", text)
 	return &WebKitCSSMatrix{}
 }
 

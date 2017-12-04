@@ -11,7 +11,7 @@ var _ EventTarget = (*Notification)(nil)
 
 // NewNotification fn
 func NewNotification(title string, options *notificationoptions.NotificationOptions) *Notification {
-	macro.Rewrite("Notification")
+	macro.Rewrite("new Notification($1, $2)", title, options)
 	return &Notification{}
 }
 

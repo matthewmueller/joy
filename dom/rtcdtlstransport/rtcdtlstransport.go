@@ -16,7 +16,7 @@ var _ window.EventTarget = (*RTCDtlsTransport)(nil)
 
 // New fn
 func New(transport *rtcicetransport.RTCIceTransport) *RTCDtlsTransport {
-	macro.Rewrite("RTCDtlsTransport")
+	macro.Rewrite("new RTCDtlsTransport($1)", transport)
 	return &RTCDtlsTransport{}
 }
 

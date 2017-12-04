@@ -6,7 +6,7 @@ var _ Event = (*ServiceWorkerMessageEvent)(nil)
 
 // NewServiceWorkerMessageEvent fn
 func NewServiceWorkerMessageEvent(kind string, eventinitdict *ServiceWorkerMessageEventInit) *ServiceWorkerMessageEvent {
-	macro.Rewrite("ServiceWorkerMessageEvent")
+	macro.Rewrite("new ServiceWorkerMessageEvent($1, $2)", kind, eventinitdict)
 	return &ServiceWorkerMessageEvent{}
 }
 

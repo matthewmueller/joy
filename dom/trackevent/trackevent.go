@@ -10,7 +10,7 @@ var _ window.Event = (*TrackEvent)(nil)
 
 // New fn
 func New(typearg string, eventinitdict *trackeventinit.TrackEventInit) *TrackEvent {
-	macro.Rewrite("TrackEvent")
+	macro.Rewrite("new TrackEvent($1, $2)", typearg, eventinitdict)
 	return &TrackEvent{}
 }
 

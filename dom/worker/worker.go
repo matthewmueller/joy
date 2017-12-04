@@ -9,7 +9,7 @@ var _ window.EventTarget = (*Worker)(nil)
 
 // New fn
 func New(stringurl string) *Worker {
-	macro.Rewrite("Worker")
+	macro.Rewrite("new Worker($1)", stringurl)
 	return &Worker{}
 }
 

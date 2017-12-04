@@ -22,7 +22,7 @@ var _ window.EventTarget = (*WebkitRTCPeerConnection)(nil)
 
 // New fn
 func New(configuration *rtcconfiguration.RTCConfiguration) *WebkitRTCPeerConnection {
-	macro.Rewrite("webkitRTCPeerConnection")
+	macro.Rewrite("new webkitRTCPeerConnection($1)", configuration)
 	return &WebkitRTCPeerConnection{}
 }
 

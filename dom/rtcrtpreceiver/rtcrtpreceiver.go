@@ -16,7 +16,7 @@ var _ window.EventTarget = (*RTCRtpReceiver)(nil)
 
 // New fn
 func New(transport interface{}, kind string, rtcptransport *rtcdtlstransport.RTCDtlsTransport) *RTCRtpReceiver {
-	macro.Rewrite("RTCRtpReceiver")
+	macro.Rewrite("new RTCRtpReceiver($1, $2, $3)", transport, kind, rtcptransport)
 	return &RTCRtpReceiver{}
 }
 

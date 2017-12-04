@@ -4,7 +4,7 @@ import "github.com/matthewmueller/joy/macro"
 
 // New fn
 func New(x *float32, y *float32) *WebKitPoint {
-	macro.Rewrite("WebKitPoint")
+	macro.Rewrite("new WebKitPoint($1, $2)", x, y)
 	return &WebKitPoint{}
 }
 

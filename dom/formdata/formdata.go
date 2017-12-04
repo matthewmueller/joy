@@ -4,7 +4,7 @@ import "github.com/matthewmueller/joy/macro"
 
 // New fn
 func New() *FormData {
-	macro.Rewrite("FormData")
+	macro.Rewrite("new FormData()")
 	return &FormData{}
 }
 

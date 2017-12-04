@@ -7,7 +7,7 @@ import (
 
 // New fn
 func New() *MSGesture {
-	macro.Rewrite("MSGesture")
+	macro.Rewrite("new MSGesture()")
 	return &MSGesture{}
 }
 

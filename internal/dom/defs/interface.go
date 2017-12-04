@@ -2,6 +2,7 @@ package defs
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/matthewmueller/joy/internal/dom/def"
 	"github.com/matthewmueller/joy/internal/dom/index"
@@ -446,14 +447,9 @@ func (d *iface) Generate() (string, error) {
 
 	// handle the constructor if there is one
 	if d.data.Constructor != nil {
-		data.Constructor.Rewrite = d.data.Name
-
-		// New()
+		// New() function
 		if d.pkg == d.file {
 			data.Constructor.Name = "New"
-			if d.file == "window" {
-				data.Constructor.Rewrite = "window"
-			}
 		} else {
 			data.Constructor.Name = "New" + gen.Capitalize(d.data.Name)
 		}
@@ -470,14 +466,17 @@ func (d *iface) Generate() (string, error) {
 				Type:     t,
 			})
 		}
+
+		// add in the rewrites
+		switch d.file {
+		case "window":
+			data.Constructor.Rewrite = "window"
+		default:
+			ints := strings.Join(gen.Sequence(len(d.data.Constructor.Params)), ", ")
+			data.Constructor.Rewrite = "new " + d.data.Name + "(" + ints + ")"
+		}
 	}
 
-	// {{ if .Constructor.Name -}}
-	// // {{ .Constructor.Name }} fn
-	// func {{ .Constructor.Name }}({{ joinvt .Constructor.Params }}) {{ .Type }} {
-	// 	return &{{ capitalize .Name }}{}
-	// }
-	// {{- end }}
 	return gen.Generate("struct/"+d.data.Name, data, `
 		{{ range .Implements -}}
 		var _ {{ . }} = (*{{ capitalize $.Name }})(nil)
@@ -486,7 +485,7 @@ func (d *iface) Generate() (string, error) {
 		{{ if .Constructor.Name -}}
 		// {{ .Constructor.Name }} fn
 		func {{ .Constructor.Name }}({{ joinvt .Constructor.Params }}) {{ .Type }} {
-			macro.Rewrite("{{ .Constructor.Rewrite }}")
+			macro.Rewrite("{{ .Constructor.Rewrite }}", {{ joinv .Constructor.Params }})
 			return &{{ capitalize .Name }}{}
 		}
 		{{- end }}

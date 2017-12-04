@@ -8,7 +8,7 @@ var _ Event = (*PointerEvent)(nil)
 
 // NewPointerEvent fn
 func NewPointerEvent(typearg string, eventinitdict *PointerEventInit) *PointerEvent {
-	macro.Rewrite("PointerEvent")
+	macro.Rewrite("new PointerEvent($1, $2)", typearg, eventinitdict)
 	return &PointerEvent{}
 }
 

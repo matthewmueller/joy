@@ -8,7 +8,7 @@ var _ Event = (*MSPointerEvent)(nil)
 
 // NewMSPointerEvent fn
 func NewMSPointerEvent(typearg string, eventinitdict *PointerEventInit) *MSPointerEvent {
-	macro.Rewrite("MSPointerEvent")
+	macro.Rewrite("new MSPointerEvent($1, $2)", typearg, eventinitdict)
 	return &MSPointerEvent{}
 }
 

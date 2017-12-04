@@ -18,7 +18,7 @@ var _ window.EventTarget = (*OfflineAudioContext)(nil)
 
 // New fn
 func New(numberofchannels uint, length uint, samplerate float32) *OfflineAudioContext {
-	macro.Rewrite("OfflineAudioContext")
+	macro.Rewrite("new OfflineAudioContext($1, $2, $3)", numberofchannels, length, samplerate)
 	return &OfflineAudioContext{}
 }
 

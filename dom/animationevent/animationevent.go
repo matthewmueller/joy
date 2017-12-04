@@ -10,7 +10,7 @@ var _ window.Event = (*AnimationEvent)(nil)
 
 // New fn
 func New(typearg string, eventinitdict *animationeventinit.AnimationEventInit) *AnimationEvent {
-	macro.Rewrite("AnimationEvent")
+	macro.Rewrite("new AnimationEvent($1, $2)", typearg, eventinitdict)
 	return &AnimationEvent{}
 }
 

@@ -9,7 +9,7 @@ var _ Event = (*PopStateEvent)(nil)
 
 // NewPopStateEvent fn
 func NewPopStateEvent(typearg string, eventinitdict *popstateeventinit.PopStateEventInit) *PopStateEvent {
-	macro.Rewrite("PopStateEvent")
+	macro.Rewrite("new PopStateEvent($1, $2)", typearg, eventinitdict)
 	return &PopStateEvent{}
 }
 

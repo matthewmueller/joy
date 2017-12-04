@@ -9,7 +9,7 @@ var _ Event = (*HashChangeEvent)(nil)
 
 // NewHashChangeEvent fn
 func NewHashChangeEvent(typearg string, eventinitdict *hashchangeeventinit.HashChangeEventInit) *HashChangeEvent {
-	macro.Rewrite("HashChangeEvent")
+	macro.Rewrite("new HashChangeEvent($1, $2)", typearg, eventinitdict)
 	return &HashChangeEvent{}
 }
 

@@ -10,7 +10,7 @@ var _ window.Event = (*CustomEvent)(nil)
 
 // New fn
 func New(typearg string, eventinitdict *customeventinit.CustomEventInit) *CustomEvent {
-	macro.Rewrite("CustomEvent")
+	macro.Rewrite("new CustomEvent($1, $2)", typearg, eventinitdict)
 	return &CustomEvent{}
 }
 

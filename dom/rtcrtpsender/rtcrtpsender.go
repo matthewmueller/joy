@@ -16,7 +16,7 @@ var _ window.EventTarget = (*RTCRtpSender)(nil)
 
 // New fn
 func New(track *window.MediaStreamTrack, transport interface{}, rtcptransport *rtcdtlstransport.RTCDtlsTransport) *RTCRtpSender {
-	macro.Rewrite("RTCRtpSender")
+	macro.Rewrite("new RTCRtpSender($1, $2, $3)", track, transport, rtcptransport)
 	return &RTCRtpSender{}
 }
 

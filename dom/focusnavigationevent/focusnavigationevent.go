@@ -11,7 +11,7 @@ var _ window.Event = (*FocusNavigationEvent)(nil)
 
 // New fn
 func New(kind string, eventinitdict *focusnavigationeventinit.FocusNavigationEventInit) *FocusNavigationEvent {
-	macro.Rewrite("FocusNavigationEvent")
+	macro.Rewrite("new FocusNavigationEvent($1, $2)", kind, eventinitdict)
 	return &FocusNavigationEvent{}
 }
 

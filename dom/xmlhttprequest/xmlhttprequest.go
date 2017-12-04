@@ -11,7 +11,7 @@ var _ window.EventTarget = (*XMLHTTPRequest)(nil)
 
 // New fn
 func New() *XMLHTTPRequest {
-	macro.Rewrite("XMLHttpRequest")
+	macro.Rewrite("new XMLHttpRequest()")
 	return &XMLHTTPRequest{}
 }
 

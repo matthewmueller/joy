@@ -21,7 +21,7 @@ var _ window.EventTarget = (*RTCIceTransport)(nil)
 
 // New fn
 func New() *RTCIceTransport {
-	macro.Rewrite("RTCIceTransport")
+	macro.Rewrite("new RTCIceTransport()")
 	return &RTCIceTransport{}
 }
 

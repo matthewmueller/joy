@@ -9,7 +9,7 @@ var _ EventTarget = (*SpeechSynthesisUtterance)(nil)
 
 // NewSpeechSynthesisUtterance fn
 func NewSpeechSynthesisUtterance(text *string) *SpeechSynthesisUtterance {
-	macro.Rewrite("SpeechSynthesisUtterance")
+	macro.Rewrite("new SpeechSynthesisUtterance($1)", text)
 	return &SpeechSynthesisUtterance{}
 }
 

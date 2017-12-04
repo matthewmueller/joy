@@ -13,7 +13,7 @@ var _ Event = (*DeviceMotionEvent)(nil)
 
 // NewDeviceMotionEvent fn
 func NewDeviceMotionEvent(typearg string, eventinitdict *devicemotioneventinit.DeviceMotionEventInit) *DeviceMotionEvent {
-	macro.Rewrite("DeviceMotionEvent")
+	macro.Rewrite("new DeviceMotionEvent($1, $2)", typearg, eventinitdict)
 	return &DeviceMotionEvent{}
 }
 

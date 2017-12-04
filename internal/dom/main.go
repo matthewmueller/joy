@@ -46,10 +46,6 @@ func generate(dir string) error {
 		return fmt.Errorf("couldn't get file from runtime")
 	}
 	dirname := path.Dir(file)
-	// xml, err := curl.XML(browserAPIURL)
-	// if err != nil {
-	// 	return err
-	// }
 
 	xml, err := ioutil.ReadFile(path.Join(dirname, "inputs", "browser.webidl.xml"))
 	if err != nil {

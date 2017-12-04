@@ -7,7 +7,7 @@ import (
 
 // New fn
 func New(candidateinitdict *rtcicecandidateinit.RTCIceCandidateInit) *RTCIceCandidate {
-	macro.Rewrite("RTCIceCandidate")
+	macro.Rewrite("new RTCIceCandidate($1)", candidateinitdict)
 	return &RTCIceCandidate{}
 }
 

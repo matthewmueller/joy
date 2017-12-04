@@ -33,7 +33,7 @@ func main() {
 	x.Open("get", "http://google.com", nil, nil, nil)
 	x.Send(nil)
 
-	ws := &websocket.WebSocket{}
+	ws := websocket.New("http://google.com", nil)
 
 	ws.SetOnopen(func(e window.Event) {
 		println(e.Bubbles())

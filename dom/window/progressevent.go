@@ -9,7 +9,7 @@ var _ Event = (*ProgressEvent)(nil)
 
 // NewProgressEvent fn
 func NewProgressEvent(typearg string, eventinitdict *progresseventinit.ProgressEventInit) *ProgressEvent {
-	macro.Rewrite("ProgressEvent")
+	macro.Rewrite("new ProgressEvent($1, $2)", typearg, eventinitdict)
 	return &ProgressEvent{}
 }
 

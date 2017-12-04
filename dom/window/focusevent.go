@@ -7,7 +7,7 @@ var _ Event = (*FocusEvent)(nil)
 
 // NewFocusEvent fn
 func NewFocusEvent(typearg string, eventinitdict *FocusEventInit) *FocusEvent {
-	macro.Rewrite("FocusEvent")
+	macro.Rewrite("new FocusEvent($1, $2)", typearg, eventinitdict)
 	return &FocusEvent{}
 }
 

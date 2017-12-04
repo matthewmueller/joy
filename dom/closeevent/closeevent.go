@@ -10,7 +10,7 @@ var _ window.Event = (*CloseEvent)(nil)
 
 // New fn
 func New(typearg string, eventinitdict *closeeventinit.CloseEventInit) *CloseEvent {
-	macro.Rewrite("CloseEvent")
+	macro.Rewrite("new CloseEvent($1, $2)", typearg, eventinitdict)
 	return &CloseEvent{}
 }
 

@@ -7,7 +7,7 @@ import (
 
 // New fn
 func New(keysystem string) *MSMediaKeys {
-	macro.Rewrite("MSMediaKeys")
+	macro.Rewrite("new MSMediaKeys($1)", keysystem)
 	return &MSMediaKeys{}
 }
 

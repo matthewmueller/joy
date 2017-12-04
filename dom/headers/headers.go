@@ -7,7 +7,7 @@ import (
 
 // New fn
 func New(init *interface{}) *Headers {
-	macro.Rewrite("Headers")
+	macro.Rewrite("new Headers($1)", init)
 	return &Headers{}
 }
 

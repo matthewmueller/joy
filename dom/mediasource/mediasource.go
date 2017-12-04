@@ -11,7 +11,7 @@ var _ window.EventTarget = (*MediaSource)(nil)
 
 // New fn
 func New() *MediaSource {
-	macro.Rewrite("MediaSource")
+	macro.Rewrite("new MediaSource()")
 	return &MediaSource{}
 }
 

@@ -11,7 +11,7 @@ var _ window.EventTarget = (*MSStreamReader)(nil)
 
 // New fn
 func New() *MSStreamReader {
-	macro.Rewrite("MSStreamReader")
+	macro.Rewrite("new MSStreamReader()")
 	return &MSStreamReader{}
 }
 

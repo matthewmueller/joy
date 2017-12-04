@@ -10,7 +10,7 @@ var _ window.Event = (*WebGLContextEvent)(nil)
 
 // New fn
 func New(typearg string, eventinitdict *webglcontexteventinit.WebGLContextEventInit) *WebGLContextEvent {
-	macro.Rewrite("WebGLContextEvent")
+	macro.Rewrite("new WebGLContextEvent($1, $2)", typearg, eventinitdict)
 	return &WebGLContextEvent{}
 }
 

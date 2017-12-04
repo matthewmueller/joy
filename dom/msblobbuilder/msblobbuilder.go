@@ -7,7 +7,7 @@ import (
 
 // New fn
 func New() *MSBlobBuilder {
-	macro.Rewrite("MSBlobBuilder")
+	macro.Rewrite("new MSBlobBuilder()")
 	return &MSBlobBuilder{}
 }
 

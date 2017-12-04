@@ -9,7 +9,7 @@ import (
 
 // New fn
 func New(callback func(entries []*intersectionobserverentry.IntersectionObserverEntry, observer *IntersectionObserver), options *intersectionobserverinit.IntersectionObserverInit) *IntersectionObserver {
-	macro.Rewrite("IntersectionObserver")
+	macro.Rewrite("new IntersectionObserver($1, $2)", callback, options)
 	return &IntersectionObserver{}
 }
 

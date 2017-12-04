@@ -11,7 +11,7 @@ var _ window.EventTarget = (*FileReader)(nil)
 
 // New fn
 func New() *FileReader {
-	macro.Rewrite("FileReader")
+	macro.Rewrite("new FileReader()")
 	return &FileReader{}
 }
 

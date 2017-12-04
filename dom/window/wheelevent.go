@@ -8,7 +8,7 @@ var _ Event = (*WheelEvent)(nil)
 
 // NewWheelEvent fn
 func NewWheelEvent(typearg string, eventinitdict *WheelEventInit) *WheelEvent {
-	macro.Rewrite("WheelEvent")
+	macro.Rewrite("new WheelEvent($1, $2)", typearg, eventinitdict)
 	return &WheelEvent{}
 }
 

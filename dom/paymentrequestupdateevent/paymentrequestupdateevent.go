@@ -11,7 +11,7 @@ var _ window.Event = (*PaymentRequestUpdateEvent)(nil)
 
 // New fn
 func New(kind string, eventinitdict *paymentrequestupdateeventinit.PaymentRequestUpdateEventInit) *PaymentRequestUpdateEvent {
-	macro.Rewrite("PaymentRequestUpdateEvent")
+	macro.Rewrite("new PaymentRequestUpdateEvent($1, $2)", kind, eventinitdict)
 	return &PaymentRequestUpdateEvent{}
 }
 

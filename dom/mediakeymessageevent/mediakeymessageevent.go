@@ -11,7 +11,7 @@ var _ window.Event = (*MediaKeyMessageEvent)(nil)
 
 // New fn
 func New(kind string, eventinitdict *mediakeymessageeventinit.MediaKeyMessageEventInit) *MediaKeyMessageEvent {
-	macro.Rewrite("MediaKeyMessageEvent")
+	macro.Rewrite("new MediaKeyMessageEvent($1, $2)", kind, eventinitdict)
 	return &MediaKeyMessageEvent{}
 }
 

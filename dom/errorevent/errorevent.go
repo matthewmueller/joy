@@ -10,7 +10,7 @@ var _ window.Event = (*ErrorEvent)(nil)
 
 // New fn
 func New(typearg string, eventinitdict *erroreventinit.ErrorEventInit) *ErrorEvent {
-	macro.Rewrite("ErrorEvent")
+	macro.Rewrite("new ErrorEvent($1, $2)", typearg, eventinitdict)
 	return &ErrorEvent{}
 }
 

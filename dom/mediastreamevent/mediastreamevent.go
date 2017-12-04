@@ -10,7 +10,7 @@ var _ window.Event = (*MediaStreamEvent)(nil)
 
 // New fn
 func New(kind string, eventinitdict *mediastreameventinit.MediaStreamEventInit) *MediaStreamEvent {
-	macro.Rewrite("MediaStreamEvent")
+	macro.Rewrite("new MediaStreamEvent($1, $2)", kind, eventinitdict)
 	return &MediaStreamEvent{}
 }
 

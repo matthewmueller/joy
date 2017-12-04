@@ -10,7 +10,7 @@ var _ window.Event = (*RTCDTMFToneChangeEvent)(nil)
 
 // New fn
 func New(typearg string, eventinitdict *rtcdtmftonechangeeventinit.RTCDTMFToneChangeEventInit) *RTCDTMFToneChangeEvent {
-	macro.Rewrite("RTCDTMFToneChangeEvent")
+	macro.Rewrite("new RTCDTMFToneChangeEvent($1, $2)", typearg, eventinitdict)
 	return &RTCDTMFToneChangeEvent{}
 }
 

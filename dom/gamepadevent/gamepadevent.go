@@ -11,7 +11,7 @@ var _ window.Event = (*GamepadEvent)(nil)
 
 // New fn
 func New(typearg string, eventinitdict *gamepadeventinit.GamepadEventInit) *GamepadEvent {
-	macro.Rewrite("GamepadEvent")
+	macro.Rewrite("new GamepadEvent($1, $2)", typearg, eventinitdict)
 	return &GamepadEvent{}
 }
 

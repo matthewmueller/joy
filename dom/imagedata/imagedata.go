@@ -4,7 +4,7 @@ import "github.com/matthewmueller/joy/macro"
 
 // New fn
 func New(width uint, height uint) *ImageData {
-	macro.Rewrite("ImageData")
+	macro.Rewrite("new ImageData($1, $2)", width, height)
 	return &ImageData{}
 }
 

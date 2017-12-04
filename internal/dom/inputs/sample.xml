@@ -139,6 +139,20 @@
         <property name="webkitRelativePath" read-only="1" type="DOMString"/>
       </properties>
     </interface>
+    <interface name="XMLHttpRequest" extends="EventTarget">
+      <constants>
+      </constants>
+      <constructor>
+        <param name="typeArg" type="DOMString"/>
+        <param name="eventInitDict" optional="1" type="DOMString"/>
+      </constructor>
+      <events>
+      </events>
+      <methods>
+      </methods>
+      <properties>
+      </properties>
+    </interface>
   </interfaces>
   <mixin-interfaces>
     <interface name="NodeSelector" extends="Object" no-interface-object="1">

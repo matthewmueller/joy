@@ -7,7 +7,7 @@ import (
 
 // New fn
 func New() *XSLTProcessor {
-	macro.Rewrite("XSLTProcessor")
+	macro.Rewrite("new XSLTProcessor()")
 	return &XSLTProcessor{}
 }
 

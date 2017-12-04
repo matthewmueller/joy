@@ -11,7 +11,7 @@ var _ window.EventTarget = (*RTCDtmfSender)(nil)
 
 // New fn
 func New(sender *rtcrtpsender.RTCRtpSender) *RTCDtmfSender {
-	macro.Rewrite("RTCDtmfSender")
+	macro.Rewrite("new RTCDtmfSender($1)", sender)
 	return &RTCDtmfSender{}
 }
 
