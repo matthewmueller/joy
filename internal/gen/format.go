@@ -75,7 +75,7 @@ func FormatAll(dir string) (err error) {
 	}
 
 	if err := cmd.Wait(); err != nil {
-		return errors.Wrapf(err, "error running goimports")
+		return errors.Wrapf(err, "error running goimports\n%s", formattingError)
 	}
 
 	return nil

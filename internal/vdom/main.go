@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/apex/log"
+	"github.com/matthewmueller/joy/internal/dom/raw"
 	"github.com/matthewmueller/joy/internal/gen"
 	"github.com/pkg/errors"
 )
@@ -52,6 +54,34 @@ func generate() error {
 		return errors.Wrapf(err, "error unmarshalling tags")
 	}
 
+	eventmap := map[string]string{}
+	for _, event := range data.Events {
+		eventmap[event] = ""
+	}
+
+	// match events with event types
+	// TODO: clean this up
+	buf, err = ioutil.ReadFile(path.Join(dirname, "..", "dom", "inputs", "browser.webidl.xml"))
+	if err != nil {
+		return err
+	}
+	var api raw.API
+	if e := xml.Unmarshal([]byte(buf), &api); e != nil {
+		return errors.Wrap(e, "error parsing xml")
+	}
+	for _, iface := range api.Interfaces {
+		for _, event := range iface.Events {
+			if _, isset := eventmap["on"+event.Name]; isset {
+				eventmap["on"+event.Name] = "func (e window." + event.Type + ")"
+			}
+		}
+	}
+	for name, kind := range eventmap {
+		if kind == "" {
+			return errors.Wrapf(err, "missed an event in browser apis %s", name)
+		}
+	}
+
 	for name, tag := range data.Tags {
 		type Attr struct {
 			Key   string
@@ -68,7 +98,6 @@ func generate() error {
 		}
 
 		attrs := append(tag.Attrs, data.Global...)
-		attrs = append(attrs, data.Events...)
 
 		for _, attr := range attrs {
 			parts := strings.Split(attr, ":")
@@ -77,20 +106,30 @@ func generate() error {
 
 			if len(parts) > 2 {
 				key = strings.Join(parts[0:len(parts)-2], ":")
-				kind = parts[len(parts)-1]
+				// kind = parts[len(parts)-1]
 			} else if len(parts) == 2 {
-				kind = parts[1]
+				// kind = parts[1]
 			}
 
-			if _, isset := data.Types[kind]; isset {
-				log.Infof("kind isset %s", kind)
-			}
+			// if _, isset := data.Types[kind]; isset {
+			// 	log.Infof("kind isset %s", kind)
+			// }
 
 			d.Attrs = append(d.Attrs, Attr{
 				Key: key,
 				Value: gen.Vartype{
-					Var:  "value",
-					Type: "string",
+					Var:  key,
+					Type: kind,
+				},
+			})
+		}
+
+		for event, kind := range eventmap {
+			d.Attrs = append(d.Attrs, Attr{
+				Key: event,
+				Value: gen.Vartype{
+					Var:  event,
+					Type: kind,
 				},
 			})
 		}
@@ -160,16 +199,16 @@ func generate() error {
 
 			{{ range .Attrs }}
 			// {{ capitalize .Key }} fn
-			func {{ capitalize .Key }}({{ lowercase .Key }} string) *Props {
-				macro.Rewrite("$1().Set('{{ lowercase .Key }}', $2)", macro.Runtime("Map", "Set", "JSON"), {{ lowercase .Key }})
+			func {{ capitalize .Key }}({{ vt .Value }}) *Props {
+				macro.Rewrite("$1().Set('{{ .Key }}', $2)", macro.Runtime("Map", "Set", "JSON"), {{ identifier .Key }})
 				p := &Props{attrs: map[string]interface{}{}}
-				return p.{{ capitalize .Key }}({{ lowercase .Key }})
+				return p.{{ capitalize .Key }}({{ identifier .Key }})
 			}
 
 			// {{ capitalize .Key }} fn
-			func (p *Props) {{ capitalize .Key }}({{ lowercase .Key }} string) *Props {
-				macro.Rewrite("$_.Set('{{ lowercase .Key }}', $1)", {{ lowercase .Key }})
-				p.attrs["{{ .Key }}"] = {{ lowercase .Key }}
+			func (p *Props) {{ capitalize .Key }}({{ vt .Value }}) *Props {
+				macro.Rewrite("$_.Set('{{ .Key }}', $1)", {{ identifier .Key }})
+				p.attrs["{{ .Key }}"] = {{ identifier .Key }}
 				return p
 			}
 			{{ end }}

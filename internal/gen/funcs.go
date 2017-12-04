@@ -19,11 +19,36 @@ func funcs() template.FuncMap {
 		"join":       Join,
 		"vt":         VT,
 		"sequence":   Sequence,
+		"identifier": Identifier,
 	}
 }
 
 // Identifier from the string avoiding the builtins
 func Identifier(s string) string {
+	out := []string{}
+	for i, w := range strings.Split(s, "-") {
+		if i == 0 {
+			out = append(out, w)
+			continue
+		}
+
+		capitalize := strings.ToUpper(w[:1]) + strings.ToLower(w[1:])
+		out = append(out, capitalize)
+	}
+	s = strings.Join(out, "")
+
+	out = []string{}
+	for i, w := range strings.Split(s, "_") {
+		if i == 0 {
+			out = append(out, w)
+			continue
+		}
+
+		capitalize := strings.ToUpper(w[:1]) + strings.ToLower(w[1:])
+		out = append(out, capitalize)
+	}
+	s = strings.Join(out, "")
+
 	if builtins[s] != "" {
 		return builtins[s]
 	}
