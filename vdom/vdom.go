@@ -1,7 +1,7 @@
 package vdom
 
 import (
-	"github.com/matthewmueller/golly/dom/document"
+	"github.com/matthewmueller/joy/dom/window"
 	"github.com/matthewmueller/joy/macro"
 )
 
@@ -45,7 +45,7 @@ type Node interface {
 }
 
 // Render the component
-func Render(component Child, parent document.Node, merge document.Node) {
+func Render(component Child, parent window.Node, merge window.Node) {
 	macro.Rewrite("$1.render($2, $3, $4)", File(), component, parent, merge)
 }
 
