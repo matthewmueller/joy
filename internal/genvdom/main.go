@@ -248,7 +248,7 @@ func (s *{{ $c }}) String() string {
 {{- $al := lowercase $attr -}}
 // {{ $ac }} fn
 func {{ $ac }}({{ $al }} string) *Props {
-	macro.Rewrite("$1().Set('{{ $al }}', $2)", js.Runtime("Map", "Set", "JSON"), {{ $al }})
+	macro.Rewrite("$1().Set('{{ $al }}', $2)", macro.Runtime("Map", "Set", "JSON"), {{ $al }})
 	p := &Props{attrs: map[string]interface{}{}}
 	return p.{{ $ac }}({{ $al }})
 }
@@ -263,7 +263,7 @@ func (p *Props) {{ $ac }}({{ $al }} string) *Props {
 
 // Attr fn
 func Attr(key string, value interface{}) *Props {
-	macro.Rewrite("$1().Set($2, $3)", js.Runtime("Map", "Set", "JSON"), key, value)
+	macro.Rewrite("$1().Set($2, $3)", macro.Runtime("Map", "Set", "JSON"), key, value)
 	p := &Props{attrs: map[string]interface{}{}}
 	return p.Attr(key, value)
 }

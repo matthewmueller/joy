@@ -1499,7 +1499,7 @@ func (tr *Translator) callExpr(d def.Definition, sp *scope.Scope, n *ast.CallExp
 		return tr.vdomFile()
 	case "vdom.Pragma":
 		return tr.vdomPragma()
-	case "js.Runtime":
+	case "macro.Runtime":
 		return tr.jsRuntime(d, sp, n)
 	}
 
@@ -2826,7 +2826,7 @@ func (tr *Translator) jsRuntime(d def.Definition, sp *scope.Scope, n *ast.CallEx
 
 	lit, ok := n.Args[0].(*ast.BasicLit)
 	if !ok {
-		return nil, fmt.Errorf("fn process: expected js.Runtime to have basiclit argument, but got %T", n.Args[0])
+		return nil, fmt.Errorf("fn process: expected macro.Runtime to have basiclit argument, but got %T", n.Args[0])
 	}
 
 	dep, e := strconv.Unquote(lit.Value)
@@ -2840,7 +2840,7 @@ func (tr *Translator) jsRuntime(d def.Definition, sp *scope.Scope, n *ast.CallEx
 	}
 
 	if len(defs) == 0 {
-		return nil, fmt.Errorf("fn process: expected js.Runtime to return at least 1 definitions")
+		return nil, fmt.Errorf("fn process: expected macro.Runtime to return at least 1 definitions")
 	}
 	def := defs[0]
 

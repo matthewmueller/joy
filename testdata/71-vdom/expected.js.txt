@@ -1,0 +1,36 @@
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/joy/internal/runtime"] = (function() {
+		mapper.prototype.JSON = function() {
+			var m = this;
+			return m.obj;
+		};
+		function mapper (o) {
+			o = o || {};
+			this.obj = o.obj || {}
+		};
+		function Map () {
+			return new mapper({});
+		};
+		mapper.prototype.Set = function(key, value) {
+			var m = this;
+			m.obj[key] = value;
+			return m;
+		};
+		return {
+			Map: Map
+		};
+	})();
+	pkg["github.com/matthewmueller/joy/testdata/71-vdom"] = (function() {
+		function main () {
+			;
+			var h = pkg["github.com/matthewmueller/joy/testdata/71-vdom/preact.js"].h('html', pkg["github.com/matthewmueller/joy/internal/runtime"].Map().Set('manifest', "hi").Set('class', "cool") ? pkg["github.com/matthewmueller/joy/internal/runtime"].Map().Set('manifest', "hi").Set('class', "cool").JSON() : {}, [pkg["github.com/matthewmueller/joy/testdata/71-vdom/preact.js"].h('head', null ? null.JSON() : {}, []), pkg["github.com/matthewmueller/joy/testdata/71-vdom/preact.js"].h('body', null ? null.JSON() : {}, [])]);
+			var document = window.document;
+			pkg["github.com/matthewmueller/joy/testdata/71-vdom/preact.js"].render(h, document.body, null)
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/joy/testdata/71-vdom"].main();
+})()

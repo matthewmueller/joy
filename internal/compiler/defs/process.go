@@ -224,7 +224,7 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 	}
 
 	switch cx {
-	case "js.Runtime":
+	case "macro.Runtime":
 		return jsRuntime(ctx, n)
 	case "macro.RawFile":
 		return jsFile(ctx, n)

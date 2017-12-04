@@ -42,9 +42,9 @@ func generate() error {
 			Comment string
 			Attrs   []string
 		}
-		Global []string
-		Events []string
-		Types  map[string]struct {
+		Globals []string
+		Events  []string
+		Types   map[string]struct {
 			Type   string
 			Values []string
 		}
@@ -97,8 +97,7 @@ func generate() error {
 			Comment: tag.Comment,
 		}
 
-		attrs := append(tag.Attrs, data.Global...)
-
+		attrs := append(tag.Attrs, data.Globals...)
 		for _, attr := range attrs {
 			parts := strings.Split(attr, ":")
 			key := parts[0]
