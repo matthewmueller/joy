@@ -20,6 +20,7 @@ func main() {
 	if err := generate(); err != nil {
 		log.WithError(err).Fatal("error generating")
 	}
+	log.Infof("done")
 }
 
 func generate() error {
@@ -70,14 +71,14 @@ func generate() error {
 	}
 	for _, iface := range api.Interfaces {
 		for _, event := range iface.Events {
-			if _, isset := eventmap[event.Name]; isset {
-				eventmap[event.Name] = "func (e window." + event.Type + ")"
+			if _, isset := eventmap["on"+event.Name]; isset {
+				eventmap["on"+event.Name] = "func (e window." + event.Type + ")"
 			}
 		}
 	}
 	for name, kind := range eventmap {
 		if kind == "" {
-			return errors.Wrapf(err, "missed an event in browser apis %s", name)
+			return fmt.Errorf("missed an event in browser apis %s", name)
 		}
 	}
 
