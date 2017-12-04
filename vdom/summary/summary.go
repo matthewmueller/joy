@@ -1035,759 +1035,759 @@ func (p *Props) Translate(translate string) *Props {
 	return p
 }
 
-// Onblur fn
-func Onblur(onblur func(e window.FocusEvent)) *Props {
-	macro.Rewrite("$1().Set('onblur', $2)", macro.Runtime("Map", "Set", "JSON"), onblur)
+// OnAbort fn
+func OnAbort(onAbort func(e window.ProgressEvent)) *Props {
+	macro.Rewrite("$1().Set('on-abort', $2)", macro.Runtime("Map", "Set", "JSON"), onAbort)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onblur(onblur)
+	return p.OnAbort(onAbort)
 }
 
-// Onblur fn
-func (p *Props) Onblur(onblur func(e window.FocusEvent)) *Props {
-	macro.Rewrite("$_.Set('onblur', $1)", onblur)
-	p.attrs["onblur"] = onblur
+// OnAbort fn
+func (p *Props) OnAbort(onAbort func(e window.ProgressEvent)) *Props {
+	macro.Rewrite("$_.Set('on-abort', $1)", onAbort)
+	p.attrs["on-abort"] = onAbort
 	return p
 }
 
-// Onchange fn
-func Onchange(onchange func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onchange', $2)", macro.Runtime("Map", "Set", "JSON"), onchange)
+// OnBlur fn
+func OnBlur(onBlur func(e window.FocusEvent)) *Props {
+	macro.Rewrite("$1().Set('on-blur', $2)", macro.Runtime("Map", "Set", "JSON"), onBlur)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onchange(onchange)
+	return p.OnBlur(onBlur)
 }
 
-// Onchange fn
-func (p *Props) Onchange(onchange func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onchange', $1)", onchange)
-	p.attrs["onchange"] = onchange
+// OnBlur fn
+func (p *Props) OnBlur(onBlur func(e window.FocusEvent)) *Props {
+	macro.Rewrite("$_.Set('on-blur', $1)", onBlur)
+	p.attrs["on-blur"] = onBlur
 	return p
 }
 
-// Onmouseout fn
-func Onmouseout(onmouseout func(e window.MouseEvent)) *Props {
-	macro.Rewrite("$1().Set('onmouseout', $2)", macro.Runtime("Map", "Set", "JSON"), onmouseout)
+// OnCanplay fn
+func OnCanplay(onCanplay func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-canplay', $2)", macro.Runtime("Map", "Set", "JSON"), onCanplay)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onmouseout(onmouseout)
+	return p.OnCanplay(onCanplay)
 }
 
-// Onmouseout fn
-func (p *Props) Onmouseout(onmouseout func(e window.MouseEvent)) *Props {
-	macro.Rewrite("$_.Set('onmouseout', $1)", onmouseout)
-	p.attrs["onmouseout"] = onmouseout
+// OnCanplay fn
+func (p *Props) OnCanplay(onCanplay func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-canplay', $1)", onCanplay)
+	p.attrs["on-canplay"] = onCanplay
 	return p
 }
 
-// Onplaying fn
-func Onplaying(onplaying func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onplaying', $2)", macro.Runtime("Map", "Set", "JSON"), onplaying)
+// OnCanplaythrough fn
+func OnCanplaythrough(onCanplaythrough func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-canplaythrough', $2)", macro.Runtime("Map", "Set", "JSON"), onCanplaythrough)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onplaying(onplaying)
+	return p.OnCanplaythrough(onCanplaythrough)
 }
 
-// Onplaying fn
-func (p *Props) Onplaying(onplaying func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onplaying', $1)", onplaying)
-	p.attrs["onplaying"] = onplaying
+// OnCanplaythrough fn
+func (p *Props) OnCanplaythrough(onCanplaythrough func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-canplaythrough', $1)", onCanplaythrough)
+	p.attrs["on-canplaythrough"] = onCanplaythrough
 	return p
 }
 
-// Onsubmit fn
-func Onsubmit(onsubmit func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onsubmit', $2)", macro.Runtime("Map", "Set", "JSON"), onsubmit)
+// OnChange fn
+func OnChange(onChange func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-change', $2)", macro.Runtime("Map", "Set", "JSON"), onChange)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onsubmit(onsubmit)
+	return p.OnChange(onChange)
 }
 
-// Onsubmit fn
-func (p *Props) Onsubmit(onsubmit func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onsubmit', $1)", onsubmit)
-	p.attrs["onsubmit"] = onsubmit
+// OnChange fn
+func (p *Props) OnChange(onChange func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-change', $1)", onChange)
+	p.attrs["on-change"] = onChange
 	return p
 }
 
-// Onsuspend fn
-func Onsuspend(onsuspend func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onsuspend', $2)", macro.Runtime("Map", "Set", "JSON"), onsuspend)
+// OnClick fn
+func OnClick(onClick func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-click', $2)", macro.Runtime("Map", "Set", "JSON"), onClick)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onsuspend(onsuspend)
+	return p.OnClick(onClick)
 }
 
-// Onsuspend fn
-func (p *Props) Onsuspend(onsuspend func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onsuspend', $1)", onsuspend)
-	p.attrs["onsuspend"] = onsuspend
+// OnClick fn
+func (p *Props) OnClick(onClick func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-click', $1)", onClick)
+	p.attrs["on-click"] = onClick
 	return p
 }
 
-// Onmouseover fn
-func Onmouseover(onmouseover func(e window.MouseEvent)) *Props {
-	macro.Rewrite("$1().Set('onmouseover', $2)", macro.Runtime("Map", "Set", "JSON"), onmouseover)
+// OnContextmenu fn
+func OnContextmenu(onContextmenu func(e window.PointerEvent)) *Props {
+	macro.Rewrite("$1().Set('on-contextmenu', $2)", macro.Runtime("Map", "Set", "JSON"), onContextmenu)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onmouseover(onmouseover)
+	return p.OnContextmenu(onContextmenu)
 }
 
-// Onmouseover fn
-func (p *Props) Onmouseover(onmouseover func(e window.MouseEvent)) *Props {
-	macro.Rewrite("$_.Set('onmouseover', $1)", onmouseover)
-	p.attrs["onmouseover"] = onmouseover
+// OnContextmenu fn
+func (p *Props) OnContextmenu(onContextmenu func(e window.PointerEvent)) *Props {
+	macro.Rewrite("$_.Set('on-contextmenu', $1)", onContextmenu)
+	p.attrs["on-contextmenu"] = onContextmenu
 	return p
 }
 
-// Onprogress fn
-func Onprogress(onprogress func(e window.ProgressEvent)) *Props {
-	macro.Rewrite("$1().Set('onprogress', $2)", macro.Runtime("Map", "Set", "JSON"), onprogress)
+// OnDblclick fn
+func OnDblclick(onDblclick func(e window.MouseEvent)) *Props {
+	macro.Rewrite("$1().Set('on-dblclick', $2)", macro.Runtime("Map", "Set", "JSON"), onDblclick)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onprogress(onprogress)
+	return p.OnDblclick(onDblclick)
 }
 
-// Onprogress fn
-func (p *Props) Onprogress(onprogress func(e window.ProgressEvent)) *Props {
-	macro.Rewrite("$_.Set('onprogress', $1)", onprogress)
-	p.attrs["onprogress"] = onprogress
+// OnDblclick fn
+func (p *Props) OnDblclick(onDblclick func(e window.MouseEvent)) *Props {
+	macro.Rewrite("$_.Set('on-dblclick', $1)", onDblclick)
+	p.attrs["on-dblclick"] = onDblclick
 	return p
 }
 
-// Onselect fn
-func Onselect(onselect func(e window.UIEvent)) *Props {
-	macro.Rewrite("$1().Set('onselect', $2)", macro.Runtime("Map", "Set", "JSON"), onselect)
+// OnDrag fn
+func OnDrag(onDrag func(e window.DragEvent)) *Props {
+	macro.Rewrite("$1().Set('on-drag', $2)", macro.Runtime("Map", "Set", "JSON"), onDrag)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onselect(onselect)
+	return p.OnDrag(onDrag)
 }
 
-// Onselect fn
-func (p *Props) Onselect(onselect func(e window.UIEvent)) *Props {
-	macro.Rewrite("$_.Set('onselect', $1)", onselect)
-	p.attrs["onselect"] = onselect
+// OnDrag fn
+func (p *Props) OnDrag(onDrag func(e window.DragEvent)) *Props {
+	macro.Rewrite("$_.Set('on-drag', $1)", onDrag)
+	p.attrs["on-drag"] = onDrag
 	return p
 }
 
-// Ondurationchange fn
-func Ondurationchange(ondurationchange func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('ondurationchange', $2)", macro.Runtime("Map", "Set", "JSON"), ondurationchange)
+// OnDragend fn
+func OnDragend(onDragend func(e window.DragEvent)) *Props {
+	macro.Rewrite("$1().Set('on-dragend', $2)", macro.Runtime("Map", "Set", "JSON"), onDragend)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Ondurationchange(ondurationchange)
+	return p.OnDragend(onDragend)
 }
 
-// Ondurationchange fn
-func (p *Props) Ondurationchange(ondurationchange func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('ondurationchange', $1)", ondurationchange)
-	p.attrs["ondurationchange"] = ondurationchange
+// OnDragend fn
+func (p *Props) OnDragend(onDragend func(e window.DragEvent)) *Props {
+	macro.Rewrite("$_.Set('on-dragend', $1)", onDragend)
+	p.attrs["on-dragend"] = onDragend
 	return p
 }
 
-// Onload fn
-func Onload(onload func(e window.ProgressEvent)) *Props {
-	macro.Rewrite("$1().Set('onload', $2)", macro.Runtime("Map", "Set", "JSON"), onload)
+// OnDragenter fn
+func OnDragenter(onDragenter func(e window.DragEvent)) *Props {
+	macro.Rewrite("$1().Set('on-dragenter', $2)", macro.Runtime("Map", "Set", "JSON"), onDragenter)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onload(onload)
+	return p.OnDragenter(onDragenter)
 }
 
-// Onload fn
-func (p *Props) Onload(onload func(e window.ProgressEvent)) *Props {
-	macro.Rewrite("$_.Set('onload', $1)", onload)
-	p.attrs["onload"] = onload
+// OnDragenter fn
+func (p *Props) OnDragenter(onDragenter func(e window.DragEvent)) *Props {
+	macro.Rewrite("$_.Set('on-dragenter', $1)", onDragenter)
+	p.attrs["on-dragenter"] = onDragenter
 	return p
 }
 
-// Onvolumechange fn
-func Onvolumechange(onvolumechange func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onvolumechange', $2)", macro.Runtime("Map", "Set", "JSON"), onvolumechange)
+// OnDragleave fn
+func OnDragleave(onDragleave func(e window.DragEvent)) *Props {
+	macro.Rewrite("$1().Set('on-dragleave', $2)", macro.Runtime("Map", "Set", "JSON"), onDragleave)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onvolumechange(onvolumechange)
+	return p.OnDragleave(onDragleave)
 }
 
-// Onvolumechange fn
-func (p *Props) Onvolumechange(onvolumechange func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onvolumechange', $1)", onvolumechange)
-	p.attrs["onvolumechange"] = onvolumechange
+// OnDragleave fn
+func (p *Props) OnDragleave(onDragleave func(e window.DragEvent)) *Props {
+	macro.Rewrite("$_.Set('on-dragleave', $1)", onDragleave)
+	p.attrs["on-dragleave"] = onDragleave
 	return p
 }
 
-// Onemptied fn
-func Onemptied(onemptied func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onemptied', $2)", macro.Runtime("Map", "Set", "JSON"), onemptied)
+// OnDragover fn
+func OnDragover(onDragover func(e window.DragEvent)) *Props {
+	macro.Rewrite("$1().Set('on-dragover', $2)", macro.Runtime("Map", "Set", "JSON"), onDragover)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onemptied(onemptied)
+	return p.OnDragover(onDragover)
 }
 
-// Onemptied fn
-func (p *Props) Onemptied(onemptied func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onemptied', $1)", onemptied)
-	p.attrs["onemptied"] = onemptied
+// OnDragover fn
+func (p *Props) OnDragover(onDragover func(e window.DragEvent)) *Props {
+	macro.Rewrite("$_.Set('on-dragover', $1)", onDragover)
+	p.attrs["on-dragover"] = onDragover
 	return p
 }
 
-// Onloadedmetadata fn
-func Onloadedmetadata(onloadedmetadata func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onloadedmetadata', $2)", macro.Runtime("Map", "Set", "JSON"), onloadedmetadata)
+// OnDragstart fn
+func OnDragstart(onDragstart func(e window.DragEvent)) *Props {
+	macro.Rewrite("$1().Set('on-dragstart', $2)", macro.Runtime("Map", "Set", "JSON"), onDragstart)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onloadedmetadata(onloadedmetadata)
+	return p.OnDragstart(onDragstart)
 }
 
-// Onloadedmetadata fn
-func (p *Props) Onloadedmetadata(onloadedmetadata func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onloadedmetadata', $1)", onloadedmetadata)
-	p.attrs["onloadedmetadata"] = onloadedmetadata
+// OnDragstart fn
+func (p *Props) OnDragstart(onDragstart func(e window.DragEvent)) *Props {
+	macro.Rewrite("$_.Set('on-dragstart', $1)", onDragstart)
+	p.attrs["on-dragstart"] = onDragstart
 	return p
 }
 
-// Onpause fn
-func Onpause(onpause func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onpause', $2)", macro.Runtime("Map", "Set", "JSON"), onpause)
+// OnDrop fn
+func OnDrop(onDrop func(e window.DragEvent)) *Props {
+	macro.Rewrite("$1().Set('on-drop', $2)", macro.Runtime("Map", "Set", "JSON"), onDrop)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onpause(onpause)
+	return p.OnDrop(onDrop)
 }
 
-// Onpause fn
-func (p *Props) Onpause(onpause func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onpause', $1)", onpause)
-	p.attrs["onpause"] = onpause
+// OnDrop fn
+func (p *Props) OnDrop(onDrop func(e window.DragEvent)) *Props {
+	macro.Rewrite("$_.Set('on-drop', $1)", onDrop)
+	p.attrs["on-drop"] = onDrop
 	return p
 }
 
-// Onseeked fn
-func Onseeked(onseeked func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onseeked', $2)", macro.Runtime("Map", "Set", "JSON"), onseeked)
+// OnDurationchange fn
+func OnDurationchange(onDurationchange func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-durationchange', $2)", macro.Runtime("Map", "Set", "JSON"), onDurationchange)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onseeked(onseeked)
+	return p.OnDurationchange(onDurationchange)
 }
 
-// Onseeked fn
-func (p *Props) Onseeked(onseeked func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onseeked', $1)", onseeked)
-	p.attrs["onseeked"] = onseeked
+// OnDurationchange fn
+func (p *Props) OnDurationchange(onDurationchange func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-durationchange', $1)", onDurationchange)
+	p.attrs["on-durationchange"] = onDurationchange
 	return p
 }
 
-// Ondragenter fn
-func Ondragenter(ondragenter func(e window.DragEvent)) *Props {
-	macro.Rewrite("$1().Set('ondragenter', $2)", macro.Runtime("Map", "Set", "JSON"), ondragenter)
+// OnEmptied fn
+func OnEmptied(onEmptied func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-emptied', $2)", macro.Runtime("Map", "Set", "JSON"), onEmptied)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Ondragenter(ondragenter)
+	return p.OnEmptied(onEmptied)
 }
 
-// Ondragenter fn
-func (p *Props) Ondragenter(ondragenter func(e window.DragEvent)) *Props {
-	macro.Rewrite("$_.Set('ondragenter', $1)", ondragenter)
-	p.attrs["ondragenter"] = ondragenter
+// OnEmptied fn
+func (p *Props) OnEmptied(onEmptied func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-emptied', $1)", onEmptied)
+	p.attrs["on-emptied"] = onEmptied
 	return p
 }
 
-// Onabort fn
-func Onabort(onabort func(e window.ProgressEvent)) *Props {
-	macro.Rewrite("$1().Set('onabort', $2)", macro.Runtime("Map", "Set", "JSON"), onabort)
+// OnEnded fn
+func OnEnded(onEnded func(e window.MediaStreamErrorEvent)) *Props {
+	macro.Rewrite("$1().Set('on-ended', $2)", macro.Runtime("Map", "Set", "JSON"), onEnded)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onabort(onabort)
+	return p.OnEnded(onEnded)
 }
 
-// Onabort fn
-func (p *Props) Onabort(onabort func(e window.ProgressEvent)) *Props {
-	macro.Rewrite("$_.Set('onabort', $1)", onabort)
-	p.attrs["onabort"] = onabort
+// OnEnded fn
+func (p *Props) OnEnded(onEnded func(e window.MediaStreamErrorEvent)) *Props {
+	macro.Rewrite("$_.Set('on-ended', $1)", onEnded)
+	p.attrs["on-ended"] = onEnded
 	return p
 }
 
-// Onmousedown fn
-func Onmousedown(onmousedown func(e window.MouseEvent)) *Props {
-	macro.Rewrite("$1().Set('onmousedown', $2)", macro.Runtime("Map", "Set", "JSON"), onmousedown)
+// OnError fn
+func OnError(onError func(e window.ProgressEvent)) *Props {
+	macro.Rewrite("$1().Set('on-error', $2)", macro.Runtime("Map", "Set", "JSON"), onError)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onmousedown(onmousedown)
+	return p.OnError(onError)
 }
 
-// Onmousedown fn
-func (p *Props) Onmousedown(onmousedown func(e window.MouseEvent)) *Props {
-	macro.Rewrite("$_.Set('onmousedown', $1)", onmousedown)
-	p.attrs["onmousedown"] = onmousedown
+// OnError fn
+func (p *Props) OnError(onError func(e window.ProgressEvent)) *Props {
+	macro.Rewrite("$_.Set('on-error', $1)", onError)
+	p.attrs["on-error"] = onError
 	return p
 }
 
-// Onstalled fn
-func Onstalled(onstalled func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onstalled', $2)", macro.Runtime("Map", "Set", "JSON"), onstalled)
+// OnFocus fn
+func OnFocus(onFocus func(e window.FocusEvent)) *Props {
+	macro.Rewrite("$1().Set('on-focus', $2)", macro.Runtime("Map", "Set", "JSON"), onFocus)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onstalled(onstalled)
+	return p.OnFocus(onFocus)
 }
 
-// Onstalled fn
-func (p *Props) Onstalled(onstalled func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onstalled', $1)", onstalled)
-	p.attrs["onstalled"] = onstalled
+// OnFocus fn
+func (p *Props) OnFocus(onFocus func(e window.FocusEvent)) *Props {
+	macro.Rewrite("$_.Set('on-focus', $1)", onFocus)
+	p.attrs["on-focus"] = onFocus
 	return p
 }
 
-// Onclick fn
-func Onclick(onclick func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onclick', $2)", macro.Runtime("Map", "Set", "JSON"), onclick)
+// OnInput fn
+func OnInput(onInput func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-input', $2)", macro.Runtime("Map", "Set", "JSON"), onInput)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onclick(onclick)
+	return p.OnInput(onInput)
 }
 
-// Onclick fn
-func (p *Props) Onclick(onclick func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onclick', $1)", onclick)
-	p.attrs["onclick"] = onclick
+// OnInput fn
+func (p *Props) OnInput(onInput func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-input', $1)", onInput)
+	p.attrs["on-input"] = onInput
 	return p
 }
 
-// Oncontextmenu fn
-func Oncontextmenu(oncontextmenu func(e window.PointerEvent)) *Props {
-	macro.Rewrite("$1().Set('oncontextmenu', $2)", macro.Runtime("Map", "Set", "JSON"), oncontextmenu)
+// OnInvalid fn
+func OnInvalid(onInvalid func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-invalid', $2)", macro.Runtime("Map", "Set", "JSON"), onInvalid)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Oncontextmenu(oncontextmenu)
+	return p.OnInvalid(onInvalid)
 }
 
-// Oncontextmenu fn
-func (p *Props) Oncontextmenu(oncontextmenu func(e window.PointerEvent)) *Props {
-	macro.Rewrite("$_.Set('oncontextmenu', $1)", oncontextmenu)
-	p.attrs["oncontextmenu"] = oncontextmenu
+// OnInvalid fn
+func (p *Props) OnInvalid(onInvalid func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-invalid', $1)", onInvalid)
+	p.attrs["on-invalid"] = onInvalid
 	return p
 }
 
-// Ondragleave fn
-func Ondragleave(ondragleave func(e window.DragEvent)) *Props {
-	macro.Rewrite("$1().Set('ondragleave', $2)", macro.Runtime("Map", "Set", "JSON"), ondragleave)
+// OnKeydown fn
+func OnKeydown(onKeydown func(e window.KeyboardEvent)) *Props {
+	macro.Rewrite("$1().Set('on-keydown', $2)", macro.Runtime("Map", "Set", "JSON"), onKeydown)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Ondragleave(ondragleave)
+	return p.OnKeydown(onKeydown)
 }
 
-// Ondragleave fn
-func (p *Props) Ondragleave(ondragleave func(e window.DragEvent)) *Props {
-	macro.Rewrite("$_.Set('ondragleave', $1)", ondragleave)
-	p.attrs["ondragleave"] = ondragleave
+// OnKeydown fn
+func (p *Props) OnKeydown(onKeydown func(e window.KeyboardEvent)) *Props {
+	macro.Rewrite("$_.Set('on-keydown', $1)", onKeydown)
+	p.attrs["on-keydown"] = onKeydown
 	return p
 }
 
-// Ondrop fn
-func Ondrop(ondrop func(e window.DragEvent)) *Props {
-	macro.Rewrite("$1().Set('ondrop', $2)", macro.Runtime("Map", "Set", "JSON"), ondrop)
+// OnKeypress fn
+func OnKeypress(onKeypress func(e window.KeyboardEvent)) *Props {
+	macro.Rewrite("$1().Set('on-keypress', $2)", macro.Runtime("Map", "Set", "JSON"), onKeypress)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Ondrop(ondrop)
+	return p.OnKeypress(onKeypress)
 }
 
-// Ondrop fn
-func (p *Props) Ondrop(ondrop func(e window.DragEvent)) *Props {
-	macro.Rewrite("$_.Set('ondrop', $1)", ondrop)
-	p.attrs["ondrop"] = ondrop
+// OnKeypress fn
+func (p *Props) OnKeypress(onKeypress func(e window.KeyboardEvent)) *Props {
+	macro.Rewrite("$_.Set('on-keypress', $1)", onKeypress)
+	p.attrs["on-keypress"] = onKeypress
 	return p
 }
 
-// Onerror fn
-func Onerror(onerror func(e window.ProgressEvent)) *Props {
-	macro.Rewrite("$1().Set('onerror', $2)", macro.Runtime("Map", "Set", "JSON"), onerror)
+// OnKeyup fn
+func OnKeyup(onKeyup func(e window.KeyboardEvent)) *Props {
+	macro.Rewrite("$1().Set('on-keyup', $2)", macro.Runtime("Map", "Set", "JSON"), onKeyup)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onerror(onerror)
+	return p.OnKeyup(onKeyup)
 }
 
-// Onerror fn
-func (p *Props) Onerror(onerror func(e window.ProgressEvent)) *Props {
-	macro.Rewrite("$_.Set('onerror', $1)", onerror)
-	p.attrs["onerror"] = onerror
+// OnKeyup fn
+func (p *Props) OnKeyup(onKeyup func(e window.KeyboardEvent)) *Props {
+	macro.Rewrite("$_.Set('on-keyup', $1)", onKeyup)
+	p.attrs["on-keyup"] = onKeyup
 	return p
 }
 
-// Oninvalid fn
-func Oninvalid(oninvalid func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('oninvalid', $2)", macro.Runtime("Map", "Set", "JSON"), oninvalid)
+// OnLoad fn
+func OnLoad(onLoad func(e window.ProgressEvent)) *Props {
+	macro.Rewrite("$1().Set('on-load', $2)", macro.Runtime("Map", "Set", "JSON"), onLoad)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Oninvalid(oninvalid)
+	return p.OnLoad(onLoad)
 }
 
-// Oninvalid fn
-func (p *Props) Oninvalid(oninvalid func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('oninvalid', $1)", oninvalid)
-	p.attrs["oninvalid"] = oninvalid
+// OnLoad fn
+func (p *Props) OnLoad(onLoad func(e window.ProgressEvent)) *Props {
+	macro.Rewrite("$_.Set('on-load', $1)", onLoad)
+	p.attrs["on-load"] = onLoad
 	return p
 }
 
-// Onkeypress fn
-func Onkeypress(onkeypress func(e window.KeyboardEvent)) *Props {
-	macro.Rewrite("$1().Set('onkeypress', $2)", macro.Runtime("Map", "Set", "JSON"), onkeypress)
+// OnLoadeddata fn
+func OnLoadeddata(onLoadeddata func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-loadeddata', $2)", macro.Runtime("Map", "Set", "JSON"), onLoadeddata)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onkeypress(onkeypress)
+	return p.OnLoadeddata(onLoadeddata)
 }
 
-// Onkeypress fn
-func (p *Props) Onkeypress(onkeypress func(e window.KeyboardEvent)) *Props {
-	macro.Rewrite("$_.Set('onkeypress', $1)", onkeypress)
-	p.attrs["onkeypress"] = onkeypress
+// OnLoadeddata fn
+func (p *Props) OnLoadeddata(onLoadeddata func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-loadeddata', $1)", onLoadeddata)
+	p.attrs["on-loadeddata"] = onLoadeddata
 	return p
 }
 
-// Ondragstart fn
-func Ondragstart(ondragstart func(e window.DragEvent)) *Props {
-	macro.Rewrite("$1().Set('ondragstart', $2)", macro.Runtime("Map", "Set", "JSON"), ondragstart)
+// OnLoadedmetadata fn
+func OnLoadedmetadata(onLoadedmetadata func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-loadedmetadata', $2)", macro.Runtime("Map", "Set", "JSON"), onLoadedmetadata)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Ondragstart(ondragstart)
+	return p.OnLoadedmetadata(onLoadedmetadata)
 }
 
-// Ondragstart fn
-func (p *Props) Ondragstart(ondragstart func(e window.DragEvent)) *Props {
-	macro.Rewrite("$_.Set('ondragstart', $1)", ondragstart)
-	p.attrs["ondragstart"] = ondragstart
+// OnLoadedmetadata fn
+func (p *Props) OnLoadedmetadata(onLoadedmetadata func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-loadedmetadata', $1)", onLoadedmetadata)
+	p.attrs["on-loadedmetadata"] = onLoadedmetadata
 	return p
 }
 
-// Onfocus fn
-func Onfocus(onfocus func(e window.FocusEvent)) *Props {
-	macro.Rewrite("$1().Set('onfocus', $2)", macro.Runtime("Map", "Set", "JSON"), onfocus)
+// OnLoadstart fn
+func OnLoadstart(onLoadstart func(e window.ProgressEvent)) *Props {
+	macro.Rewrite("$1().Set('on-loadstart', $2)", macro.Runtime("Map", "Set", "JSON"), onLoadstart)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onfocus(onfocus)
+	return p.OnLoadstart(onLoadstart)
 }
 
-// Onfocus fn
-func (p *Props) Onfocus(onfocus func(e window.FocusEvent)) *Props {
-	macro.Rewrite("$_.Set('onfocus', $1)", onfocus)
-	p.attrs["onfocus"] = onfocus
+// OnLoadstart fn
+func (p *Props) OnLoadstart(onLoadstart func(e window.ProgressEvent)) *Props {
+	macro.Rewrite("$_.Set('on-loadstart', $1)", onLoadstart)
+	p.attrs["on-loadstart"] = onLoadstart
 	return p
 }
 
-// Onloadstart fn
-func Onloadstart(onloadstart func(e window.ProgressEvent)) *Props {
-	macro.Rewrite("$1().Set('onloadstart', $2)", macro.Runtime("Map", "Set", "JSON"), onloadstart)
+// OnMousedown fn
+func OnMousedown(onMousedown func(e window.MouseEvent)) *Props {
+	macro.Rewrite("$1().Set('on-mousedown', $2)", macro.Runtime("Map", "Set", "JSON"), onMousedown)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onloadstart(onloadstart)
+	return p.OnMousedown(onMousedown)
 }
 
-// Onloadstart fn
-func (p *Props) Onloadstart(onloadstart func(e window.ProgressEvent)) *Props {
-	macro.Rewrite("$_.Set('onloadstart', $1)", onloadstart)
-	p.attrs["onloadstart"] = onloadstart
+// OnMousedown fn
+func (p *Props) OnMousedown(onMousedown func(e window.MouseEvent)) *Props {
+	macro.Rewrite("$_.Set('on-mousedown', $1)", onMousedown)
+	p.attrs["on-mousedown"] = onMousedown
 	return p
 }
 
-// Onmousemove fn
-func Onmousemove(onmousemove func(e window.MouseEvent)) *Props {
-	macro.Rewrite("$1().Set('onmousemove', $2)", macro.Runtime("Map", "Set", "JSON"), onmousemove)
+// OnMousemove fn
+func OnMousemove(onMousemove func(e window.MouseEvent)) *Props {
+	macro.Rewrite("$1().Set('on-mousemove', $2)", macro.Runtime("Map", "Set", "JSON"), onMousemove)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onmousemove(onmousemove)
+	return p.OnMousemove(onMousemove)
 }
 
-// Onmousemove fn
-func (p *Props) Onmousemove(onmousemove func(e window.MouseEvent)) *Props {
-	macro.Rewrite("$_.Set('onmousemove', $1)", onmousemove)
-	p.attrs["onmousemove"] = onmousemove
+// OnMousemove fn
+func (p *Props) OnMousemove(onMousemove func(e window.MouseEvent)) *Props {
+	macro.Rewrite("$_.Set('on-mousemove', $1)", onMousemove)
+	p.attrs["on-mousemove"] = onMousemove
 	return p
 }
 
-// Ondblclick fn
-func Ondblclick(ondblclick func(e window.MouseEvent)) *Props {
-	macro.Rewrite("$1().Set('ondblclick', $2)", macro.Runtime("Map", "Set", "JSON"), ondblclick)
+// OnMouseout fn
+func OnMouseout(onMouseout func(e window.MouseEvent)) *Props {
+	macro.Rewrite("$1().Set('on-mouseout', $2)", macro.Runtime("Map", "Set", "JSON"), onMouseout)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Ondblclick(ondblclick)
+	return p.OnMouseout(onMouseout)
 }
 
-// Ondblclick fn
-func (p *Props) Ondblclick(ondblclick func(e window.MouseEvent)) *Props {
-	macro.Rewrite("$_.Set('ondblclick', $1)", ondblclick)
-	p.attrs["ondblclick"] = ondblclick
+// OnMouseout fn
+func (p *Props) OnMouseout(onMouseout func(e window.MouseEvent)) *Props {
+	macro.Rewrite("$_.Set('on-mouseout', $1)", onMouseout)
+	p.attrs["on-mouseout"] = onMouseout
 	return p
 }
 
-// Ondrag fn
-func Ondrag(ondrag func(e window.DragEvent)) *Props {
-	macro.Rewrite("$1().Set('ondrag', $2)", macro.Runtime("Map", "Set", "JSON"), ondrag)
+// OnMouseover fn
+func OnMouseover(onMouseover func(e window.MouseEvent)) *Props {
+	macro.Rewrite("$1().Set('on-mouseover', $2)", macro.Runtime("Map", "Set", "JSON"), onMouseover)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Ondrag(ondrag)
+	return p.OnMouseover(onMouseover)
 }
 
-// Ondrag fn
-func (p *Props) Ondrag(ondrag func(e window.DragEvent)) *Props {
-	macro.Rewrite("$_.Set('ondrag', $1)", ondrag)
-	p.attrs["ondrag"] = ondrag
+// OnMouseover fn
+func (p *Props) OnMouseover(onMouseover func(e window.MouseEvent)) *Props {
+	macro.Rewrite("$_.Set('on-mouseover', $1)", onMouseover)
+	p.attrs["on-mouseover"] = onMouseover
 	return p
 }
 
-// Ondragover fn
-func Ondragover(ondragover func(e window.DragEvent)) *Props {
-	macro.Rewrite("$1().Set('ondragover', $2)", macro.Runtime("Map", "Set", "JSON"), ondragover)
+// OnMouseup fn
+func OnMouseup(onMouseup func(e window.MouseEvent)) *Props {
+	macro.Rewrite("$1().Set('on-mouseup', $2)", macro.Runtime("Map", "Set", "JSON"), onMouseup)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Ondragover(ondragover)
+	return p.OnMouseup(onMouseup)
 }
 
-// Ondragover fn
-func (p *Props) Ondragover(ondragover func(e window.DragEvent)) *Props {
-	macro.Rewrite("$_.Set('ondragover', $1)", ondragover)
-	p.attrs["ondragover"] = ondragover
+// OnMouseup fn
+func (p *Props) OnMouseup(onMouseup func(e window.MouseEvent)) *Props {
+	macro.Rewrite("$_.Set('on-mouseup', $1)", onMouseup)
+	p.attrs["on-mouseup"] = onMouseup
 	return p
 }
 
-// Onshow fn
-func Onshow(onshow func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onshow', $2)", macro.Runtime("Map", "Set", "JSON"), onshow)
+// OnMousewheel fn
+func OnMousewheel(onMousewheel func(e window.WheelEvent)) *Props {
+	macro.Rewrite("$1().Set('on-mousewheel', $2)", macro.Runtime("Map", "Set", "JSON"), onMousewheel)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onshow(onshow)
+	return p.OnMousewheel(onMousewheel)
 }
 
-// Onshow fn
-func (p *Props) Onshow(onshow func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onshow', $1)", onshow)
-	p.attrs["onshow"] = onshow
+// OnMousewheel fn
+func (p *Props) OnMousewheel(onMousewheel func(e window.WheelEvent)) *Props {
+	macro.Rewrite("$_.Set('on-mousewheel', $1)", onMousewheel)
+	p.attrs["on-mousewheel"] = onMousewheel
 	return p
 }
 
-// Onwaiting fn
-func Onwaiting(onwaiting func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onwaiting', $2)", macro.Runtime("Map", "Set", "JSON"), onwaiting)
+// OnPause fn
+func OnPause(onPause func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-pause', $2)", macro.Runtime("Map", "Set", "JSON"), onPause)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onwaiting(onwaiting)
+	return p.OnPause(onPause)
 }
 
-// Onwaiting fn
-func (p *Props) Onwaiting(onwaiting func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onwaiting', $1)", onwaiting)
-	p.attrs["onwaiting"] = onwaiting
+// OnPause fn
+func (p *Props) OnPause(onPause func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-pause', $1)", onPause)
+	p.attrs["on-pause"] = onPause
 	return p
 }
 
-// Ondragend fn
-func Ondragend(ondragend func(e window.DragEvent)) *Props {
-	macro.Rewrite("$1().Set('ondragend', $2)", macro.Runtime("Map", "Set", "JSON"), ondragend)
+// OnPlay fn
+func OnPlay(onPlay func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-play', $2)", macro.Runtime("Map", "Set", "JSON"), onPlay)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Ondragend(ondragend)
+	return p.OnPlay(onPlay)
 }
 
-// Ondragend fn
-func (p *Props) Ondragend(ondragend func(e window.DragEvent)) *Props {
-	macro.Rewrite("$_.Set('ondragend', $1)", ondragend)
-	p.attrs["ondragend"] = ondragend
+// OnPlay fn
+func (p *Props) OnPlay(onPlay func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-play', $1)", onPlay)
+	p.attrs["on-play"] = onPlay
 	return p
 }
 
-// Onended fn
-func Onended(onended func(e window.MediaStreamErrorEvent)) *Props {
-	macro.Rewrite("$1().Set('onended', $2)", macro.Runtime("Map", "Set", "JSON"), onended)
+// OnPlaying fn
+func OnPlaying(onPlaying func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-playing', $2)", macro.Runtime("Map", "Set", "JSON"), onPlaying)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onended(onended)
+	return p.OnPlaying(onPlaying)
 }
 
-// Onended fn
-func (p *Props) Onended(onended func(e window.MediaStreamErrorEvent)) *Props {
-	macro.Rewrite("$_.Set('onended', $1)", onended)
-	p.attrs["onended"] = onended
+// OnPlaying fn
+func (p *Props) OnPlaying(onPlaying func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-playing', $1)", onPlaying)
+	p.attrs["on-playing"] = onPlaying
 	return p
 }
 
-// Onkeydown fn
-func Onkeydown(onkeydown func(e window.KeyboardEvent)) *Props {
-	macro.Rewrite("$1().Set('onkeydown', $2)", macro.Runtime("Map", "Set", "JSON"), onkeydown)
+// OnProgress fn
+func OnProgress(onProgress func(e window.ProgressEvent)) *Props {
+	macro.Rewrite("$1().Set('on-progress', $2)", macro.Runtime("Map", "Set", "JSON"), onProgress)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onkeydown(onkeydown)
+	return p.OnProgress(onProgress)
 }
 
-// Onkeydown fn
-func (p *Props) Onkeydown(onkeydown func(e window.KeyboardEvent)) *Props {
-	macro.Rewrite("$_.Set('onkeydown', $1)", onkeydown)
-	p.attrs["onkeydown"] = onkeydown
+// OnProgress fn
+func (p *Props) OnProgress(onProgress func(e window.ProgressEvent)) *Props {
+	macro.Rewrite("$_.Set('on-progress', $1)", onProgress)
+	p.attrs["on-progress"] = onProgress
 	return p
 }
 
-// Onresize fn
-func Onresize(onresize func(e window.UIEvent)) *Props {
-	macro.Rewrite("$1().Set('onresize', $2)", macro.Runtime("Map", "Set", "JSON"), onresize)
+// OnRatechange fn
+func OnRatechange(onRatechange func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-ratechange', $2)", macro.Runtime("Map", "Set", "JSON"), onRatechange)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onresize(onresize)
+	return p.OnRatechange(onRatechange)
 }
 
-// Onresize fn
-func (p *Props) Onresize(onresize func(e window.UIEvent)) *Props {
-	macro.Rewrite("$_.Set('onresize', $1)", onresize)
-	p.attrs["onresize"] = onresize
+// OnRatechange fn
+func (p *Props) OnRatechange(onRatechange func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-ratechange', $1)", onRatechange)
+	p.attrs["on-ratechange"] = onRatechange
 	return p
 }
 
-// Ontimeupdate fn
-func Ontimeupdate(ontimeupdate func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('ontimeupdate', $2)", macro.Runtime("Map", "Set", "JSON"), ontimeupdate)
+// OnReset fn
+func OnReset(onReset func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-reset', $2)", macro.Runtime("Map", "Set", "JSON"), onReset)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Ontimeupdate(ontimeupdate)
+	return p.OnReset(onReset)
 }
 
-// Ontimeupdate fn
-func (p *Props) Ontimeupdate(ontimeupdate func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('ontimeupdate', $1)", ontimeupdate)
-	p.attrs["ontimeupdate"] = ontimeupdate
+// OnReset fn
+func (p *Props) OnReset(onReset func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-reset', $1)", onReset)
+	p.attrs["on-reset"] = onReset
 	return p
 }
 
-// Oncanplay fn
-func Oncanplay(oncanplay func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('oncanplay', $2)", macro.Runtime("Map", "Set", "JSON"), oncanplay)
+// OnResize fn
+func OnResize(onResize func(e window.UIEvent)) *Props {
+	macro.Rewrite("$1().Set('on-resize', $2)", macro.Runtime("Map", "Set", "JSON"), onResize)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Oncanplay(oncanplay)
+	return p.OnResize(onResize)
 }
 
-// Oncanplay fn
-func (p *Props) Oncanplay(oncanplay func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('oncanplay', $1)", oncanplay)
-	p.attrs["oncanplay"] = oncanplay
+// OnResize fn
+func (p *Props) OnResize(onResize func(e window.UIEvent)) *Props {
+	macro.Rewrite("$_.Set('on-resize', $1)", onResize)
+	p.attrs["on-resize"] = onResize
 	return p
 }
 
-// Onmousewheel fn
-func Onmousewheel(onmousewheel func(e window.WheelEvent)) *Props {
-	macro.Rewrite("$1().Set('onmousewheel', $2)", macro.Runtime("Map", "Set", "JSON"), onmousewheel)
+// OnReadystatechange fn
+func OnReadystatechange(onReadystatechange func(e window.ProgressEvent)) *Props {
+	macro.Rewrite("$1().Set('on-readystatechange', $2)", macro.Runtime("Map", "Set", "JSON"), onReadystatechange)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onmousewheel(onmousewheel)
+	return p.OnReadystatechange(onReadystatechange)
 }
 
-// Onmousewheel fn
-func (p *Props) Onmousewheel(onmousewheel func(e window.WheelEvent)) *Props {
-	macro.Rewrite("$_.Set('onmousewheel', $1)", onmousewheel)
-	p.attrs["onmousewheel"] = onmousewheel
+// OnReadystatechange fn
+func (p *Props) OnReadystatechange(onReadystatechange func(e window.ProgressEvent)) *Props {
+	macro.Rewrite("$_.Set('on-readystatechange', $1)", onReadystatechange)
+	p.attrs["on-readystatechange"] = onReadystatechange
 	return p
 }
 
-// Onreadystatechange fn
-func Onreadystatechange(onreadystatechange func(e window.ProgressEvent)) *Props {
-	macro.Rewrite("$1().Set('onreadystatechange', $2)", macro.Runtime("Map", "Set", "JSON"), onreadystatechange)
+// OnScroll fn
+func OnScroll(onScroll func(e window.UIEvent)) *Props {
+	macro.Rewrite("$1().Set('on-scroll', $2)", macro.Runtime("Map", "Set", "JSON"), onScroll)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onreadystatechange(onreadystatechange)
+	return p.OnScroll(onScroll)
 }
 
-// Onreadystatechange fn
-func (p *Props) Onreadystatechange(onreadystatechange func(e window.ProgressEvent)) *Props {
-	macro.Rewrite("$_.Set('onreadystatechange', $1)", onreadystatechange)
-	p.attrs["onreadystatechange"] = onreadystatechange
+// OnScroll fn
+func (p *Props) OnScroll(onScroll func(e window.UIEvent)) *Props {
+	macro.Rewrite("$_.Set('on-scroll', $1)", onScroll)
+	p.attrs["on-scroll"] = onScroll
 	return p
 }
 
-// Onseeking fn
-func Onseeking(onseeking func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onseeking', $2)", macro.Runtime("Map", "Set", "JSON"), onseeking)
+// OnSeeked fn
+func OnSeeked(onSeeked func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-seeked', $2)", macro.Runtime("Map", "Set", "JSON"), onSeeked)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onseeking(onseeking)
+	return p.OnSeeked(onSeeked)
 }
 
-// Onseeking fn
-func (p *Props) Onseeking(onseeking func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onseeking', $1)", onseeking)
-	p.attrs["onseeking"] = onseeking
+// OnSeeked fn
+func (p *Props) OnSeeked(onSeeked func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-seeked', $1)", onSeeked)
+	p.attrs["on-seeked"] = onSeeked
 	return p
 }
 
-// Onreset fn
-func Onreset(onreset func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onreset', $2)", macro.Runtime("Map", "Set", "JSON"), onreset)
+// OnSeeking fn
+func OnSeeking(onSeeking func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-seeking', $2)", macro.Runtime("Map", "Set", "JSON"), onSeeking)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onreset(onreset)
+	return p.OnSeeking(onSeeking)
 }
 
-// Onreset fn
-func (p *Props) Onreset(onreset func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onreset', $1)", onreset)
-	p.attrs["onreset"] = onreset
+// OnSeeking fn
+func (p *Props) OnSeeking(onSeeking func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-seeking', $1)", onSeeking)
+	p.attrs["on-seeking"] = onSeeking
 	return p
 }
 
-// Onmouseup fn
-func Onmouseup(onmouseup func(e window.MouseEvent)) *Props {
-	macro.Rewrite("$1().Set('onmouseup', $2)", macro.Runtime("Map", "Set", "JSON"), onmouseup)
+// OnSelect fn
+func OnSelect(onSelect func(e window.UIEvent)) *Props {
+	macro.Rewrite("$1().Set('on-select', $2)", macro.Runtime("Map", "Set", "JSON"), onSelect)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onmouseup(onmouseup)
+	return p.OnSelect(onSelect)
 }
 
-// Onmouseup fn
-func (p *Props) Onmouseup(onmouseup func(e window.MouseEvent)) *Props {
-	macro.Rewrite("$_.Set('onmouseup', $1)", onmouseup)
-	p.attrs["onmouseup"] = onmouseup
+// OnSelect fn
+func (p *Props) OnSelect(onSelect func(e window.UIEvent)) *Props {
+	macro.Rewrite("$_.Set('on-select', $1)", onSelect)
+	p.attrs["on-select"] = onSelect
 	return p
 }
 
-// Onscroll fn
-func Onscroll(onscroll func(e window.UIEvent)) *Props {
-	macro.Rewrite("$1().Set('onscroll', $2)", macro.Runtime("Map", "Set", "JSON"), onscroll)
+// OnShow fn
+func OnShow(onShow func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-show', $2)", macro.Runtime("Map", "Set", "JSON"), onShow)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onscroll(onscroll)
+	return p.OnShow(onShow)
 }
 
-// Onscroll fn
-func (p *Props) Onscroll(onscroll func(e window.UIEvent)) *Props {
-	macro.Rewrite("$_.Set('onscroll', $1)", onscroll)
-	p.attrs["onscroll"] = onscroll
+// OnShow fn
+func (p *Props) OnShow(onShow func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-show', $1)", onShow)
+	p.attrs["on-show"] = onShow
 	return p
 }
 
-// Onkeyup fn
-func Onkeyup(onkeyup func(e window.KeyboardEvent)) *Props {
-	macro.Rewrite("$1().Set('onkeyup', $2)", macro.Runtime("Map", "Set", "JSON"), onkeyup)
+// OnStalled fn
+func OnStalled(onStalled func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-stalled', $2)", macro.Runtime("Map", "Set", "JSON"), onStalled)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onkeyup(onkeyup)
+	return p.OnStalled(onStalled)
 }
 
-// Onkeyup fn
-func (p *Props) Onkeyup(onkeyup func(e window.KeyboardEvent)) *Props {
-	macro.Rewrite("$_.Set('onkeyup', $1)", onkeyup)
-	p.attrs["onkeyup"] = onkeyup
+// OnStalled fn
+func (p *Props) OnStalled(onStalled func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-stalled', $1)", onStalled)
+	p.attrs["on-stalled"] = onStalled
 	return p
 }
 
-// Onratechange fn
-func Onratechange(onratechange func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onratechange', $2)", macro.Runtime("Map", "Set", "JSON"), onratechange)
+// OnSubmit fn
+func OnSubmit(onSubmit func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-submit', $2)", macro.Runtime("Map", "Set", "JSON"), onSubmit)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onratechange(onratechange)
+	return p.OnSubmit(onSubmit)
 }
 
-// Onratechange fn
-func (p *Props) Onratechange(onratechange func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onratechange', $1)", onratechange)
-	p.attrs["onratechange"] = onratechange
+// OnSubmit fn
+func (p *Props) OnSubmit(onSubmit func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-submit', $1)", onSubmit)
+	p.attrs["on-submit"] = onSubmit
 	return p
 }
 
-// Oncanplaythrough fn
-func Oncanplaythrough(oncanplaythrough func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('oncanplaythrough', $2)", macro.Runtime("Map", "Set", "JSON"), oncanplaythrough)
+// OnSuspend fn
+func OnSuspend(onSuspend func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-suspend', $2)", macro.Runtime("Map", "Set", "JSON"), onSuspend)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Oncanplaythrough(oncanplaythrough)
+	return p.OnSuspend(onSuspend)
 }
 
-// Oncanplaythrough fn
-func (p *Props) Oncanplaythrough(oncanplaythrough func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('oncanplaythrough', $1)", oncanplaythrough)
-	p.attrs["oncanplaythrough"] = oncanplaythrough
+// OnSuspend fn
+func (p *Props) OnSuspend(onSuspend func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-suspend', $1)", onSuspend)
+	p.attrs["on-suspend"] = onSuspend
 	return p
 }
 
-// Oninput fn
-func Oninput(oninput func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('oninput', $2)", macro.Runtime("Map", "Set", "JSON"), oninput)
+// OnTimeupdate fn
+func OnTimeupdate(onTimeupdate func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-timeupdate', $2)", macro.Runtime("Map", "Set", "JSON"), onTimeupdate)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Oninput(oninput)
+	return p.OnTimeupdate(onTimeupdate)
 }
 
-// Oninput fn
-func (p *Props) Oninput(oninput func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('oninput', $1)", oninput)
-	p.attrs["oninput"] = oninput
+// OnTimeupdate fn
+func (p *Props) OnTimeupdate(onTimeupdate func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-timeupdate', $1)", onTimeupdate)
+	p.attrs["on-timeupdate"] = onTimeupdate
 	return p
 }
 
-// Onloadeddata fn
-func Onloadeddata(onloadeddata func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onloadeddata', $2)", macro.Runtime("Map", "Set", "JSON"), onloadeddata)
+// OnVolumechange fn
+func OnVolumechange(onVolumechange func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-volumechange', $2)", macro.Runtime("Map", "Set", "JSON"), onVolumechange)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onloadeddata(onloadeddata)
+	return p.OnVolumechange(onVolumechange)
 }
 
-// Onloadeddata fn
-func (p *Props) Onloadeddata(onloadeddata func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onloadeddata', $1)", onloadeddata)
-	p.attrs["onloadeddata"] = onloadeddata
+// OnVolumechange fn
+func (p *Props) OnVolumechange(onVolumechange func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-volumechange', $1)", onVolumechange)
+	p.attrs["on-volumechange"] = onVolumechange
 	return p
 }
 
-// Onplay fn
-func Onplay(onplay func(e window.Event)) *Props {
-	macro.Rewrite("$1().Set('onplay', $2)", macro.Runtime("Map", "Set", "JSON"), onplay)
+// OnWaiting fn
+func OnWaiting(onWaiting func(e window.Event)) *Props {
+	macro.Rewrite("$1().Set('on-waiting', $2)", macro.Runtime("Map", "Set", "JSON"), onWaiting)
 	p := &Props{attrs: map[string]interface{}{}}
-	return p.Onplay(onplay)
+	return p.OnWaiting(onWaiting)
 }
 
-// Onplay fn
-func (p *Props) Onplay(onplay func(e window.Event)) *Props {
-	macro.Rewrite("$_.Set('onplay', $1)", onplay)
-	p.attrs["onplay"] = onplay
+// OnWaiting fn
+func (p *Props) OnWaiting(onWaiting func(e window.Event)) *Props {
+	macro.Rewrite("$_.Set('on-waiting', $1)", onWaiting)
+	p.attrs["on-waiting"] = onWaiting
 	return p
 }
 

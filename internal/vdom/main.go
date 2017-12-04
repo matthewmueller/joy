@@ -30,7 +30,6 @@ func generate() error {
 	dirname := path.Dir(file)
 
 	vdomPath := path.Join(dirname, "..", "..", "vdom")
-	log.Infof(vdomPath)
 
 	buf, err := ioutil.ReadFile(path.Join(dirname, "inputs", "tags.json"))
 	if err != nil {
@@ -71,8 +70,8 @@ func generate() error {
 	}
 	for _, iface := range api.Interfaces {
 		for _, event := range iface.Events {
-			if _, isset := eventmap["on"+event.Name]; isset {
-				eventmap["on"+event.Name] = "func (e window." + event.Type + ")"
+			if _, isset := eventmap[event.Name]; isset {
+				eventmap[event.Name] = "func (e window." + event.Type + ")"
 			}
 		}
 	}
@@ -123,12 +122,12 @@ func generate() error {
 			})
 		}
 
-		for event, kind := range eventmap {
+		for _, event := range data.Events {
 			d.Attrs = append(d.Attrs, Attr{
 				Key: event,
 				Value: gen.Vartype{
 					Var:  event,
-					Type: kind,
+					Type: eventmap[event],
 				},
 			})
 		}
@@ -253,7 +252,7 @@ func generate() error {
 		}
 	}
 
-	// format all the files now that they're written
+	// form	at all the files now that they're written
 	if err := gen.FormatAll(vdomPath); err != nil {
 		return errors.Wrapf(err, "error formatting vdom/")
 	}

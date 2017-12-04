@@ -1,9 +1,6 @@
 package vdom
 
-import (
-	"github.com/matthewmueller/joy/dom/window"
-	"github.com/matthewmueller/joy/macro"
-)
+//go:generate go run internal/gen.go
 
 // Use fn
 // js:"Use,omit"
@@ -43,9 +40,9 @@ type Node interface {
 }
 
 // Render the component
-func Render(component Child, parent window.Node, merge window.Node) {
-	macro.Rewrite("$1.render($2, $3, $4)", File(), component, parent, merge)
-}
+// func Render(component Child, parent *document.Node, merge *document.Node) {
+// 	macro.Rewrite("$1.render($2, $3, $4)", File(), component, parent, merge)
+// }
 
 // String turns the component into a string
 func String(component Child) string {
