@@ -1,8 +1,7 @@
-;
-(function() {
-var pkg = {};
-pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"] = (function() {
-return (function () {
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"] = (function() {
+		return (function () {
   'use strict'
   function VNode() { }
   function h(nodeName, attributes) {
@@ -609,82 +608,79 @@ return (function () {
     options: options
   }
 })()
-;
-})();
-pkg["github.com/matthewmueller/joy/runtime"] = (function() {
-mapper.prototype.JSON = function() {
-var m = this;
-return m.obj;
-};
-function mapper (o) {
-o = o || {};
-this.obj = o.obj || {};
-};
-function Map () {
-return new mapper({});
-};
-mapper.prototype.Set = function(key, value) {
-var m = this;
-m.obj[key] = value;
-return m;
-};
-return {
-  Map: Map
-};
-})();
-pkg["github.com/matthewmueller/joy/testdata/49-jsx/header"] = (function() {
-function state (o) {
-o = o || {};
-this.count = o.count || 0;
-};
-Header.prototype.componentWillMount = function() {
-var d = this;
-d.state.count = 5;
-};
-function props (o) {
-o = o || {};
-this.title = o.title || "";
-this.bats = o.bats || "";
-this.children = o.children || [];
-};
-function Header (o) {
-o = o || {};
-this.Component = o.Component || new pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].Component();
-for (var $k in this.Component || pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].Component.prototype) {
-this[$k] = this[$k] || (this.Component || pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].Component.prototype)[$k]
-};
-this.props = o.props || new props();
-this.state = o.state || new state();
-};
-Header.prototype.render = function() {
-var d = this;
-return pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].h('h3', pkg["github.com/matthewmueller/joy/runtime"].Map().Set('class', d.props.title).Set("count", d.state.count) ? pkg["github.com/matthewmueller/joy/runtime"].Map().Set('class', d.props.title).Set("count", d.state.count).JSON() : {}, [d.props.children]);
-};
-function New (title) {
-var children = Array.prototype.slice.call(arguments, 1);
-return pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].h(Header, new props({
-  title: title,
-  children: children
-}));
-};
-return {
-  Header: Header,
-  New: New
-};
-})();
-pkg["github.com/matthewmueller/joy/testdata/49-jsx"] = (function() {
-var header = pkg["github.com/matthewmueller/joy/testdata/49-jsx/header"];
-function main () {
-;
-var hdr = pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].h('h2', pkg["github.com/matthewmueller/joy/runtime"].Map().Set('class', "hi") ? pkg["github.com/matthewmueller/joy/runtime"].Map().Set('class', "hi").JSON() : {}, ["yo!", header.New.apply(null, ["lol"].concat("hi!"))]);
-var w = window;
-var document = w.document;
-pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].render(hdr, document.body);
-console.log(document.body.innerHTML);
-};
-return {
-  main: main
-};
-})();
-return pkg["github.com/matthewmueller/joy/testdata/49-jsx"].main();
+
+	})();
+	pkg["github.com/matthewmueller/joy/internal/runtime"] = (function() {
+		mapper.prototype.JSON = function() {
+			var m = this;
+			return m.obj;
+		};
+		function mapper (o) {
+			o = o || {};
+			this.obj = o.obj || {}
+		};
+		function Map () {
+			return new mapper({});
+		};
+		mapper.prototype.Set = function(key, value) {
+			var m = this;
+			m.obj[key] = value;
+			return m;
+		};
+		return {
+			Map: Map
+		};
+	})();
+	pkg["github.com/matthewmueller/joy/testdata/49-jsx/header"] = (function() {
+		Header.prototype.componentWillMount = function() {
+			var d = this;
+			d.state.count = 5
+		};
+		function Header (o) {
+			o = o || {};
+			this.Component = o.Component || new pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].Component();
+			for (var $k in this.Component || pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].Component.prototype) {
+				this[$k] = this[$k] || (this.Component || pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].Component.prototype)[$k]
+			};
+			this.props = o.props || {
+				title: "",
+				bats: "",
+				children: []
+			};
+			this.state = o.state || {
+				count: 0
+			}
+		};
+		Header.prototype.render = function() {
+			var d = this;
+			return pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].h('h3', pkg["github.com/matthewmueller/joy/internal/runtime"].Map().Set('class', d.props.title).Set("count", d.state.count) ? pkg["github.com/matthewmueller/joy/internal/runtime"].Map().Set('class', d.props.title).Set("count", d.state.count).JSON() : {}, [d.props.children]);
+		};
+		function New (title) {
+			var children = Array.prototype.slice.call(arguments, 1);
+			return pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].h(Header, {
+				title: title,
+				bats: "",
+				children: children
+			});
+		};
+		return {
+			Header: Header,
+			New: New
+		};
+	})();
+	pkg["github.com/matthewmueller/joy/testdata/49-jsx"] = (function() {
+		var header = pkg["github.com/matthewmueller/joy/testdata/49-jsx/header"];
+		function main () {
+			;
+			var hdr = pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].h('h2', pkg["github.com/matthewmueller/joy/internal/runtime"].Map().Set('class', "hi") ? pkg["github.com/matthewmueller/joy/internal/runtime"].Map().Set('class', "hi").JSON() : {}, ["yo!", header.New.apply(null, ["lol"].concat("hi!"))]);
+			var w = window;
+			var document = w.document;
+			pkg["github.com/matthewmueller/joy/testdata/49-jsx/preact/preact.js"].render(hdr, document.body);
+			console.log(document.body.innerHTML)
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/joy/testdata/49-jsx"].main();
 })()

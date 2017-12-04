@@ -12,11 +12,13 @@ import (
 func main() {
 	vdom.Use("preact.h", "./preact.js")
 
-	h := html.New(html.Manifest("hi").Class("cool"),
+	hdr := html.New(html.Manifest("hi").Class("cool"),
 		head.New(nil),
-		body.New(nil),
+		body.New(nil, vdom.S("hi world")),
 	)
 
-	document := window.New().Document()
-	vdom.Render(h, document.Body().(*htmlbodyelement.HTMLBodyElement), nil)
+	w := window.New()
+	document := w.Document()
+	vdom.Render(hdr, document.Body().(*htmlbodyelement.HTMLBodyElement), nil)
+	println(document.Body().InnerHTML())
 }

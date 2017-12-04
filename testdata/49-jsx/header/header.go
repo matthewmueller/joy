@@ -2,7 +2,7 @@ package header
 
 import (
 	"github.com/matthewmueller/joy/vdom"
-	"github.com/matthewmueller/joy/vdom/h/h3"
+	"github.com/matthewmueller/joy/vdom/h3"
 )
 
 // Header struct

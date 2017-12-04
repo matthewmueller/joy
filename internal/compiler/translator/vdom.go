@@ -36,7 +36,7 @@ func (tr *Translator) maybeVDOMLit(d def.Definition, n *ast.CompositeLit) (jsast
 
 	isNode := false
 	for _, iface := range ifaces {
-		if iface.Path() == vdomPath && iface.Name() == "Component" {
+		if iface.Path() == vdomPath && iface.Name() == "Child" {
 			isNode = true
 			break
 		}
@@ -182,7 +182,7 @@ func findComponentIndex(fn defs.Functioner) (int, error) {
 
 		switch t := def.(type) {
 		case defs.Interfacer:
-			if t.Path() == vdomPath && t.Name() == "Component" {
+			if t.Path() == vdomPath && t.Name() == "Child" {
 				return i, nil
 			}
 		case defs.Structer:
@@ -191,7 +191,7 @@ func findComponentIndex(fn defs.Functioner) (int, error) {
 				return -1, err
 			}
 			for _, imp := range imps {
-				if imp.Path() == vdomPath && imp.Name() == "Component" {
+				if imp.Path() == vdomPath && imp.Name() == "Child" {
 					return i, nil
 				}
 			}

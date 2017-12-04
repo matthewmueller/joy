@@ -1,11 +1,12 @@
 package main
 
 import (
+	"github.com/matthewmueller/joy/dom/htmlbodyelement"
+	"github.com/matthewmueller/joy/dom/window"
 	"github.com/matthewmueller/joy/testdata/49-jsx/header"
 	"github.com/matthewmueller/joy/testdata/49-jsx/preact"
-	"github.com/matthewmueller/joy/testdata/49-jsx/window"
 	"github.com/matthewmueller/joy/vdom"
-	"github.com/matthewmueller/joy/vdom/h/h2"
+	"github.com/matthewmueller/joy/vdom/h2"
 )
 
 func main() {
@@ -18,6 +19,6 @@ func main() {
 
 	w := window.New()
 	document := w.Document()
-	preact.Render(hdr, document.Body())
+	preact.Render(hdr, document.Body().(*htmlbodyelement.HTMLBodyElement))
 	println(document.Body().InnerHTML())
 }

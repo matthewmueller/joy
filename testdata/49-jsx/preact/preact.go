@@ -1,8 +1,8 @@
 package preact
 
 import (
+	"github.com/matthewmueller/joy/dom/window"
 	"github.com/matthewmueller/joy/macro"
-	"github.com/matthewmueller/joy/testdata/49-jsx/window"
 	"github.com/matthewmueller/joy/vdom"
 )
 
