@@ -1,0 +1,12 @@
+;(function() {
+	var pkg = {};
+	pkg["github.com/matthewmueller/joy/testdata/75-switch"] = (function() {
+		function main () {
+
+		};
+		return {
+			main: main
+		};
+	})();
+	return pkg["github.com/matthewmueller/joy/testdata/75-switch"].main();
+})()
