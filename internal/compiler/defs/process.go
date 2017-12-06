@@ -226,7 +226,7 @@ func callExpr(ctx *context, n *ast.CallExpr) error {
 	switch cx {
 	case "macro.Runtime":
 		return jsRuntime(ctx, n)
-	case "macro.RawFile":
+	case "macro.File":
 		return jsFile(ctx, n)
 	case "macro.Rewrite":
 		return jsRewrite(ctx, n)
@@ -364,7 +364,7 @@ func jsRuntime(ctx *context, n *ast.CallExpr) error {
 	for _, arg := range n.Args {
 		lit, ok := arg.(*ast.BasicLit)
 		if !ok {
-			return fmt.Errorf("fn process: expected rawfile to have basiclit argument, but got %T", arg)
+			return fmt.Errorf("fn process: expected file to have basiclit argument, but got %T", arg)
 		}
 
 		dep, e := strconv.Unquote(lit.Value)
@@ -406,7 +406,7 @@ func jsFile(ctx *context, n *ast.CallExpr) error {
 
 	lit, ok := n.Args[0].(*ast.BasicLit)
 	if !ok {
-		return fmt.Errorf("fn process: expected rawfile to have basiclit argument, but got %T", n.Args[0])
+		return fmt.Errorf("fn process: expected file to have basiclit argument, but got %T", n.Args[0])
 	}
 
 	path, e := strconv.Unquote(lit.Value)

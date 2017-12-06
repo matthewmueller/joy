@@ -30,7 +30,7 @@ func (c *Component) ForceUpdate() {
 
 // Render the component
 func Render(component vdom.Component, el *document.Node) {
-	macro.Rewrite("$1.render($2, $3)", macro.RawFile("./preact.js"), component, el)
+	macro.Rewrite("$1.render($2, $3)", macro.File("./preact.js"), component, el)
 }
 
 // String turns the component into a string

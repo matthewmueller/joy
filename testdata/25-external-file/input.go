@@ -3,7 +3,7 @@ package main
 import "github.com/matthewmueller/joy/macro"
 
 func call() interface{} {
-	fetch := macro.RawFile(`./fetch.js`)
+	fetch := macro.File(`./fetch.js`)
 	return fetch
 }
 

@@ -76,7 +76,7 @@ func Find(packages []string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.Infof("%+v", packages)
+
 	args := make([]string, 0, len(packages)+3)
 	args = append(args, "list", "-f", "{{.Name}}|{{.ImportPath}}")
 	args = append(args, packages...)

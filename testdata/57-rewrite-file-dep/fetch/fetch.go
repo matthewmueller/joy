@@ -5,7 +5,7 @@ import (
 )
 
 // unfetch
-var unfetch = macro.RawFile("./unfetch.js")
+var unfetch = macro.File("./unfetch.js")
 
 // Options struct
 type Options struct {
@@ -22,7 +22,7 @@ func Get(url string) (Response, error) {
 			return [ null, err ]
 		}
 	})($1, $2)
-	`, macro.RawFile("./unfetch.js"), url)
+	`, macro.File("./unfetch.js"), url)
 	return Response{}, nil
 }
 

@@ -20,8 +20,9 @@ import (
 
 // ServeSettings struct
 type ServeSettings struct {
-	Packages []string
-	Port     int
+	Packages    []string
+	Development bool
+	Port        int
 }
 
 // html includes the client JavaScript
@@ -39,8 +40,10 @@ const html = `<!doctype html>
 func Serve(ctx context.Context, settings *ServeSettings) error {
 	log.SetHandler(text.New(os.Stderr))
 
-	// build
-	c := compiler.New()
+	// compile
+	c := compiler.New(&compiler.Params{
+		Development: settings.Development,
+	})
 	index, graph, err := c.Parse(settings.Packages...)
 	if err != nil {
 		return err
@@ -77,7 +80,7 @@ func Serve(ctx context.Context, settings *ServeSettings) error {
 		// }
 
 		// // add raw files
-		// for _, file := range main.RawFiles {
+		// for _, file := range main.Files {
 		// 	pkgpath := path.Join(gosrc, file.Name)
 		// 	if e := w.Add(pkgpath); e != nil {
 		// 		return e

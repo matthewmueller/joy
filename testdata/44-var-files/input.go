@@ -4,7 +4,7 @@ import (
 	"github.com/matthewmueller/joy/macro"
 )
 
-var fn = macro.RawFile("./fn.js")
+var fn = macro.File("./fn.js")
 
 func main() {
 	println(test("hello world"))

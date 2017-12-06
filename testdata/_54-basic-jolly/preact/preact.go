@@ -6,7 +6,7 @@ import (
 	"github.com/matthewmueller/joy/vdom"
 )
 
-// var preact = macro.RawFile("./preact.js")
+// var preact = macro.File("./preact.js")
 
 // var _ jsx.Node = (*Component)(nil)
 

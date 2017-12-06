@@ -3,6 +3,7 @@ package chrome
 import (
 	"context"
 	"io"
+	"io/ioutil"
 	"net"
 	"net/url"
 	"os"
@@ -102,7 +103,8 @@ func New(parent context.Context, settings *Settings) (*Chrome, error) {
 	if err != nil {
 		return nil, err
 	} else if settings.Stdout == nil {
-		settings.Stdout = os.Stdout
+		// TODO: write stdout to log.Debug
+		settings.Stdout = ioutil.Discard
 	}
 	go io.Copy(settings.Stdout, stdout)
 
@@ -111,7 +113,8 @@ func New(parent context.Context, settings *Settings) (*Chrome, error) {
 	if err != nil {
 		return nil, err
 	} else if settings.Stderr == nil {
-		settings.Stderr = os.Stderr
+		// TODO: write stderr to log.Debug
+		settings.Stderr = ioutil.Discard
 	}
 	go io.Copy(settings.Stderr, stderr)
 

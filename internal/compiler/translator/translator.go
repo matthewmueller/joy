@@ -2556,8 +2556,8 @@ func (tr *Translator) maybeJSRaw(d def.Definition, sp *scope.Scope, cx *ast.Call
 	}
 
 	switch sel.Sel.Name {
-	case "RawFile":
-		return tr.jsRawFile(d, sp, cx)
+	case "File":
+		return tr.jsFile(d, sp, cx)
 	case "Raw":
 		return tr.jsRaw(d, sp, cx)
 	default:
@@ -2565,7 +2565,7 @@ func (tr *Translator) maybeJSRaw(d def.Definition, sp *scope.Scope, cx *ast.Call
 	}
 }
 
-func (tr *Translator) jsRawFile(d def.Definition, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpression, error) {
+func (tr *Translator) jsFile(d def.Definition, sp *scope.Scope, cx *ast.CallExpr) (jsast.IExpression, error) {
 	if len(cx.Args) == 0 {
 		return nil, nil
 	}

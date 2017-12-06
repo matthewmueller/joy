@@ -1,6 +1,6 @@
 package macro
 
-// RawFile inlines a JS file
-func RawFile(filepath string) interface{} {
+// File inlines a JS file
+func File(filepath string) interface{} {
 	return nil
 }

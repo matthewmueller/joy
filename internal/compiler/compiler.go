@@ -34,15 +34,19 @@ type file struct {
 	modules []*module
 }
 
-// Compiler struct
-type Compiler struct {
-	// index        map[string]ast.Node
-	// declarations []Declaration
+// Params for the compiler
+type Params struct {
+	Development bool
 }
 
 // New Compiler
-func New() *Compiler {
-	return &Compiler{}
+func New(params *Params) *Compiler {
+	return &Compiler{params}
+}
+
+// Compiler struct
+type Compiler struct {
+	params *Params
 }
 
 // Compile our code

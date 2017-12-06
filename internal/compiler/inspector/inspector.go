@@ -27,7 +27,7 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 	compositeLits := []string{}
 	maybeDependants := map[string]*types.Declaration{}
 	imports := map[string]map[string]string{}
-	rawfileMap := map[string][]*types.File{}
+	fileMap := map[string][]*types.File{}
 
 	// human-friendly pointers to the runtime declarations
 	// runtimeDecls := map[string]*types.Declaration{}
@@ -330,18 +330,18 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 				compositeLits = append(compositeLits, kind.String())
 
 			case *ast.CallExpr:
-				// look for macro.RawFile(filename)
-				file, e := checkJSRawFile(n, declaration.From)
+				// look for macro.File(filename)
+				file, e := checkJSFile(n, declaration.From)
 				if e != nil {
 					err = e
 					return false
 				} else if file != nil {
-					// tack on the rawfile's map
-					if rawfileMap[declaration.From] == nil {
-						rawfileMap[declaration.From] = []*types.File{}
+					// tack on the file's map
+					if fileMap[declaration.From] == nil {
+						fileMap[declaration.From] = []*types.File{}
 					}
-					rawfileMap[declaration.From] = append(
-						rawfileMap[declaration.From],
+					fileMap[declaration.From] = append(
+						fileMap[declaration.From],
 						file,
 					)
 					return true
@@ -407,7 +407,7 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 	// main()'s
 	for _, main := range mains {
 		packages, pkgmap := groupByPackages(main)
-		rawfiles := []*types.File{}
+		files := []*types.File{}
 
 		// tack on the dependencies along with their alias names
 		for _, pkg := range packages {
@@ -434,15 +434,15 @@ func Inspect(program *loader.Program, index *indexer.Index) (scripts []*types.Sc
 				pkg.Dependencies[alias] = pkgmap[path]
 			}
 
-			for _, file := range rawfileMap[pkg.Path] {
-				rawfiles = append(rawfiles, file)
+			for _, file := range fileMap[pkg.Path] {
+				files = append(files, file)
 			}
 		}
 
 		scripts = append(scripts, &types.Script{
 			Name:     main.From,
 			Packages: packages,
-			RawFiles: rawfiles,
+			Files: files,
 		})
 	}
 
@@ -596,7 +596,7 @@ func getRuntimePath() (string, error) {
 	return runtimePkg, nil
 }
 
-func checkJSRawFile(cx *ast.CallExpr, from string) (*types.File, error) {
+func checkJSFile(cx *ast.CallExpr, from string) (*types.File, error) {
 	sel, ok := cx.Fun.(*ast.SelectorExpr)
 	if !ok {
 		return nil, nil
@@ -607,7 +607,7 @@ func checkJSRawFile(cx *ast.CallExpr, from string) (*types.File, error) {
 		return nil, nil
 	}
 
-	if x.Name != "js" || sel.Sel.Name != "RawFile" {
+	if x.Name != "js" || sel.Sel.Name != "File" {
 		return nil, nil
 	}
 

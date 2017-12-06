@@ -18,7 +18,7 @@ func Fetch(url string, options *Options) (Response, error) {
 	} catch (err) {
 		return [ null, err ]
 	}
-`, macro.RawFile("./unfetch.js"), url, options)
+`, macro.File("./unfetch.js"), url, options)
 	return Response{}, nil
 }
 
@@ -32,7 +32,7 @@ func Get(url string) (Response, error) {
 			return [ null, err ]
 		}
 	})($1, $2)
-	`, macro.RawFile("./unfetch.js"), url)
+	`, macro.File("./unfetch.js"), url)
 	return Response{}, nil
 }
 

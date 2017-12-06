@@ -5,7 +5,7 @@ import (
 )
 
 // unfetch
-var unfetch = macro.RawFile("./unfetch.js")
+var unfetch = macro.File("./unfetch.js")
 
 // Options struct
 type Options struct {
