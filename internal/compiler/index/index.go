@@ -96,6 +96,26 @@ func (i *Index) Link(alias string, d def.Definition) {
 	i.aliases[alias] = d
 }
 
+// Inits gets all the main functions
+func (i *Index) Inits() (inits []def.Definition) {
+	var defids []string
+	for _, info := range i.program.InitialPackages() {
+		p := info.Pkg.Path()
+		def := i.defs[p+" init"]
+		if def == nil {
+			continue
+		}
+		defids = append(defids, def.ID())
+	}
+
+	sort.Strings(defids)
+	for _, id := range defids {
+		inits = append(inits, i.defs[id])
+	}
+
+	return inits
+}
+
 // Mains gets all the main functions
 func (i *Index) Mains() (mains []def.Definition) {
 	var defids []string

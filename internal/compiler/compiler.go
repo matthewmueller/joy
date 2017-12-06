@@ -78,6 +78,11 @@ func (c *Compiler) Parse(packages ...string) (idx *index.Index, g *graph.Graph, 
 		return idx, g, errors.Wrapf(err, "indexing error")
 	}
 
+	// init() functions are not yet supported, so let's disable
+	if len(idx.Inits()) > 0 {
+		return idx, g, fmt.Errorf("init() functions are not supported yet")
+	}
+
 	// initial packages
 	visited := map[string]bool{}
 	queue := []def.Definition{}
