@@ -1,40 +1,39 @@
+DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+
+INFOLOG := \033[34m ▸\033[0m
+WARNLOG := \033[33m ▸\033[0m
+ERROLOG := \033[31m ⨯\033[0m
+
 TEST:="./"
 
 test:
-	@echo "==> Running go tests..."
+	@echo "$(INFOLOG) Running go tests..."
 	@go list $(TEST) \
 		| grep -v "/vendor/" \
 		| xargs -n1 go test -timeout=5m -parallel=10 $(TESTARGS)
 .PHONY: tests
 
-jsx:
-	@echo "==> Running jsx example..."
-	@go run cmd/joy/joy.go build ./testdata/49-jsx/
-.PHONY: jsx
-
-hn:
-	@echo "==> Running hackernews example..."
-	@go run cmd/joy/joy.go serve ./_examples/hn
-.PHONY: hn
-
 # Install the commands.
 install:
+	@echo "$(INFOLOG) Installing Joy to $$PATH..."
 	@go install ./cmd/...
 .PHONY: install
 
 dom:
+	@echo "$(INFOLOG) Generating the DOM..."
 	@go run internal/dom/main.go
-	# @go generate ./internal/gendom/main.go
-	# @go run cmd/joy/joy.go build ./_examples/dom
-	# @go run _examples/dom/dom.go
 .PHONY: dom
 
 vdom:
+	@echo "$(INFOLOG) Generating the virtual DOM..."
 	@go run internal/vdom/main.go
-	# @go generate ./internal/gendom/main.go
-	# @go run cmd/joy/joy.go build ./_examples/dom
-	# @go run _examples/dom/dom.go
 .PHONY: vdom
+
+# Release binaries to GitHub.
+release:
+	@echo "$(INFOLOG) Releasing..."
+	@goreleaser -p 1 --rm-dist -config .goreleaser.yml
+.PHONY: release
 
 # Show source statistics.
 cloc:

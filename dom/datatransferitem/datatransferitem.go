@@ -19,8 +19,8 @@ func (*DataTransferItem) GetAsFile() (f *file.File) {
 
 // GetAsString fn
 // js:"getAsString"
-func (*DataTransferItem) GetAsString(_callback func(data string)) {
-	macro.Rewrite("$_.getAsString($1)", _callback)
+func (*DataTransferItem) GetAsString(Callback func(data string)) {
+	macro.Rewrite("$_.getAsString($1)", Callback)
 }
 
 // WebkitGetAsEntry fn

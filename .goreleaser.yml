@@ -1,63 +1,27 @@
-# project_name: joy
-# release:
-#   github:
-#     owner: matthewmueller
-#     name: joy
-#   name_template: '{{.Tag}}'
-# brew:
-#   commit_author:
-#     name: goreleaserbot
-#     email: goreleaser@carlosbecker.com
-#   install: bin.install "joy"
-# builds:
-# - goos:
-#   - linux
-#   - darwin
-#   goarch:
-#   - amd64
-#   - "386"
-#   goarm:
-#   - "6"
-#   main: .
-#   ldflags: -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
-#   binary: joy
-# archive:
-#   format: tar.gz
-#   name_template: '{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{
-#     .Arm }}{{ end }}'
-#   files:
-#   - licence*
-#   - LICENCE*
-#   - license*
-#   - LICENSE*
-#   - readme*
-#   - README*
-#   - changelog*
-#   - CHANGELOG*
-# fpm:
-#   bindir: /usr/local/bin
-# snapshot:
-#   name_template: SNAPSHOT-{{ .Commit }}
-# checksum:
-#   name_template: '{{ .ProjectName }}_{{ .Version }}_checksums.txt'
-# dist: dist
-
-# build:
-#   main: cmd/up/main.go
-#   binary: up
-#   goos:
-#     - darwin
-#     - linux
-#     - windows
-#     - freebsd
-#     - netbsd
-#     - openbsd
-#   goarch:
-#     - amd64
-#     - 386
-# changelog:
-#   sort: asc
-#   filters:
-#     exclude:
-#       - '^docs:'
-#       - '^refactor'
+ build:
+  main: cmd/joy/main.go
+  binary: joy
+  ldflags: -s -w
+    -X main.version={{.Version}}
+    -X main.commit={{.Commit}} 
+    -X main.date={{.Date}}
+    -X github.com/matthewmueller/joy/internal/env.awsAccessKey={{ .Env.AWS_ACCESS_ID }}
+    -X github.com/matthewmueller/joy/internal/env.awsSecretKey={{ .Env.AWS_SECRET_ACCESS_KEY }}
+    -X github.com/matthewmueller/joy/internal/env.awsRegion={{ .Env.AWS_REGION }}
+    -X github.com/matthewmueller/joy/internal/env.firehoseStream={{ .Env.AWS_FIREHOSE_STREAM }}
+  goos:
+    - darwin
+    - linux
+    - windows
+    - freebsd
+    - netbsd
+    - openbsd
+  goarch:
+    - amd64
+    - 386
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^refactor'
