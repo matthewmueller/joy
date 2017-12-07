@@ -32,7 +32,7 @@ vdom:
 # Release binaries to GitHub.
 release:
 	@echo "$(INFOLOG) Releasing..."
-	@goreleaser -p 1 --rm-dist -config .goreleaser.yml
+	@goreleaser -p 1 --rm-dist --config .goreleaser.yml
 .PHONY: release
 
 # Show source statistics.
