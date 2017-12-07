@@ -1,21 +1,21 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/07-struct-nested"] = (function() {
-		function main () {
-			var user = {
-				Name: "Matt",
-				Phone: {
-					Type: "",
-					Number: "1234511",
-					Main: false
-				}
-			};
-			console.log(user.Phone.Number);
-			user.Phone.Type = "CELL"
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/07-struct-nested"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/07-struct-nested"] = (function() {
+    function main () {
+      var user = {
+        Name: "Matt",
+        Phone: {
+          Type: "",
+          Number: "1234511",
+          Main: false
+        }
+      };
+      console.log(user.Phone.Number);
+      user.Phone.Type = "CELL"
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/07-struct-nested"].main();
 })()

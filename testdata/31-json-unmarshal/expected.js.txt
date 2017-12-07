@@ -1,15 +1,15 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/31-json-unmarshal"] = (function() {
-		function follows (p) {
-			console.log(p.name)
-		};
-		function main () {
-			var p = {
-				name: "",
-				age: 0
-			};
-			var e = (function(data, v) {
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/31-json-unmarshal"] = (function() {
+    function follows (p) {
+      console.log(p.name)
+    };
+    function main () {
+      var p = {
+        name: "",
+        age: 0
+      };
+      var e = (function(data, v) {
   try {
     var o = JSON.parse(data)
     for (var k in o) v[k] = o[k]
@@ -17,13 +17,13 @@
   } catch (e) { return e }
 })("{\"name\":\"ma\\\"tt\",\"age\":28}", p);
 if (e != null) {
-				throw e
-			};
-			follows(p)
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/31-json-unmarshal"].main();
+        throw e
+      };
+      follows(p)
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/31-json-unmarshal"].main();
 })()

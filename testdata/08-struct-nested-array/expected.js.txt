@@ -1,25 +1,25 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/08-struct-nested-array"] = (function() {
-		function main () {
-			var user = {
-				FirstName: "Matt",
-				LastName: "Mueller",
-				Phones: [{
-					Type: "HOME",
-					Number: "1234123",
-					Main: false
-				}, {
-					Type: "CELL",
-					Number: "0923123",
-					Main: true
-				}]
-			};
-			console.log(user.FirstName + ": " + user.Phones[0].Number)
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/08-struct-nested-array"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/08-struct-nested-array"] = (function() {
+    function main () {
+      var user = {
+        FirstName: "Matt",
+        LastName: "Mueller",
+        Phones: [{
+          Type: "HOME",
+          Number: "1234123",
+          Main: false
+        }, {
+          Type: "CELL",
+          Number: "0923123",
+          Main: true
+        }]
+      };
+      console.log(user.FirstName + ": " + user.Phones[0].Number)
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/08-struct-nested-array"].main();
 })()

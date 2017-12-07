@@ -1,14 +1,14 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/26-errors"] = (function() {
-		function main () {
-			var err = new Error("new error");
-			console.log(err.message);
-			throw err
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/26-errors"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/26-errors"] = (function() {
+    function main () {
+      var err = new Error("new error");
+      console.log(err.message);
+      throw err
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/26-errors"].main();
 })()

@@ -10,23 +10,27 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"time"
 
 	"github.com/apex/log"
 	"github.com/google/go-github/github"
+	"github.com/matthewmueller/joy/internal/stats"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
 // New build command
 func New(ctx context.Context, root *kingpin.Application, version string) {
 	cmd := root.Command("upgrade", "upgrade joy to the latest version")
-	cmd.Action(func(_ *kingpin.ParseContext) error {
+	cmd.Action(func(_ *kingpin.ParseContext) (err error) {
+		defer stats.TrackError("upgrade", time.Now(), &err)
 		return upgrade(ctx, version)
 	})
 }
 
 // https://github.com/apex/apex/blob/master/upgrade/upgrade.go
 // Thanks TJ
-func upgrade(ctx context.Context, version string) error {
+func upgrade(ctx context.Context, version string) (err error) {
+	start := time.Now()
 	log.Infof("current release is %s", version)
 
 	// fetch releases
@@ -39,8 +43,21 @@ func upgrade(ctx context.Context, version string) error {
 	// see if it's new
 	latest := releases[0]
 	log.Infof("latest release is %s", *latest.TagName)
+	latestVersion := (*latest.TagName)[1:]
 
-	if (*latest.TagName)[1:] == version {
+	// stats
+	defer func() {
+		if err == nil {
+			stats.Track("upgrade", map[string]interface{}{
+				"duration": time.Since(start).Round(time.Millisecond).String(),
+				"from":     version,
+				"to":       latestVersion,
+			})
+		}
+	}()
+
+	// TODO: ignore if semver
+	if latestVersion == version {
 		log.Infof("you're up to date :)")
 		return nil
 	}
@@ -85,7 +102,7 @@ func upgrade(ctx context.Context, version string) error {
 		return err
 	}
 
-	log.Infof("visit https://github.com/joy/joy/releases for the changelog")
+	log.Infof("visit https://github.com/matthewmueller/joy/releases for the changelog")
 	return nil
 }
 

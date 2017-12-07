@@ -1,7 +1,7 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/57-rewrite-file-dep/fetch/unfetch.js"] = (function() {
-		return function fetch(url, options) {
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/57-rewrite-file-dep/fetch/unfetch.js"] = (function() {
+    return function fetch(url, options) {
   options = options || {}
   return new Promise(function(resolve, reject) {
     var request = new XMLHttpRequest()
@@ -72,10 +72,10 @@
   })
 }
 
-	})();
-	pkg["github.com/matthewmueller/joy/testdata/57-rewrite-file-dep"] = (function() {
-		async function main () {
-			var $response = await (async function (unfetch, url) {
+  })();
+  pkg["github.com/matthewmueller/joy/testdata/57-rewrite-file-dep"] = (function() {
+    async function main () {
+      var $response = await (async function (unfetch, url) {
 		try {
 			var res = await unfetch(url)
 			return [ res, null ]
@@ -84,12 +84,12 @@
 		}
 	})(pkg["github.com/matthewmueller/joy/testdata/57-rewrite-file-dep/fetch/unfetch.js"], "https://api.github.com/users/matthewmueller/repos")
 	, response = $response[0], err = $response[1];
-			if (err != null) {
-				console.log(err)
-				return ;
-			};
-			var repos = [];
-			var e = await (async function ($obj) {
+      if (err != null) {
+        console.log(err)
+        return ;
+      };
+      var repos = [];
+      var e = await (async function ($obj) {
 		try {
 			var $o = await response.json()
 			for (var $k in $o) $obj[$k] = $o[$k]
@@ -99,18 +99,18 @@
 		}
 	})(repos);
 if (e != null) {
-				throw e
-			};
-			for (var _ = 0, repo; _ < repos.length; _++) {
-				var repo = repos[_]
-				if (repo.name == ".dotfiles") {
-					console.log(repo.name)
-				}
-			}
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/57-rewrite-file-dep"].main();
+        throw e
+      };
+      for (var _ = 0, repo; _ < repos.length; _++) {
+        var repo = repos[_]
+        if (repo.name == ".dotfiles") {
+          console.log(repo.name)
+        }
+      }
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/57-rewrite-file-dep"].main();
 })()

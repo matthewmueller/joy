@@ -1,24 +1,24 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/50-slice-spreads"] = (function() {
-		function test2 (prefix) {
-			var results = Array.prototype.slice.call(arguments, 1);
-			console.log(prefix, results)
-		};
-		function test () {
-			var results = Array.prototype.slice.call(arguments, 0);
-			console.log(results);
-			test2.apply(null, ["hi"].concat(results));
-			(function(prefix, results) {
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/50-slice-spreads"] = (function() {
+    function test2 (prefix) {
+      var results = Array.prototype.slice.call(arguments, 1);
+      console.log(prefix, results)
+    };
+    function test () {
+      var results = Array.prototype.slice.call(arguments, 0);
+      console.log(results);
+      test2.apply(null, ["hi"].concat(results));
+      (function(prefix, results) {
 
-			})("hello", results)
-		};
-		function main () {
-			test.apply(null, ["a", "b"].concat("c"))
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/50-slice-spreads"].main();
+      })("hello", results)
+    };
+    function main () {
+      test.apply(null, ["a", "b"].concat("c"))
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/50-slice-spreads"].main();
 })()

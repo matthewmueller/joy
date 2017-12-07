@@ -140,7 +140,7 @@ func Serve(ctx context.Context, settings *ServeSettings) error {
 
 	eg := &errgroup.Group{}
 	eg.Go(func() error {
-		log.Infof("listening on http://localhost:8080")
+		log.Infof("listening on http://localhost:" + strconv.Itoa(settings.Port))
 		return server.ListenAndServe()
 	})
 

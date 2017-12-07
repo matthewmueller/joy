@@ -1,19 +1,19 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/02-variables"] = (function() {
-		function main () {
-			var a = "a";
-			var b = "b", c = "c", d = "d";
-			var e = 3;
-			var $f = (function() {
-				return ["f", "g"];
-			})(), f = $f[0], g = $f[1];
-			var h = "h", i = "i", j = "j", k = "k";
-			console.log(a, b, c, d, e, f, g, h, i, j, k)
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/02-variables"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/02-variables"] = (function() {
+    function main () {
+      var a = "a";
+      var b = "b", c = "c", d = "d";
+      var e = 3;
+      var $f = (function() {
+        return ["f", "g"];
+      })(), f = $f[0], g = $f[1];
+      var h = "h", i = "i", j = "j", k = "k";
+      console.log(a, b, c, d, e, f, g, h, i, j, k)
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/02-variables"].main();
 })()

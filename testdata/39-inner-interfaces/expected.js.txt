@@ -1,48 +1,48 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/39-inner-interfaces"] = (function() {
-		stringer.prototype.String = function() {
-			var s = this;
-			return s.value;
-		};
-		Subthing.prototype.firstName = function() {
-			var s = this;
-			return s.first;
-		};
-		Subthing.prototype.lastName = function() {
-			var s = this;
-			return s.last;
-		};
-		Subthing.prototype.Name = function() {
-			var s = this;
-			return s.firstName.bind(s)().String() + " " + s.lastName.bind(s)().String();
-		};
-		function Subthing (o) {
-			o = o || {};
-			this.first = o.first || null;
-			this.last = o.last || null
-		};
-		function stringer (o) {
-			o = o || {};
-			this.value = o.value || ""
-		};
-		function main () {
-			var s = {
-				Subthing: new Subthing({
-					first: new stringer({
-						value: "matt"
-					}),
-					last: new stringer({
-						value: "mueller"
-					})
-				})
-			};
-			console.log(s.Subthing.Name.bind(s.Subthing)())
-		};
-		return {
-			Subthing: Subthing,
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/39-inner-interfaces"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/39-inner-interfaces"] = (function() {
+    stringer.prototype.String = function() {
+      var s = this;
+      return s.value;
+    };
+    Subthing.prototype.firstName = function() {
+      var s = this;
+      return s.first;
+    };
+    Subthing.prototype.lastName = function() {
+      var s = this;
+      return s.last;
+    };
+    Subthing.prototype.Name = function() {
+      var s = this;
+      return s.firstName.bind(s)().String() + " " + s.lastName.bind(s)().String();
+    };
+    function Subthing (o) {
+      o = o || {};
+      this.first = o.first || null;
+      this.last = o.last || null
+    };
+    function stringer (o) {
+      o = o || {};
+      this.value = o.value || ""
+    };
+    function main () {
+      var s = {
+        Subthing: new Subthing({
+          first: new stringer({
+            value: "matt"
+          }),
+          last: new stringer({
+            value: "mueller"
+          })
+        })
+      };
+      console.log(s.Subthing.Name.bind(s.Subthing)())
+    };
+    return {
+      Subthing: Subthing,
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/39-inner-interfaces"].main();
 })()

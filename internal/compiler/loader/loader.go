@@ -27,7 +27,9 @@ func Load(packages ...string) (program *loader.Program, err error) {
 	for _, fullpath := range packages {
 		packagePath, e := filepath.Rel(goSrc, fullpath)
 		if e != nil {
-			return nil, e
+			// not inside the $GOPATH
+			conf.CreateFromFilenames("", fullpath)
+			continue
 		}
 
 		// support both files and packages

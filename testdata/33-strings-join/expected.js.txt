@@ -1,13 +1,13 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/33-strings-join"] = (function() {
-		function main () {
-			var a = ["1", "2", "3", "4"];
-			console.log(a.join(" "))
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/33-strings-join"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/33-strings-join"] = (function() {
+    function main () {
+      var a = ["1", "2", "3", "4"];
+      console.log(a.join(" "))
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/33-strings-join"].main();
 })()

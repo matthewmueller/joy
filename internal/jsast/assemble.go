@@ -77,7 +77,7 @@ type context struct {
 }
 
 func indent(n int) string {
-	return strings.Repeat("\t", n)
+	return strings.Repeat("  ", n)
 }
 
 // Assemble JS from the AST

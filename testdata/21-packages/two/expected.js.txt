@@ -1,51 +1,51 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/21-packages/deepdep"] = (function() {
-		function Dep (o) {
-			o = o || {};
-			this.deep = o.deep || ""
-		};
-		function New () {
-			return new Dep({
-				deep: "deep"
-			});
-		};
-		Dep.prototype.String = function() {
-			var d = this;
-			return d.deep;
-		};
-		return {
-			Dep: Dep,
-			New: New
-		};
-	})();
-	pkg["github.com/matthewmueller/joy/testdata/21-packages/dep"] = (function() {
-		var deepdep = pkg["github.com/matthewmueller/joy/testdata/21-packages/deepdep"];
-		var A = "A";
-		function Another () {
-			var deep = deepdep.New();
-			return "exported another " + deep.String();
-		};
-		function another () {
-			return "another";
-		};
-		function Dep (dep) {
-			return dep + " " + another();
-		};
-		return {
-			A: A,
-			Another: Another,
-			Dep: Dep
-		};
-	})();
-	pkg["github.com/matthewmueller/joy/testdata/21-packages/two"] = (function() {
-		var dep = pkg["github.com/matthewmueller/joy/testdata/21-packages/dep"];
-		function main () {
-			console.log(dep.Dep("two") + dep.A + dep.Another())
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/21-packages/two"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/21-packages/deepdep"] = (function() {
+    function Dep (o) {
+      o = o || {};
+      this.deep = o.deep || ""
+    };
+    function New () {
+      return new Dep({
+        deep: "deep"
+      });
+    };
+    Dep.prototype.String = function() {
+      var d = this;
+      return d.deep;
+    };
+    return {
+      Dep: Dep,
+      New: New
+    };
+  })();
+  pkg["github.com/matthewmueller/joy/testdata/21-packages/dep"] = (function() {
+    var deepdep = pkg["github.com/matthewmueller/joy/testdata/21-packages/deepdep"];
+    var A = "A";
+    function Another () {
+      var deep = deepdep.New();
+      return "exported another " + deep.String();
+    };
+    function another () {
+      return "another";
+    };
+    function Dep (dep) {
+      return dep + " " + another();
+    };
+    return {
+      A: A,
+      Another: Another,
+      Dep: Dep
+    };
+  })();
+  pkg["github.com/matthewmueller/joy/testdata/21-packages/two"] = (function() {
+    var dep = pkg["github.com/matthewmueller/joy/testdata/21-packages/dep"];
+    function main () {
+      console.log(dep.Dep("two") + dep.A + dep.Another())
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/21-packages/two"].main();
 })()

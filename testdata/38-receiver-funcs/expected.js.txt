@@ -1,25 +1,25 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/38-receiver-funcs"] = (function() {
-		subthing.prototype.Name = function() {
-			var s = this;
-			return s.name;
-		};
-		function subthing (o) {
-			o = o || {};
-			this.name = o.name || ""
-		};
-		function main () {
-			var s = {
-				subthing: new subthing({
-					name: "matt"
-				})
-			};
-			console.log(s.subthing.Name.bind(s.subthing)())
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/38-receiver-funcs"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/38-receiver-funcs"] = (function() {
+    subthing.prototype.Name = function() {
+      var s = this;
+      return s.name;
+    };
+    function subthing (o) {
+      o = o || {};
+      this.name = o.name || ""
+    };
+    function main () {
+      var s = {
+        subthing: new subthing({
+          name: "matt"
+        })
+      };
+      console.log(s.subthing.Name.bind(s.subthing)())
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/38-receiver-funcs"].main();
 })()

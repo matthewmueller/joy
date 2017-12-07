@@ -5,8 +5,13 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
+	"time"
 
-	"github.com/matthewmueller/joy/internal/mains"
+	"github.com/apex/log"
+	"github.com/matthewmueller/joy/internal/prompt"
+	"github.com/matthewmueller/joy/internal/stats"
+	"github.com/matthewmueller/store"
 
 	"github.com/pkg/errors"
 
@@ -21,22 +26,42 @@ import (
 )
 
 // Run the CLI
-func Run(ctx context.Context, ver string) error {
-	// defer stats.Client.ConditionalFlush(100, 12*time.Hour)
-	cmd := kingpin.New("joy", "Go to Javascript compiler")
+func Run(ctx context.Context, ver string) (err error) {
+	// setup stats
+	defer func() {
+		if err := stats.Client.MaybeFlush(100, 1*time.Minute); err != nil {
+			log.WithError(err).Errorf("error flushing")
+		}
+	}()
+
+	stats.Client.Set(map[string]interface{}{
+		"os":      runtime.GOOS,
+		"arch":    runtime.GOARCH,
+		"version": ver,
+	})
+
+	cmd := kingpin.New("joy", "Joy – A Delightful Go to Javascript Compiler")
 	cmd.Version(ver)
+
+	// setup our local db
+	db, err := store.New("joy")
+	if err != nil {
+		return errors.Wrapf(err, "unable to setup the storage")
+	}
+
+	runs, err := stats.Increment(db)
+	if err != nil {
+		return errors.Wrapf(err, "error incrementing stats")
+	}
+
+	if done, err := prompt.Prompt(db, runs); err != nil || done {
+		return errors.Wrapf(err, "prompt error")
+	}
 
 	// special case: joy ./main.go
 	if len(os.Args[1:]) == 1 && filepath.Ext(os.Args[1]) == ".go" {
-		pkgs, err := mains.Find([]string{os.Args[1]})
-		if err != nil {
-			return errors.Wrapf(err, "error finding mains")
-		} else if len(pkgs) == 0 {
-			return errors.Wrapf(err, "no main file")
-		}
-
 		files, err := api.Build(ctx, &api.BuildSettings{
-			Packages: pkgs,
+			Packages: []string{os.Args[1]},
 		})
 
 		if err != nil {
@@ -50,14 +75,14 @@ func Run(ctx context.Context, ver string) error {
 	}
 
 	// commands
-	upgrade.New(ctx, cmd, ver)
-	version.New(ctx, cmd, ver)
+	run.New(ctx, cmd)
 	build.New(ctx, cmd)
 	serve.New(ctx, cmd)
 	test.New(ctx, cmd)
-	run.New(ctx, cmd)
+	upgrade.New(ctx, cmd, ver)
+	version.New(ctx, cmd, ver)
 
 	// run the command
-	_, err := cmd.Parse(os.Args[1:])
+	_, err = cmd.Parse(os.Args[1:])
 	return err
 }

@@ -1,19 +1,19 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/15-append"] = (function() {
-		function main () {
-			var nodes = [];
-			nodes = nodes.concat({
-				NodeName: "div"
-			}, {
-				NodeName: "strong"
-			});
-			console.log(nodes[0].NodeName);
-			console.log(nodes[1].NodeName)
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/15-append"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/15-append"] = (function() {
+    function main () {
+      var nodes = [];
+      nodes = nodes.concat({
+        NodeName: "div"
+      }, {
+        NodeName: "strong"
+      });
+      console.log(nodes[0].NodeName);
+      console.log(nodes[1].NodeName)
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/15-append"].main();
 })()

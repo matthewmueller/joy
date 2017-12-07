@@ -1,14 +1,14 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/65-dup-method-struct"] = (function() {
-		function main () {
-			var w = window;
-			var doc = document;
-			console.log(doc.nodeName)
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/65-dup-method-struct"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/65-dup-method-struct"] = (function() {
+    function main () {
+      var w = window;
+      var doc = document;
+      console.log(doc.nodeName)
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/65-dup-method-struct"].main();
 })()

@@ -1,25 +1,25 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/09-zero-values"] = (function() {
-		function main () {
-			var user = {
-				FirstName: "Tobi",
-				LastName: "",
-				Age: 0,
-				Phone: {
-					Type: "",
-					Number: ""
-				}
-			};
-			console.log(user.FirstName);
-			console.log(user.LastName);
-			console.log(user.Age);
-			console.log(user.Phone.Type);
-			console.log(user.Phone.Number)
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/09-zero-values"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/09-zero-values"] = (function() {
+    function main () {
+      var user = {
+        FirstName: "Tobi",
+        LastName: "",
+        Age: 0,
+        Phone: {
+          Type: "",
+          Number: ""
+        }
+      };
+      console.log(user.FirstName);
+      console.log(user.LastName);
+      console.log(user.Age);
+      console.log(user.Phone.Type);
+      console.log(user.Phone.Number)
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/09-zero-values"].main();
 })()

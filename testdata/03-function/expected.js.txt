@@ -1,17 +1,17 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/03-function"] = (function() {
-		function hello (name) {
-			var out = "";
-			return "hello " + name;
-		};
-		function main () {
-			var greet = hello("anki");
-			console.log(greet)
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/03-function"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/03-function"] = (function() {
+    function hello (name) {
+      var out = "";
+      return "hello " + name;
+    };
+    function main () {
+      var greet = hello("anki");
+      console.log(greet)
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/03-function"].main();
 })()

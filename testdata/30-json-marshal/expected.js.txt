@@ -1,22 +1,22 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/30-json-marshal"] = (function() {
-		function main () {
-			var $bytes = (function(v) {
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/30-json-marshal"] = (function() {
+    function main () {
+      var $bytes = (function(v) {
   try { return [ JSON.stringify(v), null ]  }
   catch (e) { return [ null, e ] }
 })({
-	name: "Matt",
-	age: 28
+  name: "Matt",
+  age: 28
 }), bytes = $bytes[0], err = $bytes[1];
-			if (err != null) {
-				throw err
-			};
-			console.log(bytes)
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/30-json-marshal"].main();
+      if (err != null) {
+        throw err
+      };
+      console.log(bytes)
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/30-json-marshal"].main();
 })()

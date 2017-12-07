@@ -1,12 +1,12 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/42-basic-rewrite"] = (function() {
-		function main () {
-			console.log("hi")
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/42-basic-rewrite"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/42-basic-rewrite"] = (function() {
+    function main () {
+      console.log("hi")
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/42-basic-rewrite"].main();
 })()

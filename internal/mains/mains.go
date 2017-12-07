@@ -40,6 +40,8 @@ func Find(packages []string) ([]string, error) {
 
 		if filepath.Ext(pkg) != "" {
 			pkg = path.Dir(pkg)
+		} else if pkg == "" {
+			continue
 		}
 
 		if pkg == "." {

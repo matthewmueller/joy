@@ -1,15 +1,15 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/24-interface-array"] = (function() {
-		function main () {
-			var doc = {
-				Fonts: []
-			};
-			console.log(doc.Fonts)
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/24-interface-array"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/24-interface-array"] = (function() {
+    function main () {
+      var doc = {
+        Fonts: []
+      };
+      console.log(doc.Fonts)
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/24-interface-array"].main();
 })()

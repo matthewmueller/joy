@@ -1,28 +1,28 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/64-other-type-defs"] = (function() {
-		function S (s) {
-			return s;
-		};
-		function main () {
-			console.log("hi");
-			console.log("hi");
-			console.log(5);
-			console.log(S("hi"));
-			var m = {
-				"a": "b"
-			};
-			m["hello"] = "world";
-			console.log(m["hello"]);
-			console.log(m["a"]);
-			var a = [];
-			a = a.concat("array");
-			console.log(a[0])
-		};
-		return {
-			S: S,
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/64-other-type-defs"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/64-other-type-defs"] = (function() {
+    function S (s) {
+      return s;
+    };
+    function main () {
+      console.log("hi");
+      console.log("hi");
+      console.log(5);
+      console.log(S("hi"));
+      var m = {
+        "a": "b"
+      };
+      m["hello"] = "world";
+      console.log(m["hello"]);
+      console.log(m["a"]);
+      var a = [];
+      a = a.concat("array");
+      console.log(a[0])
+    };
+    return {
+      S: S,
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/64-other-type-defs"].main();
 })()

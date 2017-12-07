@@ -1,12 +1,12 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/01-hello-world"] = (function() {
-		function main () {
-			console.log("hi world!")
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/01-hello-world"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/01-hello-world"] = (function() {
+    function main () {
+      console.log("hi world!")
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/01-hello-world"].main();
 })()

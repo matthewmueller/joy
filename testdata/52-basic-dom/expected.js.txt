@@ -1,21 +1,21 @@
 ;(function() {
-	var pkg = {};
-	pkg["github.com/matthewmueller/joy/testdata/52-basic-dom"] = (function() {
-		function main () {
-			var document = window.document;
-			var a = document.createElement("a");
-			console.log(a.nodeName);
-			var strong = document.createElement("strong");
-			console.log(document.createElement("strong").outerHTML);
-			a.appendChild(strong);
-			strong.textContent = "hi world!";
-			var body = document.body;
-			body.appendChild(a);
-			console.log(document.body.outerHTML)
-		};
-		return {
-			main: main
-		};
-	})();
-	return pkg["github.com/matthewmueller/joy/testdata/52-basic-dom"].main();
+  var pkg = {};
+  pkg["github.com/matthewmueller/joy/testdata/52-basic-dom"] = (function() {
+    function main () {
+      var document = window.document;
+      var a = document.createElement("a");
+      console.log(a.nodeName);
+      var strong = document.createElement("strong");
+      console.log(document.createElement("strong").outerHTML);
+      a.appendChild(strong);
+      strong.textContent = "hi world!";
+      var body = document.body;
+      body.appendChild(a);
+      console.log(document.body.outerHTML)
+    };
+    return {
+      main: main
+    };
+  })();
+  return pkg["github.com/matthewmueller/joy/testdata/52-basic-dom"].main();
 })()
