@@ -1,4 +1,4 @@
- build:
+build:
   main: cmd/joy/main.go
   binary: joy
   ldflags: -s -w
