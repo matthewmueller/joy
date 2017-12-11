@@ -15,7 +15,7 @@ test:
 
 # Install the commands.
 install:
-	@echo "$(INFOLOG) Installing Joy to $$PATH..."
+	@echo "$(INFOLOG) Installing Joy to the path..."
 	@go install ./cmd/...
 .PHONY: install
 

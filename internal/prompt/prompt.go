@@ -24,7 +24,9 @@ func Prompt(db *skv.KVStore, count int) (done bool, err error) {
 	}
 
 	if count == 1 {
-		introduce()
+		if err := introduce(); err != nil {
+			return done, errors.Wrapf(err, "error prompting email")
+		}
 		return true, nil
 	}
 
@@ -41,7 +43,7 @@ func Prompt(db *skv.KVStore, count int) (done bool, err error) {
 }
 
 // Introduce Joy to first timers
-func introduce() {
+func introduce() error {
 	fmt.Println(splash())
 
 	typewriter.Type(strings.TrimSpace(`
@@ -69,10 +71,28 @@ More tips:
     • Follow twitter.com/mattmueller for project updates
 
 Joy was a labor of love for me. I hope you'll find Joy as
-delightful as I do – Matt
+delightful as I do.
+
+Before jumping into Joy, I had a quick question:
+
 	`), 20*time.Second)
 	fmt.Printf(string('\n'))
 	fmt.Printf(string('\n'))
+
+ask:
+	referrer := prompt.StringRequired(" • How did you hear about Joy? ")
+	if referrer == "" {
+		goto ask
+	}
+
+	if err := stats.Track("new developer", map[string]interface{}{
+		"referrer": referrer,
+	}); err != nil {
+		return errors.Wrapf(err, "error tracking referrer")
+	}
+	fmt.Printf("\nThanks a bunch!\n")
+
+	return nil
 }
 
 func promptEmail(db *skv.KVStore) error {
@@ -100,13 +120,13 @@ to unsubscribe in each email you receive.
 		fmt.Printf(string('\n'))
 
 	askName:
-		name := prompt.StringRequired("[?] What is your name: ")
+		name := prompt.StringRequired(" • What is your name? ")
 		if len(name) <= 2 {
 			goto askName
 		}
 
 	askEmail:
-		email := prompt.StringRequired("[?] What is your email address: ")
+		email := prompt.StringRequired(" • What is your email address? ")
 		if !govalidator.IsEmail(email) {
 			goto askEmail
 		}
@@ -123,7 +143,7 @@ to unsubscribe in each email you receive.
 			"name":  name,
 			"email": email,
 		}); err != nil {
-			return errors.Wrapf(err, "error sending name & email")
+			return errors.Wrapf(err, "error tracking name & email")
 		}
 
 		fmt.Printf("\nThanks bud! Now where were we")
