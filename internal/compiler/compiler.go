@@ -8,12 +8,12 @@ import (
 	"github.com/matthewmueller/joy/internal/compiler/def"
 	"github.com/matthewmueller/joy/internal/compiler/defs"
 	"github.com/matthewmueller/joy/internal/compiler/index"
+	"github.com/matthewmueller/joy/internal/compiler/indexer"
 	"github.com/matthewmueller/joy/internal/compiler/script"
 	"github.com/matthewmueller/joy/internal/compiler/translator"
 	"github.com/matthewmueller/joy/internal/jsast"
 	"github.com/pkg/errors"
 
-	"github.com/matthewmueller/joy/internal/compiler/db"
 	"github.com/matthewmueller/joy/internal/compiler/graph"
 	"github.com/matthewmueller/joy/internal/compiler/loader"
 )
@@ -73,7 +73,7 @@ func (c *Compiler) Parse(packages ...string) (idx *index.Index, g *graph.Graph, 
 		return idx, g, errors.Wrapf(err, "load error")
 	}
 
-	idx, err = db.New(program)
+	idx, err = indexer.New(program)
 	if err != nil {
 		return idx, g, errors.Wrapf(err, "indexing error")
 	}
