@@ -6,13 +6,13 @@ Visit [mat.tm/joy](https://mat.tm/joy) to learn more about Joy.
 
 ---
 
-[Getting Started]()
-&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[Examples]()
-&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[Using the CLI]()
+[Getting Started](#getting-started)
+&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[Examples](#examples)
+&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[Using the CLI](#using-the-cli)
 
-<!-- [JOY API]()&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[DOM API]()&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[Virtual DOM API]() -->
+[Joy API](https://godoc.org/github.com/matthewmueller/joy)&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[DOM API](https://godoc.org/github.com/matthewmueller/joy/dom)&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[Virtual DOM API](https://godoc.org/github.com/matthewmueller/joy/vdom)
 
-[Contributing]()&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[FAQ]()&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[More Links]()
+[Contributing](#contributing)&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[FAQ](#faq)&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[More Links](#more-links)
 
 ---
 
