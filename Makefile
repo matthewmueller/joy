@@ -31,8 +31,10 @@ vdom:
 
 # Release binaries to GitHub.
 release:
-	@echo "$(INFOLOG) Releasing..."
-	@goreleaser -p 1 --rm-dist --config .goreleaser.yml
+	@read -p "> What's the new version? (e.g. 0.1.0) " version; \
+	echo "$(INFOLOG) Releasing... v$$version"; \
+	git tag v$$version; \
+	goreleaser -p 1 --rm-dist --config .goreleaser.yml;
 .PHONY: release
 
 # Show source statistics.
