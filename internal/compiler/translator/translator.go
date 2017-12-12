@@ -15,7 +15,6 @@ import (
 
 	"golang.org/x/tools/go/loader"
 
-	"github.com/matthewmueller/joy/internal/compiler/db"
 	"github.com/matthewmueller/joy/internal/compiler/def"
 	"github.com/matthewmueller/joy/internal/compiler/index"
 	"github.com/matthewmueller/joy/internal/compiler/scope"
@@ -25,7 +24,7 @@ import (
 
 // context struct
 type context struct {
-	index *db.DB
+	index *index.Index
 	info  *loader.PackageInfo
 	def   def.Definition
 }

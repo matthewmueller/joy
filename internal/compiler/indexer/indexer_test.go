@@ -1,4 +1,4 @@
-package db_test
+package indexer_test
 
 // import (
 // 	"go/ast"
