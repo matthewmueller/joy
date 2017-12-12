@@ -1,58 +1,124 @@
-Joy gee, it's another Go to JS compiler.
+![joy compiler](https://user-images.githubusercontent.com/170299/33872480-b10be348-df49-11e7-80b1-06736c8298ae.png)
 
-![img](https://cldup.com/uQb67D_DJT.png)
+Translate idiomatic Go into concise Javascript that works in every browser. Use Go's type system and world-class tooling to build large web applications with confidence.
 
-## Helpful Resources
+Visit [mat.tm/joy](https://mat.tm/joy) to learn more about Joy.
+
+---
+
+[Getting Started]()
+&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[Examples]()
+&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[Using the CLI]()
+
+<!-- [JOY API]()&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[DOM API]()&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[Virtual DOM API]() -->
+
+[Contributing]()&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[FAQ]()&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[More Links]()
+
+---
+
+## Getting Started
+
+**1. Install Joy:**
+
+```sh
+curl -sfL https://raw.githubusercontent.com/matthewmueller/joy/master/install.sh | sh
+```
+
+> Note: you can also download from the [releases tab](https://github.com/matthewmueller/joy/releases).
+
+**2. Create a `main.go` file with the following code:**
+
+```go
+package main
+
+func main() {
+  println("hi world!")
+}
+```
+
+**3. Run the code in a real browser:**
+
+```sh
+joy run main.go
+```
+
+**4. See the compiled Javascript:**
+
+```sh
+joy main.go
+```
+
+## Examples
+
+Visit https://mat.tm/joy/#examples or peruse the [test suite](https://github.com/matthewmueller/joy/tree/master/testdata).
+
+## Using the CLI
+
+**Compile Go into Javascript:**
+
+```
+joy <main.go>
+```
+
+**Compile and run the Go code in headless chrome:**
+
+```
+joy run <main.go>
+```
+
+**Build a development version of the code:**
+
+```
+joy build --dev <main.go>...
+```
+
+**Build a production version of the code (coming soon!):**
+
+```
+joy build <main.go>...
+```
+
+**Start a development server with livereload:**
+
+```
+joy serve <main.go>...
+```
+
+> Run `joy help` for additional details.
+
+## Contributing
+
+So happy to hear you're interested in contributing! Here's a quick rundown of how to get setup:
+
+**Setup**
+
+1. Make sure you have the Go environment setup on your computer. There are quite a few better resources online on how to do that
+
+2. `go get -u -v https://github.com/matthewmueller/joy/...` to install the compiler from source
+
+3. `go test -v` to run all the tests
+
+**Links and tips:**
 
 - https://astexplorer.net/: I've been using this to figure out how to build the JS tree
 - http://goast.yuroyoro.net/ : Simple Go AST viewer
-- https://github.com/estree/estree/blob/master/es5.md: Link to the ES3 AST format, this is implemented in syntax.go
+- https://github.com/estree/estree/blob/master/es5.md: Link to the ES3 AST format, this is implemented in [syntax.go](internal/jsast/syntax.go)
 - https://golang.org/ref/spec: You may need to refer to this to see what types are possible in Go's AST
 - To run all tests: `go test -v`
 - To run individual tests: `go test -v -run Test/08`
-- To run examples: `go run cmd/joy/main.go --pkg $(PWD)/_examples/dom`
-- To see a callgraph: `go run cmd/joy/main.go --pkg $(PWD)/_examples/dom --graph`
-- `pretty.Println(ast)` will pretty print the JS AST
+- `pretty.Println(ast)` will pretty print the JS AST (requires [this package](https://github.com/kr/pretty))
 - `ast.Print(nil, node)` will pretty print the Go AST
 
-## Design
+If you have any further questions, [open an issue](github.com/matthewmueller/joy/issues) or reach out to me on [twitter](https://twitter.com/mattmueller).
 
-- Dead-code elimination across all your dependencies
-- Simple interface between untyped JS and typed Go
-- Compiles to ES3, the most universal JS dialect
-- Idiomatic Go to readable Javascript
-- Fast builds
+## FAQ
 
-## Wait, why?
+Visit https://mat.tm/joy/#faq to view the FAQ.
 
-- Javascript has become increasingly difficult to package up and distribute
-- Despite all the hard work that's gone into Javascript tooling, build systems and transpilers remain slow
-- Even when there's widespread WebAssembly adoption, Javascript will be supported for years to come
-- Go is a minimal language with a simple type system and clear future priorities around better tools
-- Go's type system and tooling make Go programs easy to understand & maintain
+## More Links
 
-## Tradeoffs
-
-**Go will compile Joy code, but Joy will probably not compile existing Go code**
-
-Just because your code is running in Go does not mean it will run on Joy without modification. For everything that browserify & webpack brought to the community, they also brought with it mysteriously large builds.
-
-Joy aims to generate clean, minimal & performant ES3 code that works in every browser. It will not jump hoops to make your Go code work inside the browser.
-
-If you need browser compatibility with existing Go code, GopherJS is much better suited for that task.
-
-**Joy doesn't include Go's wonderful standard library**
-
-All 3rd party packages are opt-in. This is to make sure that our builds remain purposeful and small. Over time, Joy will add compatibility with certain standard library packages where it makes sense.
-
-**Joy aims to be a browser solution, not a node.js solution**
-
-While there's a good chance Joy programs will work in node.js, it's not the focus of this project. The stack we're going for here is Go on the backend and Go on the frontend compiled with Joy.
-
-## Additional Motivation
-
-The source code to metadata ratio is out of wack nowadays.
-
-![img](https://cldup.com/4EtJ3jqzdw.png)
-
-Let's change this.
+- Run `joy help` to see what else Joy can do for you
+- Visit mat.tm/joy to read more about Joy's origins
+- Chat with us in **#joy-compiler** on Slack at gophers.slack.com
+- Star github.com/matthewmueller/joy to follow the development
+- Follow twitter.com/mattmueller for project updates
