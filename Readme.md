@@ -94,7 +94,7 @@ So happy to hear you're interested in contributing! Here's a quick rundown of ho
 
 1. Make sure you have the Go environment setup on your computer. There are quite a few better resources online on how to do that
 
-2. `go get -u -v https://github.com/matthewmueller/joy/...` to install the compiler from source
+2. `go get -u -v github.com/matthewmueller/joy/...` to install the compiler from source
 
 3. `go test -v` to run all the tests
 
