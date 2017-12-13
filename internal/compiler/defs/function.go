@@ -116,15 +116,6 @@ func Function(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (de
 		exported = true
 	}
 
-	fromRuntime := false
-	runtimePath, e := util.RuntimePath()
-	if e != nil {
-		return nil, e
-	}
-	if packagePath == runtimePath {
-		fromRuntime = true
-	}
-
 	tag, e := util.JSTagFromComment(n.Doc)
 	if e != nil {
 		return nil, e
@@ -139,7 +130,6 @@ func Function(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (de
 		name:     name,
 		node:     n,
 		kind:     info.TypeOf(n.Name),
-		runtime:  fromRuntime,
 		imports:  map[string]string{},
 		params:   params,
 		results:  results,
@@ -261,7 +251,7 @@ func (d *functions) Imports() map[string]string {
 }
 
 func (d *functions) FromRuntime() bool {
-	return d.runtime
+	return d.path == "runtime"
 }
 
 func (d *functions) maybeAsync(def def.Definition) error {

@@ -107,25 +107,10 @@ func Method(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (def.
 		exported = true
 	}
 
-	// check if this declaration is from the runtime
-	fromRuntime := false
-	runtimePath, e := util.RuntimePath()
-	if e != nil {
-		return nil, e
-	}
-	if packagePath == runtimePath {
-		fromRuntime = true
-	}
-
 	tag, e := util.JSTagFromComment(n.Doc)
 	if e != nil {
 		return nil, e
 	}
-	// log.Infof("before id=%s tag=%s", id, tag)
-	// async := false
-	// if tag != nil && tag.HasOption("async") {
-	// 	async = true
-	// }
 
 	return &methods{
 		id:       id,
@@ -136,7 +121,6 @@ func Method(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (def.
 		node:     n,
 		kind:     info.TypeOf(n.Name),
 		recv:     recv,
-		runtime:  fromRuntime,
 		params:   params,
 		results:  results,
 		variadic: variadic,
@@ -265,7 +249,7 @@ func (d *methods) Imports() map[string]string {
 }
 
 func (d *methods) FromRuntime() bool {
-	return d.runtime
+	return d.path == "runtime"
 }
 
 // Rewrite fn

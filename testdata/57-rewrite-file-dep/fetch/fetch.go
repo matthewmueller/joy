@@ -4,9 +4,6 @@ import (
 	"github.com/matthewmueller/joy/macro"
 )
 
-// unfetch
-var unfetch = macro.File("./unfetch.js")
-
 // Options struct
 type Options struct {
 	Method string

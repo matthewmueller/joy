@@ -10,6 +10,7 @@ import (
 	"github.com/matthewmueller/joy/internal/compiler/defs"
 	"github.com/matthewmueller/joy/internal/compiler/index"
 	"github.com/matthewmueller/joy/internal/compiler/util"
+	"github.com/matthewmueller/joy/internal/paths"
 	"golang.org/x/tools/go/loader"
 )
 
@@ -26,11 +27,18 @@ func New(program *loader.Program) (idx *index.Index, err error) {
 		index: index.New(program),
 	}
 
-	jsPath, e := util.JSSourcePath()
+	// TODO: I'd very much like to get rid of this
+	// but unfortunately it breaks the macros in
+	// an unexpected way inside index.DefinitionOf(...).
+	// Basically the index starts
+	// getting the macro definition (probably due
+	// to precedence). The index needs to be much
+	// better tested before we can remove this
+	jsPath, e := paths.Macro()
 	if e != nil {
 		return nil, e
 	}
-
+	log.Infof(jsPath)
 	for _, info := range program.AllPackages {
 		// ignore the joy/js package path
 		if info.Pkg.Path() == jsPath {

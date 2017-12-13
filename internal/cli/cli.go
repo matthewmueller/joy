@@ -54,8 +54,10 @@ func Run(ctx context.Context, ver string) (err error) {
 		return errors.Wrapf(err, "error incrementing stats")
 	}
 
-	if done, err := prompt.Prompt(db, runs); err != nil || done {
-		return errors.Wrapf(err, "prompt error")
+	if ver != "master" {
+		if done, err := prompt.Prompt(db, runs); err != nil || done {
+			return errors.Wrapf(err, "prompt error")
+		}
 	}
 
 	// special case: joy ./main.go

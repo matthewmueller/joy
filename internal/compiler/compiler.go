@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/matthewmueller/joy/internal/setup"
+
 	"github.com/apex/log"
 	"github.com/matthewmueller/joy/internal/compiler/def"
 	"github.com/matthewmueller/joy/internal/compiler/defs"
@@ -51,6 +53,10 @@ type Compiler struct {
 
 // Compile our code
 func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err error) {
+	if err := c.Setup(); err != nil {
+		return scripts, errors.Wrapf(err, "setup error")
+	}
+
 	idx, g, err := c.Parse(packages...)
 	if err != nil {
 		return scripts, errors.Wrap(err, "parse error")
@@ -62,6 +68,15 @@ func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err er
 	}
 
 	return scripts, nil
+}
+
+// Setup the compiler's runtime code
+func (c *Compiler) Setup() error {
+	if err := setup.Runtime(); err != nil {
+		return errors.Wrapf(err, "error setting up runtime")
+	}
+
+	return nil
 }
 
 // Parse fn

@@ -1,6 +1,6 @@
 ;(function() {
   var pkg = {};
-  pkg["github.com/matthewmueller/joy/internal/runtime"] = (function() {
+  pkg["runtime"] = (function() {
     function Chan (o) {
       o = o || {};
       this.capacity = o.capacity || 0;
@@ -85,7 +85,7 @@ self.catch = p.catch.bind(p)
     };
   })();
   pkg["github.com/matthewmueller/joy/testdata/23-goroutine-basic"] = (function() {
-    var runtime = pkg["github.com/matthewmueller/joy/internal/runtime"];
+    var runtime = pkg["runtime"];
     async function main () {
       var ch = new runtime.Channel();
       (async function(msg) {

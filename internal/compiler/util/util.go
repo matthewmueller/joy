@@ -13,55 +13,23 @@ import (
 	"github.com/apex/log"
 	"github.com/fatih/structtag"
 	"github.com/matthewmueller/joy/internal/compiler/def"
+	"github.com/matthewmueller/joy/internal/paths"
 	"github.com/pkg/errors"
 )
 
 var joyPath string
 var goSourcePath string
 var runtimePkg string
-var jsSourcePkg string
 var vdomSourcePkg string
 
 // JoyPath absolute path
 func JoyPath() (string, error) {
-	if joyPath != "" {
-		return joyPath, nil
-	}
-
-	_, file, _, ok := runtime.Caller(0)
-	if !ok {
-		return "", errors.New("unable to get the joy source root")
-	}
-	root := path.Dir(path.Dir(path.Dir(path.Dir(file))))
-	joyPath = root
-	return root, nil
+	return paths.Joy()
 }
 
 // RuntimePath gets the path of our runtime
 func RuntimePath() (string, error) {
-	if runtimePkg != "" {
-		return runtimePkg, nil
-	}
-
-	root, e := JoyPath()
-	if e != nil {
-		return "", e
-	}
-	runtimePath := path.Join(root, "internal", "runtime")
-
-	gosrc, e := GoSourcePath()
-	if e != nil {
-		return "", e
-	}
-
-	// runtime package
-	rt, e := filepath.Rel(gosrc, runtimePath)
-	if e != nil {
-		return "", e
-	}
-	runtimePkg = rt
-
-	return runtimePkg, nil
+	return paths.Runtime()
 }
 
 // JSTag struct
@@ -292,33 +260,6 @@ func GoSourcePath() (string, error) {
 
 	goSourcePath = path.Join(p, "src")
 	return goSourcePath, nil
-}
-
-// JSSourcePath gets the fullpath to Go's source files
-func JSSourcePath() (string, error) {
-	if jsSourcePkg != "" {
-		return jsSourcePkg, nil
-	}
-
-	root, e := JoyPath()
-	if e != nil {
-		return "", e
-	}
-	runtimePath := path.Join(root, "macro")
-
-	gosrc, e := GoSourcePath()
-	if e != nil {
-		return "", e
-	}
-
-	// runtime package
-	rel, e := filepath.Rel(gosrc, runtimePath)
-	if e != nil {
-		return "", e
-	}
-	jsSourcePkg = rel
-
-	return jsSourcePkg, nil
 }
 
 // VDOMSourcePath gets the fullpath to the VDOM source files

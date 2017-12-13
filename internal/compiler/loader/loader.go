@@ -44,11 +44,11 @@ func Load(packages ...string) (program *loader.Program, err error) {
 
 	// import the runtime by default
 	// TODO: there's gotta be a better way to do this
-	runtimePkg, err := util.RuntimePath()
+	runtimePath, err := util.RuntimePath()
 	if err != nil {
 		return nil, err
 	}
-	conf.Import(runtimePkg)
+	conf.CreateFromFilenames("", path.Join(runtimePath, "runtime.go"))
 
 	// add comments to the AST
 	conf.ParserMode = parser.ParseComments

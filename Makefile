@@ -19,6 +19,10 @@ install:
 	@go install ./cmd/...
 .PHONY: install
 
+embed:
+	@go-bindata -o ./internal/bindata/bindata.go -pkg bindata ./internal/runtime ./macro
+.PHONY: embed	
+
 dom:
 	@echo "$(INFOLOG) Generating the DOM..."
 	@go run internal/dom/main.go
@@ -30,7 +34,7 @@ vdom:
 .PHONY: vdom
 
 # Release binaries to GitHub.
-release:
+release: embed
 	@read -p "> What's the new version? (e.g. 0.1.0) " version; \
 	echo "$(INFOLOG) Releasing... v$$version"; \
 	git tag v$$version; \

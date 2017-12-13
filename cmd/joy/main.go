@@ -7,18 +7,17 @@ import (
 	"syscall"
 
 	"github.com/matthewmueller/joy/internal/cli"
+	"github.com/matthewmueller/joy/internal/version"
 
 	"github.com/apex/log"
 	logcli "github.com/apex/log/handlers/cli"
 )
 
-var version = "master"
-
 func main() {
 	ctx := trap(syscall.SIGINT, syscall.SIGTERM)
 	log.SetHandler(logcli.Default)
 
-	err := cli.Run(ctx, version)
+	err := cli.Run(ctx, version.Version)
 	if err != nil {
 		log.Fatal(err.Error())
 		os.Exit(1)

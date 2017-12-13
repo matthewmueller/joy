@@ -2,7 +2,7 @@ build:
   main: cmd/joy/main.go
   binary: joy
   ldflags: -s -w
-    -X main.version={{.Version}}
+    -X github.com/matthewmueller/joy/internal/version.Version={{.Version}}
     -X main.commit={{.Commit}} 
     -X main.date={{.Date}}
     -X github.com/matthewmueller/joy/internal/env.awsAccessKey={{.Env.AWS_ACCESS_ID}}
