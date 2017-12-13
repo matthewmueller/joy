@@ -88,7 +88,7 @@ func internalRuntimeVersion() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "internal/runtime/VERSION", size: 6, mode: os.FileMode(420), modTime: time.Unix(1513164412, 0)}
+	info := bindataFileInfo{name: "internal/runtime/VERSION", size: 6, mode: os.FileMode(420), modTime: time.Unix(1513164490, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -108,7 +108,7 @@ func internalRuntimeRuntimeGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "internal/runtime/runtime.go", size: 2514, mode: os.FileMode(420), modTime: time.Unix(1513164412, 0)}
+	info := bindataFileInfo{name: "internal/runtime/runtime.go", size: 2514, mode: os.FileMode(420), modTime: time.Unix(1513164490, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

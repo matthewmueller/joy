@@ -21,7 +21,7 @@ install:
 
 embed:
 	@go-bindata -o ./internal/bindata/bindata.go -pkg bindata ./internal/runtime ./macro
-	@gofmt -w ./internal/bindata/...
+	@gofmt -w ./internal/bindata/
 .PHONY: embed	
 
 dom:
