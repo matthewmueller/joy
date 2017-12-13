@@ -88,7 +88,7 @@ func internalRuntimeVersion() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "internal/runtime/VERSION", size: 6, mode: os.FileMode(420), modTime: time.Unix(1513164490, 0)}
+	info := bindataFileInfo{name: "internal/runtime/VERSION", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -108,7 +108,7 @@ func internalRuntimeRuntimeGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "internal/runtime/runtime.go", size: 2514, mode: os.FileMode(420), modTime: time.Unix(1513164490, 0)}
+	info := bindataFileInfo{name: "internal/runtime/runtime.go", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -128,7 +128,7 @@ func macroRawGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "macro/raw.go", size: 133, mode: os.FileMode(420), modTime: time.Unix(1513164284, 0)}
+	info := bindataFileInfo{name: "macro/raw.go", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -148,7 +148,7 @@ func macroRawfileGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "macro/rawfile.go", size: 114, mode: os.FileMode(420), modTime: time.Unix(1513164284, 0)}
+	info := bindataFileInfo{name: "macro/rawfile.go", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -168,7 +168,7 @@ func macroRewriteGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "macro/rewrite.go", size: 174, mode: os.FileMode(420), modTime: time.Unix(1513164284, 0)}
+	info := bindataFileInfo{name: "macro/rewrite.go", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -188,7 +188,7 @@ func macroRuntimeGo() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "macro/runtime.go", size: 107, mode: os.FileMode(420), modTime: time.Unix(1513164284, 0)}
+	info := bindataFileInfo{name: "macro/runtime.go", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

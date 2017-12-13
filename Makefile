@@ -20,7 +20,7 @@ install:
 .PHONY: install
 
 embed:
-	@go-bindata -o ./internal/bindata/bindata.go -pkg bindata ./internal/runtime ./macro
+	@go-bindata -o ./internal/bindata/bindata.go -nometadata -pkg bindata ./internal/runtime ./macro
 	@gofmt -w ./internal/bindata/
 .PHONY: embed	
 
