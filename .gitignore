@@ -1,3 +1,5 @@
 /chrome
 /.envrc
 /dist
+/dom
+/vdom

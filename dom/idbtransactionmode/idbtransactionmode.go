@@ -1,3 +1,0 @@
-package idbtransactionmode
-
-type IDBTransactionMode string

@@ -1,3 +1,0 @@
-package videofacingmodeenum
-
-type VideoFacingModeEnum string

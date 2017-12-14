@@ -1,3 +1,0 @@
-package idbcursordirection
-
-type IDBCursorDirection string

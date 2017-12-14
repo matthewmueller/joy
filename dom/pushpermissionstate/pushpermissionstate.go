@@ -1,3 +1,0 @@
-package pushpermissionstate
-
-type PushPermissionState string
