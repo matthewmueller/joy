@@ -2,6 +2,7 @@
 // sources:
 // internal/runtime/VERSION
 // internal/runtime/runtime.go
+// macro/VERSION
 // macro/raw.go
 // macro/rawfile.go
 // macro/rewrite.go
@@ -116,6 +117,26 @@ func internalRuntimeRuntimeGo() (*asset, error) {
 	}
 
 	info := bindataFileInfo{name: "internal/runtime/runtime.go", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _macroVersion = []byte("\x1f\x8b\x08\x00\x00\x09\x6e\x88\x00\xff\xca\x4d\x2c\x2e\x49\x2d\x02\x04\x00\x00\xff\xff\xd6\xa3\x09\x2d\x06\x00\x00\x00")
+
+func macroVersionBytes() ([]byte, error) {
+	return bindataRead(
+		_macroVersion,
+		"macro/VERSION",
+	)
+}
+
+func macroVersion() (*asset, error) {
+	bytes, err := macroVersionBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "macro/VERSION", size: 0, mode: os.FileMode(0), modTime: time.Unix(0, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -394,6 +415,7 @@ func AssetNames() []string {
 var _bindata = map[string]func() (*asset, error){
 	"internal/runtime/VERSION":     internalRuntimeVersion,
 	"internal/runtime/runtime.go":  internalRuntimeRuntimeGo,
+	"macro/VERSION":                macroVersion,
 	"macro/raw.go":                 macroRawGo,
 	"macro/rawfile.go":             macroRawfileGo,
 	"macro/rewrite.go":             macroRewriteGo,
@@ -455,6 +477,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		}},
 	}},
 	"macro": &bintree{nil, map[string]*bintree{
+		"VERSION":    &bintree{macroVersion, map[string]*bintree{}},
 		"raw.go":     &bintree{macroRawGo, map[string]*bintree{}},
 		"rawfile.go": &bintree{macroRawfileGo, map[string]*bintree{}},
 		"rewrite.go": &bintree{macroRewriteGo, map[string]*bintree{}},

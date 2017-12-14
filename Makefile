@@ -6,7 +6,7 @@ ERROLOG := \033[31m ⨯\033[0m
 
 TEST:="./..."
 
-test:
+test: embed
 	@echo "$(INFOLOG) Running go tests..."
 	@go list $(TEST) \
 		| grep -v "/vendor/" \
