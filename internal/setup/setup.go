@@ -30,6 +30,39 @@ func Runtime() error {
 	return setup(runtimePath)
 }
 
+// Stdlib tests and sets up the right place to pull in stdlib
+// source files. This will depend on if you're
+// working from the $GOPATH or if you've simply
+// run the binary
+func Stdlib() error {
+	stdlibPath, err := paths.Stdlib()
+	if err != nil {
+		return errors.Wrapf(err, "error getting runtime path")
+	}
+
+	if exists, err := exists(stdlibPath); exists && err != nil {
+		return nil
+	}
+
+	return setup(stdlibPath)
+}
+
+// Macro sets up the macro path source files.
+// This will depend on if you're working from
+// the $GOPATH or if you've simply run the binary
+func Macro() error {
+	macroPath, err := paths.Macro()
+	if err != nil {
+		return errors.Wrapf(err, "error getting runtime path")
+	}
+
+	if exists, err := exists(macroPath); exists && err != nil {
+		return nil
+	}
+
+	return setup(macroPath)
+}
+
 func exists(dir string) (bool, error) {
 	// exists
 	if _, err := os.Stat(dir); !os.IsNotExist(err) {
@@ -57,10 +90,6 @@ func setup(dir string) error {
 		return errors.Wrapf(err, "error getting relative path")
 	}
 
-	if err := os.MkdirAll(dir, 0755); err != nil {
-		return errors.Wrapf(err, "error creating runtime")
-	}
-
 	for _, name := range bindata.AssetNames() {
 		if path.Base(name) == "VERSION" {
 			continue
@@ -73,8 +102,13 @@ func setup(dir string) error {
 			return errors.Wrapf(err, "error getting asset data for %s", name)
 		}
 
-		if err := ioutil.WriteFile(path.Join(root, name), data, 0644); err != nil {
-			return errors.Wrapf(err, "error writing runtime")
+		fullpath := path.Join(root, name)
+		if err := os.MkdirAll(path.Dir(fullpath), 0755); err != nil {
+			return errors.Wrapf(err, "error creating dir")
+		}
+
+		if err := ioutil.WriteFile(fullpath, data, 0644); err != nil {
+			return errors.Wrapf(err, "error writing asset")
 		}
 	}
 

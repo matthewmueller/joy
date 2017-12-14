@@ -3,17 +3,14 @@ package stdlib
 import (
 	"errors"
 	"fmt"
-	"os"
-	"path"
-	"path/filepath"
-	"runtime"
-)
 
-var stdlibPath = getPath()
+	"github.com/matthewmueller/joy/internal/paths"
+)
 
 // Supports checks if we support this stdlib import
 func Supports(importPath string) (alias string, err error) {
-	if stdlibPath == "" {
+	stdlibPath, err := paths.Stdlib()
+	if err != nil {
 		return "", errors.New("stdlib path not found")
 	}
 
@@ -22,26 +19,10 @@ func Supports(importPath string) (alias string, err error) {
 			return "", fmt.Errorf("the '%s' package is not supported in joy yet", importPath)
 		}
 
-		return path.Join(stdlibPath, importPath), nil
+		return stdlibPath, nil
 	}
 
 	return "", nil
-}
-
-// get the new path of the standard library
-func getPath() string {
-	_, file, _, ok := runtime.Caller(0)
-	if !ok {
-		return ""
-	}
-
-	gosrc := path.Join(os.Getenv("GOPATH"), "src")
-	rel, e := filepath.Rel(gosrc, path.Dir(file))
-	if e != nil {
-		return ""
-	}
-
-	return rel
 }
 
 // Map containing the standard library

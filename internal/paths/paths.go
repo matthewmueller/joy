@@ -14,6 +14,7 @@ import (
 // cached paths
 var joyPath string
 var runtimePath string
+var stdlibPath string
 var macroPath string
 
 // Joy is root the directory where Joy stores source,
@@ -36,7 +37,7 @@ func Joy() (string, error) {
 	}
 
 	// short-circuit for testing
-	// return getPath("joy")
+	return getPath("joy")
 
 	root := path.Join(file, "..", "..", "..")
 	if _, err := os.Stat(root); !os.IsNotExist(err) {
@@ -63,6 +64,22 @@ func Runtime() (string, error) {
 	return runtimePath, nil
 }
 
+// Stdlib path
+func Stdlib() (string, error) {
+	// use cached
+	if stdlibPath != "" {
+		return stdlibPath, nil
+	}
+
+	root, err := Joy()
+	if err != nil {
+		return "", errors.Wrapf(err, "error getting stdlib")
+	}
+
+	stdlibPath = path.Join(root, "stdlib")
+	return stdlibPath, nil
+}
+
 // Macro gets the macro path
 //
 // Note that this depends on $GOPATH
@@ -77,19 +94,27 @@ func Macro() (string, error) {
 		return macroPath, nil
 	}
 
-	gopath := envOr("GOPATH", defaultGOPATH())
-	if gopath == "" {
-		return "", errors.New("no gopath set")
+	root, err := Joy()
+	if err != nil {
+		return "", errors.Wrapf(err, "error getting stdlib")
 	}
 
-	fullpath := path.Join(gopath, "src", "github.com", "matthewmueller", "joy", "macro")
-	if _, err := os.Stat(fullpath); os.IsNotExist(err) {
-		return "", errors.New("you'll need to run `go get github.com/matthewmueller/joy/macro` to compile code with macros")
-	}
-
-	// TODO: fragile, fix for forks and things
-	macroPath = "github.com/matthewmueller/joy/macro"
+	macroPath = path.Join(root, "macro")
 	return macroPath, nil
+
+	// gopath := envOr("GOPATH", defaultGOPATH())
+	// if gopath == "" {
+	// 	return "", errors.New("no gopath set")
+	// }
+
+	// fullpath := path.Join(gopath, "src", "github.com", "matthewmueller", "joy", "macro")
+	// if _, err := os.Stat(fullpath); os.IsNotExist(err) {
+	// 	return "", errors.New("you'll need to run `go get github.com/matthewmueller/joy/macro` to compile code with macros")
+	// }
+
+	// // TODO: fragile, fix for forks and things
+	// macroPath = "github.com/matthewmueller/joy/macro"
+	// return macroPath, nil
 }
 
 // // RuntimePath gets the path of our runtime

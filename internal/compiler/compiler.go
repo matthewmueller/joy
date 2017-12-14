@@ -76,6 +76,14 @@ func (c *Compiler) Setup() error {
 		return errors.Wrapf(err, "error setting up runtime")
 	}
 
+	if err := setup.Stdlib(); err != nil {
+		return errors.Wrapf(err, "error setting up stdlib")
+	}
+
+	if err := setup.Macro(); err != nil {
+		return errors.Wrapf(err, "error setting up macro")
+	}
+
 	return nil
 }
 

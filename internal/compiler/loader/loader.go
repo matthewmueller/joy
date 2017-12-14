@@ -5,9 +5,11 @@ import (
 	"go/parser"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/apex/log"
 	"github.com/matthewmueller/joy/internal/compiler/util"
+	"github.com/matthewmueller/joy/internal/paths"
 	"github.com/matthewmueller/joy/stdlib"
 	"github.com/pkg/errors"
 	"golang.org/x/tools/go/loader"
@@ -55,18 +57,26 @@ func Load(packages ...string) (program *loader.Program, err error) {
 
 	// replace stdlib packages with our own
 	conf.FindPackage = func(ctxt *build.Context, importPath, fromDir string, mode build.ImportMode) (*build.Package, error) {
-		alias, e := stdlib.Supports(importPath)
+		if strings.HasSuffix(importPath, "joy/macro") {
+			joyPath, err := paths.Joy()
+			if err != nil {
+				return nil, errors.Wrapf(err, "error getting joy path")
+			}
+			return ctxt.Import("./macro", joyPath, mode)
+		}
+
+		stdlibPath, e := stdlib.Supports(importPath)
 		if e != nil {
 			return nil, e
 		}
 
 		// not part of the stdlib
-		if alias == "" {
+		if stdlibPath == "" {
 			return ctxt.Import(importPath, fromDir, mode)
 		}
 
-		// use the alias
-		return ctxt.Import(alias, fromDir, mode)
+		// use the custom stdlib path
+		return ctxt.Import("./"+importPath, stdlibPath, mode)
 	}
 
 	ctx := defaultContext()
