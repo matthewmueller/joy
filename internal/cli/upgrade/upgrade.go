@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/apex/log"
@@ -109,7 +110,8 @@ func upgrade(ctx context.Context, version string) (err error) {
 // findAsset returns the binary for this platform.
 func findAsset(release *github.RepositoryRelease) *github.ReleaseAsset {
 	for _, asset := range release.Assets {
-		if *asset.Name == fmt.Sprintf("joy_%s_%s", runtime.GOOS, runtime.GOARCH) {
+		version := strings.TrimPrefix(*release.TagName, "v")
+		if *asset.Name == fmt.Sprintf("joy_%s_%s_%s.tar.gz", version, runtime.GOOS, runtime.GOARCH) {
 			return &asset
 		}
 	}
