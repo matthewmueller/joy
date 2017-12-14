@@ -4,7 +4,7 @@ INFOLOG := \033[34m ▸\033[0m
 WARNLOG := \033[33m ▸\033[0m
 ERROLOG := \033[31m ⨯\033[0m
 
-TEST:="./"
+TEST:="./..."
 
 test:
 	@echo "$(INFOLOG) Running go tests..."
