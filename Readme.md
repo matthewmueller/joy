@@ -12,9 +12,7 @@ Visit [mat.tm/joy](https://mat.tm/joy) to learn more about Joy.
 
 [Contributing](#contributing)&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[FAQ](#faq)&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[More Links](#more-links)
 
-**GoDoc:**
-
-[Joy API](https://godoc.org/github.com/matthewmueller/joy)&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[DOM API](https://godoc.org/github.com/matthewmueller/joy/dom)&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[Virtual DOM API](https://godoc.org/github.com/matthewmueller/joy/vdom)
+[Joy API](https://godoc.org/github.com/matthewmueller/joy)&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;*DOM API (coming soon!)*&nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;*Virtual DOM API (coming soon!)*
 
 ---
 
