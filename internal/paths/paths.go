@@ -37,7 +37,7 @@ func Joy() (string, error) {
 	}
 
 	// short-circuit for testing
-	return getPath("joy")
+	// return getPath("joy")
 
 	root := path.Join(file, "..", "..", "..")
 	if _, err := os.Stat(root); !os.IsNotExist(err) {

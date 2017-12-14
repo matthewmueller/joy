@@ -11,6 +11,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/matthewmueller/joy/internal/paths"
+
 	"github.com/sanity-io/litter"
 	"github.com/sergi/go-diff/diffmatchpatch"
 
@@ -44,10 +46,25 @@ func Test(t *testing.T) {
 		t.Fatal(e)
 	}
 
-	gosrc := path.Join(os.Getenv("GOPATH"), "src")
+	root, err := paths.Joy()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+exists:
+	chromePath, err := chrome.Exists(path.Join(root, "chrome"))
+	if err != nil {
+		t.Fatal(err)
+	} else if chromePath == "" {
+		log.Infof("downloading headless chrome (this only needs to be done once)")
+		if err := chrome.Download(path.Join(root, "chrome")); err != nil {
+			t.Fatal(err)
+		}
+		goto exists
+	}
 
 	ch, err := chrome.New(ctx, &chrome.Settings{
-		ExecutablePath: os.Getenv("GOLLY_CHROME_PATH"),
+		ExecutablePath: chromePath,
 		Stderr:         ioutil.Discard,
 		Stdout:         ioutil.Discard,
 	})
@@ -55,6 +72,8 @@ func Test(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer ch.Close()
+
+	gosrc := path.Join(os.Getenv("GOPATH"), "src")
 
 	for _, dir := range dirs {
 		if !dir.IsDir() {

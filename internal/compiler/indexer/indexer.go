@@ -27,9 +27,14 @@ func New(program *loader.Program) (idx *index.Index, err error) {
 	}
 
 	for _, info := range program.AllPackages {
+		pkgpath := info.Pkg.Path()
 		// ignore the joy/macro package path when indexing
-		// TODO: is this going to work in every case?
-		if info.Pkg.Path() == "./macro" {
+		// TODO: this is a HUGE HACK and should be eliminated
+		// altogether. It shouldn't matter whether we include macro
+		// in the index, but right now index.DefinitionOf will return
+		// macro.File rather than the underlying type so rewrites
+		// currently get messed up
+		if pkgpath == "./macro" || strings.HasSuffix(pkgpath, "joy/macro") {
 			continue
 		}
 
