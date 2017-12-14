@@ -18,6 +18,17 @@ Visit [mat.tm/joy](https://mat.tm/joy) to learn more about Joy.
 
 ## Getting Started
 
+**Prerequisites**
+
+Joy needs Go to be installed and `GOPATH` to be set.
+
+On macOS
+```
+brew install go
+export GOPATH=$(go env GOPATH)
+```
+> Note: you can install Go from [here](https://golang.org/doc/install) and find instructions on setting GOPATH [here](https://golang.org/doc/code.html#GOPATH) for your system.
+
 **1. Install Joy:**
 
 ```sh
