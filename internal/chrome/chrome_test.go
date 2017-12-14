@@ -3,23 +3,45 @@ package chrome_test
 import (
 	"context"
 	"io/ioutil"
-	"os"
+	"path"
 	"testing"
 
+	"github.com/matthewmueller/joy/internal/paths"
+
 	"github.com/matthewmueller/joy/internal/chrome"
+	"github.com/matthewmueller/log"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRun(t *testing.T) {
 	ctx := context.Background()
+
+	root, err := paths.Joy()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+exists:
+	chromePath, err := chrome.Exists(path.Join(root, "chrome"))
+	if err != nil {
+		t.Fatal(err)
+	} else if chromePath == "" {
+		log.Infof("downloading headless chrome (this only needs to be done once)")
+		if err := chrome.Download(path.Join(root, "chrome")); err != nil {
+			t.Fatal(err)
+		}
+		goto exists
+	}
+
 	ch, err := chrome.New(ctx, &chrome.Settings{
-		ExecutablePath: os.Getenv("GOLLY_CHROME_PATH"),
-		Stdout:         ioutil.Discard,
+		ExecutablePath: chromePath,
 		Stderr:         ioutil.Discard,
+		Stdout:         ioutil.Discard,
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer ch.Close()
 
 	target, err := ch.Target()
 	if err != nil {
@@ -27,21 +49,13 @@ func TestRun(t *testing.T) {
 	}
 
 	result, err := target.Run(`
-		new Promise(function (resolve, reject) {
-			console.log("hiya", 5)
-			setTimeout(() => {
-				console.log("hello")
-				setTimeout(() => {
-					resolve("hi world!")
-				}, 300)
-			}, 300)
-		})
+		console.log("hiya", 5)
 	`)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, "hiya 5\nhello", result)
+	assert.Equal(t, "hiya 5", result)
 
 	if e := target.Close(); e != nil {
 		t.Fatal(e)

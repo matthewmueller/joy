@@ -255,7 +255,7 @@ func (t *Target) Run(source string) (result string, err error) {
 		}
 	}()
 
-	// hack but probably will work (until I compile with regenerator)
+	// TODO: HACK but probably will work (until I compile with regenerator)
 	awaitPromise := false
 	if strings.Contains(source, "async function main") {
 		awaitPromise = true

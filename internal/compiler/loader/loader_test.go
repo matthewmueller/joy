@@ -5,7 +5,6 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/joy/internal/compiler/loader"
 )
 
@@ -20,18 +19,12 @@ func init() {
 }
 
 func fixture(name string) string {
-	// file, err := ioutil.ReadFile(path.Join(dirname, name))
-	// if err != nil {
-	// 	t.Fatal(err)
-	// }
-
 	return path.Join(dirname, "testdata", name)
 }
 
-func TestDeepInterfaces(t *testing.T) {
-	program, err := loader.Load(fixture("dom"))
+func TestDeepInterfaceFix(t *testing.T) {
+	_, err := loader.Load(fixture("dom"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	log.Infof("got program! %+v", program)
 }

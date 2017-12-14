@@ -1,7 +1,7 @@
 package window
 
 type Node interface {
-	EventTarget
+	DispatchEvent() Event
 
 	ParentElement() HTMLElement
 }
