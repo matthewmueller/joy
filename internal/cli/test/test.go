@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/joy/internal/mains"
 	"github.com/matthewmueller/joy/internal/stats"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
@@ -22,15 +21,15 @@ func New(ctx context.Context, root *kingpin.Application) {
 		// stats
 		defer stats.TrackError("test", time.Now(), &err)
 
-		packages, err := mains.Find(*pkgs)
-		if err != nil {
-			return err
-		}
+		// packages, err := mains.Find(*pkgs...)
+		// if err != nil {
+		// 	return err
+		// }
 
 		// stats
 		stats.Track("test", map[string]interface{}{
 			"duration": time.Since(start).Round(time.Millisecond).String(),
-			"packages": len(packages),
+			"packages": len(*pkgs),
 		})
 
 		log.Infof("Headless testing is coming soon!")

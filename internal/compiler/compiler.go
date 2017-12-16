@@ -1,12 +1,13 @@
+// Package compiler is the entrypoint to Joy's compiler
+// It follows the steps outlined in: https://mat.tm/joy/#how
 package compiler
 
 import (
 	"fmt"
 	"sort"
 
-	"github.com/matthewmueller/joy/internal/setup"
-
 	"github.com/apex/log"
+	"github.com/asaskevich/govalidator"
 	"github.com/matthewmueller/joy/internal/compiler/def"
 	"github.com/matthewmueller/joy/internal/compiler/defs"
 	"github.com/matthewmueller/joy/internal/compiler/index"
@@ -36,62 +37,86 @@ type file struct {
 	modules []*module
 }
 
-// Params for the compiler
-type Params struct {
+// Config for the compiler
+type Config struct {
+	// build a development or production bundle
 	Development bool
+
+	// path to runtime code (e.g. for channel support)
+	RuntimePath string `valid:"required"`
+
+	// path to the macro library
+	MacroPath string `valid:"required"`
+
+	// path to joy's stdlib
+	StdPath string `valid:"required"`
+
+	// packages to compile
+	Packages []string
 }
 
-// New Compiler
-func New(params *Params) *Compiler {
-	return &Compiler{params}
-}
-
-// Compiler struct
-type Compiler struct {
-	params *Params
-}
-
-// Compile our code
-func (c *Compiler) Compile(packages ...string) (scripts []*script.Script, err error) {
-	if err := c.Setup(); err != nil {
-		return scripts, errors.Wrapf(err, "setup error")
+// Compile our Go application into a Javascript application
+func Compile(cfg *Config) (scripts []*script.Script, err error) {
+	if valid, err := govalidator.ValidateStruct(cfg); !valid || err != nil {
+		return scripts, errors.Wrapf(err, "invalid loader config")
 	}
 
-	idx, g, err := c.Parse(packages...)
-	if err != nil {
-		return scripts, errors.Wrap(err, "parse error")
+	// Setup the local state we need for the runtime, stdlib
+	// and macro dependencies
+	if err := Setup(cfg); err != nil {
+		return scripts, errors.Wrapf(err, "compiler setup error")
 	}
 
-	scripts, err = c.Assemble(idx, g)
+	// Parse: loads, indexes and graphs the program
+	index, graph, err := Parse(cfg)
 	if err != nil {
-		return scripts, errors.Wrap(err, "assemble error")
+		return scripts, errors.Wrap(err, "compiler parse error")
+	}
+
+	// Assemble: translates and generates the javascript
+	scripts, err = Assemble(index, graph)
+	if err != nil {
+		return scripts, errors.Wrap(err, "compiler assemble error")
 	}
 
 	return scripts, nil
 }
 
-// Setup the compiler's runtime code
-func (c *Compiler) Setup() error {
-	if err := setup.Runtime(); err != nil {
-		return errors.Wrapf(err, "error setting up runtime")
-	}
+// Setup the compiler's stdlib, runtime and macro source code
+// we're going to keep this stupid simple right now
+func Setup(cfg *Config) error {
 
-	if err := setup.Stdlib(); err != nil {
-		return errors.Wrapf(err, "error setting up stdlib")
-	}
+	// if err := setup.Runtime(); err != nil {
+	// 	return errors.Wrapf(err, "error setting up runtime")
+	// }
 
-	if err := setup.Macro(); err != nil {
-		return errors.Wrapf(err, "error setting up macro")
-	}
+	// if err := setup.Stdlib(); err != nil {
+	// 	return errors.Wrapf(err, "error setting up stdlib")
+	// }
+
+	// if err := setup.Macro(); err != nil {
+	// 	return errors.Wrapf(err, "error setting up macro")
+	// }
 
 	return nil
 }
 
-// Parse fn
-func (c *Compiler) Parse(packages ...string) (idx *index.Index, g *graph.Graph, err error) {
+// Parse loads, indexes and graphs the program
+//
+// This is breaking down our program into all the pieces
+// we need to build it back up as a Javascript program.
+//
+// Eventually, we'll be able use this stage separately
+// from assembling to incrementally compile packages
+func Parse(cfg *Config) (idx *index.Index, g *graph.Graph, err error) {
 	// defer log.Trace("parse").Stop(&err)
 
-	program, err := loader.Load(packages...)
+	program, err := loader.Load(&loader.Config{
+		MacroPath:   cfg.MacroPath,
+		RuntimePath: cfg.RuntimePath,
+		StdPath:     cfg.StdPath,
+		Packages:    cfg.Packages,
+	})
 	if err != nil {
 		return idx, g, errors.Wrapf(err, "load error")
 	}
@@ -155,7 +180,7 @@ func (c *Compiler) Parse(packages ...string) (idx *index.Index, g *graph.Graph, 
 }
 
 // Assemble the code
-func (c *Compiler) Assemble(idx *index.Index, g *graph.Graph) (scripts []*script.Script, err error) {
+func Assemble(idx *index.Index, g *graph.Graph) (scripts []*script.Script, err error) {
 	// defer log.Trace("assemble").Stop(&err)
 
 	tr := translator.New(idx)
@@ -409,9 +434,10 @@ func prune(inp []def.Definition) (out []def.Definition, err error) {
 	return out, nil
 }
 
-// TODO: rearrange fixes the order for some common issues the
+// rearrange fixes the order for some common issues the
 // graph wouldn't know about. Right now this:
 // 1. moves methods below constructors
+// TODO: 2. move prototypes below constructor functions
 func rearrange(defs []def.Definition) []def.Definition {
 	return defs
 }

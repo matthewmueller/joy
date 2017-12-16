@@ -1,6 +1,6 @@
 ;(function() {
   var pkg = {};
-  pkg["runtime"] = (function() {
+  pkg["github.com/matthewmueller/joy/internal/runtime"] = (function() {
     function Chan (o) {
       o = o || {};
       this.capacity = o.capacity || 0;
@@ -85,7 +85,7 @@ self.catch = p.catch.bind(p)
     };
   })();
   pkg["github.com/matthewmueller/joy/testdata/32-goroutine-deep"] = (function() {
-    var runtime = pkg["runtime"];
+    var runtime = pkg["github.com/matthewmueller/joy/internal/runtime"];
     function another () {
       return "another";
     };

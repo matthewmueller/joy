@@ -1,4 +1,4 @@
-package loader_test
+package mains_test
 
 import (
 	"fmt"
@@ -7,26 +7,36 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"sort"
 	"strings"
 	"testing"
 
-	"github.com/matthewmueller/joy/internal/compiler/loader"
+	"github.com/matthewmueller/joy/internal/mains"
 	"github.com/stretchr/testify/assert"
 )
 
 var tests = []struct {
-	name     string
-	packages []string
-	outpaths []string
+	name string
+	in   []string
+	out  []string
 }{
-	// {"empty", []string{}, []string{}},
-	{"00-basic", []string{"$PWD/testdata/00-basic"}, []string{
-		"$PWD/testdata/00-basic",
-		"$PWD/testdata/macro",
-		"$PWD/testdata/runtime",
-		"$PWD/testdata/stdlib/fmt",
-	}},
+	// basics
+	{"no prefix file", []string{"testdata/one/main.go"}, []string{"$PWD/testdata/one"}},
+	{"no prefix dir", []string{"testdata/one"}, []string{"$PWD/testdata/one"}},
+	{"no prefix dir slash", []string{"testdata/one/"}, []string{"$PWD/testdata/one"}},
+	{"relative file", []string{"./testdata/one/main.go"}, []string{"$PWD/testdata/one"}},
+	{"relative dir", []string{"./testdata/one"}, []string{"$PWD/testdata/one"}},
+	{"relative dir slash", []string{"./testdata/one/"}, []string{"$PWD/testdata/one"}},
+	{"absolute file", []string{"$PWD/testdata/one/main.go"}, []string{"$PWD/testdata/one"}},
+	{"absolute dir", []string{"$PWD/testdata/one"}, []string{"$PWD/testdata/one"}},
+	{"absolute dir slash", []string{"$PWD/testdata/one/"}, []string{"$PWD/testdata/one"}},
+
+	// ellipsis
+	{"no prefix file ellipsis", []string{"testdata/one/..."}, []string{"$PWD/testdata/one"}},
+	{"relative dir ellipsis", []string{"./testdata/one/..."}, []string{"$PWD/testdata/one"}},
+	{"absolute file ellipsis", []string{"$PWD/testdata/one/..."}, []string{"$PWD/testdata/one"}},
+	{"no prefix file ellipsis", []string{"testdata/two/..."}, []string{"$PWD/testdata/two/a", "$PWD/testdata/two/b"}},
+	{"relative dir ellipsis", []string{"./testdata/two/..."}, []string{"$PWD/testdata/two/a", "$PWD/testdata/two/b"}},
+	{"absolute file ellipsis", []string{"$PWD/testdata/two/..."}, []string{"$PWD/testdata/two/a", "$PWD/testdata/two/b"}},
 }
 
 func Test(t *testing.T) {
@@ -39,9 +49,8 @@ func Test(t *testing.T) {
 	if gopath == "" {
 		t.Fatal("mains test expects a gopath")
 	}
-	os.Unsetenv("GOPATH")
 
-	tmpdir, err := ioutil.TempDir("", "loader_test")
+	tmpdir, err := ioutil.TempDir("", "mains_test")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,71 +60,34 @@ func Test(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	os.Unsetenv("GOPATH")
 	for _, test := range tests {
 
-		// 1) has a $GOPATH
 		os.Setenv("GOPATH", gopath)
 		t.Run(test.name, func(t *testing.T) {
-			var packages []string
-			for _, pkg := range test.packages {
-				packages = append(packages, strings.Replace(pkg, "$PWD", cwd, -1))
-			}
-			var outpaths []string
-			for _, pkg := range test.outpaths {
-				outpaths = append(outpaths, strings.Replace(pkg, "$PWD", cwd, -1))
-			}
-
-			p, err := loader.Load(&loader.Config{
-				StdPath:     path.Join(cwd, "testdata", "stdlib"),
-				MacroPath:   path.Join(cwd, "testdata", "macro"),
-				RuntimePath: path.Join(cwd, "testdata", "runtime"),
-				Packages:    packages,
-			})
+			ins, outs := inouts(t, test)
+			mns, err := mains.Find(append([]string{}, ins...))
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			var paths []string
-			for _, pkg := range p.AllPackages {
-				paths = append(paths, path.Join(gopath, "src", pkg.Pkg.Path()))
-			}
-			sort.Strings(paths)
-
-			for i, p := range paths {
-				assert.Equal(t, outpaths[i], p)
+			assert.Len(t, mns, len(outs), "wrong length")
+			for i, main := range mns {
+				assert.Equal(t, outs[i], main)
 			}
 		})
 
-		// No $GOPATH
 		os.Unsetenv("GOPATH")
 		t.Run(test.name+" no gopath", func(t *testing.T) {
-			var packages []string
-			for _, pkg := range test.packages {
-				packages = append(packages, strings.Replace(pkg, "$PWD", cwd, -1))
-			}
-			var outpaths []string
-			for _, pkg := range test.outpaths {
-				outpaths = append(outpaths, strings.Replace(pkg, "$PWD", cwd, -1))
-			}
-
-			p, err := loader.Load(&loader.Config{
-				StdPath:     path.Join(cwd, "testdata", "stdlib"),
-				MacroPath:   path.Join(cwd, "testdata", "macro"),
-				RuntimePath: path.Join(cwd, "testdata", "runtime"),
-				Packages:    packages,
-			})
+			ins, outs := inouts(t, test)
+			mns, err := mains.Find(append([]string{}, ins...))
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			var paths []string
-			for _, pkg := range p.AllPackages {
-				paths = append(paths, path.Join(gopath, "src", pkg.Pkg.Path()))
-			}
-			sort.Strings(paths)
-
-			for i, p := range paths {
-				assert.Equal(t, outpaths[i], p)
+			assert.Len(t, mns, len(outs), "wrong length")
+			for i, main := range mns {
+				assert.Equal(t, outs[i], main)
 			}
 		})
 
@@ -124,35 +96,16 @@ func Test(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		// outside the $GOPATH
 		t.Run(test.name+" outside gopath", func(t *testing.T) {
-			var packages []string
-			for _, pkg := range test.packages {
-				packages = append(packages, strings.Replace(pkg, "$PWD", tmpdir, -1))
-			}
-			var outpaths []string
-			for _, pkg := range test.outpaths {
-				outpaths = append(outpaths, strings.Replace(pkg, "$PWD", tmpdir, -1))
-			}
-
-			p, err := loader.Load(&loader.Config{
-				StdPath:     path.Join(tmpdir, "testdata", "stdlib"),
-				MacroPath:   path.Join(tmpdir, "testdata", "macro"),
-				RuntimePath: path.Join(tmpdir, "testdata", "runtime"),
-				Packages:    packages,
-			})
+			ins, outs := inouts(t, test)
+			mns, err := mains.Find(append([]string{}, ins...))
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			var paths []string
-			for _, pkg := range p.AllPackages {
-				paths = append(paths, path.Join(gopath, "src", pkg.Pkg.Path()))
-			}
-			sort.Strings(paths)
-
-			for i, p := range paths {
-				assert.Equal(t, outpaths[i], p)
+			assert.Len(t, mns, len(outs), "wrong length")
+			for i, main := range mns {
+				assert.Equal(t, outs[i], main)
 			}
 		})
 
@@ -160,6 +113,25 @@ func Test(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
+}
+
+func inouts(t *testing.T, test struct {
+	name string
+	in   []string
+	out  []string
+}) (ins []string, outs []string) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, in := range test.in {
+		ins = append(ins, strings.Replace(in, "$PWD", cwd, -1))
+	}
+	for _, out := range test.out {
+		outs = append(outs, strings.Replace(out, "$PWD", cwd, -1))
+	}
+	return
 }
 
 // CopyDir recursively copies a directory tree, attempting to preserve permissions.

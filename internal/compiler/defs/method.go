@@ -8,6 +8,8 @@ import (
 	"github.com/matthewmueller/joy/internal/compiler/def"
 	"github.com/matthewmueller/joy/internal/compiler/index"
 	"github.com/matthewmueller/joy/internal/compiler/util"
+	"github.com/matthewmueller/joy/internal/paths"
+	"github.com/pkg/errors"
 	"golang.org/x/tools/go/loader"
 )
 
@@ -112,11 +114,18 @@ func Method(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (def.
 		return nil, e
 	}
 
+	runtimePath, err := paths.Runtime()
+	if err != nil {
+		return nil, errors.Wrapf(err, "error getting runtime path")
+	}
+	fromRuntime := strings.HasSuffix(runtimePath, packagePath)
+
 	return &methods{
 		id:       id,
 		index:    index,
 		exported: exported,
 		path:     packagePath,
+		runtime:  fromRuntime,
 		name:     name,
 		node:     n,
 		kind:     info.TypeOf(n.Name),
@@ -249,7 +258,7 @@ func (d *methods) Imports() map[string]string {
 }
 
 func (d *methods) FromRuntime() bool {
-	return d.path == "runtime"
+	return d.runtime
 }
 
 // Rewrite fn

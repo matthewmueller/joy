@@ -5,6 +5,9 @@ import (
 	"go/types"
 	"strings"
 
+	"github.com/matthewmueller/joy/internal/paths"
+	"github.com/pkg/errors"
+
 	"golang.org/x/tools/go/loader"
 
 	"github.com/matthewmueller/joy/internal/compiler/def"
@@ -121,12 +124,19 @@ func Function(index *index.Index, info *loader.PackageInfo, n *ast.FuncDecl) (de
 		return nil, e
 	}
 
+	runtimePath, err := paths.Runtime()
+	if err != nil {
+		return nil, errors.Wrapf(err, "error getting runtime path")
+	}
+	fromRuntime := strings.HasSuffix(runtimePath, packagePath)
+
 	return &functions{
 		index:    index,
 		info:     info,
 		id:       id,
 		exported: exported,
 		path:     packagePath,
+		runtime:  fromRuntime,
 		name:     name,
 		node:     n,
 		kind:     info.TypeOf(n.Name),
@@ -251,7 +261,7 @@ func (d *functions) Imports() map[string]string {
 }
 
 func (d *functions) FromRuntime() bool {
-	return d.path == "runtime"
+	return d.runtime
 }
 
 func (d *functions) maybeAsync(def def.Definition) error {
