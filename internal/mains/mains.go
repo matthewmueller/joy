@@ -13,7 +13,6 @@ import (
 	"strings"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/joy/internal/compiler/util"
 	"github.com/pkg/errors"
 )
 
@@ -23,55 +22,34 @@ import (
 //
 // Mostly based on:
 // https://github.com/mitchellh/gox/blob/c9740af9c6574448fd48eb30a71f964014c7a837/go.go#L123
-func Find(packages []string) ([]string, error) {
-	pwd, err := os.Getwd()
+func Find(packages ...string) (mains []string, err error) {
+	cwd, err := os.Getwd()
 	if err != nil {
-		return nil, err
-	}
-
-	goSrc, err := util.GoSourcePath()
-	if err != nil {
-		return nil, err
+		return mains, err
 	}
 
 	for i, pkg := range packages {
-		isVariadic := strings.HasSuffix(pkg, "...")
-		pkg = strings.TrimRight(pkg, "/.")
-
-		if filepath.Ext(pkg) != "" {
-			pkg = path.Dir(pkg)
-		} else if pkg == "" {
+		// no prefix
+		if pkg[0] != '.' && pkg[0] != filepath.Separator {
+			packages[i] = "." + string(filepath.Separator) + pkg
 			continue
 		}
 
-		if pkg == "." {
-			packages[i] = pkg
-			continue
-		}
-
-		// absolute => relative
+		// absolute
 		if pkg[0] == filepath.Separator {
-			rel, err := filepath.Rel(pwd, pkg)
+			rel, err := filepath.Rel(cwd, pkg)
 			if err != nil {
-				return nil, errors.Wrapf(err, "couldn't get relative path")
+				return mains, errors.Wrapf(err, "unable to get relative path")
 			}
-			pkg = rel
-		}
 
-		// relative
-		if pkg[0] == '.' && pkg[1] == filepath.Separator {
-			if isVariadic {
-				pkg += "/..."
+			if rel[0] != '.' {
+				packages[i] = "." + string(filepath.Separator) + rel
+			} else {
+				packages[i] = rel
 			}
-			packages[i] = pkg
+
 			continue
 		}
-
-		pkg = "." + string(filepath.Separator) + pkg
-		if isVariadic {
-			pkg += "/..."
-		}
-		packages[i] = pkg
 	}
 
 	goCmd, err := exec.LookPath("go")
@@ -100,23 +78,20 @@ func Find(packages []string) ([]string, error) {
 		}
 
 		if parts[0] == "main" {
-			// TODO: not sure if this is reliable
-			// but it's for when you pass a filepath
-			// to go list, it returns command-line-arguments
 			if parts[1] == "command-line-arguments" {
 				// TODO: i don't think this will work for multiple files
 				for _, pkg := range packages {
-					results = append(results, pkg)
+					results = append(results, path.Join(cwd, path.Dir(pkg)))
 				}
-				return results, nil
+				continue
 			}
 
-			fullpath := strings.TrimPrefix(parts[1], "_")
-			if fullpath[0] != '/' {
-				fullpath = path.Join(goSrc, fullpath)
+			if strings.HasPrefix(parts[1], "_/") {
+				results = append(results, strings.TrimPrefix(parts[1], "_"))
+				continue
 			}
 
-			results = append(results, fullpath)
+			results = append(results, parts[1])
 		}
 	}
 

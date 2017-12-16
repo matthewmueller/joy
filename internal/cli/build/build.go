@@ -8,8 +8,7 @@ import (
 	"time"
 
 	"github.com/apex/log"
-	"github.com/matthewmueller/joy/internal/compiler"
-	"github.com/matthewmueller/joy/internal/mains"
+	"github.com/matthewmueller/joy/api/build"
 	"github.com/matthewmueller/joy/internal/stats"
 	"github.com/pkg/errors"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
@@ -36,17 +35,13 @@ func New(ctx context.Context, root *kingpin.Application) {
 			return nil
 		}
 
-		gofiles, err := mains.Find(*packages)
-		if err != nil {
-			return err
-		}
-
-		c := compiler.New(&compiler.Params{
+		scripts, err := build.Build(&build.Config{
+			Context:     ctx,
+			Packages:    *packages,
 			Development: *dev,
 		})
-		jsfiles, e := c.Compile(gofiles...)
-		if e != nil {
-			return errors.Wrap(e, "error building packages")
+		if err != nil {
+			return errors.Wrap(err, "error building packages")
 		}
 
 		cwd, err := os.Getwd()
@@ -55,7 +50,7 @@ func New(ctx context.Context, root *kingpin.Application) {
 		}
 
 		var loc int
-		for _, file := range jsfiles {
+		for _, file := range scripts {
 			filename := path.Base(file.Name())
 			if err := ioutil.WriteFile(path.Join(cwd, filename+".js"), []byte(file.Source()), 0644); err != nil {
 				return errors.Wrapf(err, "error writing %s", file.Path())
@@ -69,7 +64,7 @@ func New(ctx context.Context, root *kingpin.Application) {
 		// stats
 		stats.Track("build", map[string]interface{}{
 			"duration": time.Since(start).Round(time.Millisecond).String(),
-			"files":    len(jsfiles),
+			"files":    len(scripts),
 			"loc":      loc,
 		})
 

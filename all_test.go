@@ -11,6 +11,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/matthewmueller/joy/api/build"
 	"github.com/matthewmueller/joy/internal/paths"
 
 	"github.com/sanity-io/litter"
@@ -18,7 +19,6 @@ import (
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/text"
-	"github.com/matthewmueller/joy/api"
 	"github.com/matthewmueller/joy/internal/chrome"
 	"github.com/pkg/errors"
 )
@@ -109,11 +109,12 @@ exists:
 			}
 
 			// compile the file
-			scripts, e := api.Build(ctx, &api.BuildSettings{
+			scripts, err := build.Build(&build.Config{
+				Context:  ctx,
 				Packages: pages,
 			})
-			if e != nil {
-				t.Fatal(errors.Wrap(e, "compile error"))
+			if err != nil {
+				t.Fatal(errors.Wrap(err, "compile error"))
 			}
 			if len(scripts) == 0 {
 				t.Fatal("expected atleast 1 script to be built")
