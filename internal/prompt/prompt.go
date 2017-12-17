@@ -31,8 +31,8 @@ func Prompt(db *skv.KVStore, count int) (done bool, err error) {
 	}
 
 	// ask for name and email
-	// once we hit 20 times
-	if count >= 20 {
+	// once we hit 100 times
+	if count >= 100 {
 		if err := promptEmail(db); err != nil {
 			return done, errors.Wrapf(err, "error prompting email")
 		}
