@@ -17,10 +17,8 @@ import (
 
 // Config struct
 type Config struct {
-	Packages    []string `valid:"required"`
-	RuntimePath string   `valid:"required"`
-	StdPath     string   `valid:"required"`
-	MacroPath   string   `valid:"required"`
+	Packages []string `valid:"required"`
+	JoyPath  string   `valid:"required"`
 }
 
 // Load takes full paths to packages and loads them
@@ -32,7 +30,11 @@ func Load(cfg *Config) (program *loader.Program, err error) {
 
 	var conf loader.Config
 
+	// paths
 	gosrc := path.Join(build.Default.GOPATH, "src")
+	stdPath := path.Join(cfg.JoyPath, "stdlib")
+	macroPath := path.Join(cfg.JoyPath, "macro")
+	runtimePath := path.Join(cfg.JoyPath, "internal", "runtime")
 
 	// add comments to the AST
 	conf.ParserMode = parser.ParseComments
@@ -55,7 +57,7 @@ func Load(cfg *Config) (program *loader.Program, err error) {
 				return nil, fmt.Errorf("%s is not supported yet by Joy", importPath)
 			}
 
-			rel, err := filepath.Rel(gosrc, path.Join(cfg.StdPath, importPath))
+			rel, err := filepath.Rel(gosrc, path.Join(stdPath, importPath))
 			if err != nil {
 				return nil, errors.Wrapf(err, "error getting relative path for the stdlib")
 			}
@@ -66,19 +68,32 @@ func Load(cfg *Config) (program *loader.Program, err error) {
 		// know where to find joy/macro, so we don't need to Go
 		// installed just to compile basic programs
 		if strings.HasSuffix(importPath, "joy/macro") {
-			rel, err := filepath.Rel(gosrc, cfg.MacroPath)
+			rel, err := filepath.Rel(gosrc, macroPath)
 			if err != nil {
 				return nil, errors.Wrapf(err, "error getting relative path for the stdlib")
 			}
 			return ctxt.Import(rel, gosrc, mode)
 		}
 
+		// the default loader's importer errors out on absolute
+		// paths, so we'll take the relative path in that case
+		// TODO: we can probably add this later, but the way
+		// our paths get written right now, they have to be
+		// consistent in the import path
+		// if importPath[0] == filepath.Separator {
+		// 	rel, err := filepath.Rel(gosrc, importPath)
+		// 	if err != nil {
+		// 		return nil, errors.Wrapf(err, "error getting relative import path")
+		// 	}
+		// 	return ctxt.Import(rel, gosrc, mode)
+		// }
+
 		// import the regular way
 		return ctxt.Import(importPath, gosrc, mode)
 	}
 
 	// include the runtime by default
-	rel, err := filepath.Rel(gosrc, cfg.RuntimePath)
+	rel, err := filepath.Rel(gosrc, runtimePath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "error getting relative path for the runtime")
 	}

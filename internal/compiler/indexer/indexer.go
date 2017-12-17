@@ -34,7 +34,7 @@ func New(program *loader.Program) (idx *index.Index, err error) {
 		// in the index, but right now index.DefinitionOf will return
 		// macro.File rather than the underlying type so rewrites
 		// currently get messed up
-		if pkgpath == "./macro" || strings.HasSuffix(pkgpath, "joy/macro") {
+		if strings.HasSuffix(pkgpath, "joy/macro") {
 			continue
 		}
 

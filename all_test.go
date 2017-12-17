@@ -46,28 +46,12 @@ func Test(t *testing.T) {
 		t.Fatal(e)
 	}
 
-	root, err := paths.Joy()
+	chromePath, err := paths.Chrome()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-exists:
-	chromePath, err := chrome.Exists(path.Join(root, "chrome"))
-	if err != nil {
-		t.Fatal(err)
-	} else if chromePath == "" {
-		log.Infof("downloading headless chrome (this only needs to be done once)")
-		if err := chrome.Download(path.Join(root, "chrome")); err != nil {
-			t.Fatal(err)
-		}
-		goto exists
-	}
-
-	ch, err := chrome.New(ctx, &chrome.Settings{
-		ExecutablePath: chromePath,
-		Stderr:         ioutil.Discard,
-		Stdout:         ioutil.Discard,
-	})
+	ch, err := chrome.Start(ctx, chromePath)
 	if err != nil {
 		t.Fatal(err)
 	}

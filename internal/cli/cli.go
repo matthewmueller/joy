@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"path/filepath"
 	"runtime"
 	"time"
 
@@ -60,8 +59,8 @@ func Run(ctx context.Context, ver string) (err error) {
 		}
 	}
 
-	// special case: joy ./main.go
-	if len(os.Args[1:]) == 1 && filepath.Ext(os.Args[1]) == ".go" {
+	// special case: joy ./main & ./main.go
+	if len(os.Args[1:]) == 1 {
 		files, err := apibuild.Build(&apibuild.Config{
 			Context:  ctx,
 			Packages: []string{os.Args[1]},

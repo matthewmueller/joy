@@ -23,8 +23,8 @@ var tests = []struct {
 	// {"empty", []string{}, []string{}},
 	{"00-basic", []string{"$PWD/testdata/00-basic"}, []string{
 		"$PWD/testdata/00-basic",
+		"$PWD/testdata/internal/runtime",
 		"$PWD/testdata/macro",
-		"$PWD/testdata/runtime",
 		"$PWD/testdata/stdlib/fmt",
 	}},
 }
@@ -66,10 +66,8 @@ func Test(t *testing.T) {
 			}
 
 			p, err := loader.Load(&loader.Config{
-				StdPath:     path.Join(cwd, "testdata", "stdlib"),
-				MacroPath:   path.Join(cwd, "testdata", "macro"),
-				RuntimePath: path.Join(cwd, "testdata", "runtime"),
-				Packages:    packages,
+				JoyPath:  path.Join(cwd, "testdata"),
+				Packages: packages,
 			})
 			if err != nil {
 				t.Fatal(err)
@@ -99,10 +97,8 @@ func Test(t *testing.T) {
 			}
 
 			p, err := loader.Load(&loader.Config{
-				StdPath:     path.Join(cwd, "testdata", "stdlib"),
-				MacroPath:   path.Join(cwd, "testdata", "macro"),
-				RuntimePath: path.Join(cwd, "testdata", "runtime"),
-				Packages:    packages,
+				JoyPath:  path.Join(cwd, "testdata"),
+				Packages: packages,
 			})
 			if err != nil {
 				t.Fatal(err)
@@ -136,10 +132,8 @@ func Test(t *testing.T) {
 			}
 
 			p, err := loader.Load(&loader.Config{
-				StdPath:     path.Join(tmpdir, "testdata", "stdlib"),
-				MacroPath:   path.Join(tmpdir, "testdata", "macro"),
-				RuntimePath: path.Join(tmpdir, "testdata", "runtime"),
-				Packages:    packages,
+				JoyPath:  path.Join(tmpdir, "testdata"),
+				Packages: packages,
 			})
 			if err != nil {
 				t.Fatal(err)

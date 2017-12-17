@@ -3,6 +3,7 @@ package run
 import (
 	"context"
 	"fmt"
+	"path"
 
 	"github.com/apex/log"
 	"github.com/matthewmueller/joy/internal/mains"
@@ -18,10 +19,7 @@ type Config struct {
 	Context     context.Context
 	FilePath    string
 	Development bool
-	ChromePath  string
-	MacroPath   string
-	RuntimePath string
-	StdPath     string
+	JoyPath     string
 	Log         log.Interface // Log (optional)
 }
 
@@ -34,36 +32,12 @@ func (c *Config) defaults() error {
 		c.Log = log.Log
 	}
 
-	if c.MacroPath == "" {
-		p, err := paths.Macro()
+	if c.JoyPath == "" {
+		p, err := paths.Joy()
 		if err != nil {
-			return errors.Wrapf(err, "error getting macro path")
+			return errors.Wrapf(err, "error getting joy's root path")
 		}
-		c.MacroPath = p
-	}
-
-	if c.RuntimePath == "" {
-		p, err := paths.Runtime()
-		if err != nil {
-			return errors.Wrapf(err, "error getting runtime path")
-		}
-		c.RuntimePath = p
-	}
-
-	if c.StdPath == "" {
-		p, err := paths.Stdlib()
-		if err != nil {
-			return errors.Wrapf(err, "error getting std path")
-		}
-		c.StdPath = p
-	}
-
-	if c.ChromePath == "" {
-		p, err := paths.Chrome()
-		if err != nil {
-			return errors.Wrapf(err, "error getting chrome path")
-		}
-		c.ChromePath = p
+		c.JoyPath = p
 	}
 
 	return nil
@@ -82,10 +56,8 @@ func Run(cfg *Config) (result string, err error) {
 
 	files, err := compiler.Compile(&compiler.Config{
 		Packages:    packages,
+		JoyPath:     cfg.JoyPath,
 		Development: cfg.Development,
-		MacroPath:   cfg.MacroPath,
-		RuntimePath: cfg.RuntimePath,
-		StdPath:     cfg.StdPath,
 	})
 	if err != nil {
 		return result, errors.Wrapf(err, "unable to compile file")
@@ -94,31 +66,22 @@ func Run(cfg *Config) (result string, err error) {
 	}
 
 	// download chrome if it doesn't already exist
-exists:
-	fullpath, err := chrome.Exists(cfg.ChromePath)
+	ch, err := chrome.Start(cfg.Context, path.Join(cfg.JoyPath, "chrome"))
 	if err != nil {
-		return result, errors.Wrapf(err, "unable to get chrome path")
-	} else if fullpath == "" {
-		cfg.Log.Infof("downloading headless chrome (this only needs to be done once)")
-		if err := chrome.Download(cfg.ChromePath); err != nil {
-			return result, errors.Wrapf(err, "error downloading headless chrome")
-		}
-		goto exists
-	}
-
-	ch, err := chrome.New(cfg.Context, &chrome.Settings{
-		ExecutablePath: cfg.ChromePath,
-	})
-	if err != nil {
-		return result, err
+		return result, errors.Wrapf(err, "error starting chrome")
 	}
 	defer ch.Close()
 
 	tar, err := ch.Target()
 	if err != nil {
-		return result, err
+		return result, errors.Wrapf(err, "error leasing target")
 	}
 	defer tar.Close()
 
-	return tar.Run(files[0].Source())
+	result, err = tar.Run(files[0].Source())
+	if err != nil {
+		return result, errors.Wrapf(err, "error running chrome target")
+	}
+
+	return result, nil
 }

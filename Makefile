@@ -8,9 +8,7 @@ TEST:="./..."
 
 test: embed
 	@echo "$(INFOLOG) Running go tests..."
-	@go list $(TEST) \
-		| grep -v "/vendor/" \
-		| xargs -n1 go test -timeout=5m -parallel=10 $(TESTARGS)
+	@go test -timeout=10m -parallel=10 $(TEST)
 .PHONY: tests
 
 # Install the commands.

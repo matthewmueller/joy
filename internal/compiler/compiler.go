@@ -4,10 +4,14 @@ package compiler
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
+	"path"
 	"sort"
 
 	"github.com/apex/log"
 	"github.com/asaskevich/govalidator"
+	"github.com/matthewmueller/joy/internal/bindata"
 	"github.com/matthewmueller/joy/internal/compiler/def"
 	"github.com/matthewmueller/joy/internal/compiler/defs"
 	"github.com/matthewmueller/joy/internal/compiler/index"
@@ -42,14 +46,8 @@ type Config struct {
 	// build a development or production bundle
 	Development bool
 
-	// path to runtime code (e.g. for channel support)
-	RuntimePath string `valid:"required"`
-
-	// path to the macro library
-	MacroPath string `valid:"required"`
-
-	// path to joy's stdlib
-	StdPath string `valid:"required"`
+	// joy's root path
+	JoyPath string `valid:"required"`
 
 	// packages to compile
 	Packages []string
@@ -83,21 +81,26 @@ func Compile(cfg *Config) (scripts []*script.Script, err error) {
 }
 
 // Setup the compiler's stdlib, runtime and macro source code
-// we're going to keep this stupid simple right now
-func Setup(cfg *Config) error {
+// we're going to keep this stupid simple right now, and just
+// overwrite everytime. Overhead right now is ~3ms on the compiler.
+//
+// TODO: optimize
+func Setup(cfg *Config) (err error) {
+	for _, asset := range bindata.AssetNames() {
+		fullpath := path.Join(cfg.JoyPath, asset)
+		if err := os.MkdirAll(path.Dir(fullpath), 0755); err != nil {
+			return errors.Wrapf(err, "error mkdirall")
+		}
 
-	// if err := setup.Runtime(); err != nil {
-	// 	return errors.Wrapf(err, "error setting up runtime")
-	// }
+		buf, err := bindata.Asset(asset)
+		if err != nil {
+			return errors.Wrapf(err, "unable to get asset")
+		}
 
-	// if err := setup.Stdlib(); err != nil {
-	// 	return errors.Wrapf(err, "error setting up stdlib")
-	// }
-
-	// if err := setup.Macro(); err != nil {
-	// 	return errors.Wrapf(err, "error setting up macro")
-	// }
-
+		if err := ioutil.WriteFile(fullpath, buf, 0644); err != nil {
+			return errors.Wrapf(err, "error writefile")
+		}
+	}
 	return nil
 }
 
@@ -112,10 +115,8 @@ func Parse(cfg *Config) (idx *index.Index, g *graph.Graph, err error) {
 	// defer log.Trace("parse").Stop(&err)
 
 	program, err := loader.Load(&loader.Config{
-		MacroPath:   cfg.MacroPath,
-		RuntimePath: cfg.RuntimePath,
-		StdPath:     cfg.StdPath,
-		Packages:    cfg.Packages,
+		JoyPath:  cfg.JoyPath,
+		Packages: cfg.Packages,
 	})
 	if err != nil {
 		return idx, g, errors.Wrapf(err, "load error")

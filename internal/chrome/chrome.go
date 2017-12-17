@@ -19,6 +19,7 @@ import (
 	"github.com/mafredri/cdp/devtool"
 	"github.com/mafredri/cdp/protocol/runtime"
 	"github.com/mafredri/cdp/rpcc"
+	"github.com/matthewmueller/log"
 	"github.com/pkg/errors"
 
 	"golang.org/x/sync/errgroup"
@@ -68,6 +69,27 @@ var defaultFlags = []string{
 }
 
 var errStopped = errors.New("stopped")
+
+// Start chrome, downloading if necessary
+func Start(ctx context.Context, chromePath string) (*Chrome, error) {
+exists:
+	fullpath, err := Exists(chromePath)
+	if err != nil {
+		return nil, errors.Wrapf(err, "couldn't find chrome")
+	} else if fullpath == "" {
+		log.Infof("downloading headless chrome (this only needs to be done once)")
+		if err := Download(chromePath); err != nil {
+			return nil, errors.Wrapf(err, "error downloading chrome")
+		}
+		goto exists
+	}
+
+	return New(ctx, &Settings{
+		ExecutablePath: fullpath,
+		Stderr:         ioutil.Discard,
+		Stdout:         ioutil.Discard,
+	})
+}
 
 // New chrome
 func New(parent context.Context, settings *Settings) (*Chrome, error) {

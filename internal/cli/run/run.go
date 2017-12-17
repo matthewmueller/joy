@@ -14,7 +14,9 @@ import (
 // New build command
 func New(ctx context.Context, root *kingpin.Application) {
 	cmd := root.Command("run", "compile and run a Go file")
-	file := cmd.Arg("file", "Go file to compile and run").Required().String()
+	filePath := cmd.Arg("file", "Go file to compile and run").Required().String()
+	// dev := cmd.Flag("dev", "generate a development build").Short('d').Bool()
+	joyPath := cmd.Flag("joy", "Joy state path").Hidden().String()
 
 	cmd.Action(func(_ *kingpin.ParseContext) (err error) {
 		start := time.Now()
@@ -24,8 +26,10 @@ func New(ctx context.Context, root *kingpin.Application) {
 
 		result, err := run.Run(&run.Config{
 			Context:     ctx,
-			FilePath:    *file,
+			FilePath:    *filePath,
 			Development: true, // TODO: change
+			// Development: *dev
+			JoyPath: *joyPath,
 		})
 		if err != nil {
 			log.WithError(err).Error("error running script")

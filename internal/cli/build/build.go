@@ -20,6 +20,7 @@ func New(ctx context.Context, root *kingpin.Application) {
 	packages := cmd.Arg("packages", "packages to build").Required().Strings()
 	dev := cmd.Flag("dev", "generate a development build").Short('d').Bool()
 	output := cmd.Flag("output", "directory to output files").Short('o').String()
+	joyPath := cmd.Flag("joy", "Joy state path").Hidden().String()
 
 	cmd.Action(func(_ *kingpin.ParseContext) (err error) {
 		start := time.Now()
@@ -39,6 +40,7 @@ func New(ctx context.Context, root *kingpin.Application) {
 			Context:     ctx,
 			Packages:    *packages,
 			Development: *dev,
+			JoyPath:     *joyPath,
 		})
 		if err != nil {
 			return errors.Wrap(err, "error building packages")

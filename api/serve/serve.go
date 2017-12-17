@@ -27,9 +27,7 @@ type Config struct {
 	Context     context.Context
 	Packages    []string
 	Development bool
-	MacroPath   string
-	RuntimePath string
-	StdPath     string
+	JoyPath     string
 	Port        int
 	Log         log.Interface // Log (optional)
 }
@@ -43,28 +41,12 @@ func (c *Config) defaults() error {
 		c.Log = log.Log
 	}
 
-	if c.MacroPath == "" {
-		p, err := paths.Macro()
+	if c.JoyPath == "" {
+		p, err := paths.Joy()
 		if err != nil {
-			return errors.Wrapf(err, "error getting macro path")
+			return errors.Wrapf(err, "error getting joy's root path")
 		}
-		c.MacroPath = p
-	}
-
-	if c.RuntimePath == "" {
-		p, err := paths.Runtime()
-		if err != nil {
-			return errors.Wrapf(err, "error getting runtime path")
-		}
-		c.RuntimePath = p
-	}
-
-	if c.StdPath == "" {
-		p, err := paths.Stdlib()
-		if err != nil {
-			return errors.Wrapf(err, "error getting std path")
-		}
-		c.StdPath = p
+		c.JoyPath = p
 	}
 
 	return nil
@@ -84,9 +66,7 @@ func Serve(cfg *Config) error {
 	index, graph, err := compiler.Parse(&compiler.Config{
 		Packages:    packages,
 		Development: cfg.Development,
-		MacroPath:   cfg.MacroPath,
-		RuntimePath: cfg.RuntimePath,
-		StdPath:     cfg.StdPath,
+		JoyPath:     cfg.JoyPath,
 	})
 	if err != nil {
 		return err
@@ -130,9 +110,7 @@ func Serve(cfg *Config) error {
 				files, err := compiler.Compile(&compiler.Config{
 					Packages:    cfg.Packages,
 					Development: cfg.Development,
-					MacroPath:   cfg.MacroPath,
-					RuntimePath: cfg.RuntimePath,
-					StdPath:     cfg.StdPath,
+					JoyPath:     cfg.JoyPath,
 				})
 				if err != nil {
 					cfg.Log.WithError(err).Errorf("error compiling joy")
