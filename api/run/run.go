@@ -1,3 +1,10 @@
+// Package run compiles your Go file and runs it on headless chrome
+//
+// This is the programmatic API to running Joy. Run will be called
+// by the CLI:
+//
+//    $ joy run main.go
+//
 package run
 
 import (
@@ -16,11 +23,11 @@ import (
 
 // Config struct
 type Config struct {
-	Context     context.Context
-	FilePath    string
-	Development bool
-	JoyPath     string
-	Log         log.Interface // Log (optional)
+	FilePath    string          // Go file to compile (required)
+	Context     context.Context // Cancellable context (optional, default: background)
+	Development bool            // Run the development bundle (optional, default: true)
+	JoyPath     string          // Root path to Joy's state files (optional)
+	Log         log.Interface   // Logger to use (optional)
 }
 
 func (c *Config) defaults() error {
