@@ -61,18 +61,20 @@ func Run(ctx context.Context, ver string) (err error) {
 
 	// special case: joy ./main & ./main.go
 	if len(os.Args[1:]) == 1 {
-		files, err := apibuild.Build(&apibuild.Config{
-			Context:  ctx,
-			Packages: []string{os.Args[1]},
-		})
-		if err != nil {
-			return errors.Wrapf(err, "error building code")
-		} else if len(files) != 1 {
-			return fmt.Errorf("joy run expects only 1 main file, but received %d files", len(files))
-		}
+		if _, err := os.Stat(os.Args[1]); !os.IsNotExist(err) {
+			files, err := apibuild.Build(&apibuild.Config{
+				Context:  ctx,
+				Packages: []string{os.Args[1]},
+			})
+			if err != nil {
+				return errors.Wrapf(err, "error building code")
+			} else if len(files) != 1 {
+				return fmt.Errorf("joy run expects only 1 main file, but received %d files", len(files))
+			}
 
-		fmt.Println(files[0].Source())
-		return nil
+			fmt.Println(files[0].Source())
+			return nil
+		}
 	}
 
 	// commands

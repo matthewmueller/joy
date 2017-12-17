@@ -8,7 +8,7 @@ TEST:="./..."
 
 test: embed
 	@echo "$(INFOLOG) Running go tests..."
-	@go test -timeout=10m -parallel=10 $(TEST)
+	@go test -timeout=10m $(TEST)
 .PHONY: tests
 
 # Install the commands.

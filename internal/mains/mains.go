@@ -6,6 +6,7 @@ package mains
 import (
 	"bytes"
 	"fmt"
+	"go/build"
 	"os"
 	"os/exec"
 	"path"
@@ -27,6 +28,8 @@ func Find(packages ...string) (mains []string, err error) {
 	if err != nil {
 		return mains, err
 	}
+
+	gosrc := path.Join(build.Default.GOPATH, "src")
 
 	for i, pkg := range packages {
 		// no prefix
@@ -91,7 +94,9 @@ func Find(packages ...string) (mains []string, err error) {
 				continue
 			}
 
-			results = append(results, parts[1])
+			// TODO: this needs testing, i think the tests never
+			// reach this because they're in ./testdata
+			results = append(results, path.Join(gosrc, parts[1]))
 		}
 	}
 
