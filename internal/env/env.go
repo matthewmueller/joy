@@ -20,10 +20,10 @@ type Env struct {
 // Get the environment
 func Get() Env {
 	return Env{
-		AWSAccessKey:   getEnv("AWS_ACCESS_ID", awsAccessKey),
-		AWSSecretKey:   getEnv("AWS_SECRET_ACCESS_KEY", awsSecretKey),
-		AWSRegion:      getEnv("AWS_REGION", awsRegion),
-		FirehoseStream: getEnv("AWS_FIREHOSE_STREAM", firehoseStream),
+		AWSAccessKey:   getEnv("JOY_AWS_ACCESS_ID", awsAccessKey),
+		AWSSecretKey:   getEnv("JOY_AWS_SECRET_ACCESS_KEY", awsSecretKey),
+		AWSRegion:      getEnv("JOY_AWS_REGION", awsRegion),
+		FirehoseStream: getEnv("JOY_AWS_FIREHOSE_STREAM", firehoseStream),
 	}
 }
 
