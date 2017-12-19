@@ -33,13 +33,13 @@ func Find(packages ...string) (mains []string, err error) {
 
 	for i, pkg := range packages {
 		// no prefix
-		if pkg[0] != '.' && pkg[0] != filepath.Separator {
+		if pkg[0] != '.' && !filepath.IsAbs(pkg) {
 			packages[i] = "." + string(filepath.Separator) + pkg
 			continue
 		}
 
 		// absolute
-		if pkg[0] == filepath.Separator {
+		if filepath.IsAbs(pkg) {
 			rel, err := filepath.Rel(cwd, pkg)
 			if err != nil {
 				return mains, errors.Wrapf(err, "unable to get relative path")
@@ -84,7 +84,7 @@ func Find(packages ...string) (mains []string, err error) {
 			if parts[1] == "command-line-arguments" {
 				// TODO: i don't think this will work for multiple files
 				for _, pkg := range packages {
-					results = append(results, path.Join(cwd, path.Dir(pkg)))
+					results = append(results, path.Join(cwd, filepath.Dir(pkg)))
 				}
 				continue
 			}
