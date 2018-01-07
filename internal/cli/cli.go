@@ -68,6 +68,8 @@ func Run(ctx context.Context, ver string) (err error) {
 			})
 			if err != nil {
 				return errors.Wrapf(err, "error building code")
+			} else if len(files) == 0 {
+				return fmt.Errorf("a main file requires a main function to build")
 			} else if len(files) != 1 {
 				return fmt.Errorf("joy run expects only 1 main file, but received %d files", len(files))
 			}

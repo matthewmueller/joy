@@ -68,6 +68,8 @@ func Run(cfg *Config) (result string, err error) {
 	})
 	if err != nil {
 		return result, errors.Wrapf(err, "unable to compile file")
+	} else if len(files) == 0 {
+		return result, fmt.Errorf("a main file requires a main function to build")
 	} else if len(files) != 1 {
 		return result, fmt.Errorf("joy run expects only 1 main file, but received %d files", len(files))
 	}
