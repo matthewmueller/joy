@@ -151,7 +151,7 @@ func Serve(cfg *Config) error {
 		bundleLock.RLock()
 		src := bundle
 		bundleLock.RUnlock()
-		fmt.Fprintf(w, src)
+		fmt.Fprint(w, src)
 	})
 
 	server := &http.Server{
