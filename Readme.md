@@ -1,5 +1,10 @@
 ![joy compiler](https://user-images.githubusercontent.com/170299/33872480-b10be348-df49-11e7-80b1-06736c8298ae.png)
 
+**⚠️ Joy development is currently on hold. Recent Go -> WASM developments look like a more promising path to Go being a great choice for frontend development. I'm thrilled to see development moving so quickly now and I think our efforts are better spent improving the Go to WASM compiler. As for Joy, there are quite a few interesting nuggets of code in here that I'd encourage you to dig up, polish and open source 😊. Thanks for your interest in this project!**
+
+**– Matt**
+
+
 Translate idiomatic Go into concise Javascript that works in every browser. Use Go's type system and world-class tooling to build large web applications with confidence.
 
 Visit [mat.tm/joy](https://mat.tm/joy) to learn more about Joy.
