@@ -11,10 +11,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/kr/pretty"
 	"github.com/matthewmueller/joy/api/build"
 	"github.com/matthewmueller/joy/internal/paths"
 
-	"github.com/sanity-io/litter"
 	"github.com/sergi/go-diff/diffmatchpatch"
 
 	"github.com/apex/log"
@@ -159,8 +159,8 @@ func Test(t *testing.T) {
 }
 
 func formatted(expected, actual interface{}) string {
-	e := litter.Sdump(expected)
-	a := litter.Sdump(actual)
+	e := pretty.Sprint(expected)
+	a := pretty.Sprint(actual)
 
 	dmp := diffmatchpatch.New()
 	diffs := dmp.DiffMain(e, a, false)

@@ -5,40 +5,22 @@ import (
 	"strings"
 	"time"
 
-	"github.com/asaskevich/govalidator"
-	"github.com/matthewmueller/joy/internal/stats"
 	"github.com/matthewmueller/joy/internal/typewriter"
 	"github.com/matthewmueller/store"
 	isatty "github.com/mattn/go-isatty"
 	"github.com/pkg/errors"
 	"github.com/rapidloop/skv"
 	prompt "github.com/tj/go-prompt"
+	govalidator "gopkg.in/asaskevich/govalidator.v4"
 )
 
 // Prompt does special things depending on
 // the number of times Joy is run
-func Prompt(db *skv.KVStore, count int) (done bool, err error) {
+func Prompt(db *skv.KVStore) (done bool, err error) {
 	// ignore when not a tty
 	if !isatty.IsTerminal(0) {
 		return false, nil
 	}
-
-	if count == 1 {
-		if err := introduce(); err != nil {
-			return done, errors.Wrapf(err, "error prompting email")
-		}
-		return true, nil
-	}
-
-	// ask for name and email
-	// once we hit 100 times
-	if count >= 100 {
-		if err := promptEmail(db); err != nil {
-			return done, errors.Wrapf(err, "error prompting email")
-		}
-		return false, nil
-	}
-
 	return false, nil
 }
 
@@ -84,12 +66,6 @@ ask:
 	if referrer == "" {
 		goto ask
 	}
-
-	if err := stats.Track("new developer", map[string]interface{}{
-		"referrer": referrer,
-	}); err != nil {
-		return errors.Wrapf(err, "error tracking referrer")
-	}
 	fmt.Printf("\nThanks a bunch!\n")
 
 	return nil
@@ -108,12 +84,12 @@ take this relationship to the next level?
 
 I wanted to ask you for your name and email address.
 
-I'd like to be able to reach you when we add features, write tutorials and 
-spotlight websites using Joy in production. I'm really hoping we can build 
+I'd like to be able to reach you when we add features, write tutorials and
+spotlight websites using Joy in production. I'm really hoping we can build
 a kick-butt community around frontend Go development.
 
-I hate spam as much as you do and if the emails you receive aren’t helpful, 
-I’d love to hear how I can improve them. As always, you'll have an option 
+I hate spam as much as you do and if the emails you receive aren’t helpful,
+I’d love to hear how I can improve them. As always, you'll have an option
 to unsubscribe in each email you receive.
 		`), 15*time.Second)
 		fmt.Printf(string('\n'))
@@ -139,13 +115,6 @@ to unsubscribe in each email you receive.
 			return errors.Wrapf(err, "error storing email")
 		}
 
-		if err := stats.Track("identity", map[string]interface{}{
-			"name":  name,
-			"email": email,
-		}); err != nil {
-			return errors.Wrapf(err, "error tracking name & email")
-		}
-
 		fmt.Printf("\nThanks bud! Now where were we")
 		typewriter.Type("...", 2*time.Second)
 		fmt.Printf(" Ah yes!\n\n")
@@ -160,6 +129,6 @@ func splash() string {
      ________  __
  __ / / __ \ \/ /
 / // / /_/ /\  /   A Delightful Go to Javascript Compiler
-\___/\____/ /_/  
+\___/\____/ /_/
 `
 }

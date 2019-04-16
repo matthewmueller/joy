@@ -10,7 +10,6 @@ import (
 	"sort"
 
 	"github.com/apex/log"
-	"github.com/asaskevich/govalidator"
 	"github.com/matthewmueller/joy/internal/bindata"
 	"github.com/matthewmueller/joy/internal/compiler/def"
 	"github.com/matthewmueller/joy/internal/compiler/defs"
@@ -20,6 +19,7 @@ import (
 	"github.com/matthewmueller/joy/internal/compiler/translator"
 	"github.com/matthewmueller/joy/internal/jsast"
 	"github.com/pkg/errors"
+	govalidator "gopkg.in/asaskevich/govalidator.v4"
 
 	"github.com/matthewmueller/joy/internal/compiler/graph"
 	"github.com/matthewmueller/joy/internal/compiler/loader"

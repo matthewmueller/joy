@@ -5,11 +5,9 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"time"
 
 	"github.com/apex/log"
 	"github.com/matthewmueller/joy/api/build"
-	"github.com/matthewmueller/joy/internal/stats"
 	"github.com/pkg/errors"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
@@ -23,11 +21,6 @@ func New(ctx context.Context, root *kingpin.Application) {
 	joyPath := cmd.Flag("joy", "Joy state path").Hidden().String()
 
 	cmd.Action(func(_ *kingpin.ParseContext) (err error) {
-		start := time.Now()
-
-		// stats
-		defer stats.TrackError("build", time.Now(), &err)
-
 		if !*dev {
 			log.Infof("Production builds coming soon! for now use `joy build --dev <packages>...` and run regenerator and uglify manually")
 			return nil
@@ -62,13 +55,6 @@ func New(ctx context.Context, root *kingpin.Application) {
 			// to map filesize to performance
 			loc += len(file.Source())
 		}
-
-		// stats
-		stats.Track("build", map[string]interface{}{
-			"duration": time.Since(start).Round(time.Millisecond).String(),
-			"files":    len(scripts),
-			"loc":      loc,
-		})
 
 		return nil
 	})

@@ -8,11 +8,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/asaskevich/govalidator"
-
 	"github.com/matthewmueller/joy/internal/std"
 	"github.com/pkg/errors"
 	"golang.org/x/tools/go/loader"
+	govalidator "gopkg.in/asaskevich/govalidator.v4"
 )
 
 // Config struct

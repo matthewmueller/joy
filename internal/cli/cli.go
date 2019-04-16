@@ -4,12 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"runtime"
-	"time"
 
-	"github.com/apex/log"
 	"github.com/matthewmueller/joy/internal/prompt"
-	"github.com/matthewmueller/joy/internal/stats"
 	"github.com/matthewmueller/store"
 
 	"github.com/pkg/errors"
@@ -26,19 +22,6 @@ import (
 
 // Run the CLI
 func Run(ctx context.Context, ver string) (err error) {
-	// setup stats
-	defer func() {
-		if err := stats.Client.MaybeFlush(100, 1*time.Minute); err != nil {
-			log.WithError(err).Errorf("error flushing")
-		}
-	}()
-
-	stats.Client.Set(map[string]interface{}{
-		"os":      runtime.GOOS,
-		"arch":    runtime.GOARCH,
-		"version": ver,
-	})
-
 	cmd := kingpin.New("joy", "Joy – A Delightful Go to Javascript Compiler")
 	cmd.Version(ver)
 
@@ -48,13 +31,8 @@ func Run(ctx context.Context, ver string) (err error) {
 		return errors.Wrapf(err, "unable to setup the storage")
 	}
 
-	runs, err := stats.Increment(db)
-	if err != nil {
-		return errors.Wrapf(err, "error incrementing stats")
-	}
-
 	if ver != "master" {
-		if done, err := prompt.Prompt(db, runs); err != nil || done {
+		if done, err := prompt.Prompt(db); err != nil || done {
 			return errors.Wrapf(err, "prompt error")
 		}
 	}

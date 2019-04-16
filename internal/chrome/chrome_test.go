@@ -8,8 +8,8 @@ import (
 
 	"github.com/matthewmueller/joy/internal/paths"
 
+	"github.com/apex/log"
 	"github.com/matthewmueller/joy/internal/chrome"
-	"github.com/matthewmueller/log"
 	"github.com/stretchr/testify/assert"
 )
 

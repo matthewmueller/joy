@@ -4,14 +4,14 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/sanity-io/litter"
+	"github.com/kr/pretty"
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
 // Format fn
 func Format(expected, actual interface{}) string {
-	e := litter.Sdump(expected)
-	a := litter.Sdump(actual)
+	e := pretty.Sprint(expected)
+	a := pretty.Sprint(actual)
 
 	dmp := diffmatchpatch.New()
 	diffs := dmp.DiffMain(e, a, false)

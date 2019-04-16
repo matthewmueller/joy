@@ -3,10 +3,8 @@ package serve
 import (
 	"context"
 	"strconv"
-	"time"
 
 	"github.com/matthewmueller/joy/api/serve"
-	"github.com/matthewmueller/joy/internal/stats"
 	"github.com/pkg/errors"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
@@ -20,11 +18,6 @@ func New(ctx context.Context, root *kingpin.Application) {
 	joyPath := cmd.Flag("joy", "Joy state path").Hidden().String()
 
 	cmd.Action(func(_ *kingpin.ParseContext) (err error) {
-		start := time.Now()
-
-		// stats
-		defer stats.TrackError("serve", time.Now(), &err)
-
 		port, e := strconv.Atoi(*port)
 		if e != nil {
 			return errors.Wrap(e, "invalid port")
@@ -40,12 +33,6 @@ func New(ctx context.Context, root *kingpin.Application) {
 		}); err != nil {
 			return errors.Wrapf(err, "error serving")
 		}
-
-		// stats
-		stats.Track("serve", map[string]interface{}{
-			"duration": time.Since(start).Round(time.Millisecond).String(),
-			"packages": len(*packages),
-		})
 
 		return nil
 	})

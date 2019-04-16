@@ -11,11 +11,9 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"time"
 
 	"github.com/apex/log"
 	"github.com/google/go-github/github"
-	"github.com/matthewmueller/joy/internal/stats"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
@@ -23,7 +21,6 @@ import (
 func New(ctx context.Context, root *kingpin.Application, version string) {
 	cmd := root.Command("upgrade", "upgrade joy to the latest version")
 	cmd.Action(func(_ *kingpin.ParseContext) (err error) {
-		defer stats.TrackError("upgrade", time.Now(), &err)
 		return upgrade(ctx, version)
 	})
 }
@@ -31,7 +28,6 @@ func New(ctx context.Context, root *kingpin.Application, version string) {
 // https://github.com/apex/apex/blob/master/upgrade/upgrade.go
 // Thanks TJ
 func upgrade(ctx context.Context, version string) (err error) {
-	start := time.Now()
 	log.Infof("current release is %s", version)
 
 	// fetch releases
@@ -45,17 +41,6 @@ func upgrade(ctx context.Context, version string) (err error) {
 	latest := releases[0]
 	log.Infof("latest release is %s", *latest.TagName)
 	latestVersion := (*latest.TagName)[1:]
-
-	// stats
-	defer func() {
-		if err == nil {
-			stats.Track("upgrade", map[string]interface{}{
-				"duration": time.Since(start).Round(time.Millisecond).String(),
-				"from":     version,
-				"to":       latestVersion,
-			})
-		}
-	}()
 
 	// TODO: ignore if semver
 	if latestVersion == version {

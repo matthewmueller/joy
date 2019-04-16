@@ -14,12 +14,12 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/apex/log"
 	"github.com/cenkalti/backoff"
 	"github.com/mafredri/cdp"
 	"github.com/mafredri/cdp/devtool"
 	"github.com/mafredri/cdp/protocol/runtime"
 	"github.com/mafredri/cdp/rpcc"
-	"github.com/matthewmueller/log"
 	"github.com/pkg/errors"
 
 	"golang.org/x/sync/errgroup"
