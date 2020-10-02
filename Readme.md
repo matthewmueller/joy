@@ -4,7 +4,7 @@
 
 Thanks for your interest in this project!
 
-❤️ **Matt**
+❤️ **master**
 
 ---
 
@@ -14,7 +14,7 @@ Visit [mat.tm/joy](https://mat.tm/joy) to learn more about Joy.
 
 ---
 
-[Getting Started](#getting-started)
+[get started](#getting-started)
 &nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[Examples](#examples)
 &nbsp;&nbsp;&nbsp;&nbsp;&#183;&nbsp;&nbsp;&nbsp;&nbsp;[Using the CLI](#using-the-cli)
 
